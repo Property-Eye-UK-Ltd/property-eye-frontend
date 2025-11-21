@@ -34,10 +34,10 @@ const Login = () => {
     };
 
     return (
-        <AuthLayout currentStep={0} totalSteps={1}>
+        <AuthLayout currentStep={0} totalSteps={1} showProgress={false}>
             <div className="space-y-6">
                 <div className="space-y-2">
-                    <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                    <h1 className="text-3xl md:text-4xl font-medium text-foreground">
                         Welcome back!
                     </h1>
                     <p className="text-base text-muted-foreground">
@@ -94,7 +94,7 @@ const Login = () => {
 
                         <Button
                             type="submit"
-                            className="w-full h-12 text-base font-medium"
+                            className="w-full h-12 text-base font-medium rounded-full"
                             disabled={!form.formState.isValid}
                         >
                             Login

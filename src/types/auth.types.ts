@@ -35,6 +35,12 @@ export interface AuthLayoutProps {
      * Optional heading to display above the progress bar
      */
     heading?: string;
+
+    /**
+     * Whether to show the progress bar
+     * @default true
+     */
+    showProgress?: boolean;
 }
 
 export interface ProgressBarProps {

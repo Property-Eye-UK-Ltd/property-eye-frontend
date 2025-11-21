@@ -7,6 +7,10 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import OTPVerification from "./pages/auth/OTPVerification";
+import AgencyOwnerInfo from "./pages/auth/AgencyOwnerInfo";
+import AgencyInformation from "./pages/auth/AgencyInformation";
+import { AuthFlowLayout } from "./components/auth/AuthFlowLayout";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +23,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+
+          {/* Auth Flow Routes with Persistent Layout */}
+          <Route element={<AuthFlowLayout />}>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/verify-otp" element={<OTPVerification />} />
+            <Route path="/agency-owner-info" element={<AgencyOwnerInfo />} />
+            <Route path="/agency-information" element={<AgencyInformation />} />
+          </Route>
           {/* Redirect root to login for now, or keep Index as landing page */}
           {/* <Route path="/" element={<Navigate to="/login" replace />} /> */}
 

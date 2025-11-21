@@ -31,12 +31,6 @@ export const ProgressBar = ({
                     aria-label={`Step ${currentStep + 1} of ${totalSteps}`}
                 />
             </div>
-
-            {/* Step indicator text */}
-            <div className="mt-2 flex justify-between items-center text-xs text-muted-foreground">
-                <span>Step {currentStep + 1} of {totalSteps}</span>
-                <span>{progressPercentage.toFixed(0)}%</span>
-            </div>
         </div>
     );
 };

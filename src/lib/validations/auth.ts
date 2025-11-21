@@ -21,3 +21,21 @@ export const signupSchema = z.object({
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;
+
+export const agencyOwnerSchema = z.object({
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    gender: z.string().min(1, "Please select a gender"),
+    address: z.string().min(5, "Please enter a valid address"),
+    profileImage: z.any().optional(),
+});
+
+export type AgencyOwnerFormData = z.infer<typeof agencyOwnerSchema>;
+
+export const agencyInfoSchema = z.object({
+    agencyName: z.string().min(2, "Agency name must be at least 2 characters"),
+    agencyAddress: z.string().min(5, "Please enter a valid address"),
+    agencyLogo: z.any().optional(),
+});
+
+export type AgencyInfoFormData = z.infer<typeof agencyInfoSchema>;
