@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Property Eye Brand Colors */
+    /* Primary: #00072C (Deep Navy Blue) */
+    /* Secondary: #FFBD09 (Golden Yellow) */
+
+    --background: #FFFFFF;
+    --foreground: #00072C;
+
+    --card: #FFFFFF;
+    --card-foreground: #00072C;
+
+    --popover: #FFFFFF;
+    --popover-foreground: #00072C;
+
+    --primary: #00072C;
+    --primary-foreground: #FFFFFF;
+
+    --secondary: #FFBD09;
+    --secondary-foreground: #00072C;
+
+    --muted: #F1F5F9;
+    --muted-foreground: #64748B;
+
+    --accent: #FFBD09;
+    --accent-foreground: #00072C;
+
+    --destructive: #EF4444;
+    --destructive-foreground: #FFFFFF;
+
+    --border: #E2E8F0;
+    --input: #E2E8F0;
+    --ring: #FFBD09;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: #00072C;
+    --sidebar-foreground: #FFFFFF;
+
+    --sidebar-primary: #FFBD09;
+    --sidebar-primary-foreground: #00072C;
+
+    --sidebar-accent: #0A1138;
+    --sidebar-accent-foreground: #FFFFFF;
+
+    --sidebar-border: #1E293B;
+    --sidebar-ring: #FFBD09;
+  }
+
+  .dark {
+    --background: #00072C;
+    --foreground: #FFFFFF;
+
+    --card: #0A1138;
+    --card-foreground: #FFFFFF;
+
+    --popover: #0A1138;
+    --popover-foreground: #FFFFFF;
+
+    --primary: #FFBD09;
+    --primary-foreground: #00072C;
+
+    --secondary: #1E293B;
+    --secondary-foreground: #FFFFFF;
+
+    --muted: #1E293B;
+    --muted-foreground: #94A3B8;
+
+    --accent: #FFBD09;
+    --accent-foreground: #00072C;
+
+    --destructive: #7F1D1D;
+    --destructive-foreground: #FFFFFF;
+
+    --border: #1E293B;
+    --input: #1E293B;
+    --ring: #FFBD09;
+
+    --sidebar-background: #00072C;
+    --sidebar-foreground: #FFFFFF;
+    --sidebar-primary: #FFBD09;
+    --sidebar-primary-foreground: #00072C;
+    --sidebar-accent: #1E293B;
+    --sidebar-accent-foreground: #FFFFFF;
+    --sidebar-border: #1E293B;
+    --sidebar-ring: #FFBD09;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+}
