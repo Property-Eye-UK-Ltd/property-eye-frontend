@@ -1,19 +1,3 @@
-/**
- * AuthLayout Component
- * 
- * Enterprise-level authentication layout with split-screen design.
- * 
- * Layout Structure:
- * - Left Side (50%): Content area with progress bar at top
- * - Right Side (50%): Image with primary brand color background
- * 
- * Features:
- * - Responsive design (stacks on mobile)
- * - Progress tracking
- * - Branded styling
- * - Accessible markup
- */
-
 import { AuthLayoutProps } from "@/types/auth.types";
 import { ProgressBar } from "./ProgressBar";
 

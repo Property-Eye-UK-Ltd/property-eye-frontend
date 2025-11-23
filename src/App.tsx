@@ -11,6 +11,7 @@ import OTPVerification from "./pages/auth/OTPVerification";
 import AgencyOwnerInfo from "./pages/auth/AgencyOwnerInfo";
 import AgencyInformation from "./pages/auth/AgencyInformation";
 import { AuthFlowLayout } from "./components/auth/AuthFlowLayout";
+import Overview from "./pages/dashboard/Overview";
 
 const queryClient = new QueryClient();
 
@@ -31,8 +32,9 @@ const App = () => (
             <Route path="/agency-owner-info" element={<AgencyOwnerInfo />} />
             <Route path="/agency-information" element={<AgencyInformation />} />
           </Route>
-          {/* Redirect root to login for now, or keep Index as landing page */}
-          {/* <Route path="/" element={<Navigate to="/login" replace />} /> */}
+
+          {/* Dashboard Routes */}
+          <Route path="/dashboard" element={<Overview />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
