@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useSidebarContext } from "./SidebarContext";
 import {
     SidebarLeft,
     SidebarRight,
@@ -35,7 +35,7 @@ const bottomNavItems: NavItem[] = [
 
 export const DashboardSidebar = () => {
     const location = useLocation();
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const { isCollapsed, setIsCollapsed } = useSidebarContext();
 
     const isActive = (path: string) => {
         if (path === "/dashboard") {
@@ -47,7 +47,7 @@ export const DashboardSidebar = () => {
     return (
         <aside
             className={cn(
-                "bg-primary text-sidebar-foreground flex flex-col h-screen transition-all duration-300",
+                "bg-primary text-sidebar-foreground flex flex-col h-screen fixed left-0 top-0 transition-all duration-300 z-10",
                 isCollapsed ? "w-20" : "w-64"
             )}
         >

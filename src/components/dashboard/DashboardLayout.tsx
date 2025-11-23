@@ -1,31 +1,48 @@
 import { ReactNode } from "react";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardHeader } from "./DashboardHeader";
+import { SidebarProvider, useSidebarContext } from "./SidebarContext";
+import { cn } from "@/lib/utils";
 
 interface DashboardLayoutProps {
     children: ReactNode;
 }
 
-export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
+    const { isCollapsed } = useSidebarContext();
+
     return (
         <div className="min-h-screen flex">
-            {/* Sidebar */}
+            {/* Sidebar - Fixed */}
             <DashboardSidebar />
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0">
+            <div
+                className={cn(
+                    "flex-1 flex flex-col min-w-0 transition-all duration-300",
+                    isCollapsed ? "ml-20" : "ml-64"
+                )}
+            >
                 {/* Header */}
                 <DashboardHeader />
 
                 {/* Separator between dashboard header and page header */}
                 <div className="border-b border-border" />
 
-                {/* Page Content */}
-                <main className="flex-1 overflow-auto bg-page-background">
+                {/* Page Content - Scrollable */}
+                <main className="flex-1 overflow-y-auto bg-page-background">
                     {children}
                 </main>
             </div>
         </div>
+    );
+};
+
+export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+    return (
+        <SidebarProvider>
+            <DashboardLayoutContent>{children}</DashboardLayoutContent>
+        </SidebarProvider>
     );
 };
 

@@ -14,7 +14,7 @@ export const DashboardHeader = () => {
     };
 
     return (
-        <header className="bg-background border-b border-border px-6 py-4">
+        <header className="bg-background px-6 py-4">
             <div className="flex items-center justify-end gap-4">
                 {/* Right to Left Layout */}
                 
