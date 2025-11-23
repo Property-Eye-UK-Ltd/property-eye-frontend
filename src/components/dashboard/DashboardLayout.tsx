@@ -17,8 +17,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 {/* Header */}
                 <DashboardHeader />
 
+                {/* Separator between dashboard header and page header */}
+                <div className="border-b border-border" />
+
                 {/* Page Content */}
-                <main className="flex-1 overflow-auto bg-background">
+                <main className="flex-1 overflow-auto bg-page-background">
                     {children}
                 </main>
             </div>

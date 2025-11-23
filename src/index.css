@@ -53,6 +53,12 @@ All colors MUST be HSL.
 
     --sidebar-border: #1E293B;
     --sidebar-ring: #FFBD09;
+
+    /* Progress/Icon Color */
+    --progress: #4D66EA;
+
+    /* Page Background */
+    --page-background: #F2F4F7;
   }
 
   .dark {
@@ -92,6 +98,12 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: #FFFFFF;
     --sidebar-border: #1E293B;
     --sidebar-ring: #FFBD09;
+
+    /* Progress/Icon Color */
+    --progress: #4D66EA;
+
+    /* Page Background */
+    --page-background: #F2F4F7;
   }
 }
 

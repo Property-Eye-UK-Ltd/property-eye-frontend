@@ -68,7 +68,8 @@ export default {
 				progress: {
 					DEFAULT: '#4D66EA',
 					foreground: '#FFFFFF'
-				}
+				},
+				'page-background': '#F2F4F7'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
