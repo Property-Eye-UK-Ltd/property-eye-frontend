@@ -1,4 +1,4 @@
-import { Refresh2, Notification, Sort, ArrowDown2, LogoutCurve } from "iconsax-react";
+import { Refresh2, Notification, Sort, ArrowDown2, LogoutCurve, SidebarLeft, SidebarRight } from "iconsax-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -6,18 +6,34 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSidebarContext } from "./SidebarContext";
 
 export const DashboardHeader = () => {
+    const { isCollapsed, setIsCollapsed } = useSidebarContext();
+    
     const handleLogout = () => {
         // Handle logout logic here
         console.log("Logout clicked");
     };
 
     return (
-        <header className="bg-background px-6 py-4">
-            <div className="flex items-center justify-end gap-4">
-                {/* Right to Left Layout */}
-                
+        <header className="bg-background border-b border-border px-6 py-4 sticky top-0 z-20">
+            <div className="flex items-center justify-between gap-4">
+                {/* Sidebar Toggle - Left Side */}
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0"
+                    aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                >
+                    {isCollapsed ? (
+                        <SidebarRight size={20} variant="Outline" className="text-primary" />
+                    ) : (
+                        <SidebarLeft size={20} variant="Outline" className="text-primary" />
+                    )}
+                </button>
+
+                {/* Right Side Content */}
+                <div className="flex items-center justify-end gap-4 flex-1">
                 {/* Last Data Pull - Leftmost */}
                 <div className="flex items-center gap-2">
                     <button
@@ -88,6 +104,7 @@ export const DashboardHeader = () => {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                </div>
                 </div>
             </div>
         </header>

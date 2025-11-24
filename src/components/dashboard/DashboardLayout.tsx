@@ -26,9 +26,6 @@ const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
                 {/* Header */}
                 <DashboardHeader />
 
-                {/* Separator between dashboard header and page header */}
-                <div className="border-b border-border" />
-
                 {/* Page Content - Scrollable */}
                 <main className="flex-1 overflow-y-auto bg-page-background">
                     {children}

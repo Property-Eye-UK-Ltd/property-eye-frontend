@@ -2,8 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useSidebarContext } from "./SidebarContext";
 import {
-    SidebarLeft,
-    SidebarRight,
     Book,
     Graph,
     Wallet1,
@@ -35,7 +33,7 @@ const bottomNavItems: NavItem[] = [
 
 export const DashboardSidebar = () => {
     const location = useLocation();
-    const { isCollapsed, setIsCollapsed } = useSidebarContext();
+    const { isCollapsed } = useSidebarContext();
 
     const isActive = (path: string) => {
         if (path === "/dashboard") {
@@ -51,35 +49,26 @@ export const DashboardSidebar = () => {
                 isCollapsed ? "w-20" : "w-64"
             )}
         >
-            {/* Logo Section with Collapse Button */}
-            <div className="p-6 flex items-center gap-3">
+            {/* Logo Section */}
+            <div className={cn("p-6 flex items-center", isCollapsed ? "justify-center" : "")}>
                 {isCollapsed ? (
-                    /* When collapsed: Only show SidebarRight icon centered */
-                    <button
-                        onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="w-full flex justify-center p-2 hover:bg-sidebar-accent rounded-full transition-colors"
-                        aria-label="Expand sidebar"
-                    >
-                        <SidebarRight size={20} variant="Outline" className="text-sidebar-foreground" />
-                    </button>
+                    /* When collapsed: Show favicon */
+                    <Link to="/dashboard" className="flex items-center justify-center">
+                        <img
+                            src="/favicon.ico"
+                            alt="Property Eye"
+                            className="h-8 w-8"
+                        />
+                    </Link>
                 ) : (
-                    /* When expanded: Show logo and SidebarLeft icon */
-                    <>
-                        <Link to="/dashboard" className="flex items-center gap-3 flex-1">
-                            <img
-                                src="/assets/logo.svg"
-                                alt="Property Eye"
-                                className="h-8 w-auto"
-                            />
-                        </Link>
-                        <button
-                            onClick={() => setIsCollapsed(!isCollapsed)}
-                            className="p-2 hover:bg-sidebar-accent rounded-full transition-colors flex-shrink-0"
-                            aria-label="Collapse sidebar"
-                        >
-                            <SidebarLeft size={20} variant="Outline" className="text-sidebar-foreground" />
-                        </button>
-                    </>
+                    /* When expanded: Show full logo */
+                    <Link to="/dashboard" className="flex items-center gap-3">
+                        <img
+                            src="/assets/logo.svg"
+                            alt="Property Eye"
+                            className="h-8 w-auto"
+                        />
+                    </Link>
                 )}
             </div>
 
