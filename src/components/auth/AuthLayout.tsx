@@ -39,7 +39,26 @@ export const AuthLayout = ({
 
             {/* Right Side - Image/Brand Area */}
             <div className="hidden lg:flex flex-1 bg-primary relative overflow-hidden">
-                {/* Content removed as requested */}
+                {/* Text and Image Container - Bottom Right Aligned */}
+                <div className="absolute bottom-0 right-0 flex flex-col items-end">
+                    {/* Text - Above Image, Left Aligned */}
+                    <div className="mb-10 self-start">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-tight">
+                            Your Gateway to{" "}
+                            <span className="text-secondary">Fraud-Free</span>
+                            <br />
+                            Property Operations.
+                        </h1>
+                    </div>
+
+                    {/* Dashboard Preview Image */}
+                    <img
+                        src="/assets/auth/layout.png"
+                        alt="Dashboard Preview"
+                        className="max-w-full h-auto object-contain"
+                        style={{ maxHeight: "60vh", maxWidth: "80vw" }}
+                    />
+                </div>
             </div>
         </div>
     );
