@@ -94,8 +94,11 @@ export const ActiveAlertsPanel = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedAlerts.map((alert) => (
-              <TableRow key={`${alert.property}-${alert.dateDetected}`} className="border-b border-border">
+            {sortedAlerts.map((alert, index) => (
+              <TableRow
+                key={`${alert.property}-${alert.dateDetected}-${index}`}
+                className="border-b border-border"
+              >
                 <TableCell className="px-4 py-3 font-normal">{alert.property}</TableCell>
                 <TableCell className="px-4 py-3">{alert.fraudScore}%</TableCell>
                 <TableCell className="px-4 py-3">{alert.type}</TableCell>
