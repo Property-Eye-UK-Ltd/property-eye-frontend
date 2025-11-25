@@ -2,7 +2,8 @@ import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface DashboardPanelProps {
-    title: string;
+    title?: string;
+    description?: string;
     icon?: ReactNode;
     children: ReactNode;
     className?: string;
@@ -13,6 +14,7 @@ interface DashboardPanelProps {
 
 export const DashboardPanel = ({
     title,
+    description,
     icon,
     children,
     className,
@@ -20,6 +22,8 @@ export const DashboardPanel = ({
     noPadding = false,
     hasBorder = false,
 }: DashboardPanelProps) => {
+    const showHeader = Boolean(title || description || icon || actions);
+
     return (
         <section
             className={cn(
@@ -28,13 +32,20 @@ export const DashboardPanel = ({
                 className
             )}
         >
-            <div className="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-t-2xl border-b border-border">
-                <div className="flex items-center gap-2 text-sm font-normal text-foreground">
-                    {icon}
-                    <span>{title}</span>
+            {showHeader && (
+                <div className="flex flex-col gap-2 bg-gray-50 px-4 py-3 rounded-t-2xl border-b border-border md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-start gap-2 text-sm text-foreground">
+                        {icon}
+                        <div className="flex flex-col leading-tight gap-1">
+                            {title && <span className="font-medium">{title}</span>}
+                            {description && (
+                                <p className="text-xs text-muted-foreground">{description}</p>
+                            )}
+                        </div>
+                    </div>
+                    {actions && <div className="flex-shrink-0">{actions}</div>}
                 </div>
-                {actions}
-            </div>
+            )}
             <div className={cn(noPadding ? "" : "p-6")}>{children}</div>
         </section>
     );
