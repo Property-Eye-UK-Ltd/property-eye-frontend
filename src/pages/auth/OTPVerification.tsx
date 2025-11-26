@@ -42,35 +42,35 @@ const OTPVerification = () => {
 
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
             {!isVerified ? (
                 // INPUT STATE
                 <>
                     <div className="space-y-2">
-                        <h1 className="text-3xl md:text-4xl font-medium text-foreground">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground">
                             Verify your account
                         </h1>
-                        <p className="text-base text-muted-foreground">
+                        <p className="text-sm sm:text-base text-muted-foreground">
                             Enter the one-time code sent to your mobile number to secure your account.
                         </p>
                     </div>
 
-                    <div className="flex flex-col items-center space-y-8">
+                    <div className="flex flex-col items-center space-y-6 sm:space-y-8">
                         <InputOTP
                             maxLength={6}
                             value={otp}
                             onChange={(value) => setOtp(value)}
                         >
                             <InputOTPGroup>
-                                <InputOTPSlot index={0} className="w-12 h-14 text-lg border-primary" />
-                                <InputOTPSlot index={1} className="w-12 h-14 text-lg border-primary" />
-                                <InputOTPSlot index={2} className="w-12 h-14 text-lg border-primary" />
+                                <InputOTPSlot index={0} className="w-10 h-12 sm:w-12 sm:h-14 text-lg border-primary" />
+                                <InputOTPSlot index={1} className="w-10 h-12 sm:w-12 sm:h-14 text-lg border-primary" />
+                                <InputOTPSlot index={2} className="w-10 h-12 sm:w-12 sm:h-14 text-lg border-primary" />
                             </InputOTPGroup>
                             <InputOTPSeparator />
                             <InputOTPGroup>
-                                <InputOTPSlot index={3} className="w-12 h-14 text-lg border-primary" />
-                                <InputOTPSlot index={4} className="w-12 h-14 text-lg border-primary" />
-                                <InputOTPSlot index={5} className="w-12 h-14 text-lg border-primary" />
+                                <InputOTPSlot index={3} className="w-10 h-12 sm:w-12 sm:h-14 text-lg border-primary" />
+                                <InputOTPSlot index={4} className="w-10 h-12 sm:w-12 sm:h-14 text-lg border-primary" />
+                                <InputOTPSlot index={5} className="w-10 h-12 sm:w-12 sm:h-14 text-lg border-primary" />
                             </InputOTPGroup>
                         </InputOTP>
 
@@ -95,12 +95,12 @@ const OTPVerification = () => {
                 </>
             ) : (
                 // SUCCESS STATE
-                <div className="flex flex-col space-y-6 py-8">
+                <div className="flex flex-col space-y-5 sm:space-y-6 py-8">
                     <div className="space-y-2">
-                        <h1 className="text-3xl md:text-4xl font-medium text-foreground">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground">
                             Account has been Successfully Verified
                         </h1>
-                        <p className="text-base text-muted-foreground">
+                        <p className="text-sm sm:text-base text-muted-foreground">
                             You're all set! Continue to the next step to complete your setup
                         </p>
                     </div>

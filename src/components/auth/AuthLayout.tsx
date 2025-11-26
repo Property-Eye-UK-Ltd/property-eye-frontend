@@ -11,12 +11,12 @@ export const AuthLayout = ({
     showProgress = true,
 }: AuthLayoutProps) => {
     return (
-        <div className="min-h-screen flex flex-col lg:flex-row">
+        <div className="min-h-screen flex flex-col lg:flex-row bg-background">
             {/* Left Side - Content Area */}
-            <div className="flex-1 flex flex-col bg-background">
+            <div className="flex-1 flex flex-col">
                 {/* Progress Bar - Fixed at top of flow */}
                 {showProgress && (
-                    <div className="w-full max-w-2xl mx-auto p-6 md:p-12 lg:p-16 pb-0">
+                    <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 md:px-12 lg:px-16 pt-6 md:pt-10 pb-0">
                         {heading && (
                             <h2 className="text-sm font-medium text-muted-foreground mb-4">
                                 {heading}
@@ -30,8 +30,8 @@ export const AuthLayout = ({
                 )}
 
                 {/* Main Content Area - Centered */}
-                <div className="flex-1 flex flex-col p-6 md:p-12 lg:p-16 max-w-2xl mx-auto w-full justify-center">
-                    <div className="flex flex-col w-full">
+                <div className="flex-1 flex flex-col px-4 py-8 sm:px-6 sm:py-12 md:p-12 lg:p-16 max-w-2xl mx-auto w-full justify-center">
+                    <div className="flex flex-col w-full gap-6 sm:gap-8">
                         {children}
                     </div>
                 </div>

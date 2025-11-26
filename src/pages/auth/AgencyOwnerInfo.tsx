@@ -55,29 +55,29 @@ const AgencyOwnerInfo = () => {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
             <div className="space-y-2">
-                <h1 className="text-3xl md:text-4xl font-medium text-foreground">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground">
                     Agency owner information
                 </h1>
-                <p className="text-base text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground">
                     Provide the details of the primary account owner responsible for this agency.
                 </p>
             </div>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8">
 
                     {/* Profile Image Upload */}
-                    <div className="flex items-center space-x-6">
-                        <div className="relative w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-border">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-border">
                             {previewImage ? (
                                 <img src={previewImage} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
                                 <Profile size="40" variant="Bulk" className="text-muted-foreground" />
                             )}
                         </div>
-                        <div>
+                        <div className="space-y-2">
                             <label
                                 htmlFor="profile-upload"
                                 className="cursor-pointer inline-flex items-center px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-full text-sm font-medium transition-colors"
@@ -95,7 +95,7 @@ const AgencyOwnerInfo = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         <FormField
                             control={form.control}
                             name="firstName"

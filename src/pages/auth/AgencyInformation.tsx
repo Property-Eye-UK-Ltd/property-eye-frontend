@@ -46,29 +46,29 @@ const AgencyInformation = () => {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
             <div className="space-y-2">
-                <h1 className="text-3xl md:text-4xl font-medium text-foreground">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground">
                     Agency information
                 </h1>
-                <p className="text-base text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground">
                     Tell us a bit more about your agency.
                 </p>
             </div>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8">
 
                     {/* Agency Logo Upload */}
-                    <div className="flex items-center space-x-6">
-                        <div className="relative w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-border">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-border">
                             {previewLogo ? (
                                 <img src={previewLogo} alt="Agency Logo" className="w-full h-full object-cover" />
                             ) : (
                                 <Profile size="40" variant="Bulk" className="text-muted-foreground" />
                             )}
                         </div>
-                        <div>
+                        <div className="space-y-2">
                             <label
                                 htmlFor="logo-upload"
                                 className="cursor-pointer inline-flex items-center px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-full text-sm font-medium transition-colors"

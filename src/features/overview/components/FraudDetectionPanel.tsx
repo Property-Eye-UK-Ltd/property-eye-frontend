@@ -75,7 +75,7 @@ export const FraudDetectionPanel = ({ data, config }: FraudDetectionPanelProps) 
           <defs>
             {Object.entries(config).map(([key, value]) => (
               <linearGradient key={key} id={`gradient${key}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={value.color} stopOpacity={0.3} />
+                <stop offset="0%" stopColor={value.color} stopOpacity={0.15} />
                 <stop offset="100%" stopColor={value.color} stopOpacity={0} />
               </linearGradient>
             ))}
@@ -94,8 +94,9 @@ export const FraudDetectionPanel = ({ data, config }: FraudDetectionPanelProps) 
               dataKey={key}
               stroke={value.color}
               strokeWidth={1.5}
-              dot={{ r: 3 }}
-              activeDot={{ r: 5 }}
+              strokeOpacity={0.4}
+              dot={{ r: 3, fill: value.color, fillOpacity: 0.4 }}
+              activeDot={{ r: 5, fill: value.color, fillOpacity: 0.4 }}
             />
           ))}
         </ComposedChart>

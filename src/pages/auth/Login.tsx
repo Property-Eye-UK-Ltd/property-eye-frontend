@@ -35,18 +35,18 @@ const Login = () => {
 
     return (
         <AuthLayout currentStep={0} totalSteps={1} showProgress={false}>
-            <div className="space-y-6">
+            <div className="space-y-5 sm:space-y-6">
                 <div className="space-y-2">
-                    <h1 className="text-3xl md:text-4xl font-medium text-foreground">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground">
                         Welcome back!
                     </h1>
-                    <p className="text-base text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         Enter your details to get access to your account.
                     </p>
                 </div>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
                         <FormField
                             control={form.control}
                             name="email"

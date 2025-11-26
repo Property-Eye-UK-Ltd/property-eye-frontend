@@ -41,18 +41,18 @@ const Signup = () => {
 
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
             <div className="space-y-2">
-                <h1 className="text-3xl md:text-4xl font-medium text-foreground">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground">
                     Let's get your agency set up!
                 </h1>
-                <p className="text-base text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground">
                     Start by entering your agency details. This helps us personalize your experience
                 </p>
             </div>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8">
                     <FormField
                         control={form.control}
                         name="phoneNumber"
