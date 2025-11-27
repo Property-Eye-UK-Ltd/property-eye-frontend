@@ -25,6 +25,7 @@ export interface FraudSeriesConfig {
 interface FraudDetectionPanelProps {
   data: FraudDataPoint[]
   config: Record<string, FraudSeriesConfig>
+  showCategoryFilter?: boolean
 }
 
 const timeRangeOptions = [
@@ -116,7 +117,7 @@ const FraudTooltip = ({ active, payload, label, config }: TooltipProps<number, s
   )
 }
 
-export const FraudDetectionPanel = ({ data, config }: FraudDetectionPanelProps) => {
+export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true }: FraudDetectionPanelProps) => {
   const [timeRange, setTimeRange] = useState("12")
   const [selectedCategories, setSelectedCategories] = useState<string[]>(Object.keys(config))
 
@@ -175,30 +176,32 @@ export const FraudDetectionPanel = ({ data, config }: FraudDetectionPanelProps) 
             </SelectContent>
           </Select>
 
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-2">
-            {Object.entries(config).map(([key, value]) => {
-              const isActive = selectedCategories.includes(key)
-              return (
-                <button
-                  key={key}
-                  onClick={() => toggleCategory(key)}
-                  className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
-                    isActive
-                      ? "bg-muted text-foreground border border-progress"
-                      : "bg-muted text-muted-foreground border border-transparent hover:border-border"
-                  )}
-                >
-                  <div
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: value.color }}
-                  />
-                  {value.label}
-                </button>
-              )
-            })}
-          </div>
+          {/* Category Filter Pills - Conditionally rendered */}
+          {showCategoryFilter && (
+            <div className="flex items-center gap-2">
+              {Object.entries(config).map(([key, value]) => {
+                const isActive = selectedCategories.includes(key)
+                return (
+                  <button
+                    key={key}
+                    onClick={() => toggleCategory(key)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                      isActive
+                        ? "bg-muted text-foreground border border-progress"
+                        : "bg-muted text-muted-foreground border border-transparent hover:border-border"
+                    )}
+                  >
+                    <div
+                      className="h-2 w-2 rounded-full"
+                      style={{ backgroundColor: value.color }}
+                    />
+                    {value.label}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
       }
     >

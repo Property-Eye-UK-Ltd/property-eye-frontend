@@ -15,6 +15,7 @@ import { AuthFlowLayout } from "./components/auth/AuthFlowLayout";
 import Overview from "./pages/dashboard/Overview";
 import CaseManagement from "./pages/dashboard/CaseManagement";
 import CaseDetails from "./pages/dashboard/CaseDetails";
+import Analytics from "./pages/dashboard/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/dashboard" element={<Overview />} />
           <Route path="/dashboard/cases" element={<CaseManagement />} />
           <Route path="/dashboard/cases/:caseId" element={<CaseDetails />} />
+          <Route path="/dashboard/analytics" element={<Analytics />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

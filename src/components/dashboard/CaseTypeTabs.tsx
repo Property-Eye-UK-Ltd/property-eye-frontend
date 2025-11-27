@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 
 interface CaseTypeTab {
   label: string
-  count: number
+  count?: number
   value: string
 }
 
@@ -28,19 +28,20 @@ export const CaseTypeTabs = ({ tabs, selected, onSelect }: CaseTypeTabsProps) =>
           onClick={() => onSelect(tab.value)}
         >
           <span>{tab.label}</span>
-          <span
-            className={cn(
-              "px-2 py-0.5 rounded-full text-xs font-medium border",
-              isActive
-                ? "bg-white border-gray-200 text-muted-foreground"
-                : "bg-gray-100 border-gray-200 text-muted-foreground"
-            )}
-          >
-            {tab.count}
-          </span>
+          {tab.count !== undefined && (
+            <span
+              className={cn(
+                "px-2 py-0.5 rounded-full text-xs font-medium border",
+                isActive
+                  ? "bg-white border-gray-200 text-muted-foreground"
+                  : "bg-gray-100 border-gray-200 text-muted-foreground"
+              )}
+            >
+              {tab.count}
+            </span>
+          )}
         </button>
       )
     })}
   </div>
 )
-

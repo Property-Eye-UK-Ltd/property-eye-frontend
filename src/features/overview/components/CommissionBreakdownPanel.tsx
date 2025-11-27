@@ -10,11 +10,12 @@ export interface CommissionBreakdownDatum {
 
 interface CommissionBreakdownPanelProps {
   data: CommissionBreakdownDatum[]
+  title?: string
 }
 
-export const CommissionBreakdownPanel = ({ data }: CommissionBreakdownPanelProps) => (
+export const CommissionBreakdownPanel = ({ data, title = "Commission Avoidance Breakdown" }: CommissionBreakdownPanelProps) => (
   <DashboardPanel
-    title="Commission Avoidance Breakdown"
+    title={title}
     icon={<ChartCircle size={18} variant="Bulk" className="text-muted-foreground" />}
     className="lg:col-span-2"
     hasBorder
@@ -54,4 +55,3 @@ export const CommissionBreakdownPanel = ({ data }: CommissionBreakdownPanelProps
     </div>
   </DashboardPanel>
 )
-
