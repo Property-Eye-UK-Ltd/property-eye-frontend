@@ -1,6 +1,4 @@
-import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
 
 export interface EvidenceRecord {
   evidenceType: string
@@ -12,49 +10,57 @@ export interface EvidenceRecord {
 interface EvidenceOverviewPanelProps {
   data: EvidenceRecord[]
   onUploadEvidence?: () => void
+  onViewEvidence?: (record: EvidenceRecord) => void
 }
 
 export const EvidenceOverviewPanel = ({
   data,
   onUploadEvidence,
+  onViewEvidence,
 }: EvidenceOverviewPanelProps) => {
   return (
-    <DashboardPanel
-      title="Evidence Overview"
-      hasBorder
-      actions={
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-sm space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">Evidence Overview</p>
         <button
           onClick={onUploadEvidence}
-          className="text-sm font-medium transition-colors hover:underline"
-          style={{ color: "var(--progress)" }}
+          className="text-sm font-medium text-progress transition-colors hover:underline"
         >
           Upload Evidence
         </button>
-      }
-      noPadding
-    >
-      <div className="overflow-x-auto">
-        <Table>
+      </div>
+      <div className="rounded-xl border border-border overflow-hidden">
+        <Table className="text-sm">
           <TableHeader>
             <TableRow className="bg-gray-50">
-              <TableHead className="px-4 font-medium">Evidence Type</TableHead>
-              <TableHead className="px-4 font-medium">Description</TableHead>
-              <TableHead className="px-4 font-medium">Uploaded by</TableHead>
-              <TableHead className="px-4 font-medium">Date</TableHead>
-              <TableHead className="px-4 font-medium">Action</TableHead>
+              <TableHead className="px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground">
+                Evidence Type
+              </TableHead>
+              <TableHead className="px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground">
+                Description
+              </TableHead>
+              <TableHead className="px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground">
+                Uploaded by
+              </TableHead>
+              <TableHead className="px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground">
+                Date
+              </TableHead>
+              <TableHead className="px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground">
+                Action
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((evidence, index) => (
-              <TableRow key={index} className="border-b border-border">
-                <TableCell className="px-4 py-3 font-normal">{evidence.evidenceType}</TableCell>
-                <TableCell className="px-4 py-3 font-normal">{evidence.description}</TableCell>
-                <TableCell className="px-4 py-3 font-normal">{evidence.uploadedBy}</TableCell>
-                <TableCell className="px-4 py-3 font-normal">{evidence.date}</TableCell>
-                <TableCell className="px-4 py-3">
+              <TableRow key={index} className="border-t border-border/70">
+                <TableCell className="px-4 py-4 text-sm text-foreground">{evidence.evidenceType}</TableCell>
+                <TableCell className="px-4 py-4 text-sm text-foreground/80">{evidence.description}</TableCell>
+                <TableCell className="px-4 py-4 text-sm text-foreground/80">{evidence.uploadedBy}</TableCell>
+                <TableCell className="px-4 py-4 text-sm text-foreground/80">{evidence.date}</TableCell>
+                <TableCell className="px-4 py-4 text-sm">
                   <button
-                    className="text-sm font-medium transition-colors hover:underline"
-                    style={{ color: "var(--progress)" }}
+                    className="text-progress font-medium hover:underline"
+                    onClick={() => onViewEvidence?.(evidence)}
                   >
                     View
                   </button>
@@ -64,7 +70,7 @@ export const EvidenceOverviewPanel = ({
           </TableBody>
         </Table>
       </div>
-    </DashboardPanel>
+    </div>
   )
 }
 

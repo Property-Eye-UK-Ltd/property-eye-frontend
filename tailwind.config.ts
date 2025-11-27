@@ -69,6 +69,14 @@ export default {
 					DEFAULT: '#4D66EA',
 					foreground: '#FFFFFF'
 				},
+				success: {
+					DEFAULT: '#16A34A',
+					foreground: '#FFFFFF'
+				},
+				error: {
+					DEFAULT: '#EF4444',
+					foreground: '#FFFFFF'
+				},
 				'page-background': '#F2F4F7'
 			},
 			borderRadius: {

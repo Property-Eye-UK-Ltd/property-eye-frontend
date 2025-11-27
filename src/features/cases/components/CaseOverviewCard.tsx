@@ -21,8 +21,8 @@ export const CaseOverviewCard = ({
   fraudTypeStyles,
 }: CaseOverviewCardProps) => {
   return (
-    <div className="rounded-2xl bg-white border border-border p-6">
-      <h3 className="text-lg font-normal text-foreground mb-4">Case Overview</h3>
+    <div className="rounded-2xl bg-white border border-border p-6 lg:sticky lg:top-4">
+      <p className="text-xs text-muted-foreground mb-4">Case Overview</p>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-xs text-muted-foreground mb-1">Case ID</p>
@@ -30,7 +30,9 @@ export const CaseOverviewCard = ({
         </div>
         <div>
           <p className="text-xs text-muted-foreground mb-1">Property Address</p>
-          <p className="text-sm text-primary">{caseData.propertyAddress}</p>
+          <p className="text-sm text-primary break-words whitespace-normal leading-relaxed">
+            {caseData.propertyAddress}
+          </p>
         </div>
         <div>
           <p className="text-xs text-muted-foreground mb-1">Fraud Type</p>

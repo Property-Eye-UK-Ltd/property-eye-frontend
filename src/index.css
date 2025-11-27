@@ -116,4 +116,22 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+
+  .scrollbar-super-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-foreground) transparent;
+  }
+
+  .scrollbar-super-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-super-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-super-thin::-webkit-scrollbar-thumb {
+    background-color: var(--muted-foreground);
+    border-radius: 9999px;
+  }
 }

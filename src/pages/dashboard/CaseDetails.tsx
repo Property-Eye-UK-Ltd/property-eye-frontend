@@ -1,4 +1,5 @@
-import { useParams, useNavigate } from "react-router-dom"
+import { useState } from "react"
+import { useParams } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { CaseDetailsPageHeader } from "@/components/dashboard/CaseDetailsPageHeader"
 import { PropertyPartiesPanel, PropertyPartiesData } from "@/features/cases/components/PropertyPartiesPanel"
@@ -6,6 +7,14 @@ import { EvidenceOverviewPanel, EvidenceRecord } from "@/features/cases/componen
 import { TimelineAuditTrailPanel, TimelineRecord } from "@/features/cases/components/TimelineAuditTrailPanel"
 import { CaseOverviewCard } from "@/features/cases/components/CaseOverviewCard"
 import { CaseRecord } from "@/features/cases/components/CaseListPanel"
+import { CloseCaseModal } from "@/features/cases/components/modals/CloseCaseModal"
+import { ViewEvidenceModal } from "@/features/cases/components/modals/ViewEvidenceModal"
+import {
+  UploadEvidenceFormValues,
+  UploadEvidenceModal,
+} from "@/features/cases/components/modals/UploadEvidenceModal"
+import { EvidenceUploadSuccessModal } from "@/features/cases/components/modals/EvidenceUploadSuccessModal"
+import { EvidenceUploadFailureModal } from "@/features/cases/components/modals/EvidenceUploadFailureModal"
 
 // Mock data - in real app, this would come from API
 // This should match the data structure from CaseManagement
@@ -139,7 +148,13 @@ const fraudTypeStyles: Record<CaseRecord["fraudType"], string> = {
 
 const CaseDetails = () => {
   const { caseId } = useParams<{ caseId: string }>()
-  const navigate = useNavigate()
+  const [isCloseCaseModalOpen, setIsCloseCaseModalOpen] = useState(false)
+  const [selectedEvidence, setSelectedEvidence] = useState<EvidenceRecord | null>(null)
+  const [isEvidenceModalOpen, setIsEvidenceModalOpen] = useState(false)
+  const [isUploadEvidenceModalOpen, setIsUploadEvidenceModalOpen] = useState(false)
+  const [isUploadSuccessModalOpen, setIsUploadSuccessModalOpen] = useState(false)
+  const [isUploadFailureModalOpen, setIsUploadFailureModalOpen] = useState(false)
+  const [isSubmittingEvidence, setIsSubmittingEvidence] = useState(false)
 
   // Decode caseId from URL (handles # character)
   const decodedCaseId = caseId ? decodeURIComponent(caseId) : ""
@@ -160,13 +175,70 @@ const CaseDetails = () => {
   const isSelfHandled = caseData.caseType === "self-handled"
 
   const handleCloseCase = () => {
-    // TODO: Implement close case logic
-    console.log("Close case:", caseId)
+    setIsCloseCaseModalOpen(true)
+  }
+
+  const handleConfirmCloseCase = () => {
+    // TODO: Replace with API call
+    console.log("Confirm close case:", caseId)
+    setIsCloseCaseModalOpen(false)
+  }
+
+  const handleDismissCloseCase = () => {
+    setIsCloseCaseModalOpen(false)
   }
 
   const handleUploadEvidence = () => {
-    // TODO: Implement upload evidence logic
-    console.log("Upload evidence")
+    setIsUploadEvidenceModalOpen(true)
+  }
+
+  const handleUploadEvidenceSubmit = async (values: UploadEvidenceFormValues) => {
+    setIsSubmittingEvidence(true)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 700))
+      const shouldSimulateError = values.description.toLowerCase().includes("fail")
+
+      setIsUploadEvidenceModalOpen(false)
+
+      if (shouldSimulateError) {
+        throw new Error("Simulated upload error")
+      }
+
+      setIsUploadSuccessModalOpen(true)
+    } catch (error) {
+      console.error(error)
+      setIsUploadFailureModalOpen(true)
+    } finally {
+      setIsSubmittingEvidence(false)
+    }
+  }
+
+  const handleUploadSuccessDone = () => {
+    setIsUploadSuccessModalOpen(false)
+  }
+
+  const handleUploadFailureCancel = () => {
+    setIsUploadFailureModalOpen(false)
+  }
+
+  const handleUploadRetry = () => {
+    setIsUploadFailureModalOpen(false)
+    setIsUploadEvidenceModalOpen(true)
+  }
+
+  const handleViewEvidence = (record: EvidenceRecord) => {
+    setSelectedEvidence(record)
+    setIsEvidenceModalOpen(true)
+  }
+
+  const handleCloseEvidenceModal = () => {
+    setIsEvidenceModalOpen(false)
+    setSelectedEvidence(null)
+  }
+
+  const handleDownloadEvidence = (record: EvidenceRecord) => {
+    // TODO: Implement download logic
+    console.log("Download evidence:", record.evidenceType)
   }
 
   return (
@@ -178,30 +250,58 @@ const CaseDetails = () => {
       />
 
       <div className="mx-auto w-full max-w-7xl px-6 py-6">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-start">
           {/* Left Column - Scrollable Cards */}
           <div className="lg:col-span-2 space-y-4">
             <PropertyPartiesPanel data={mockPropertyParties} />
-            <EvidenceOverviewPanel data={mockEvidence} onUploadEvidence={handleUploadEvidence} />
+            <EvidenceOverviewPanel
+              data={mockEvidence}
+              onUploadEvidence={handleUploadEvidence}
+              onViewEvidence={handleViewEvidence}
+            />
             <TimelineAuditTrailPanel data={mockTimeline} />
             {/* Add more cards here as needed */}
           </div>
 
           {/* Right Column - Fixed Case Overview */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-4">
-              <CaseOverviewCard
-                caseData={caseData}
-                severityStyles={severityStyles}
-                fraudTypeStyles={fraudTypeStyles}
-              />
-            </div>
+          <div className="lg:col-span-1 lg:sticky lg:top-6 lg:self-start">
+            <CaseOverviewCard
+              caseData={caseData}
+              severityStyles={severityStyles}
+              fraudTypeStyles={fraudTypeStyles}
+            />
           </div>
         </div>
       </div>
+
+      <CloseCaseModal
+        open={isCloseCaseModalOpen}
+        onCancel={handleDismissCloseCase}
+        onConfirm={handleConfirmCloseCase}
+      />
+      <ViewEvidenceModal
+        open={isEvidenceModalOpen}
+        evidence={selectedEvidence}
+        onClose={handleCloseEvidenceModal}
+        onDownload={handleDownloadEvidence}
+      />
+      <UploadEvidenceModal
+        open={isUploadEvidenceModalOpen}
+        onClose={() => setIsUploadEvidenceModalOpen(false)}
+        onSubmit={handleUploadEvidenceSubmit}
+        isSubmitting={isSubmittingEvidence}
+      />
+      <EvidenceUploadSuccessModal
+        open={isUploadSuccessModalOpen}
+        onDone={handleUploadSuccessDone}
+      />
+      <EvidenceUploadFailureModal
+        open={isUploadFailureModalOpen}
+        onCancel={handleUploadFailureCancel}
+        onRetry={handleUploadRetry}
+      />
     </DashboardLayout>
   )
 }
 
 export default CaseDetails
-
