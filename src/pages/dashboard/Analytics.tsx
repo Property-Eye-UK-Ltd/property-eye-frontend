@@ -3,6 +3,9 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { MetricCards, MetricCard } from "@/features/overview/components/MetricCards"
 import { CommissionBreakdownDatum, CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
 import { FraudDataPoint, FraudDetectionPanel, FraudSeriesConfig } from "@/features/overview/components/FraudDetectionPanel"
+import { RepeatOffender, RepeatOffendersPanel } from "@/features/overview/components/RepeatOffendersPanel"
+import { MostCommonFraudTypesPanel, FraudTypeData, FraudTypeConfig } from "@/features/analytics/components/MostCommonFraudTypesPanel"
+import { TimingGapsDistributionPanel, TimingGapData } from "@/features/analytics/components/TimingGapsDistributionPanel"
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { Button } from "@/components/ui/button"
@@ -53,7 +56,7 @@ const metrics: MetricCard[] = [
     },
 ]
 
-// Fraud Rate Over Time data
+// Overview Tab Data
 const fraudRateData: FraudDataPoint[] = [
     { month: "Jan", rate: 72 },
     { month: "Feb", rate: 18 },
@@ -73,7 +76,6 @@ const fraudRateConfig: Record<string, FraudSeriesConfig> = {
     rate: { label: "Fraud Rate", color: "#00072C" },
 }
 
-// Severity Distribution data
 const severityData: CommissionBreakdownDatum[] = [
     { name: "Low", value: 53, color: "#6B7280" },
     { name: "Medium", value: 20, color: "#EAB308" },
@@ -81,7 +83,6 @@ const severityData: CommissionBreakdownDatum[] = [
     { name: "Critical", value: 8, color: "#EF4444" },
 ]
 
-// Detection vs False Positive data
 const detectionData: FraudDataPoint[] = [
     { month: "Jan", detection: 45, falsePositive: 68 },
     { month: "Feb", detection: 52, falsePositive: 15 },
@@ -102,6 +103,50 @@ const detectionConfig: Record<string, FraudSeriesConfig> = {
     falsePositive: { label: "False Positive Ratio", color: "#EF4444" },
 }
 
+// Fraud Patterns Tab Data
+const fraudTypesData: FraudTypeData[] = [
+    { type: "Private Sale", privateSale: 55, buyerIntro: 0, dualAgency: 0 },
+    { type: "Buyer Intro", privateSale: 0, buyerIntro: 78, dualAgency: 0 },
+    { type: "Dual Agency", privateSale: 0, buyerIntro: 0, dualAgency: 72 },
+]
+
+const fraudTypesConfig: Record<string, FraudTypeConfig> = {
+    privateSale: { label: "Private Sale", color: "#9333EA" },
+    buyerIntro: { label: "Buyer Intro", color: "#3B82F6" },
+    dualAgency: { label: "Dual Agency", color: "#1E40AF" },
+}
+
+const repeatOffenders: RepeatOffender[] = [
+    { name: "Fredrick Hunt", location: "Ashfield Road", offenses: 24 },
+    { name: "Madeline Kahro", location: "Picadilly", offenses: 22 },
+    { name: "Fredrick Hunt", location: "Leicester", offenses: 19 },
+    { name: "Fredrick Hunt", location: "Manchester", offenses: 19 },
+    { name: "Fredrick Hunt", location: "London", offenses: 12 },
+    { name: "Fredrick Hunt", location: "London", offenses: 12 },
+]
+
+const timingGapsData: TimingGapData[] = [
+    { range: "0", count: 5 },
+    { range: "50", count: 8 },
+    { range: "100", count: 7 },
+    { range: "150", count: 5 },
+    { range: "200", count: 3 },
+    { range: "250", count: 3 },
+    { range: "300", count: 8 },
+    { range: "350", count: 14 },
+    { range: "400", count: 16 },
+    { range: "450", count: 19 },
+    { range: "500", count: 14 },
+    { range: "550", count: 13 },
+    { range: "600", count: 10 },
+    { range: "650", count: 8 },
+    { range: "700", count: 6 },
+    { range: "750", count: 7 },
+    { range: "800", count: 5 },
+    { range: "850", count: 4 },
+    { range: "900", count: 3 },
+]
+
 const Analytics = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
     const [selectedTab, setSelectedTab] = useState(analyticsTabs[0].value)
@@ -109,12 +154,10 @@ const Analytics = () => {
 
     const handleExport = (format: "pdf" | "csv") => {
         console.log(`Exporting as ${format}`)
-        // Handle export logic
     }
 
     const handleScheduleReports = () => {
         console.log("Schedule reports clicked")
-        // Handle schedule reports logic
     }
 
     return (
@@ -128,7 +171,6 @@ const Analytics = () => {
                             <PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />
                         </div>
                         <div className="flex items-center gap-3">
-                            {/* Schedule Reports Button */}
                             <Button
                                 onClick={handleScheduleReports}
                                 className="rounded-full bg-white border border-border text-foreground hover:bg-muted h-10 px-4"
@@ -136,7 +178,6 @@ const Analytics = () => {
                                 Schedule Reports
                             </Button>
 
-                            {/* Export Dropdown */}
                             <DropdownMenu onOpenChange={setIsExportOpen}>
                                 <DropdownMenuTrigger asChild>
                                     <Button className="rounded-full bg-primary text-white hover:bg-primary/90 h-10 px-4">
@@ -163,27 +204,45 @@ const Analytics = () => {
             </div>
 
             <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
-                {/* Metric Cards */}
                 <MetricCards metrics={metrics} />
-
-                {/* Analytics Tabs */}
                 <CaseTypeTabs tabs={analyticsTabs} selected={selectedTab} onSelect={setSelectedTab} />
 
-                {/* Top Chart - Fraud Rate Over Time (no category filter) */}
-                <FraudDetectionPanel data={fraudRateData} config={fraudRateConfig} showCategoryFilter={false} />
+                {/* Overview Tab Content */}
+                {selectedTab === "overview" && (
+                    <>
+                        <FraudDetectionPanel data={fraudRateData} config={fraudRateConfig} showCategoryFilter={false} />
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-7">
+                            <div className="lg:col-span-2">
+                                <CommissionBreakdownPanel data={severityData} title="Severity Distribution" />
+                            </div>
+                            <div className="lg:col-span-5">
+                                <FraudDetectionPanel data={detectionData} config={detectionConfig} />
+                            </div>
+                        </div>
+                    </>
+                )}
 
-                {/* Bottom Row - Two Charts */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-7">
-                    {/* Severity Distribution - Donut Chart (2 columns) */}
-                    <div className="lg:col-span-2">
-                        <CommissionBreakdownPanel data={severityData} title="Severity Distribution" />
-                    </div>
+                {/* Fraud Patterns Tab Content */}
+                {selectedTab === "fraud-patterns" && (
+                    <>
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+                            <div className="lg:col-span-2">
+                                <MostCommonFraudTypesPanel data={fraudTypesData} config={fraudTypesConfig} />
+                            </div>
+                            <div className="lg:col-span-3">
+                                <RepeatOffendersPanel offenders={repeatOffenders} />
+                            </div>
+                        </div>
+                        <TimingGapsDistributionPanel data={timingGapsData} />
+                    </>
+                )}
 
-                    {/* Detection vs False Positive Ratio - Multi-line Chart (5 columns) */}
-                    <div className="lg:col-span-5">
-                        <FraudDetectionPanel data={detectionData} config={detectionConfig} />
+                {/* Financial Impact Tab Content */}
+                {selectedTab === "financial-impact" && (
+                    <div className="text-center py-20 text-muted-foreground">
+                        Financial Impact content coming soon...
                     </div>
-                </div>
+                )}
             </div>
         </DashboardLayout>
     )
