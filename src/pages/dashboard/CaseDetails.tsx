@@ -25,57 +25,57 @@ const mockCases: (CaseRecord & {
   commissionAtRisk?: string
   evidenceStatus?: string
 })[] = [
-  {
-    caseId: "#256545",
-    propertyAddress: "22 Ashfield Road, Leicester",
-    fraudType: "Buyer Intro",
-    score: 92,
-    severity: "Critical",
-    dateDetected: "3 Nov, 2025",
-    caseType: "managed",
-    recoveryMode: "Managed",
-    status: "Flagged",
-    commissionAtRisk: "£12,790",
-    evidenceStatus: "Completed",
-  },
-  {
-    caseId: "#367281",
-    propertyAddress: "45 Piccadilly, Manchester",
-    fraudType: "Private Sale",
-    score: 88,
-    severity: "Low",
-    dateDetected: "21 Oct, 2025",
-    caseType: "managed",
-  },
-  {
-    caseId: "#367282",
-    propertyAddress: "12 High Street, London",
-    fraudType: "Dual Agency",
-    score: 100,
-    severity: "Low",
-    dateDetected: "30 Sep, 2025",
-    caseType: "managed",
-  },
-  {
-    caseId: "#367290",
-    propertyAddress: "42 Elm Grove, Glasgow",
-    fraudType: "Buyer Intro",
-    score: 87,
-    severity: "High",
-    dateDetected: "25 Aug, 2025",
-    caseType: "self-handled",
-  },
-  {
-    caseId: "#367291",
-    propertyAddress: "19 Queen Street, Cardiff",
-    fraudType: "Private Sale",
-    score: 73,
-    severity: "Medium",
-    dateDetected: "20 Aug, 2025",
-    caseType: "self-handled",
-  },
-  // Add more cases as needed
-]
+    {
+      caseId: "#256545",
+      propertyAddress: "22 Ashfield Road, Leicester",
+      fraudType: "Buyer Intro",
+      score: 92,
+      severity: "Critical",
+      dateDetected: "3 Nov, 2025",
+      caseType: "managed",
+      recoveryMode: "Managed",
+      status: "Flagged",
+      commissionAtRisk: "£12,790",
+      evidenceStatus: "Completed",
+    },
+    {
+      caseId: "#367281",
+      propertyAddress: "45 Piccadilly, Manchester",
+      fraudType: "Private Sale",
+      score: 88,
+      severity: "Low",
+      dateDetected: "21 Oct, 2025",
+      caseType: "managed",
+    },
+    {
+      caseId: "#367282",
+      propertyAddress: "12 High Street, London",
+      fraudType: "Dual Agency",
+      score: 100,
+      severity: "Low",
+      dateDetected: "30 Sep, 2025",
+      caseType: "managed",
+    },
+    {
+      caseId: "#367290",
+      propertyAddress: "42 Elm Grove, Glasgow",
+      fraudType: "Buyer Intro",
+      score: 87,
+      severity: "High",
+      dateDetected: "25 Aug, 2025",
+      caseType: "self-handled",
+    },
+    {
+      caseId: "#367291",
+      propertyAddress: "19 Queen Street, Cardiff",
+      fraudType: "Private Sale",
+      score: 73,
+      severity: "Medium",
+      dateDetected: "20 Aug, 2025",
+      caseType: "self-handled",
+    },
+    // Add more cases as needed
+  ]
 
 const mockEvidence: EvidenceRecord[] = [
   {
@@ -158,7 +158,7 @@ const CaseDetails = () => {
 
   // Decode caseId from URL (handles # character)
   const decodedCaseId = caseId ? decodeURIComponent(caseId) : ""
-  
+
   // Find the case data
   const caseData = mockCases.find((c) => c.caseId === decodedCaseId)
 
@@ -264,7 +264,7 @@ const CaseDetails = () => {
           </div>
 
           {/* Right Column - Fixed Case Overview */}
-          <div className="lg:col-span-1 lg:sticky lg:top-6 lg:self-start">
+          <div className="lg:col-span-1 lg:sticky lg:top-28 lg:self-start">
             <CaseOverviewCard
               caseData={caseData}
               severityStyles={severityStyles}
