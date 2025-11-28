@@ -6,6 +6,7 @@ import { FraudDataPoint, FraudDetectionPanel, FraudSeriesConfig } from "@/featur
 import { RepeatOffender, RepeatOffendersPanel } from "@/features/overview/components/RepeatOffendersPanel"
 import { MostCommonFraudTypesPanel, FraudTypeData, FraudTypeConfig } from "@/features/analytics/components/MostCommonFraudTypesPanel"
 import { TimingGapsDistributionPanel, TimingGapData } from "@/features/analytics/components/TimingGapsDistributionPanel"
+import { HMLRCheckEfficiencyPanel } from "@/features/analytics/components/HMLRCheckEfficiencyPanel"
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { Button } from "@/components/ui/button"
@@ -147,6 +148,45 @@ const timingGapsData: TimingGapData[] = [
     { range: "900", count: 3 },
 ]
 
+// Financial Impact Tab Data
+const commissionAvoidedData: FraudDataPoint[] = [
+    { month: "Jan", avoided: 70 },
+    { month: "Feb", avoided: 15 },
+    { month: "Mar", avoided: 30 },
+    { month: "Apr", avoided: 20 },
+    { month: "May", avoided: 40 },
+    { month: "Jun", avoided: 10 },
+    { month: "Jul", avoided: 55 },
+    { month: "Aug", avoided: 12 },
+    { month: "Sep", avoided: 55 },
+    { month: "Oct", avoided: 50 },
+    { month: "Nov", avoided: 90 },
+    { month: "Dec", avoided: 40 },
+]
+
+const commissionAvoidedConfig: Record<string, FraudSeriesConfig> = {
+    avoided: { label: "Commission Avoided", color: "#00072C" },
+}
+
+const recoveredCommissionData: FraudDataPoint[] = [
+    { month: "Jan", recovered: 10 },
+    { month: "Feb", recovered: 12 },
+    { month: "Mar", recovered: 15 },
+    { month: "Apr", recovered: 18 },
+    { month: "May", recovered: 25 },
+    { month: "Jun", recovered: 22 },
+    { month: "Jul", recovered: 40 },
+    { month: "Aug", recovered: 35 },
+    { month: "Sep", recovered: 50 },
+    { month: "Oct", recovered: 48 },
+    { month: "Nov", recovered: 55 },
+    { month: "Dec", recovered: 52 },
+]
+
+const recoveredCommissionConfig: Record<string, FraudSeriesConfig> = {
+    recovered: { label: "Recovered Commission", color: "#3B82F6" },
+}
+
 const Analytics = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
     const [selectedTab, setSelectedTab] = useState(analyticsTabs[0].value)
@@ -210,13 +250,22 @@ const Analytics = () => {
                 {/* Overview Tab Content */}
                 {selectedTab === "overview" && (
                     <>
-                        <FraudDetectionPanel data={fraudRateData} config={fraudRateConfig} showCategoryFilter={false} />
+                        <FraudDetectionPanel
+                            data={fraudRateData}
+                            config={fraudRateConfig}
+                            showCategoryFilter={false}
+                            title="Fraud Rate Over Time"
+                        />
                         <div className="grid grid-cols-1 gap-6 lg:grid-cols-7">
                             <div className="lg:col-span-2">
                                 <CommissionBreakdownPanel data={severityData} title="Severity Distribution" />
                             </div>
                             <div className="lg:col-span-5">
-                                <FraudDetectionPanel data={detectionData} config={detectionConfig} />
+                                <FraudDetectionPanel
+                                    data={detectionData}
+                                    config={detectionConfig}
+                                    title="Detection vs False Positive Ratio"
+                                />
                             </div>
                         </div>
                     </>
@@ -239,9 +288,31 @@ const Analytics = () => {
 
                 {/* Financial Impact Tab Content */}
                 {selectedTab === "financial-impact" && (
-                    <div className="text-center py-20 text-muted-foreground">
-                        Financial Impact content coming soon...
-                    </div>
+                    <>
+                        <FraudDetectionPanel
+                            data={commissionAvoidedData}
+                            config={commissionAvoidedConfig}
+                            showCategoryFilter={false}
+                            title="Total Commission Avoided"
+                        />
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-7">
+                            <div className="lg:col-span-2 space-y-6">
+                                <div className="bg-white border border-border rounded-lg p-6">
+                                    <h3 className="text-sm text-muted-foreground mb-2">Cost Reduction Estimate</h3>
+                                    <p className="text-4xl font-medium text-foreground">£18,029</p>
+                                </div>
+                                <HMLRCheckEfficiencyPanel percentage={48} />
+                            </div>
+                            <div className="lg:col-span-5">
+                                <FraudDetectionPanel
+                                    data={recoveredCommissionData}
+                                    config={recoveredCommissionConfig}
+                                    showCategoryFilter={false}
+                                    title="Recovered Commission"
+                                />
+                            </div>
+                        </div>
+                    </>
                 )}
             </div>
         </DashboardLayout>

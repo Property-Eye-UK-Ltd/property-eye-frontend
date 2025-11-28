@@ -26,6 +26,7 @@ interface FraudDetectionPanelProps {
   data: FraudDataPoint[]
   config: Record<string, FraudSeriesConfig>
   showCategoryFilter?: boolean
+  title?: string
 }
 
 const timeRangeOptions = [
@@ -117,7 +118,7 @@ const FraudTooltip = ({ active, payload, label, config }: TooltipProps<number, s
   )
 }
 
-export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true }: FraudDetectionPanelProps) => {
+export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, title = "Fraud Detection Over Time" }: FraudDetectionPanelProps) => {
   const [timeRange, setTimeRange] = useState("12")
   const [selectedCategories, setSelectedCategories] = useState<string[]>(Object.keys(config))
 
@@ -157,7 +158,7 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true }:
 
   return (
     <DashboardPanel
-      title="Fraud Detection Over Time"
+      title={title}
       icon={<Diagram size={16} variant="TwoTone" className="text-muted-foreground" />}
       hasBorder
       actions={
