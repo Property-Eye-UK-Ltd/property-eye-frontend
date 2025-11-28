@@ -41,7 +41,7 @@ export const CommissionBreakdownPanel = ({ data, title = "Commission Avoidance B
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="w-full space-y-3">
+      <div className="w-full space-y-2.5">
         {data.map((item) => (
           <div key={item.name} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
