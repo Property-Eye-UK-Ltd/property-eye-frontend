@@ -16,6 +16,7 @@ import Overview from "./pages/dashboard/Overview";
 import CaseManagement from "./pages/dashboard/CaseManagement";
 import CaseDetails from "./pages/dashboard/CaseDetails";
 import Analytics from "./pages/dashboard/Analytics";
+import TeamManagement from "./pages/dashboard/TeamManagement";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/dashboard/cases" element={<CaseManagement />} />
           <Route path="/dashboard/cases/:caseId" element={<CaseDetails />} />
           <Route path="/dashboard/analytics" element={<Analytics />} />
+          <Route path="/dashboard/team" element={<TeamManagement />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
