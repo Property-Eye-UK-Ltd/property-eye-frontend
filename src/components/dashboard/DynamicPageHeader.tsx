@@ -1,4 +1,5 @@
 import { ReactNode } from "react"
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import {
     Breadcrumb,
@@ -14,20 +15,54 @@ interface BreadcrumbItem {
     href?: string
 }
 
+interface ActionButton {
+    label: string
+    onClick: () => void
+    variant?: "default" | "outline" | "destructive"
+    className?: string
+}
+
 interface DynamicPageHeaderProps {
     title: string
     breadcrumbs?: BreadcrumbItem[]
-    action?: {
-        label: string
-        onClick: () => void
-    }
+    actions?: ReactNode | ActionButton[]
+    tabs?: ReactNode
 }
 
 export const DynamicPageHeader = ({
     title,
     breadcrumbs,
-    action,
+    actions,
+    tabs,
 }: DynamicPageHeaderProps) => {
+    const renderActions = () => {
+        if (!actions) return null
+
+        // If actions is a ReactNode (custom component), render it directly
+        if (!Array.isArray(actions)) {
+            return <div className="flex items-center gap-2">{actions}</div>
+        }
+
+        // If actions is an array of ActionButton objects, render buttons
+        return (
+            <div className="flex items-center gap-2">
+                {actions.map((action, index) => (
+                    <Button
+                        key={index}
+                        onClick={action.onClick}
+                        variant={action.variant}
+                        className={
+                            action.className ||
+                            "rounded-full bg-primary text-white hover:text-white hover:bg-primary/70"
+                        }
+                    >
+                        {action.label}
+                    </Button>
+                ))}
+            </div>
+        )
+    }
+
     return (
         <div className="bg-white w-full border-b border-border sticky top-0 z-10">
             <div className="max-w-7xl mx-auto w-full px-6 py-4">
@@ -38,34 +73,30 @@ export const DynamicPageHeader = ({
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     {breadcrumbs.map((crumb, index) => (
-                                        <>
-                                            <BreadcrumbItem key={index}>
+                                        <div key={index} className="contents">
+                                            <BreadcrumbItem>
                                                 {crumb.href ? (
                                                     <BreadcrumbLink asChild>
-                                                        <a href={crumb.href} className="cursor-pointer">
+                                                        <Link to={crumb.href} className="cursor-pointer">
                                                             {crumb.label}
-                                                        </a>
+                                                        </Link>
                                                     </BreadcrumbLink>
                                                 ) : (
                                                     <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                                                 )}
                                             </BreadcrumbItem>
-                                            {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-                                        </>
+                                            {index < breadcrumbs.length - 1 && (
+                                                <BreadcrumbSeparator className="text-secondary" />
+                                            )}
+                                        </div>
                                     ))}
                                 </BreadcrumbList>
                             </Breadcrumb>
                         )}
                     </div>
-                    {action && (
-                        <Button
-                            onClick={action.onClick}
-                            className="rounded-full bg-primary text-white hover:text-white hover:bg-primary/70"
-                        >
-                            {action.label}
-                        </Button>
-                    )}
+                    {renderActions()}
                 </div>
+                {tabs && <div className="mt-4">{tabs}</div>}
             </div>
         </div>
     )

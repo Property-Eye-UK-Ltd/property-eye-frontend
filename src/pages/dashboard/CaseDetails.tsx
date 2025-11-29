@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { CaseDetailsPageHeader } from "@/components/dashboard/CaseDetailsPageHeader"
+import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PropertyPartiesPanel, PropertyPartiesData } from "@/features/cases/components/PropertyPartiesPanel"
 import { EvidenceOverviewPanel, EvidenceRecord } from "@/features/cases/components/EvidenceOverviewPanel"
 import { TimelineAuditTrailPanel, TimelineRecord } from "@/features/cases/components/TimelineAuditTrailPanel"
@@ -243,10 +243,22 @@ const CaseDetails = () => {
 
   return (
     <DashboardLayout>
-      <CaseDetailsPageHeader
-        caseId={decodedCaseId}
-        showCloseCase={isSelfHandled}
-        onCloseCase={handleCloseCase}
+      <DynamicPageHeader
+        title="Case Details"
+        breadcrumbs={[
+          { label: "Case Management", href: "/dashboard/cases" },
+          { label: decodedCaseId },
+        ]}
+        actions={
+          isSelfHandled
+            ? [
+              {
+                label: "Close case",
+                onClick: handleCloseCase,
+              },
+            ]
+            : undefined
+        }
       />
 
       <div className="mx-auto w-full max-w-7xl px-6 py-6">

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
 import { FraudDetectionPanel } from "@/features/overview/components/FraudDetectionPanel"
 import { RepeatOffendersPanel } from "@/features/overview/components/RepeatOffendersPanel"
@@ -51,46 +52,41 @@ const Analytics = () => {
 
     return (
         <DashboardLayout>
-            {/* Custom Page Header with Title and Tabs Below */}
-            <div className="bg-white w-full border-b border-border sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto w-full px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex flex-col gap-3">
-                            <h1 className="text-3xl font-medium text-foreground">Analytics & Reports</h1>
-                            <PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <Button
-                                onClick={handleScheduleReports}
-                                className="rounded-full bg-white border border-border text-foreground hover:bg-muted h-10 px-4"
-                            >
-                                Schedule Reports
-                            </Button>
+            <DynamicPageHeader
+                title="Analytics & Reports"
+                actions={
+                    <>
+                        <Button
+                            onClick={handleScheduleReports}
+                            className="rounded-full bg-white border border-border text-foreground hover:bg-muted h-10 px-4"
+                        >
+                            Schedule Reports
+                        </Button>
 
-                            <DropdownMenu onOpenChange={setIsExportOpen}>
-                                <DropdownMenuTrigger asChild>
-                                    <Button className="rounded-full bg-primary text-white hover:bg-primary/90 h-10 px-4">
-                                        Export
-                                        <ArrowDown2
-                                            size={18}
-                                            variant="Outline"
-                                            className={`ml-2 transition-transform duration-200 ${isExportOpen ? 'rotate-180' : ''}`}
-                                        />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-32">
-                                    <DropdownMenuItem onClick={() => handleExport("pdf")} className="cursor-pointer">
-                                        Export as PDF
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleExport("csv")} className="cursor-pointer">
-                                        Export as CSV
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        <DropdownMenu onOpenChange={setIsExportOpen}>
+                            <DropdownMenuTrigger asChild>
+                                <Button className="rounded-full bg-primary text-white hover:bg-primary/90 h-10 px-4">
+                                    Export
+                                    <ArrowDown2
+                                        size={18}
+                                        variant="Outline"
+                                        className={`ml-2 transition-transform duration-200 ${isExportOpen ? 'rotate-180' : ''}`}
+                                    />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-32">
+                                <DropdownMenuItem onClick={() => handleExport("pdf")} className="cursor-pointer">
+                                    Export as PDF
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleExport("csv")} className="cursor-pointer">
+                                    Export as CSV
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </>
+                }
+                tabs={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
+            />
 
             <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
                 <MetricCards metrics={metrics} />

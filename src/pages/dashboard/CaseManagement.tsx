@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { PageHeader } from "@/components/dashboard/PageHeader"
+import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { MetricCards, MetricCard } from "@/features/overview/components/MetricCards"
@@ -239,7 +239,7 @@ const CaseManagement = () => {
 
   return (
     <DashboardLayout>
-      <PageHeader
+      <DynamicPageHeader
         title="Case Management"
         actions={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
       />

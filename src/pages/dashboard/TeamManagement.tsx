@@ -4,7 +4,7 @@ import { ProfileAdd } from "iconsax-react"
 import { TeamMetrics } from "@/features/team/components/TeamMetrics"
 import { UserListPanel } from "@/features/team/components/UserListPanel"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { PageHeader } from "@/components/dashboard/PageHeader"
+import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { AddUserModal, AddUserFormValues } from "@/features/team/components/modals/AddUserModal"
 import { EditUserModal, EditUserFormValues } from "@/features/team/components/modals/EditUserModal"
 import { DisableUserModal, DisableUserFormValues } from "@/features/team/components/modals/DisableUserModal"
@@ -74,7 +74,7 @@ const TeamManagement = () => {
 
     return (
         <DashboardLayout>
-            <PageHeader
+            <DynamicPageHeader
                 title="Team Management"
                 actions={
                     <Button

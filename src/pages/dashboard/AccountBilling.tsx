@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { PageHeader } from "@/components/dashboard/PageHeader"
+import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { CurrentPlanCard } from "@/features/billing/components/CurrentPlanCard"
 import { PaymentHistoryTable } from "@/features/billing/components/PaymentHistoryTable"
 import { CancelSubscriptionConfirmModal } from "@/features/billing/components/modals/CancelSubscriptionConfirmModal"
@@ -43,7 +43,7 @@ const AccountBilling = () => {
 
     return (
         <DashboardLayout>
-            <PageHeader title="Account & Billing" />
+            <DynamicPageHeader title="Account & Billing" />
             <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
                 {/* Current Plan */}
                 <CurrentPlanCard

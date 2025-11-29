@@ -28,8 +28,8 @@ const SubscriptionPlans = () => {
             />
             <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
                 {/* Plans Container - White Card */}
-                <div className="rounded-2xl bg-white p-8 shadow-sm">
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-2xl bg-white p-6 shadow-sm">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                         {subscriptionPlans.map((plan) => (
                             <PlanCard key={plan.id} plan={plan} onSelectPlan={handleSelectPlan} />
                         ))}
