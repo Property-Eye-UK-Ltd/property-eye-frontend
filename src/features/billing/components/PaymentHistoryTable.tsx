@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Filter, ArrowDown2, ArrowLeft, ArrowRight } from "iconsax-react"
+import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { paymentHistory } from "@/data/billing-data"
 
@@ -18,12 +19,43 @@ const ITEMS_PER_PAGE = 7
 
 export const PaymentHistoryTable = () => {
     const [currentPage, setCurrentPage] = useState(1)
+    const [sortColumn, setSortColumn] = useState<"billingDate" | "amount" | "status" | null>(null)
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
+
+    const sortedPayments = useMemo(() => {
+        if (!sortColumn) return paymentHistory
+        const direction = sortDirection === "asc" ? 1 : -1
+
+        return [...paymentHistory].sort((a, b) => {
+            if (sortColumn === "billingDate") {
+                return (new Date(a.billingDate).getTime() - new Date(b.billingDate).getTime()) * direction
+            }
+            if (sortColumn === "amount") {
+                const amountA = parseFloat(a.amount.replace(/[£,]/g, ""))
+                const amountB = parseFloat(b.amount.replace(/[£,]/g, ""))
+                return (amountA - amountB) * direction
+            }
+            if (sortColumn === "status") {
+                return a.status.localeCompare(b.status) * direction
+            }
+            return 0
+        })
+    }, [sortColumn, sortDirection])
+
+    const handleSort = (column: "billingDate" | "amount" | "status") => {
+        if (sortColumn === column) {
+            setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
+        } else {
+            setSortColumn(column)
+            setSortDirection("asc")
+        }
+    }
 
     // Pagination logic
-    const totalPages = Math.ceil(paymentHistory.length / ITEMS_PER_PAGE)
+    const totalPages = Math.ceil(sortedPayments.length / ITEMS_PER_PAGE)
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
     const endIndex = startIndex + ITEMS_PER_PAGE
-    const paginatedPayments = paymentHistory.slice(startIndex, endIndex)
+    const paginatedPayments = sortedPayments.slice(startIndex, endIndex)
 
     return (
         <DashboardPanel
@@ -51,9 +83,33 @@ export const PaymentHistoryTable = () => {
                         <TableRow className="bg-gray-50">
                             <TableHead className="px-4 font-medium">Invoice Number</TableHead>
                             <TableHead className="px-4 font-medium">Payment Type</TableHead>
-                            <TableHead className="px-4 font-medium">Billing Date</TableHead>
-                            <TableHead className="px-4 font-medium">Amount</TableHead>
-                            <TableHead className="px-4 font-medium">Status</TableHead>
+                            <TableHead className="px-4 font-medium">
+                                <button
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                    onClick={() => handleSort("billingDate")}
+                                >
+                                    Billing Date
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                </button>
+                            </TableHead>
+                            <TableHead className="px-4 font-medium">
+                                <button
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                    onClick={() => handleSort("amount")}
+                                >
+                                    Amount
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                </button>
+                            </TableHead>
+                            <TableHead className="px-4 font-medium">
+                                <button
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                    onClick={() => handleSort("status")}
+                                >
+                                    Status
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                </button>
+                            </TableHead>
                             <TableHead className="px-4 font-medium text-right">Action</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -96,15 +152,15 @@ export const PaymentHistoryTable = () => {
                         ))}
                     </TableBody>
                 </Table>
-                <div className="flex flex-col gap-4 border-t border-border bg-[#00072C] px-4 py-4 text-white md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-4 border-t border-border px-4 py-4 text-white md:flex-row md:items-center md:justify-between">
                     <div className="flex flex-wrap items-center gap-2">
                         {[1].map((page) => (
                             <button
                                 key={page}
                                 onClick={() => setCurrentPage(page)}
                                 className={cn(
-                                    "h-9 w-9 rounded-full border border-white text-sm font-medium transition-colors",
-                                    currentPage === page ? "bg-white text-[#00072C]" : "text-white"
+                                    "h-9 w-9 rounded-full border border-primary text-sm font-medium transition-colors",
+                                    currentPage === page ? "bg-primary text-secondary" : "text-primary"
                                 )}
                             >
                                 {page}
@@ -115,18 +171,18 @@ export const PaymentHistoryTable = () => {
                         <button
                             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                             disabled={currentPage === 1}
-                            className="flex items-center gap-2 rounded-full border border-white bg-transparent px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
                         >
-                            <ArrowLeft size={16} variant="Outline" className="text-white" />
+                            <ArrowLeft size={16} variant="Outline" className="text-primary" />
                             Previous
                         </button>
                         <button
                             onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                             disabled={currentPage === totalPages}
-                            className="flex items-center gap-2 rounded-full border border-white bg-transparent px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                            className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
                         >
                             Next
-                            <ArrowRight size={16} variant="Outline" className="text-white" />
+                            <ArrowRight size={16} variant="Outline" className="text-primary" />
                         </button>
                     </div>
                 </div>
