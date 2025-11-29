@@ -57,7 +57,7 @@ export const DashboardSidebar = () => {
                         <img
                             src="/favicon.ico"
                             alt="Property Eye"
-                            className="h-8 w-8"
+                            className="h-6 w-auto"
                         />
                     </Link>
                 ) : (
@@ -91,7 +91,7 @@ export const DashboardSidebar = () => {
                                     )}
                                     title={isCollapsed ? item.label : undefined}
                                 >
-                                    <div className="flex-shrink-0" style={{ color: "#4D66EA" }}>
+                                    <div className="flex-shrink-0" style={{ color: active ? "var(--primary)" : "var(--progress)" }}>
                                         <Icon size={20} variant="Bulk" />
                                     </div>
                                     {!isCollapsed && (
@@ -125,7 +125,7 @@ export const DashboardSidebar = () => {
                                     )}
                                     title={isCollapsed ? item.label : undefined}
                                 >
-                                    <div className="flex-shrink-0" style={{ color: "#4D66EA" }}>
+                                    <div className="flex-shrink-0" style={{ color: active ? "var(--primary)" : "var(--progress)" }}>
                                         <Icon size={20} variant="Bulk" />
                                     </div>
                                     {!isCollapsed && (

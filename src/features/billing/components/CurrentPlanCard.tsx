@@ -7,9 +7,10 @@ import { currentPlan } from "@/data/billing-data"
 
 interface CurrentPlanCardProps {
     onCancelPlan?: () => void
+    onChangePlan?: () => void
 }
 
-export const CurrentPlanCard = ({ onCancelPlan }: CurrentPlanCardProps) => {
+export const CurrentPlanCard = ({ onCancelPlan, onChangePlan }: CurrentPlanCardProps) => {
     const checksPercentage = Math.round((currentPlan.checksUsed / currentPlan.checksTotal) * 100)
     const crmPercentage = Math.round((currentPlan.crmUsersUsed / currentPlan.crmUsersTotal) * 100)
 
@@ -75,7 +76,10 @@ export const CurrentPlanCard = ({ onCancelPlan }: CurrentPlanCardProps) => {
                     >
                         Cancel Plan
                     </Button>
-                    <Button className="rounded-full bg-[#00072C] hover:bg-[#00072C]/90">
+                    <Button
+                        onClick={onChangePlan}
+                        className="rounded-full bg-[#00072C] hover:bg-[#00072C]/90"
+                    >
                         Change Plan
                     </Button>
                 </div>
