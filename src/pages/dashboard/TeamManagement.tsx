@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/dashboard/PageHeader"
 import { AddUserModal, AddUserFormValues } from "@/features/team/components/modals/AddUserModal"
 import { EditUserFormValues } from "@/features/team/components/modals/EditUserModal"
 import { DisableUserFormValues } from "@/features/team/components/modals/DisableUserModal"
-import { toast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 const TeamManagement = () => {
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
@@ -23,8 +23,7 @@ const TeamManagement = () => {
         setIsAddUserModalOpen(false)
 
         // Show success toast
-        toast({
-            title: "User invited successfully",
+        toast.success("User invited successfully", {
             description: `An invitation has been sent to ${values.email}`,
         })
     }
@@ -35,8 +34,7 @@ const TeamManagement = () => {
         console.log("Editing user:", userId, values)
 
         // Show success toast
-        toast({
-            title: "User updated successfully",
+        toast.success("User updated successfully", {
             description: `Changes to ${values.name} have been saved`,
         })
     }
@@ -47,9 +45,8 @@ const TeamManagement = () => {
         console.log("Disabling user:", userId, values)
 
         // Show success toast
-        toast({
-            title: "User disabled successfully",
-            description: `The user has been disabled`,
+        toast.success("User disabled successfully", {
+            description: "The user has been disabled",
         })
     }
 

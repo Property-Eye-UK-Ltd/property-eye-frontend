@@ -29,7 +29,7 @@ export const ModalShell = ({
         <button
           aria-label="Close dialog"
           onClick={onClose}
-          className="absolute right-6 top-6 text-primary"
+          className="absolute right-6 top-6 text-primary z-20"
         >
           <CloseCircle variant="TwoTone" size={28} className="text-primary" />
         </button>
@@ -38,4 +38,3 @@ export const ModalShell = ({
     </div>
   )
 }
-
