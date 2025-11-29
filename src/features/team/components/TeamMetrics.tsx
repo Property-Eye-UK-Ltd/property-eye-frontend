@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
 
 const donutData1 = [
@@ -51,7 +50,7 @@ export const TeamMetrics = () => {
                                             data={donutData1}
                                             cx="50%"
                                             cy="50%"
-                                            innerRadius={22}
+                                            innerRadius={26}
                                             outerRadius={32}
                                             startAngle={90}
                                             endAngle={-270}
@@ -84,7 +83,7 @@ export const TeamMetrics = () => {
                                             data={donutData2}
                                             cx="50%"
                                             cy="50%"
-                                            innerRadius={22}
+                                            innerRadius={26}
                                             outerRadius={32}
                                             startAngle={90}
                                             endAngle={-270}
