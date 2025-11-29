@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react"
 import { ModalShell } from "@/components/modals/ModalShell"
+import { Textarea } from "@/components/ui/textarea"
 import {
     Select,
     SelectContent,
@@ -7,47 +8,46 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { User } from "@/data/team-data"
 
-export interface DisableUserFormValues {
+export interface CancelSubscriptionFormValues {
     reason: string
     description: string
 }
 
-interface DisableUserModalProps {
+interface CancelSubscriptionFormModalProps {
     open: boolean
     onClose: () => void
-    onSubmit: (values: DisableUserFormValues) => Promise<void> | void
-    user: User | null
+    onSubmit: (values: CancelSubscriptionFormValues) => Promise<void> | void
     isSubmitting?: boolean
 }
 
-const disableReasons = [
-    "Violation of company policy",
-    "End of contract",
-    "Security concerns",
-    "Requested by user",
+const cancellationReasons = [
+    "Too expensive",
+    "Not using it enough",
+    "Found a better alternative",
+    "Missing features",
+    "Technical issues",
     "Other",
 ]
 
-export const DisableUserModal = ({
+export const CancelSubscriptionFormModal = ({
     open,
     onClose,
     onSubmit,
-    user,
     isSubmitting = false,
-}: DisableUserModalProps) => {
-    const [formValues, setFormValues] = useState<DisableUserFormValues>({
+}: CancelSubscriptionFormModalProps) => {
+    const [formValues, setFormValues] = useState<CancelSubscriptionFormValues>({
         reason: "",
         description: "",
     })
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+
         if (!formValues.reason || !formValues.description || isSubmitting) {
             return
         }
+
         onSubmit(formValues)
     }
 
@@ -64,9 +64,9 @@ export const DisableUserModal = ({
                 className="flex max-h-[85vh] flex-col overflow-hidden rounded-3xl bg-white"
             >
                 <div className="bg-white px-6 py-6 text-left shrink-0">
-                    <h2 className="text-2xl font-semibold text-foreground">Disable User</h2>
+                    <h2 className="text-2xl font-semibold text-foreground">Cancel Subscription</h2>
                     <p className="text-sm text-muted-foreground mt-1">
-                        Enter the reason for disabling user
+                        Enter the details of the user to be added to the team.
                     </p>
                 </div>
 
@@ -75,7 +75,7 @@ export const DisableUserModal = ({
                         <div className="space-y-5">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">
-                                    Reason for disabling
+                                    Reason for cancellation
                                 </label>
                                 <Select
                                     value={formValues.reason}
@@ -87,7 +87,7 @@ export const DisableUserModal = ({
                                         <SelectValue placeholder="Select a reason" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {disableReasons.map((reason) => (
+                                        {cancellationReasons.map((reason) => (
                                             <SelectItem key={reason} value={reason}>
                                                 {reason}
                                             </SelectItem>
@@ -99,12 +99,11 @@ export const DisableUserModal = ({
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Description</label>
                                 <Textarea
-                                    name="description"
                                     value={formValues.description}
                                     onChange={(e) =>
                                         setFormValues((prev) => ({ ...prev, description: e.target.value }))
                                     }
-                                    placeholder="Please provide additional details about why this user is being disabled..."
+                                    placeholder="Please provide additional details about your cancellation..."
                                     className="min-h-[120px] rounded-xl border border-border bg-transparent px-4 py-3 text-sm resize-none"
                                 />
                             </div>

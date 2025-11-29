@@ -2,18 +2,16 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { DonutChart } from "@/components/ui/donut-chart";
+import { DonutChart } from "@/components/ui/donut-chart"
 import { currentPlan } from "@/data/billing-data"
 
-export const CurrentPlanCard = () => {
+interface CurrentPlanCardProps {
+    onCancelPlan?: () => void
+}
+
+export const CurrentPlanCard = ({ onCancelPlan }: CurrentPlanCardProps) => {
     const checksPercentage = Math.round((currentPlan.checksUsed / currentPlan.checksTotal) * 100)
     const crmPercentage = Math.round((currentPlan.crmUsersUsed / currentPlan.crmUsersTotal) * 100)
-
-    // Donut chart data
-    const donutData = [
-        { value: checksPercentage },
-        { value: 100 - checksPercentage },
-    ]
 
     return (
         <DashboardPanel className="overflow-hidden" hasBorder>
@@ -72,6 +70,7 @@ export const CurrentPlanCard = () => {
                 <div className="flex items-center justify-end gap-3 pt-2">
                     <Button
                         variant="outline"
+                        onClick={onCancelPlan}
                         className="rounded-full border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                     >
                         Cancel Plan
