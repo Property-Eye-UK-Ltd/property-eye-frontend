@@ -6,12 +6,16 @@ import { UserListPanel } from "@/features/team/components/UserListPanel"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { PageHeader } from "@/components/dashboard/PageHeader"
 import { AddUserModal, AddUserFormValues } from "@/features/team/components/modals/AddUserModal"
-import { EditUserFormValues } from "@/features/team/components/modals/EditUserModal"
-import { DisableUserFormValues } from "@/features/team/components/modals/DisableUserModal"
+import { EditUserModal, EditUserFormValues } from "@/features/team/components/modals/EditUserModal"
+import { DisableUserModal, DisableUserFormValues } from "@/features/team/components/modals/DisableUserModal"
+import { User } from "@/data/team-data"
 import { toast } from "sonner"
 
 const TeamManagement = () => {
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [isDisableModalOpen, setIsDisableModalOpen] = useState(false)
+    const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleAddUser = async (values: AddUserFormValues) => {
@@ -28,10 +32,19 @@ const TeamManagement = () => {
         })
     }
 
-    const handleEditUser = async (userId: string, values: EditUserFormValues) => {
+    const handleEditClick = (user: User) => {
+        setSelectedUser(user)
+        setIsEditModalOpen(true)
+    }
+
+    const handleEditUser = async (values: EditUserFormValues) => {
+        if (!selectedUser) return
+        setIsSubmitting(true)
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1500))
-        console.log("Editing user:", userId, values)
+        console.log("Editing user:", selectedUser.id, values)
+        setIsSubmitting(false)
+        setIsEditModalOpen(false)
 
         // Show success toast
         toast.success("User updated successfully", {
@@ -39,10 +52,19 @@ const TeamManagement = () => {
         })
     }
 
-    const handleDisableUser = async (userId: string, values: DisableUserFormValues) => {
+    const handleDisableClick = () => {
+        setIsEditModalOpen(false)
+        setIsDisableModalOpen(true)
+    }
+
+    const handleDisableUser = async (values: DisableUserFormValues) => {
+        if (!selectedUser) return
+        setIsSubmitting(true)
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1500))
-        console.log("Disabling user:", userId, values)
+        console.log("Disabling user:", selectedUser.id, values)
+        setIsSubmitting(false)
+        setIsDisableModalOpen(false)
 
         // Show success toast
         toast.success("User disabled successfully", {
@@ -69,10 +91,7 @@ const TeamManagement = () => {
                 <TeamMetrics />
 
                 {/* User List */}
-                <UserListPanel
-                    onEditUser={handleEditUser}
-                    onDisableUser={handleDisableUser}
-                />
+                <UserListPanel onEditClick={handleEditClick} />
             </div>
 
             {/* Add User Modal */}
@@ -80,6 +99,25 @@ const TeamManagement = () => {
                 open={isAddUserModalOpen}
                 onClose={() => setIsAddUserModalOpen(false)}
                 onSubmit={handleAddUser}
+                isSubmitting={isSubmitting}
+            />
+
+            {/* Edit User Modal */}
+            <EditUserModal
+                open={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onSubmit={handleEditUser}
+                onDisable={handleDisableClick}
+                user={selectedUser}
+                isSubmitting={isSubmitting}
+            />
+
+            {/* Disable User Modal */}
+            <DisableUserModal
+                open={isDisableModalOpen}
+                onClose={() => setIsDisableModalOpen(false)}
+                onSubmit={handleDisableUser}
+                user={selectedUser}
                 isSubmitting={isSubmitting}
             />
         </DashboardLayout>
