@@ -20,9 +20,10 @@ export interface IntegrationSettings {
 }
 
 export interface SecuritySettings {
+    currentPassword: string
+    newPassword: string
+    confirmPassword: string
     twoFactorAuth: boolean
-    sessionTimeout: number
-    passwordExpiry: number
 }
 
 export interface DataRetentionSettings {
@@ -54,9 +55,10 @@ export const mockIntegrationSettings: IntegrationSettings = {
 }
 
 export const mockSecuritySettings: SecuritySettings = {
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
     twoFactorAuth: true,
-    sessionTimeout: 30,
-    passwordExpiry: 90,
 }
 
 export const mockDataRetentionSettings: DataRetentionSettings = {

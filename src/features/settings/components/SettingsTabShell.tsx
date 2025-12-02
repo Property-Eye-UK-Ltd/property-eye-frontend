@@ -61,7 +61,7 @@ export const SettingsTabShell = ({
                                     <Button
                                         onClick={onCancel}
                                         variant="outline"
-                                        className="rounded-full"
+                                        className="rounded-full hover:bg-progress/30"
                                     >
                                         Cancel
                                     </Button>

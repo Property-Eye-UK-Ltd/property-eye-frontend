@@ -22,7 +22,7 @@ export const SettingsTabs = ({ tabs, selected, onSelect }: SettingsTabsProps) =>
                         className={cn(
                             "px-4 py-2 rounded-full text-sm font-medium transition-colors",
                             isActive
-                                ? "bg-primary/90 border border-primary text-foreground"
+                                ? "bg-progress/10 border border-primary text-foreground"
                                 : "bg-transparent text-muted-foreground hover:bg-muted/30"
                         )}
                         onClick={() => onSelect(tab.value)}
