@@ -21,6 +21,7 @@ import AccountBilling from "./pages/dashboard/AccountBilling";
 import SubscriptionPlans from "./pages/dashboard/SubscriptionPlans";
 import HelpCenter from "./pages/dashboard/HelpCenter";
 import HelpArticle from "./pages/dashboard/HelpArticle";
+import Settings from "./pages/dashboard/Settings";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
           <Route path="/dashboard/billing/plans" element={<SubscriptionPlans />} />
           <Route path="/dashboard/help" element={<HelpCenter />} />
           <Route path="/dashboard/help/:articleId" element={<HelpArticle />} />
+          <Route path="/dashboard/settings" element={<Settings />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
