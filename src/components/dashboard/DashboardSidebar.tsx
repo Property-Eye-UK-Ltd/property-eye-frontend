@@ -120,7 +120,7 @@ export const DashboardSidebar = () => {
                                         "flex items-center gap-3 px-4 py-3 rounded-full transition-colors",
                                         isCollapsed && "justify-center",
                                         active
-                                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium hover:bg-primary/90"
+                                            ? "bg-secondary text-primary font-medium hover:bg-primary/90"
                                             : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                                     )}
                                     title={isCollapsed ? item.label : undefined}

@@ -19,6 +19,8 @@ import Analytics from "./pages/dashboard/Analytics";
 import TeamManagement from "./pages/dashboard/TeamManagement";
 import AccountBilling from "./pages/dashboard/AccountBilling";
 import SubscriptionPlans from "./pages/dashboard/SubscriptionPlans";
+import HelpCenter from "./pages/dashboard/HelpCenter";
+import HelpArticle from "./pages/dashboard/HelpArticle";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,9 @@ const App = () => (
           <Route path="/dashboard/team" element={<TeamManagement />} />
           <Route path="/dashboard/billing" element={<AccountBilling />} />
           <Route path="/dashboard/billing/plans" element={<SubscriptionPlans />} />
+          <Route path="/dashboard/help" element={<HelpCenter />} />
+          <Route path="/dashboard/help/:articleId" element={<HelpArticle />} />
+
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
