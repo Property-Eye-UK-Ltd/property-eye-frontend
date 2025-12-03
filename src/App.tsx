@@ -24,6 +24,7 @@ import HelpArticle from "./pages/dashboard/HelpArticle";
 import Settings from "./pages/dashboard/Settings";
 import AdminLogin from "./pages/auth/AdminLogin";
 import AdminForgotPassword from "./pages/auth/AdminForgotPassword";
+import AdminOverview from "./pages/admin/AdminOverview";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,9 @@ const App = () => (
           <Route path="/dashboard/help" element={<HelpCenter />} />
           <Route path="/dashboard/help/:articleId" element={<HelpArticle />} />
           <Route path="/dashboard/settings" element={<Settings />} />
+
+          {/* Super Admin Dashboard Routes */}
+          <Route path="/admin/dashboard" element={<AdminOverview />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

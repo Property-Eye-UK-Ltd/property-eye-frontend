@@ -85,8 +85,8 @@ export const DashboardSidebar = ({ variant = "agency" }: DashboardSidebarProps) 
                 </ul>
             </nav>
 
-            {/* Separator */}
-            <div className="border-t border-sidebar-border" />
+            {/* Separator - Only for Super Admin */}
+            {variant === "super-admin" && <div className="border-t border-sidebar-border" />}
 
             {/* Bottom Navigation Items (Settings, etc.) */}
             <div className="px-3 py-4">

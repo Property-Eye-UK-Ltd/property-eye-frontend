@@ -1,12 +1,4 @@
-import {
-    Category,
-    Buildings2,
-    Folder2,
-    People,
-    Wallet2,
-    DocumentText,
-    Setting2,
-} from "iconsax-react"
+import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph } from "iconsax-react"
 
 export interface NavItem {
     label: string
@@ -25,19 +17,19 @@ export const agencyNavConfig: NavConfig = {
     mainItems: [
         {
             label: "Overview",
-            icon: Category,
+            icon: Element,
             path: "/dashboard",
             variant: "Bulk",
         },
         {
             label: "Case Management",
-            icon: Folder2,
+            icon: Book,
             path: "/dashboard/cases",
             variant: "Bulk",
         },
         {
             label: "Analytics",
-            icon: DocumentText,
+            icon: Graph,
             path: "/dashboard/analytics",
             variant: "Bulk",
         },
@@ -49,14 +41,8 @@ export const agencyNavConfig: NavConfig = {
         },
         {
             label: "Account & Billing",
-            icon: Wallet2,
+            icon: Wallet1,
             path: "/dashboard/billing",
-            variant: "Bulk",
-        },
-        {
-            label: "Help Center",
-            icon: DocumentText,
-            path: "/dashboard/help",
             variant: "Bulk",
         },
     ],
@@ -67,6 +53,12 @@ export const agencyNavConfig: NavConfig = {
             path: "/dashboard/settings",
             variant: "Bulk",
         },
+        {
+            label: "Help Center",
+            icon: Headphone,
+            path: "/dashboard/help",
+            variant: "Bulk",
+        },
     ],
     showProCard: true,
 }
@@ -75,19 +67,19 @@ export const superAdminNavConfig: NavConfig = {
     mainItems: [
         {
             label: "Overview",
-            icon: Category,
+            icon: Element,
             path: "/admin/dashboard",
             variant: "Bulk",
         },
         {
             label: "Agencies",
-            icon: Buildings2,
+            icon: Home3,
             path: "/admin/agencies",
             variant: "Bulk",
         },
         {
             label: "Case Management",
-            icon: Folder2,
+            icon: Book,
             path: "/admin/cases",
             variant: "Bulk",
         },
@@ -99,13 +91,13 @@ export const superAdminNavConfig: NavConfig = {
         },
         {
             label: "Billing & Finance",
-            icon: Wallet2,
+            icon: Wallet1,
             path: "/admin/billing",
             variant: "Bulk",
         },
         {
             label: "Reports & Exports",
-            icon: DocumentText,
+            icon: Graph,
             path: "/admin/reports",
             variant: "Bulk",
         },

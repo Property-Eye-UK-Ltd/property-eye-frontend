@@ -51,7 +51,7 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                             <Input
                                 type="search"
                                 placeholder="Search"
-                                className="pl-10 bg-background border-border"
+                                className="pl-10 bg-background border-border rounded-full"
                             />
                         </div>
                     ) : (

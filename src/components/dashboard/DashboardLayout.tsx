@@ -1,20 +1,21 @@
-import { ReactNode } from "react";
-import { DashboardSidebar } from "./DashboardSidebar";
-import { DashboardHeader } from "./DashboardHeader";
-import { SidebarProvider, useSidebarContext } from "./SidebarContext";
-import { cn } from "@/lib/utils";
+import { ReactNode } from "react"
+import { DashboardSidebar } from "./DashboardSidebar"
+import { DashboardHeader } from "./DashboardHeader"
+import { SidebarProvider, useSidebarContext } from "./SidebarContext"
+import { cn } from "@/lib/utils"
 
 interface DashboardLayoutProps {
-    children: ReactNode;
+    children: ReactNode
+    variant?: "agency" | "super-admin"
 }
 
-const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
-    const { isCollapsed } = useSidebarContext();
+const DashboardLayoutContent = ({ children, variant = "agency" }: DashboardLayoutProps) => {
+    const { isCollapsed } = useSidebarContext()
 
     return (
         <div className="min-h-screen flex">
             {/* Sidebar - Fixed */}
-            <DashboardSidebar />
+            <DashboardSidebar variant={variant} />
 
             {/* Main Content Area */}
             <div
@@ -24,7 +25,7 @@ const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
                 )}
             >
                 {/* Dashboard Header - Sticky */}
-                <DashboardHeader />
+                <DashboardHeader variant={variant} />
 
                 {/* Page Content - Scrollable (children includes PageHeader) */}
                 <main className="flex-1 overflow-y-auto bg-page-background">
@@ -32,14 +33,13 @@ const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
                 </main>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+export const DashboardLayout = ({ children, variant = "agency" }: DashboardLayoutProps) => {
     return (
         <SidebarProvider>
-            <DashboardLayoutContent>{children}</DashboardLayoutContent>
+            <DashboardLayoutContent variant={variant}>{children}</DashboardLayoutContent>
         </SidebarProvider>
-    );
-};
-
+    )
+}
