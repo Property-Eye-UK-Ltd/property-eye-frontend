@@ -1,5 +1,5 @@
-import { AuthLayoutProps } from "@/types/auth.types";
-import { ProgressBar } from "./ProgressBar";
+import { AuthLayoutProps } from "@/types/auth.types"
+import { ProgressBar } from "./ProgressBar"
 
 export const AuthLayout = ({
     children,
@@ -9,7 +9,34 @@ export const AuthLayout = ({
     imageAlt = "Property Eye Authentication",
     heading,
     showProgress = true,
+    variant = "agency",
 }: AuthLayoutProps) => {
+    // Configure content based on variant
+    const config = {
+        agency: {
+            text: (
+                <>
+                    Your Gateway to <span className="text-secondary">Fraud-Free</span>
+                    <br />
+                    Property Operations.
+                </>
+            ),
+            image: "/assets/auth/layout.png",
+        },
+        "super-admin": {
+            text: (
+                <>
+                    Oversee All Agencies. <span className="text-secondary">Safeguard</span>
+                    <br />
+                    the Entire <span className="text-secondary">Real Estate Network.</span>
+                </>
+            ),
+            image: "/assets/auth/layout-admin.png",
+        },
+    }
+
+    const currentConfig = config[variant]
+
     return (
         <div className="min-h-screen flex flex-col lg:flex-row bg-background">
             {/* Left Side - Content Area */}
@@ -22,18 +49,13 @@ export const AuthLayout = ({
                                 {heading}
                             </h2>
                         )}
-                        <ProgressBar
-                            currentStep={currentStep}
-                            totalSteps={totalSteps}
-                        />
+                        <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
                     </div>
                 )}
 
                 {/* Main Content Area - Centered */}
                 <div className="flex-1 flex flex-col px-4 py-8 sm:px-6 sm:py-12 md:p-12 lg:p-16 max-w-2xl mx-auto w-full justify-center">
-                    <div className="flex flex-col w-full gap-6 sm:gap-8">
-                        {children}
-                    </div>
+                    <div className="flex flex-col w-full gap-6 sm:gap-8">{children}</div>
                 </div>
             </div>
 
@@ -44,16 +66,13 @@ export const AuthLayout = ({
                     {/* Text - Above Image, Left Aligned */}
                     <div className="mb-10 self-start">
                         <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-tight">
-                            Your Gateway to{" "}
-                            <span className="text-secondary">Fraud-Free</span>
-                            <br />
-                            Property Operations.
+                            {currentConfig.text}
                         </h1>
                     </div>
 
                     {/* Dashboard Preview Image */}
                     <img
-                        src="/assets/auth/layout.png"
+                        src={currentConfig.image}
                         alt="Dashboard Preview"
                         className="max-w-full h-auto object-contain"
                         style={{ maxHeight: "60vh", maxWidth: "80vw" }}
@@ -61,5 +80,5 @@ export const AuthLayout = ({
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}

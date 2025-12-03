@@ -72,7 +72,9 @@ const ForgotPassword = () => {
                         {step === "request" ? "Forgot Password" : "Set New Password"}
                     </h1>
                     <p className="text-sm sm:text-base text-muted-foreground">
-                        Enter your email to reset your password, we’ll send a reset link to your registered email.
+                        {step === "request"
+                            ? "Enter your email to reset your password, we'll send a reset link to your registered email."
+                            : "Create a new password for your account. Make sure it's strong and secure."}
                     </p>
                 </div>
 

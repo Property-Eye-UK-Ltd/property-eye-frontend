@@ -22,6 +22,8 @@ import SubscriptionPlans from "./pages/dashboard/SubscriptionPlans";
 import HelpCenter from "./pages/dashboard/HelpCenter";
 import HelpArticle from "./pages/dashboard/HelpArticle";
 import Settings from "./pages/dashboard/Settings";
+import AdminLogin from "./pages/auth/AdminLogin";
+import AdminForgotPassword from "./pages/auth/AdminForgotPassword";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,9 @@ const App = () => (
             <Route path="/verify-otp" element={<OTPVerification />} />
             <Route path="/agency-owner-info" element={<AgencyOwnerInfo />} />
             <Route path="/agency-information" element={<AgencyInformation />} />
+            {/* Super Admin Auth Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
           </Route>
 
           {/* Dashboard Routes */}

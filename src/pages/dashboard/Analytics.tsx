@@ -146,7 +146,7 @@ const Analytics = () => {
                                     <h3 className="text-sm text-muted-foreground mb-2">Cost Reduction Estimate</h3>
                                     <p className="text-4xl font-medium text-foreground">£18,029</p>
                                 </div>
-                                <HMLRCheckEfficiencyPanel percentage={48} />
+                                <HMLRCheckEfficiencyPanel percentage={40} />
                             </div>
                             <div className="lg:col-span-5">
                                 <FraudDetectionPanel

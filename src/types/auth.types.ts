@@ -41,6 +41,12 @@ export interface AuthLayoutProps {
      * @default true
      */
     showProgress?: boolean;
+
+    /**
+     * Layout variant for different user types
+     * @default "agency"
+     */
+    variant?: "agency" | "super-admin";
 }
 
 export interface ProgressBarProps {

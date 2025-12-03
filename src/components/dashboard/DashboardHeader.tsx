@@ -1,21 +1,26 @@
-import { Refresh2, Sort, ArrowDown2, LogoutCurve, SidebarLeft, SidebarRight } from "iconsax-react";
-import { NotificationMenu } from "./NotificationMenu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Refresh2, Sort, ArrowDown2, LogoutCurve, SidebarLeft, SidebarRight, SearchNormal } from "iconsax-react"
+import { NotificationMenu } from "./NotificationMenu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Input } from "@/components/ui/input"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useSidebarContext } from "./SidebarContext";
+} from "@/components/ui/dropdown-menu"
+import { useSidebarContext } from "./SidebarContext"
 
-export const DashboardHeader = () => {
-    const { isCollapsed, setIsCollapsed } = useSidebarContext();
+interface DashboardHeaderProps {
+    variant?: "agency" | "super-admin"
+}
+
+export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) => {
+    const { isCollapsed, setIsCollapsed } = useSidebarContext()
 
     const handleLogout = () => {
         // Handle logout logic here
-        console.log("Logout clicked");
-    };
+        console.log("Logout clicked")
+    }
 
     return (
         <header className="bg-background border-b border-border px-6 py-4 sticky top-0 z-20">
@@ -35,31 +40,49 @@ export const DashboardHeader = () => {
 
                 {/* Right Side Content */}
                 <div className="flex items-center justify-end gap-4 flex-1">
-                    {/* Last Data Pull - Leftmost */}
-                    <div className="flex items-center gap-2">
-                        <button
-                            className="p-1.5 hover:bg-muted rounded-full transition-colors"
-                            aria-label="Refresh data"
-                        >
-                            <Refresh2 size={20} variant="Bulk" className="text-primary" />
-                        </button>
-                        <div className="text-left">
-                            <p className="text-xs font-medium text-foreground">Last data pull:</p>
-                            <p className="text-xs text-muted-foreground">8 Nov 2025, 14:23 GMT</p>
+                    {variant === "super-admin" ? (
+                        /* Search Bar for Super Admin */
+                        <div className="relative flex-1 max-w-md">
+                            <SearchNormal
+                                size={20}
+                                variant="TwoTone"
+                                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                            />
+                            <Input
+                                type="search"
+                                placeholder="Search"
+                                className="pl-10 bg-background border-border"
+                            />
                         </div>
-                    </div>
+                    ) : (
+                        /* Last Data Pull & Points for Agency Admin */
+                        <>
+                            {/* Last Data Pull - Leftmost */}
+                            <div className="flex items-center gap-2">
+                                <button
+                                    className="p-1.5 hover:bg-muted rounded-full transition-colors"
+                                    aria-label="Refresh data"
+                                >
+                                    <Refresh2 size={20} variant="Bulk" className="text-primary" />
+                                </button>
+                                <div className="text-left">
+                                    <p className="text-xs font-medium text-foreground">Last data pull:</p>
+                                    <p className="text-xs text-muted-foreground">8 Nov 2025, 14:23 GMT</p>
+                                </div>
+                            </div>
 
-                    {/* Progress Badge/Tag */}
-                    <div className="flex items-center gap-2 bg-muted rounded-full px-3 py-1.5">
-                        <div className="bg-primary rounded-full p-1">
-                            <Sort size={16} variant="Outline" className="text-secondary" />
-                        </div>
-                        <span className="text-sm font-medium">
-                            <span style={{ color: "#4D66EA" }}>450</span>
-                            <span className="text-muted-foreground">/500</span>
-                        </span>
-                    </div>
-
+                            {/* Progress Badge/Tag */}
+                            <div className="flex items-center gap-2 bg-muted rounded-full px-3 py-1.5">
+                                <div className="bg-primary rounded-full p-1">
+                                    <Sort size={16} variant="Outline" className="text-secondary" />
+                                </div>
+                                <span className="text-sm font-medium">
+                                    <span style={{ color: "#4D66EA" }}>450</span>
+                                    <span className="text-muted-foreground">/500</span>
+                                </span>
+                            </div>
+                        </>
+                    )}
 
                     {/* Notification Icon */}
                     <NotificationMenu />
@@ -104,6 +127,5 @@ export const DashboardHeader = () => {
                 </div>
             </div>
         </header>
-    );
-};
-
+    )
+}
