@@ -25,6 +25,8 @@ import Settings from "./pages/dashboard/Settings";
 import AdminLogin from "./pages/auth/AdminLogin";
 import AdminForgotPassword from "./pages/auth/AdminForgotPassword";
 import AdminOverview from "./pages/admin/AdminOverview";
+import Agencies from "./pages/admin/Agencies";
+import AgencyProfile from "./pages/admin/AgencyProfile";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +66,8 @@ const App = () => (
 
           {/* Super Admin Dashboard Routes */}
           <Route path="/admin/dashboard" element={<AdminOverview />} />
+          <Route path="/admin/agencies" element={<Agencies />} />
+          <Route path="/admin/agencies/:agencyId" element={<AgencyProfile />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
