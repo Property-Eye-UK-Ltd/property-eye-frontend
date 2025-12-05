@@ -11,9 +11,10 @@ export interface CommissionBreakdownDatum {
 interface CommissionBreakdownPanelProps {
   data: CommissionBreakdownDatum[]
   title?: string
+  chartSize?: number
 }
 
-export const CommissionBreakdownPanel = ({ data, title = "Commission Avoidance Breakdown" }: CommissionBreakdownPanelProps) => (
+export const CommissionBreakdownPanel = ({ data, title = "Commission Avoidance Breakdown", chartSize = 160 }: CommissionBreakdownPanelProps) => (
   <DashboardPanel
     title={title}
     icon={<ChartCircle size={18} variant="Bulk" className="text-muted-foreground" />}
@@ -22,14 +23,14 @@ export const CommissionBreakdownPanel = ({ data, title = "Commission Avoidance B
   >
     <div className="flex flex-col items-center gap-6">
       <div className="relative flex-shrink-0">
-        <ResponsiveContainer width={160} height={160}>
+        <ResponsiveContainer width={chartSize} height={chartSize}>
           <PieChart>
             <Pie
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius={55}
-              outerRadius={74}
+              innerRadius={chartSize * 0.34}
+              outerRadius={chartSize * 0.46}
               paddingAngle={2}
               dataKey="value"
               cornerRadius={8}

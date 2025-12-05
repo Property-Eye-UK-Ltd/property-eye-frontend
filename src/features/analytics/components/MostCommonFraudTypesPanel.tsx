@@ -16,16 +16,17 @@ export interface FraudTypeConfig {
 interface MostCommonFraudTypesProps {
     data: FraudTypeData[]
     config: Record<string, FraudTypeConfig>
+    height?: number
 }
 
-export const MostCommonFraudTypesPanel = ({ data, config }: MostCommonFraudTypesProps) => {
+export const MostCommonFraudTypesPanel = ({ data, config, height = 255 }: MostCommonFraudTypesProps) => {
     return (
         <DashboardPanel
             title="Most Common Fraud Types"
             icon={<Chart size={16} variant="TwoTone" className="text-muted-foreground" />}
             hasBorder
         >
-            <ChartContainer config={config} className="h-[255px] w-full -ml-6">
+            <ChartContainer config={config} className="w-full -ml-6" style={{ height: `${height}px` }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data} margin={{ left: 0, right: 0, top: 10, bottom: 0 }}>
                         <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" vertical={false} />

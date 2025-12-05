@@ -155,7 +155,7 @@ const Overview = () => {
         <MetricCards metrics={metrics} />
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-          <CommissionBreakdownPanel data={donutData} />
+          <CommissionBreakdownPanel data={donutData} chartSize={150} />
           <RepeatOffendersPanel offenders={repeatOffenders} />
         </div>
 
