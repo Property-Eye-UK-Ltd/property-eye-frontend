@@ -31,6 +31,7 @@ import BillingFinance from "./pages/admin/BillingFinance";
 import TransactionDetails from "./pages/admin/TransactionDetails";
 import AdminTeamManagement from "./pages/admin/TeamManagement";
 import StaffDetails from "./pages/admin/StaffDetails";
+import ReportsExports from "./pages/admin/ReportsExports";
 import Agencies from "./pages/admin/Agencies";
 import AgencyProfile from "./pages/admin/AgencyProfile";
 
@@ -80,6 +81,7 @@ const App = () => (
           <Route path="/admin/billing/transaction/:transactionId" element={<TransactionDetails />} />
           <Route path="/admin/team" element={<AdminTeamManagement />} />
           <Route path="/admin/team/staff/:staffId" element={<StaffDetails />} />
+          <Route path="/admin/reports" element={<ReportsExports />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

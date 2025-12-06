@@ -20,6 +20,7 @@ export interface FraudDataPoint {
 export interface FraudSeriesConfig {
   label: string
   color: string
+  strokeOpacity?: number
 }
 
 interface FraudDetectionPanelProps {
@@ -239,9 +240,9 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, t
                 dataKey={key}
                 stroke={value.color}
                 strokeWidth={1.5}
-                strokeOpacity={0.4}
-                dot={{ r: 3, fill: value.color, fillOpacity: 0.4 }}
-                activeDot={{ r: 5, fill: value.color, fillOpacity: 0.4 }}
+                strokeOpacity={value.strokeOpacity ?? 0.4}
+                dot={{ r: 3, fill: value.color, fillOpacity: value.strokeOpacity ?? 0.4 }}
+                activeDot={{ r: 5, fill: value.color, fillOpacity: value.strokeOpacity ?? 0.4 }}
               />
             ))}
           </ComposedChart>

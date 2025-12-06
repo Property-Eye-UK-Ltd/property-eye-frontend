@@ -70,7 +70,7 @@ export const SuspendStaffModal = ({ open, onClose, onConfirm, staffName }: Suspe
                                 <Textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    placeholder="There wa"
+                                    placeholder="Please provide details about the suspension reason..."
                                     className="min-h-32 rounded-xl border border-border bg-transparent px-4 py-3 text-sm resize-none"
                                 />
                             </div>
