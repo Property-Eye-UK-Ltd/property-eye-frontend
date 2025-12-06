@@ -120,9 +120,9 @@ export const CaseListPanel = ({
             <TableRow className="bg-gray-50">
               <TableHead className="px-4 font-medium">Case ID</TableHead>
               <TableHead className="px-4 font-medium">Property Address</TableHead>
-              <TableHead className="px-4 font-semibold">
+              <TableHead className="px-4 font-medium">
                 <button
-                  className="flex items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   onClick={() => handleSort("fraudType")}
                 >
                   Fraud Type
@@ -130,9 +130,9 @@ export const CaseListPanel = ({
                 </button>
               </TableHead>
               <TableHead className="px-4 font-medium">Score</TableHead>
-              <TableHead className="px-4 font-semibold">
+              <TableHead className="px-4 font-medium">
                 <button
-                  className="flex items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   onClick={() => handleSort("severity")}
                 >
                   Severity

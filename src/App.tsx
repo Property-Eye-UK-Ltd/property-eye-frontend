@@ -25,6 +25,7 @@ import Settings from "./pages/dashboard/Settings";
 import AdminLogin from "./pages/auth/AdminLogin";
 import AdminForgotPassword from "./pages/auth/AdminForgotPassword";
 import AdminOverview from "./pages/admin/AdminOverview";
+import AdminCaseManagement from "./pages/admin/CaseManagement";
 import Agencies from "./pages/admin/Agencies";
 import AgencyProfile from "./pages/admin/AgencyProfile";
 
@@ -68,6 +69,7 @@ const App = () => (
           <Route path="/admin/dashboard" element={<AdminOverview />} />
           <Route path="/admin/agencies" element={<Agencies />} />
           <Route path="/admin/agencies/:agencyId" element={<AgencyProfile />} />
+          <Route path="/admin/cases" element={<AdminCaseManagement />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
