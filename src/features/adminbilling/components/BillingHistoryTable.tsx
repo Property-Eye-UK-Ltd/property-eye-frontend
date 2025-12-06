@@ -2,25 +2,23 @@ import { useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { ChevronsUpDown } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { cn } from "@/lib/utils"
-import { AgencyCase, caseSeverityStyles, caseFraudTypeStyles } from "@/data/agencyCasesData"
-import { agenciesData } from "@/data/agenciesData"
+import { BillingTransaction, billingStatusStyles } from "@/data/adminBillingData"
 
-interface AdminCasesTableProps {
-    data: AgencyCase[]
+interface BillingHistoryTableProps {
+    data: BillingTransaction[]
 }
 
-export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
+export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
     const navigate = useNavigate()
-    const [sortColumn, setSortColumn] = useState<keyof AgencyCase | null>(null)
+    const [sortColumn, setSortColumn] = useState<keyof BillingTransaction | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [currentPage, setCurrentPage] = useState(1)
 
-    const handleSort = (column: keyof AgencyCase) => {
+    const handleSort = (column: keyof BillingTransaction) => {
         if (sortColumn === column) {
             setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
         } else {
@@ -29,11 +27,7 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
         }
     }
 
-    const handleViewCase = (caseId: string) => {
-        navigate(`/admin/cases/${encodeURIComponent(caseId)}`)
-    }
-
-    const sortedCases = useMemo(() => {
+    const sortedData = useMemo(() => {
         if (!sortColumn) return data
 
         return [...data].sort((a, b) => {
@@ -44,18 +38,9 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
             if (typeof aValue === "string" && typeof bValue === "string") {
                 return aValue.localeCompare(bValue) * direction
             }
-            if (typeof aValue === "number" && typeof bValue === "number") {
-                return (aValue - bValue) * direction
-            }
             return 0
         })
     }, [data, sortColumn, sortDirection])
-
-    // Add agency names to cases
-    const casesWithAgencies = sortedCases.map((caseItem) => {
-        const randomAgency = agenciesData[Math.floor(Math.random() * agenciesData.length)]
-        return { ...caseItem, agencyName: randomAgency.name }
-    })
 
     return (
         <>
@@ -63,60 +48,47 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className="px-4 font-medium">Case ID</TableHead>
+                            <TableHead className="px-4 font-medium">Transaction ID</TableHead>
                             <TableHead className="px-4 font-medium">Agency Name</TableHead>
-                            <TableHead className="px-4 font-medium">Property Address</TableHead>
+                            <TableHead className="px-4 font-medium">Plan Tier</TableHead>
+                            <TableHead className="px-4 font-medium">Amount</TableHead>
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("fraudType")}
+                                    onClick={() => handleSort("transactionDate")}
                                 >
-                                    Fraud Type
+                                    Transaction Date
                                     <ChevronsUpDown className="h-4 w-4" />
                                 </button>
                             </TableHead>
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("severity")}
+                                    onClick={() => handleSort("status")}
                                 >
-                                    Severity
+                                    Status
                                     <ChevronsUpDown className="h-4 w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium">Date Detected</TableHead>
                             <TableHead className="px-4 font-medium">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {casesWithAgencies.map((caseItem) => (
-                            <TableRow key={caseItem.id} className="border-b border-border">
-                                <TableCell className="px-4 py-3">
-                                    <div className="flex items-center gap-3">
-                                        <Checkbox className="data-[state=checked]:bg-progress data-[state=checked]:border-progress" />
-                                        <span className="text-muted-foreground">{caseItem.caseId}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.agencyName}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.propertyAddress}</TableCell>
+                        {sortedData.map((transaction) => (
+                            <TableRow key={transaction.id} className="border-b border-border">
+                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.transactionId}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.agencyName}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.planTier}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.amount}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.transactionDate}</TableCell>
                                 <TableCell className="px-4 py-4">
-                                    <Badge
-                                        className={cn("rounded-full px-3 py-1 text-xs font-normal", caseFraudTypeStyles[caseItem.fraudType])}
-                                    >
-                                        {caseItem.fraudType}
+                                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal", billingStatusStyles[transaction.status])}>
+                                        {transaction.status}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-4 py-4">
-                                    <Badge
-                                        className={cn("rounded-full px-3 py-1 text-xs font-normal", caseSeverityStyles[caseItem.severity])}
-                                    >
-                                        {caseItem.severity}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.dateDetected}</TableCell>
                                 <TableCell className="px-4 py-3">
                                     <button
-                                        onClick={() => handleViewCase(caseItem.caseId)}
+                                        onClick={() => navigate(`/admin/billing/transaction/${transaction.id}`)}
                                         className="text-sm font-medium transition-colors hover:underline"
                                         style={{ color: "var(--progress)" }}
                                     >

@@ -26,6 +26,9 @@ import AdminLogin from "./pages/auth/AdminLogin";
 import AdminForgotPassword from "./pages/auth/AdminForgotPassword";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminCaseManagement from "./pages/admin/CaseManagement";
+import AdminCaseDetails from "./pages/admin/AdminCaseDetails";
+import BillingFinance from "./pages/admin/BillingFinance";
+import TransactionDetails from "./pages/admin/TransactionDetails";
 import Agencies from "./pages/admin/Agencies";
 import AgencyProfile from "./pages/admin/AgencyProfile";
 
@@ -70,6 +73,9 @@ const App = () => (
           <Route path="/admin/agencies" element={<Agencies />} />
           <Route path="/admin/agencies/:agencyId" element={<AgencyProfile />} />
           <Route path="/admin/cases" element={<AdminCaseManagement />} />
+          <Route path="/admin/cases/:caseId" element={<AdminCaseDetails />} />
+          <Route path="/admin/billing" element={<BillingFinance />} />
+          <Route path="/admin/billing/transaction/:transactionId" element={<TransactionDetails />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
