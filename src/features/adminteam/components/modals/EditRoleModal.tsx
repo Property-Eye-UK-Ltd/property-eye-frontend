@@ -47,7 +47,7 @@ export const EditRoleModal = ({ open, onClose, onConfirm, staffData }: EditRoleM
         <ModalShell open={open} onClose={handleClose} contentClassName="max-w-2xl rounded-3xl bg-white pb-0 pt-0">
             <form onSubmit={handleSubmit} className="flex max-h-[85vh] flex-col overflow-hidden rounded-3xl bg-white">
                 <div className="shrink-0 bg-white px-6 py-6 text-left">
-                    <h2 className="text-2xl font-semibold text-foreground">Edit a Staff</h2>
+                    <h2 className="text-2xl font-medium text-foreground">Edit a Staff</h2>
                     <p className="mt-1 text-sm text-muted-foreground">Change the details of the staff in the team.</p>
                 </div>
 

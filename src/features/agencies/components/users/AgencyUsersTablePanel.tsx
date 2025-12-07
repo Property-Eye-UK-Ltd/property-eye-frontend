@@ -2,7 +2,6 @@ import { useState, useMemo } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
 import { ChevronsUpDown } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { cn } from "@/lib/utils"
@@ -10,9 +9,11 @@ import { AgencyUser, userAccountStatusStyles, twoFactorStatusStyles } from "@/da
 
 interface AgencyUsersTablePanelProps {
     data: AgencyUser[]
+    selectedUsers?: string[]
+    onSelectionChange?: (selectedIds: string[]) => void
 }
 
-export const AgencyUsersTablePanel = ({ data }: AgencyUsersTablePanelProps) => {
+export const AgencyUsersTablePanel = ({ data, selectedUsers = [], onSelectionChange }: AgencyUsersTablePanelProps) => {
     const [sortColumn, setSortColumn] = useState<keyof AgencyUser | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [currentPage, setCurrentPage] = useState(1)
@@ -44,12 +45,30 @@ export const AgencyUsersTablePanel = ({ data }: AgencyUsersTablePanelProps) => {
         })
     }, [data, sortColumn, sortDirection])
 
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            onSelectionChange?.(data.map((u) => u.id))
+        } else {
+            onSelectionChange?.([])
+        }
+    }
+
+    const handleSelectUser = (userId: string, checked: boolean) => {
+        if (!onSelectionChange) return
+        if (checked) {
+            onSelectionChange([...selectedUsers, userId])
+        } else {
+            onSelectionChange(selectedUsers.filter((id) => id !== userId))
+        }
+    }
+
     return (
         <>
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50">
+                            <TableHead className="w-[50px] px-4"></TableHead>
                             <TableHead className="px-4 font-medium">Name</TableHead>
                             <TableHead className="px-4 font-medium">
                                 <button
@@ -80,17 +99,20 @@ export const AgencyUsersTablePanel = ({ data }: AgencyUsersTablePanelProps) => {
                                     <ChevronsUpDown className="h-4 w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {sortedUsers.map((user) => (
                             <TableRow key={user.id} className="border-b border-border">
                                 <TableCell className="px-4 py-3">
-                                    <div className="flex items-center gap-3">
-                                        <Checkbox className="data-[state=checked]:bg-progress data-[state=checked]:border-progress" />
-                                        <span className="font-normal">{user.name}</span>
-                                    </div>
+                                    <Checkbox
+                                        checked={selectedUsers.includes(user.id)}
+                                        onCheckedChange={(checked) => handleSelectUser(user.id, checked as boolean)}
+                                        className="data-[state=checked]:bg-progress data-[state=checked]:border-progress"
+                                    />
+                                </TableCell>
+                                <TableCell className="px-4 py-3">
+                                    <span className="font-normal">{user.name}</span>
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{user.role}</TableCell>
                                 <TableCell className="px-4 py-4">
@@ -109,14 +131,6 @@ export const AgencyUsersTablePanel = ({ data }: AgencyUsersTablePanelProps) => {
                                     >
                                         {user.twoFactorEnabled ? "Enabled" : "Disabled"}
                                     </Badge>
-                                </TableCell>
-                                <TableCell className="px-4 py-3">
-                                    <button
-                                        className="text-sm font-medium transition-colors hover:underline"
-                                        style={{ color: "var(--progress)" }}
-                                    >
-                                        View
-                                    </button>
                                 </TableCell>
                             </TableRow>
                         ))}

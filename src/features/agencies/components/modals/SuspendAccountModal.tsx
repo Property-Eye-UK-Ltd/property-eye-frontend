@@ -3,11 +3,10 @@ import { ModalShell } from "@/components/modals/ModalShell"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 
-interface SuspendStaffModalProps {
+interface SuspendAccountModalProps {
     open: boolean
     onClose: () => void
     onConfirm: (reason: string, description: string) => void
-    staffName?: string
 }
 
 const suspensionReasons = [
@@ -18,7 +17,7 @@ const suspensionReasons = [
     "Other",
 ]
 
-export const SuspendStaffModal = ({ open, onClose, onConfirm, staffName }: SuspendStaffModalProps) => {
+export const SuspendAccountModal = ({ open, onClose, onConfirm }: SuspendAccountModalProps) => {
     const [reason, setReason] = useState("")
     const [description, setDescription] = useState("")
 
@@ -42,8 +41,8 @@ export const SuspendStaffModal = ({ open, onClose, onConfirm, staffName }: Suspe
         <ModalShell open={open} onClose={handleClose} contentClassName="max-w-2xl rounded-3xl bg-white pb-0 pt-0">
             <form onSubmit={handleSubmit} className="flex max-h-[85vh] flex-col overflow-hidden rounded-3xl bg-white">
                 <div className="shrink-0 bg-white px-6 py-6 text-left">
-                    <h2 className="text-2xl font-medium text-foreground">Suspend Staff</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">Enter the reason for suspending staff</p>
+                    <h2 className="text-2xl font-medium text-foreground">Suspend Account</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Enter the reason for suspending the account</p>
                 </div>
 
                 <div className="scrollbar-super-thin overflow-y-auto bg-muted px-6 py-8">
@@ -70,7 +69,7 @@ export const SuspendStaffModal = ({ open, onClose, onConfirm, staffName }: Suspe
                                 <Textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    placeholder="Please provide details about the suspension reason..."
+                                    placeholder="There was..."
                                     className="min-h-32 rounded-xl border border-border bg-transparent px-4 py-3 text-sm resize-none"
                                 />
                             </div>

@@ -88,7 +88,7 @@ export const AddStaffModal = ({ open, onClose, onSubmit, isSubmitting = false }:
         <ModalShell open={open} onClose={onClose} contentClassName="max-w-3xl rounded-3xl bg-white pb-0 pt-0">
             <form onSubmit={handleSubmit} className="flex max-h-[85vh] flex-col overflow-hidden rounded-3xl bg-white">
                 <div className="shrink-0 bg-white px-6 py-6 text-left">
-                    <h2 className="text-2xl font-semibold text-foreground">Add a Staff</h2>
+                    <h2 className="text-2xl font-medium text-foreground">Add a Staff</h2>
                     <p className="mt-1 text-sm text-muted-foreground">Enter the details of the staff to be added to the team.</p>
                 </div>
 

@@ -10,17 +10,23 @@ import { AgencyTimelinePanel } from "@/features/agencies/components/summary/Agen
 import { AgencyInformationCard } from "@/features/agencies/components/summary/AgencyInformationCard"
 import { AgencyUsersTablePanel } from "@/features/agencies/components/users/AgencyUsersTablePanel"
 import { AgencyCasesTablePanel } from "@/features/agencies/components/cases/AgencyCasesTablePanel"
+import { SuspendAccountModal } from "@/features/agencies/components/modals/SuspendAccountModal"
+import { RoleOverrideModal } from "@/features/agencies/components/modals/RoleOverrideModal"
 import { AgencyProfileData, mockTimeline } from "@/data/agencyProfileData"
 import { mockAgencyUsers } from "@/data/agencyUsersData"
 import { mockAgencyCases } from "@/data/agencyCasesData"
 import { agenciesData } from "@/data/agenciesData"
 import { ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { toast } from "sonner"
 
 const AgencyProfile = () => {
     const { agencyId } = useParams<{ agencyId: string }>()
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState<"summary" | "users" | "cases">("summary")
+    const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false)
+    const [isRoleModalOpen, setIsRoleModalOpen] = useState(false)
+    const [selectedUsers, setSelectedUsers] = useState<string[]>([])
 
     // Find the agency data
     const agencyData = agenciesData.find((a) => a.id === agencyId)
@@ -63,6 +69,34 @@ const AgencyProfile = () => {
         { label: "Cases", value: "cases" },
     ]
 
+    const handleSuspend = (reason: string, description: string) => {
+        console.log("Suspending agency:", { reason, description })
+        toast.success("Agency account suspended successfully")
+        setIsSuspendModalOpen(false)
+    }
+
+    const handleRoleUpdate = (role: string, reason: string, description: string) => {
+        console.log("Updating role:", { role, reason, description, selectedUsers })
+        toast.success(`Role updated for ${selectedUsers.length} user(s)`)
+        setIsRoleModalOpen(false)
+        setSelectedUsers([]) // Clear selection after action
+    }
+
+    const handleActionClick = (action: "edit" | "reactivate" | "suspend") => {
+        if (selectedUsers.length === 0) {
+            toast.error(`Please select users before you can ${action === "edit" ? "edit user" : action === "reactivate" ? "reactivate account" : "suspend account"}`)
+            return
+        }
+
+        if (action === "edit") {
+            setIsRoleModalOpen(true)
+        } else if (action === "suspend") {
+            setIsSuspendModalOpen(true)
+        } else {
+             toast.success("Accounts reactivated successfully")
+        }
+    }
+
     return (
         <DashboardLayout variant="super-admin">
             {/* Page Header */}
@@ -76,6 +110,7 @@ const AgencyProfile = () => {
                     <Button
                         variant="destructive"
                         className="rounded-full bg-red-50 text-red-600 hover:bg-red-100 border-0"
+                        onClick={() => setIsSuspendModalOpen(true)}
                     >
                         Suspend Account
                     </Button>
@@ -125,16 +160,27 @@ const AgencyProfile = () => {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">
-                                    <DropdownMenuItem className="cursor-pointer">Invite User</DropdownMenuItem>
-                                    <DropdownMenuItem className="cursor-pointer">Export List</DropdownMenuItem>
-                                    <DropdownMenuItem className="cursor-pointer text-destructive">
-                                        Suspend Selected
+                                    <DropdownMenuItem className="cursor-pointer" onSelect={() => handleActionClick("edit")}>
+                                        Edit User
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="cursor-pointer" onSelect={() => handleActionClick("reactivate")}>
+                                        Reactivate Account
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="cursor-pointer text-destructive"
+                                        onSelect={() => handleActionClick("suspend")}
+                                    >
+                                        Suspend Account
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         }
                     >
-                        <AgencyUsersTablePanel data={mockAgencyUsers} />
+                        <AgencyUsersTablePanel
+                            data={mockAgencyUsers}
+                            selectedUsers={selectedUsers}
+                            onSelectionChange={setSelectedUsers}
+                        />
                     </DashboardPanel>
                 )}
 
@@ -149,6 +195,18 @@ const AgencyProfile = () => {
                     </DashboardPanel>
                 )}
             </div>
+
+            <SuspendAccountModal
+                open={isSuspendModalOpen}
+                onClose={() => setIsSuspendModalOpen(false)}
+                onConfirm={handleSuspend}
+            />
+            
+            <RoleOverrideModal
+                open={isRoleModalOpen}
+                onClose={() => setIsRoleModalOpen(false)}
+                onConfirm={handleRoleUpdate}
+            />
         </DashboardLayout>
     )
 }
