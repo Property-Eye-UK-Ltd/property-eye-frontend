@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,6 +13,7 @@ interface AgencyCasesTablePanelProps {
 }
 
 export const AgencyCasesTablePanel = ({ data }: AgencyCasesTablePanelProps) => {
+    const navigate = useNavigate()
     const [sortColumn, setSortColumn] = useState<keyof AgencyCase | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [currentPage, setCurrentPage] = useState(1)
@@ -93,6 +95,13 @@ export const AgencyCasesTablePanel = ({ data }: AgencyCasesTablePanelProps) => {
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.dateDetected}</TableCell>
                                 <TableCell className="px-4 py-3">
                                     <button
+                                        onClick={() => navigate(`/admin/cases/${encodeURIComponent(caseItem.caseId)}`, {
+                                            state: {
+                                                returnPath: window.location.pathname,
+                                                returnLabel: "Agency Profile",
+                                                activeTab: "cases"
+                                            }
+                                        })}
                                         className="text-sm font-medium transition-colors hover:underline"
                                         style={{ color: "var(--progress)" }}
                                     >

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { Button } from "@/components/ui/button"
@@ -80,12 +80,16 @@ const AdminCaseDetails = () => {
         evidenceStatus: "Completed",
     }
 
+    const location = useLocation()
+    const returnPath = location.state?.returnPath || "/admin/cases"
+    const returnLabel = location.state?.returnLabel || "Case Management"
+
     return (
         <DashboardLayout variant="super-admin">
             {/* Page Header */}
             <DynamicPageHeader
                 title="Case Details"
-                breadcrumbs={[{ label: "Case Management", href: "/admin/cases" }, { label: decodedCaseId }]}
+                breadcrumbs={[{ label: returnLabel, href: returnPath }, { label: decodedCaseId }]}
                 actions={
                     <div className="flex items-center gap-3">
                         <Button
