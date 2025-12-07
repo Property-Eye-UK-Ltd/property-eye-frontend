@@ -8,9 +8,10 @@ import { Camera, Profile } from "iconsax-react"
 interface ProfileTabProps {
     settings: ProfileSettings
     onSave: (settings: ProfileSettings) => void
+    isSuperAdmin?: boolean
 }
 
-export const ProfileTab = ({ settings, onSave }: ProfileTabProps) => {
+export const ProfileTab = ({ settings, onSave, isSuperAdmin = false }: ProfileTabProps) => {
     const [isEditing, setIsEditing] = useState(false)
     const [formData, setFormData] = useState<ProfileSettings>(settings)
     const [previewLogo, setPreviewLogo] = useState<string | null>(null)
@@ -85,18 +86,20 @@ export const ProfileTab = ({ settings, onSave }: ProfileTabProps) => {
 
                     {/* Form Fields - Left aligned */}
                     <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="agencyName" className="text-sm font-normal text-foreground">
-                                Agency Name
-                            </Label>
-                            <Input
-                                id="agencyName"
-                                placeholder="Enter agency name"
-                                value={formData.agencyName}
-                                onChange={(e) => handleChange("agencyName", e.target.value)}
-                                disabled={!isEditing}
-                            />
-                        </div>
+                        {!isSuperAdmin && (
+                            <div className="space-y-2">
+                                <Label htmlFor="agencyName" className="text-sm font-normal text-foreground">
+                                    Agency Name
+                                </Label>
+                                <Input
+                                    id="agencyName"
+                                    placeholder="Enter agency name"
+                                    value={formData.agencyName}
+                                    onChange={(e) => handleChange("agencyName", e.target.value)}
+                                    disabled={!isEditing}
+                                />
+                            </div>
+                        )}
 
                         <div className="space-y-2">
                             <Label htmlFor="email" className="text-sm font-normal text-foreground">
@@ -125,18 +128,20 @@ export const ProfileTab = ({ settings, onSave }: ProfileTabProps) => {
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="address" className="text-sm font-normal text-foreground">
-                                Address
-                            </Label>
-                            <Input
-                                id="address"
-                                placeholder="Enter address"
-                                value={formData.address}
-                                onChange={(e) => handleChange("address", e.target.value)}
-                                disabled={!isEditing}
-                            />
-                        </div>
+                        {!isSuperAdmin && (
+                            <div className="space-y-2">
+                                <Label htmlFor="address" className="text-sm font-normal text-foreground">
+                                    Address
+                                </Label>
+                                <Input
+                                    id="address"
+                                    placeholder="Enter address"
+                                    value={formData.address}
+                                    onChange={(e) => handleChange("address", e.target.value)}
+                                    disabled={!isEditing}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

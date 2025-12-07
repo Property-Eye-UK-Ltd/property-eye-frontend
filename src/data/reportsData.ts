@@ -62,3 +62,51 @@ export const checksConsumptionData = [
     { name: "Premium Plan", value: 130298, color: "#EAB308" },
     { name: "Enterprise Plan", value: 45264, color: "#6B7280" },
 ]
+
+// Cases Open vs Cases Closed data
+export const casesChartData = [
+    { month: "Jan", "Cases Open": 45, "Cases Closed": 70 },
+    { month: "Feb", "Cases Open": 52, "Cases Closed": 20 },
+    { month: "Mar", "Cases Open": 35, "Cases Closed": 30 },
+    { month: "Apr", "Cases Open": 85, "Cases Closed": 20 },
+    { month: "May", "Cases Open": 20, "Cases Closed": 40 },
+    { month: "Jun", "Cases Open": 15, "Cases Closed": 10 },
+    { month: "Jul", "Cases Open": 55, "Cases Closed": 40 },
+    { month: "Aug", "Cases Open": 35, "Cases Closed": 15 },
+    { month: "Sep", "Cases Open": 60, "Cases Closed": 95 },
+    { month: "Oct", "Cases Open": 85, "Cases Closed": 55 },
+    { month: "Nov", "Cases Open": 45, "Cases Closed": 90 },
+    { month: "Dec", "Cases Open": 15, "Cases Closed": 40 },
+]
+
+export const casesChartConfig = {
+    "Cases Open": {
+        label: "Cases Open",
+        color: "#F97316",
+    },
+    "Cases Closed": {
+        label: "Cases Closed",
+        color: "#16A34A",
+    },
+}
+
+// Event Log data
+export interface EventLogEntry {
+    actor: string
+    role: string
+    actionType: string
+    targetObject: string
+    date: string
+}
+
+export const eventLogData: EventLogEntry[] = [
+    { actor: "John Smith", role: "Admin", actionType: "Triggered Case", targetObject: "Case", date: "3 November, 2025" },
+    { actor: "Khalid Jaffar", role: "Admin", actionType: "Closed Case", targetObject: "Case", date: "3 November, 2025" },
+    { actor: "Maria Sheldon", role: "Admin", actionType: "Suspension", targetObject: "Agency", date: "3 November, 2025" },
+    { actor: "John Smith", role: "Admin", actionType: "Role Override", targetObject: "Agency", date: "21 October, 2025" },
+    { actor: "Kurt Daniel", role: "Admin", actionType: "Printed Invoice", targetObject: "Invoice", date: "21 October, 2025" },
+    { actor: "Angela Davies", role: "Admin", actionType: "Closed Case", targetObject: "Case", date: "21 October, 2025" },
+    { actor: "John Smith", role: "Admin", actionType: "Suspension", targetObject: "Agency", date: "3 November, 2025" },
+    { actor: "Khalid Jaffar", role: "Admin", actionType: "Printed Invoice", targetObject: "Invoice", date: "21 October, 2025" },
+    { actor: "Maria Sheldon", role: "Admin", actionType: "Printed Invoice", targetObject: "Invoice", date: "30 September, 2025" },
+]

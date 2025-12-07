@@ -27,6 +27,7 @@ interface FraudDetectionPanelProps {
   data: FraudDataPoint[]
   config: Record<string, FraudSeriesConfig>
   showCategoryFilter?: boolean
+  showArea?: boolean
   title?: string
 }
 
@@ -119,7 +120,7 @@ const FraudTooltip = ({ active, payload, label, config }: TooltipProps<number, s
   )
 }
 
-export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, title = "Fraud Detection Over Time" }: FraudDetectionPanelProps) => {
+export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, showArea = true, title = "Fraud Detection Over Time" }: FraudDetectionPanelProps) => {
   const [timeRange, setTimeRange] = useState("12")
   const [selectedCategories, setSelectedCategories] = useState<string[]>(Object.keys(config))
 
@@ -230,7 +231,7 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, t
             />
             <YAxis domain={[0, 100]} fontSize={12} stroke="#64748B" />
             <ChartTooltip content={<FraudTooltip config={config} />} />
-            {Object.keys(filteredConfig).map((key) => (
+            {(showArea ?? true) && Object.keys(filteredConfig).map((key) => (
               <Area key={`area-${key}`} type="linear" dataKey={key} fill={`url(#gradient${key})`} stroke="none" />
             ))}
             {Object.entries(filteredConfig).map(([key, value]) => (
