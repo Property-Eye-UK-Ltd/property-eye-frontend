@@ -21,7 +21,7 @@ import {
 import {
     periods,
     analyticsTabs,
-    metrics,
+    metricsData,
     fraudRateData,
     fraudRateConfig,
     severityData,
@@ -89,7 +89,7 @@ const Analytics = () => {
             />
 
             <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
-                <MetricCards metrics={metrics} />
+                <MetricCards metrics={metricsData[selectedPeriod]} />
                 <CaseTypeTabs tabs={analyticsTabs} selected={selectedTab} onSelect={setSelectedTab} />
 
                 {/* Overview Tab Content */}

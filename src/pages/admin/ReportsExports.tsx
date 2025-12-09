@@ -11,7 +11,7 @@ import { ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { TopAgenciesTable } from "@/features/reports/components/TopAgenciesTable"
 import { EventLogTable } from "@/features/reports/components/EventLogTable"
-import { reportsMetrics, reportPeriods, topAgenciesData, checksConsumptionData, casesChartData, casesChartConfig, eventLogData } from "@/data/reportsData"
+import { reportsMetricsData, reportPeriods, topAgenciesData, checksConsumptionData, casesChartData, casesChartConfig, eventLogData } from "@/data/reportsData"
 
 const ReportsExports = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(reportPeriods[0])
@@ -52,7 +52,7 @@ const ReportsExports = () => {
             {/* Page Content */}
             <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
                 {/* Metric Cards */}
-                <MetricCards metrics={reportsMetrics} />
+                <MetricCards metrics={reportsMetricsData[selectedPeriod]} />
 
                 {/* First Row - Pie Chart and Top Agencies Table */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">

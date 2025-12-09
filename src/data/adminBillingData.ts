@@ -100,35 +100,97 @@ export const billingStatusStyles: Record<BillingTransaction["status"], string> =
   Pending: "bg-orange-50 text-orange-600 border border-orange-100",
 }
 
-export const billingMetrics: MetricCard[] = [
-  {
-    title: "Revenue Generated",
-    value: "£94,320",
-    period: "All time",
-    change: "+2%",
-    topBarClass: "bg-green-500",
-  },
-  {
-    title: "Total Subscribers",
-    value: "329",
-    period: "All time",
-    change: "+2%",
-    topBarClass: "bg-purple-500",
-  },
-  {
-    title: "Pending Renewal",
-    value: "37",
-    period: "All time",
-    change: "+2%",
-    topBarClass: "bg-orange-500",
-  },
-  {
-    title: "Cancelled Subscriptions",
-    value: "50",
-    period: "All time",
-    change: "+321",
-    topBarClass: "bg-red-500",
-  },
-]
+export const billingMetricsData: Record<string, MetricCard[]> = {
+  "All Time": [
+    {
+      title: "Revenue Generated",
+      value: "£94,320",
+      period: "All time",
+      change: "+2%",
+      topBarClass: "bg-green-500",
+    },
+    {
+      title: "Total Subscribers",
+      value: "329",
+      period: "All time",
+      change: "+2%",
+      topBarClass: "bg-purple-500",
+    },
+    {
+      title: "Pending Renewal",
+      value: "37",
+      period: "All time",
+      change: "+2%",
+      topBarClass: "bg-orange-500",
+    },
+    {
+      title: "Cancelled Subscriptions",
+      value: "50",
+      period: "All time",
+      change: "+321",
+      topBarClass: "bg-red-500",
+    },
+  ],
+  "This Month": [
+    {
+      title: "Revenue Generated",
+      value: "£8,450",
+      period: "This Month",
+      change: "+5%",
+      topBarClass: "bg-green-500",
+    },
+    {
+      title: "Total Subscribers",
+      value: "335",
+      period: "This Month",
+      change: "+6",
+      topBarClass: "bg-purple-500",
+    },
+    {
+      title: "Pending Renewal",
+      value: "42",
+      period: "This Month",
+      change: "+5",
+      topBarClass: "bg-orange-500",
+    },
+    {
+      title: "Cancelled Subscriptions",
+      value: "52",
+      period: "This Month",
+      change: "+2",
+      topBarClass: "bg-red-500",
+    },
+  ],
+  "Last Week": [
+    {
+      title: "Revenue Generated",
+      value: "£2,100",
+      period: "Last Week",
+      change: "-1%",
+      topBarClass: "bg-green-500",
+    },
+    {
+      title: "Total Subscribers",
+      value: "330",
+      period: "Last Week",
+      change: "+1",
+      topBarClass: "bg-purple-500",
+    },
+    {
+      title: "Pending Renewal",
+      value: "39",
+      period: "Last Week",
+      change: "+2",
+      topBarClass: "bg-orange-500",
+    },
+    {
+      title: "Cancelled Subscriptions",
+      value: "51",
+      period: "Last Week",
+      change: "+1",
+      topBarClass: "bg-red-500",
+    },
+  ],
+}
 
 export const billingPeriods = ["All Time", "This Month", "Last Week"]

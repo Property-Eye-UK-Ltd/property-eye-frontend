@@ -13,36 +13,98 @@ export const analyticsTabs = [
     { label: "Financial Impact", value: "financial-impact" },
 ]
 
-export const metrics: MetricCard[] = [
-    {
-        title: "Total fraud Alerts",
-        value: "1,459",
-        period: "All time",
-        change: "+221",
-        topBarClass: "bg-red-500",
-    },
-    {
-        title: "Commission at Risk",
-        value: "£12,898",
-        period: "All time",
-        change: "+£2,233",
-        topBarClass: "bg-orange-500",
-    },
-    {
-        title: "Total Recoveries",
-        value: "324",
-        period: "All time",
-        change: "+2",
-        topBarClass: "bg-green-500",
-    },
-    {
-        title: "Avg. Fraud Likelihood",
-        value: "37%",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-purple-500",
-    },
-]
+export const metricsData: Record<string, MetricCard[]> = {
+    "All Time": [
+        {
+            title: "Total fraud Alerts",
+            value: "1,459",
+            period: "All time",
+            change: "+221",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Commission at Risk",
+            value: "£12,898",
+            period: "All time",
+            change: "+£2,233",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Total Recoveries",
+            value: "324",
+            period: "All time",
+            change: "+2",
+            topBarClass: "bg-green-500",
+        },
+        {
+            title: "Avg. Fraud Likelihood",
+            value: "37%",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-purple-500",
+        },
+    ],
+    "This Month": [
+        {
+            title: "Total fraud Alerts",
+            value: "128",
+            period: "This Month",
+            change: "+15",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Commission at Risk",
+            value: "£1,250",
+            period: "This Month",
+            change: "+£150",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Total Recoveries",
+            value: "22",
+            period: "This Month",
+            change: "+3",
+            topBarClass: "bg-green-500",
+        },
+        {
+            title: "Avg. Fraud Likelihood",
+            value: "35%",
+            period: "This Month",
+            change: "-1%",
+            topBarClass: "bg-purple-500",
+        },
+    ],
+    "Last Week": [
+        {
+            title: "Total fraud Alerts",
+            value: "34",
+            period: "Last Week",
+            change: "-2",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Commission at Risk",
+            value: "£450",
+            period: "Last Week",
+            change: "-£50",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Total Recoveries",
+            value: "5",
+            period: "Last Week",
+            change: "+1",
+            topBarClass: "bg-green-500",
+        },
+        {
+            title: "Avg. Fraud Likelihood",
+            value: "33%",
+            period: "Last Week",
+            change: "-3%",
+            topBarClass: "bg-purple-500",
+        },
+    ],
+}
 
 // Overview Tab Data
 export const fraudRateData: FraudDataPoint[] = [

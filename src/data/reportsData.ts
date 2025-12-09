@@ -22,36 +22,98 @@ export const topAgenciesData: TopAgency[] = [
 ]
 
 // Reports metrics
-export const reportsMetrics: MetricCard[] = [
-    {
-        title: "Revenue Generated",
-        value: "£194,320",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-green-500",
-    },
-    {
-        title: "Cases Open",
-        value: "329",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-purple-500",
-    },
-    {
-        title: "Pending Renewal",
-        value: "37",
-        period: "All time",
-        change: "+12%",
-        topBarClass: "bg-gray-500",
-    },
-    {
-        title: "Cancelled Subscriptions",
-        value: "50",
-        period: "All time",
-        change: "+321",
-        topBarClass: "bg-red-500",
-    },
-]
+export const reportsMetricsData: Record<string, MetricCard[]> = {
+    "All Time": [
+        {
+            title: "Revenue Generated",
+            value: "£194,320",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-green-500",
+        },
+        {
+            title: "Cases Open",
+            value: "329",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-purple-500",
+        },
+        {
+            title: "Pending Renewal",
+            value: "37",
+            period: "All time",
+            change: "+12%",
+            topBarClass: "bg-gray-500",
+        },
+        {
+            title: "Cancelled Subscriptions",
+            value: "50",
+            period: "All time",
+            change: "+321",
+            topBarClass: "bg-red-500",
+        },
+    ],
+    "This Month": [
+        {
+            title: "Revenue Generated",
+            value: "£14,250",
+            period: "This Month",
+            change: "+5%",
+            topBarClass: "bg-green-500",
+        },
+        {
+            title: "Cases Open",
+            value: "35",
+            period: "This Month",
+            change: "+3%",
+            topBarClass: "bg-purple-500",
+        },
+        {
+            title: "Pending Renewal",
+            value: "12",
+            period: "This Month",
+            change: "+4%",
+            topBarClass: "bg-gray-500",
+        },
+        {
+            title: "Cancelled Subscriptions",
+            value: "8",
+            period: "This Month",
+            change: "+1",
+            topBarClass: "bg-red-500",
+        },
+    ],
+    "Last Week": [
+        {
+            title: "Revenue Generated",
+            value: "£3,200",
+            period: "Last Week",
+            change: "+1%",
+            topBarClass: "bg-green-500",
+        },
+        {
+            title: "Cases Open",
+            value: "12",
+            period: "Last Week",
+            change: "+1%",
+            topBarClass: "bg-purple-500",
+        },
+        {
+            title: "Pending Renewal",
+            value: "5",
+            period: "Last Week",
+            change: "+2%",
+            topBarClass: "bg-gray-500",
+        },
+        {
+            title: "Cancelled Subscriptions",
+            value: "2",
+            period: "Last Week",
+            change: "+0",
+            topBarClass: "bg-red-500",
+        },
+    ],
+}
 
 export const reportPeriods = ["All Time", "This Month", "Last Week"]
 

@@ -4,36 +4,98 @@ import { FraudDataPoint, FraudSeriesConfig } from "@/features/overview/component
 import { CaseQueueRecord } from "@/features/admin/components/CaseQueuePanel"
 import { FraudTypeData, FraudTypeConfig } from "@/features/analytics/components/MostCommonFraudTypesPanel"
 
-export const adminMetrics: MetricCard[] = [
-    {
-        title: "Total Checks Used",
-        value: "17,320",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-blue-500",
-    },
-    {
-        title: "Total Agencies",
-        value: "1,459",
-        period: "All time",
-        change: "+321",
-        topBarClass: "bg-red-500",
-    },
-    {
-        title: "Total Open Cases",
-        value: "280",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-orange-500",
-    },
-    {
-        title: "Recovered Commission",
-        value: "£433,294",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-green-500",
-    },
-]
+export const adminMetricsData: Record<string, MetricCard[]> = {
+    "All Time": [
+        {
+            title: "Total Checks Used",
+            value: "17,320",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-blue-500",
+        },
+        {
+            title: "Total Agencies",
+            value: "1,459",
+            period: "All time",
+            change: "+321",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Total Open Cases",
+            value: "280",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Recovered Commission",
+            value: "£433,294",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-green-500",
+        },
+    ],
+    "This Month": [
+        {
+            title: "Total Checks Used",
+            value: "1,250",
+            period: "This Month",
+            change: "+5%",
+            topBarClass: "bg-blue-500",
+        },
+        {
+            title: "Total Agencies",
+            value: "1,480",
+            period: "This Month",
+            change: "+21",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Total Open Cases",
+            value: "45",
+            period: "This Month",
+            change: "-10%",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Recovered Commission",
+            value: "£32,400",
+            period: "This Month",
+            change: "+4%",
+            topBarClass: "bg-green-500",
+        },
+    ],
+    "Last Week": [
+        {
+            title: "Total Checks Used",
+            value: "320",
+            period: "Last Week",
+            change: "-1%",
+            topBarClass: "bg-blue-500",
+        },
+        {
+            title: "Total Agencies",
+            value: "1,482",
+            period: "Last Week",
+            change: "+2",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Total Open Cases",
+            value: "12",
+            period: "Last Week",
+            change: "-5%",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Recovered Commission",
+            value: "£8,500",
+            period: "Last Week",
+            change: "+1%",
+            topBarClass: "bg-green-500",
+        },
+    ],
+}
 
 export const adminRevenueData: CommissionBreakdownDatum[] = [
     { name: "Basic Plan", value: 9543, color: "#9333EA" }, // Purple

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { SearchNormal, Filter, ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { BillingHistoryTable } from "@/features/adminbilling/components/BillingHistoryTable"
-import { mockBillingTransactions, billingMetrics, billingPeriods } from "@/data/adminBillingData"
+import { mockBillingTransactions, billingMetricsData, billingPeriods } from "@/data/adminBillingData"
 
 const BillingFinance = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(billingPeriods[0])
@@ -32,7 +32,7 @@ const BillingFinance = () => {
             {/* Page Content */}
             <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
                 {/* Metric Cards */}
-                <MetricCards metrics={billingMetrics} />
+                <MetricCards metrics={billingMetricsData[selectedPeriod]} />
 
                 {/* Billing History Panel */}
                 <DashboardPanel

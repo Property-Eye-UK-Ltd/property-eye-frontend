@@ -8,7 +8,7 @@ import { FraudDetectionPanel } from "@/features/overview/components/FraudDetecti
 import { CaseQueuePanel } from "@/features/admin/components/CaseQueuePanel"
 import { MostCommonFraudTypesPanel } from "@/features/analytics/components/MostCommonFraudTypesPanel"
 import {
-    adminMetrics,
+    adminMetricsData,
     adminRevenueData,
     adminCaseQueueData,
     adminSeverityStyles,
@@ -36,7 +36,7 @@ const AdminOverview = () => {
 
             <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
                 {/* Metric Cards */}
-                <MetricCards metrics={adminMetrics} />
+                <MetricCards metrics={adminMetricsData[selectedPeriod]} />
 
                 {/* Users Activity Chart */}
                 <FraudDetectionPanel

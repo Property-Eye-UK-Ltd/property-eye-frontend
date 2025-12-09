@@ -11,36 +11,98 @@ export interface AgencyRecord {
     accountStatus: "Active" | "Suspended" | "Pending"
 }
 
-export const agenciesMetrics: MetricCard[] = [
-    {
-        title: "Total Agencies",
-        value: "1,459",
-        period: "All time",
-        change: "+321",
-        topBarClass: "bg-red-500",
-    },
-    {
-        title: "Self-handled Agencies",
-        value: "329",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-purple-500",
-    },
-    {
-        title: "Total Agency Users",
-        value: "280",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-orange-500",
-    },
-    {
-        title: "Total Open Cases",
-        value: "94",
-        period: "All time",
-        change: "+2%",
-        topBarClass: "bg-green-500",
-    },
-]
+export const agenciesMetricsData: Record<string, MetricCard[]> = {
+    "All Time": [
+        {
+            title: "Total Agencies",
+            value: "1,459",
+            period: "All time",
+            change: "+321",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Self-handled Agencies",
+            value: "329",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-purple-500",
+        },
+        {
+            title: "Total Agency Users",
+            value: "280",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Total Open Cases",
+            value: "94",
+            period: "All time",
+            change: "+2%",
+            topBarClass: "bg-green-500",
+        },
+    ],
+    "This Month": [
+        {
+            title: "Total Agencies",
+            value: "1,480",
+            period: "This Month",
+            change: "+21",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Self-handled Agencies",
+            value: "340",
+            period: "This Month",
+            change: "+11",
+            topBarClass: "bg-purple-500",
+        },
+        {
+            title: "Total Agency Users",
+            value: "295",
+            period: "This Month",
+            change: "+15",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Total Open Cases",
+            value: "102",
+            period: "This Month",
+            change: "+8",
+            topBarClass: "bg-green-500",
+        },
+    ],
+    "Last Week": [
+        {
+            title: "Total Agencies",
+            value: "1,462",
+            period: "Last Week",
+            change: "+3",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Self-handled Agencies",
+            value: "331",
+            period: "Last Week",
+            change: "+2",
+            topBarClass: "bg-purple-500",
+        },
+        {
+            title: "Total Agency Users",
+            value: "282",
+            period: "Last Week",
+            change: "+2",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Total Open Cases",
+            value: "96",
+            period: "Last Week",
+            change: "+2",
+            topBarClass: "bg-green-500",
+        },
+    ],
+}
 
 export const agenciesData: AgencyRecord[] = [
     {

@@ -14,7 +14,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { agenciesMetrics, agenciesData } from "@/data/agenciesData"
+import { agenciesMetricsData, agenciesData } from "@/data/agenciesData"
 import { AgenciesTablePanel } from "@/features/agencies/components/AgenciesTablePanel"
 
 const periods = ["All Time", "This Month", "Last Week"]
@@ -46,7 +46,7 @@ const Agencies = () => {
 
             <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
                 {/* Metric Cards */}
-                <MetricCards metrics={agenciesMetrics} />
+                <MetricCards metrics={agenciesMetricsData[selectedPeriod]} />
 
                 {/* Agencies List Panel */}
                 <DashboardPanel
