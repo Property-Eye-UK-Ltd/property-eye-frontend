@@ -2,6 +2,7 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { Button } from "@/components/ui/button"
 import { useParams, useNavigate } from "react-router-dom"
+import { helpCenterCards } from "@/data/help-center-data"
 
 const HelpArticle = () => {
     const { articleId } = useParams()
@@ -11,11 +12,16 @@ const HelpArticle = () => {
         console.log("Contact Us clicked")
     }
 
-    // Mock data - in real app, fetch based on articleId
+    // Find the card data based on the URL
+    const matchedCard = helpCenterCards.find((card) => card.link.endsWith(articleId || ""))
+    const title = matchedCard?.title || "Getting Started"
+    const description = matchedCard?.description || "Learn how to login, setup your account, and navigate the main features."
+
+    // Mock content - keep sections static for now as we don't have separate content per article
     const article = {
-        title: "Getting Started",
+        title: title,
         lastModified: "Jan 2025",
-        description: "Learn how to login, setup your account, and navigate the main features.",
+        description: description,
         sections: [
             {
                 title: "Creating an Account",

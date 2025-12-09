@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useLocation } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PropertyPartiesPanel, PropertyPartiesData } from "@/features/cases/components/PropertyPartiesPanel"
@@ -148,6 +148,7 @@ const fraudTypeStyles: Record<CaseRecord["fraudType"], string> = {
 
 const CaseDetails = () => {
   const { caseId } = useParams<{ caseId: string }>()
+  const location = useLocation()
   const [isCloseCaseModalOpen, setIsCloseCaseModalOpen] = useState(false)
   const [selectedEvidence, setSelectedEvidence] = useState<EvidenceRecord | null>(null)
   const [isEvidenceModalOpen, setIsEvidenceModalOpen] = useState(false)
@@ -246,7 +247,7 @@ const CaseDetails = () => {
       <DynamicPageHeader
         title="Case Details"
         breadcrumbs={[
-          { label: "Case Management", href: "/dashboard/cases" },
+          { label: (location.state as any)?.returnLabel || "Case Management", href: (location.state as any)?.returnPath || "/dashboard/cases" },
           { label: decodedCaseId },
         ]}
         actions={

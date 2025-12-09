@@ -60,7 +60,7 @@ export const AuthLayout = ({
             </div>
 
             {/* Right Side - Image/Brand Area */}
-            <div className="hidden lg:flex flex-1 bg-primary relative overflow-hidden">
+            <div className="hidden lg:flex flex-1 bg-primary relative overflow-hidden h-screen sticky top-0">
                 {/* Text and Image Container - Bottom Right Aligned */}
                 <div className="absolute bottom-0 right-0 flex flex-col items-end">
                     {/* Text - Above Image, Left Aligned */}

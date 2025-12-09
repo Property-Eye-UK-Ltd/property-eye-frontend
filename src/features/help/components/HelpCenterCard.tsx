@@ -13,7 +13,7 @@ export const HelpCenterCard = ({ icon, title, description, link }: HelpCenterCar
     const IconComponent = (Icons as any)[icon] || Icons.InfoCircle
 
     return (
-        <div className="rounded-2xl bg-muted p-6">
+        <Link to={link} className="block rounded-2xl bg-muted p-6 transition-colors hover:bg-muted/80">
             <div className="space-y-4">
                 {/* Icon */}
                 <div className="w-12 h-12 rounded-full bg-[#00072C0D] flex items-center justify-center">
@@ -27,14 +27,13 @@ export const HelpCenterCard = ({ icon, title, description, link }: HelpCenterCar
                 </div>
 
                 {/* Read More Link */}
-                <Link
-                    to={link}
+                <span
                     className="inline-block text-sm font-normal transition-colors"
                     style={{ color: "var(--progress)" }}
                 >
                     Read more
-                </Link>
+                </span>
             </div>
-        </div>
+        </Link>
     )
 }

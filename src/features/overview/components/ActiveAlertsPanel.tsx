@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -7,6 +8,8 @@ import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { ChevronsUpDown } from "lucide-react"
 
 export interface AlertRecord {
+  id?: string
+  caseId?: string
   property: string
   fraudScore: number
   type: string
@@ -25,6 +28,7 @@ export const ActiveAlertsPanel = ({
   severityStyles,
   pagination = [1, 2, 3, "ellipsis", 8, 9, 10],
 }: ActiveAlertsPanelProps) => {
+  const navigate = useNavigate()
   const [sortColumn, setSortColumn] = useState<"type" | "severity" | null>(null)
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
   const [currentPage, setCurrentPage] = useState(1)
@@ -71,18 +75,18 @@ export const ActiveAlertsPanel = ({
             <TableRow className="bg-gray-50">
               <TableHead className="px-4 font-medium">Property</TableHead>
               <TableHead className="px-4 font-medium">Fraud Score</TableHead>
-              <TableHead className="px-4 font-semibold">
+              <TableHead className="px-4 font-medium">
                 <button
-                  className="flex items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   onClick={() => handleSort("type")}
                 >
                   Type
                   <ChevronsUpDown className="h-4 w-4" />
                 </button>
               </TableHead>
-              <TableHead className="px-4 font-semibold">
+              <TableHead className="px-4 font-medium">
                 <button
-                  className="flex items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   onClick={() => handleSort("severity")}
                 >
                   Severity
@@ -109,7 +113,16 @@ export const ActiveAlertsPanel = ({
                 </TableCell>
                 <TableCell className="px-4 py-3">{alert.dateDetected}</TableCell>
                 <TableCell className="px-4 py-3">
-                  <button className="text-sm font-medium transition-colors hover:underline" style={{ color: "var(--progress)" }}>
+                  <button
+                    onClick={() => navigate(`/dashboard/cases/${encodeURIComponent(alert.caseId || "")}`, {
+                      state: {
+                        returnPath: "/dashboard",
+                        returnLabel: "Overview"
+                      }
+                    })}
+                    className="text-sm font-medium transition-colors hover:underline"
+                    style={{ color: "var(--progress)" }}
+                  >
                     View
                   </button>
                 </TableCell>
