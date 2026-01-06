@@ -51,7 +51,7 @@ const Header = () => {
                                 key={link.label}
                                 to={link.href}
                                 className={cn(
-                                    "text-primary/70 hover:text-primary font-normal text-sm transition-colors",
+                                    "text-primary/40 hover:text-primary font-normal text-sm transition-colors",
                                     isActive && "font-semibold text-primary"
                                 )}
                             >

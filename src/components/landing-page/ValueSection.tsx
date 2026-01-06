@@ -44,15 +44,15 @@ const ValueSection = () => {
                             {values.map((item, index) => (
                                 <div
                                     key={index}
-                                    className="bg-primary rounded-2xl p-8 md:p-10 relative overflow-hidden group hover:translate-y-[-4px] transition-all duration-300"
+                                    className="bg-primary rounded-2xl p-6 md:p-8 relative overflow-hidden group hover:translate-y-[-4px] transition-all duration-300"
                                 >
                                     {/* Icon Wrapper */}
-                                    <div className="absolute top-8 left-8 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white/80">
+                                    <div className="absolute top-6 left-8 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white/80">
                                         {item.icon}
                                     </div>
 
-                                    <div className="mt-14">
-                                        <h3 className="text-secondary text-md font-normal mb-6 leading-snug">
+                                    <div className="mt-20">
+                                        <h3 className="text-secondary text-md font-normal mb-4 leading-snug">
                                             {item.title}
                                         </h3>
                                         <p className="text-white text-xs md:text-sm leading-relaxed">
