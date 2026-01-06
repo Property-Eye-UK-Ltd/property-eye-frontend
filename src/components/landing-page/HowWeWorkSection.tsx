@@ -29,35 +29,35 @@ const HowWeWorkSection = () => {
             }}
         >
             <div className="mx-auto max-w-7xl px-6 relative z-10">
-                <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-24">
 
                     {/* Left Heading */}
                     <div className="lg:w-1/4 flex lg:justify-end">
-                        <h2 className="text-3xl md:text-4xl font-medium text-primary leading-tight lg:text-left sticky top-32">
+                        <h2 className="text-2xl md:text-4xl font-normal text-primary leading-tight lg:text-left sticky top-32">
                             How we work
                         </h2>
                     </div>
 
                     {/* Right Columns (Cards) */}
                     <div className="lg:w-3/4">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {steps.map((step, index) => (
                                 <div
                                     key={index}
-                                    className="bg-primary rounded-2xl p-4 md:p-6 flex flex-col min-h-[400px] transition-transform hover:translate-y-[-8px] duration-300"
+                                    className="bg-primary rounded-2xl p-6 md:p-6 lg:p-6 flex flex-col min-h-0 md:min-h-[450px] transition-transform hover:translate-y-[-8px] duration-300"
                                 >
                                     {/* Icon */}
-                                    <div className="mb-16">
+                                    <div className="mb-12">
                                         <img
                                             src={step.icon}
                                             alt={step.title}
-                                            className="w-16 h-16 object-contain"
+                                            className="w-16 h-16 md:w-16 md:h-16 object-contain"
                                         />
                                     </div>
 
                                     {/* Content */}
                                     <div className="mt-auto">
-                                        <h3 className="text-secondary text-sm md:text-md font-normal mb-4 leading-tight">
+                                        <h3 className="text-secondary text-md md:text-lg font-normal mb-4 leading-tight">
                                             {step.title}
                                         </h3>
                                         <p className="text-white text-xs md:text-sm leading-relaxed">

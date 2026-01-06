@@ -84,7 +84,7 @@ const Header = () => {
             {/* Mobile Navigation */}
             <div
                 className={cn(
-                    "lg:hidden fixed inset-x-0 top-[72px] bg-white border-t border-gray-100 shadow-xl transition-all duration-300 overflow-hidden",
+                    "lg:hidden fixed inset-x-0 top-[62px] bg-white border-t border-gray-100 shadow-xl transition-all duration-300 overflow-hidden",
                     isMenuOpen ? "max-h-screen py-6 opacity-100" : "max-h-0 py-0 opacity-0"
                 )}
             >

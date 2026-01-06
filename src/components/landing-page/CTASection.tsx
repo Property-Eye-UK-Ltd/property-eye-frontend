@@ -7,14 +7,14 @@ const CTASection = () => {
             <div className="mx-auto max-w-7xl px-6 relative">
 
                 {/* Main Card */}
-                <div className="bg-[#4D66EA] rounded-xl md:rounded-2xl p-12 md:p-24 relative z-10 flex flex-col items-center text-center overflow-hidden">
+                <div className="bg-[#4D66EA] rounded-xl md:rounded-2xl p-8 md:p-24 relative z-10 flex flex-col items-center text-center overflow-hidden">
 
                     {/* Decoration: Left SVG (Trapped) */}
-                    <div className="hidden lg:block absolute -left-1 top-1/2 -translate-y-1/2 z-0 w-1/4 max-w-[200px]">
+                    <div className="hidden lg:block absolute -left-4 top-1/2 -translate-y-1/2 z-0 w-1/4 max-w-[200px]">
                         <img
                             src="/assets/home/cta/left.svg"
                             alt=""
-                            className="w-full h-auto drop-shadow-2xl"
+                            className="w-full h-auto drop-shadow-2xl translate-y-[-10%]"
                         />
                     </div>
 
