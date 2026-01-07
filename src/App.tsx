@@ -3,8 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Index from "./pages/Index";
 import Home from "./pages/landing-page/Home";
+import Contact from "./pages/landing-page/Contact";
+import RequestDemo from "./pages/landing-page/RequestDemo";
+import ScrollToTop from "./components/ScrollToTop";
+import PrivacyPolicy from "./pages/landing-page/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -45,10 +48,14 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/request-demo" element={<RequestDemo />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           {/* Auth Flow Routes with Persistent Layout */}
           <Route element={<AuthFlowLayout />}>
