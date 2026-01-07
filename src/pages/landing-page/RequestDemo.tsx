@@ -19,6 +19,24 @@ export default function RequestDemo() {
 
     const logos = Array(4).fill("/assets/logo-dark.png"); // Using placeholders as per design, updated to match style
 
+    const nextSteps = [
+        { number: 1, text: "We receive your demo request" },
+        { number: 2, text: "We contact you to schedule" },
+        { number: 3, text: "You receive an access to demo" },
+    ];
+
+    const formatStepText = (text: string) => {
+        const words = text.split(" ");
+        const firstTwo = words.slice(0, 2).join(" ");
+        const rest = words.slice(2).join(" ");
+        return (
+            <>
+                <span className="text-secondary">{firstTwo}</span>{" "}
+                <span className="text-[#FFF2CE]">{rest}</span>
+            </>
+        );
+    };
+
     useEffect(() => {
         const { fullName, email, phoneNumber, agencyName } = formData;
         setIsValid(
@@ -58,8 +76,8 @@ export default function RequestDemo() {
         <div className="min-h-screen bg-page-background flex flex-col">
             <Header />
 
-            <main className="flex-grow flex items-center justify-center pt-28 pb-16 px-4 sm:px-6 lg:px-8">
-                <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-start">
+            <main className="flex-grow flex flex-col items-center pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+                <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-start mb-24">
 
                     {/* Left Column: Info */}
                     <div className="flex flex-col justify-center h-full pt-4">
@@ -174,6 +192,36 @@ export default function RequestDemo() {
                         </form>
                     </div>
 
+                </div>
+
+                {/* Next Steps Section */}
+                <div className="w-full max-w-7xl">
+                    <div className="text-center mb-16">
+                        <div className="inline-block px-4 py-1.5 rounded-full bg-primary text-secondary font-medium text-xs mb-6 tracking-widest uppercase">
+                            NEXT STEPS
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-medium text-black leading-tight">
+                            Here’s what you can expect <br className="hidden md:block" /> to happen next
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {nextSteps.map((step) => (
+                            <div
+                                key={step.number}
+                                className="bg-primary rounded-2xl p-8 min-h-0 md:min-h-[450px] flex flex-col justify-between relative overflow-hidden group hover:translate-y-[-8px] transition-transform duration-300"
+                            >
+                                {/* Number */}
+                                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white text-xl font-medium mb-8">
+                                    {step.number}
+                                </div>
+                                {/* Text */}
+                                <h3 className="text-lg md:text-2xl lg:text-3xl font-medium leading-tight">
+                                    {formatStepText(step.text)}
+                                </h3>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </main>
 
