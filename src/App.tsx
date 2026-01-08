@@ -10,6 +10,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import PrivacyPolicy from "./pages/landing-page/PrivacyPolicy";
 import CookiePolicy from "./pages/landing-page/CookiePolicy";
 import TermsAndConditions from "./pages/landing-page/TermsAndConditions";
+import Pricing from "./pages/landing-page/Pricing";
+import FAQ from "./pages/landing-page/FAQ";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -60,6 +62,8 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/faq" element={<FAQ />} />
 
           {/* Auth Flow Routes with Persistent Layout */}
           <Route element={<AuthFlowLayout />}>

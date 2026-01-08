@@ -6,11 +6,12 @@ import { SubscriptionPlan } from "@/data/subscription-plans-data"
 interface PlanCardProps {
     plan: SubscriptionPlan
     onSelectPlan: (planId: string) => void
+    ctaText?: string
 }
 
-export const PlanCard = ({ plan, onSelectPlan }: PlanCardProps) => {
+export const PlanCard = ({ plan, onSelectPlan, ctaText }: PlanCardProps) => {
     return (
-        <div className="relative flex flex-col rounded-2xl bg-muted p-6">
+        <div className="relative flex flex-col rounded-2xl bg-muted p-4 md:p-6">
             {/* Current Plan Badge */}
             {plan.isCurrent && (
                 <div className="absolute right-4 top-4">
@@ -21,7 +22,7 @@ export const PlanCard = ({ plan, onSelectPlan }: PlanCardProps) => {
             )}
 
             {/* Plan Header */}
-            <div className="mb-4">
+            <div className="mb-3 md:mb-4">
                 <h3 className="text-xs font-normal uppercase tracking-wide text-muted-foreground">
                     {plan.name}
                 </h3>
@@ -29,15 +30,15 @@ export const PlanCard = ({ plan, onSelectPlan }: PlanCardProps) => {
 
             {/* Price */}
             <div className="mb-2">
-                <p className="text-2xl font-medium text-foreground">{plan.priceRange}</p>
-                <p className="text-sm mb-6 text-muted-foreground">{plan.priceSubtext}</p>
+                <p className="text-xl md:text-2xl font-medium text-foreground">{plan.priceRange}</p>
+                <p className="text-xs md:text-sm mb-4 md:mb-6 text-muted-foreground">{plan.priceSubtext}</p>
             </div>
 
             {/* Description */}
-            <p className="mb-6 text-xs text-foreground">{plan.description}</p>
+            <p className="mb-4 md:mb-6 text-xs text-foreground">{plan.description}</p>
 
             {/* Features List */}
-            <div className="mb-6 flex-1 space-y-3">
+            <div className="mb-4 md:mb-6 flex-1 space-y-2 md:space-y-3">
                 {plan.features.map((feature, index) => (
                     <div key={index} className="flex items-center gap-2 text-xs">
                         <span className="text-muted-foreground">{feature.text}</span>
@@ -66,7 +67,7 @@ export const PlanCard = ({ plan, onSelectPlan }: PlanCardProps) => {
                     onClick={() => onSelectPlan(plan.id)}
                     className="w-full rounded-full bg-primary py-6 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                 >
-                    Select Plan
+                    {ctaText || "Select Plan"}
                 </Button>
             )}
         </div>

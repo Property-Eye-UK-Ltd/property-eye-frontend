@@ -12,13 +12,13 @@ const NotFound = () => {
     <div className="min-h-screen flex items-center justify-center bg-muted relative overflow-hidden">
       {/* Large 404 Background Text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <span className="text-[600px] font-medium text-gray-200 select-none leading-none">
+        <span className="text-[200px] md:text-[600px] font-medium text-gray-200 select-none leading-none opacity-50 md:opacity-100">
           404
         </span>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center space-y-6 px-4">
+      <div className="relative z-10 text-center space-y-4 md:space-y-6 px-4">
         {/* Eyebrow */}
         <div className="inline-block px-4 py-1.5 bg-progress/10 rounded-full">
           <span className="text-xs font-normal text-foreground uppercase tracking-wide">
