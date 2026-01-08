@@ -66,12 +66,12 @@ const Footer = () => {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/terms" className="text-white hover:text-white transition-colors text-sm">
+                                    <Link to="/terms-and-conditions" className="text-white hover:text-white transition-colors text-sm">
                                         Terms of Service
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/cookies" className="text-white hover:text-white transition-colors text-sm">
+                                    <Link to="/cookie-policy" className="text-white hover:text-white transition-colors text-sm">
                                         Cookie Policy
                                     </Link>
                                 </li>
