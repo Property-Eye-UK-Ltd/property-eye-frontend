@@ -5,6 +5,7 @@ import MissionSection from "@/components/landing-page/about/MissionSection";
 import ValuesSection from "@/components/landing-page/about/ValuesSection";
 import StorySection from "@/components/landing-page/about/StorySection";
 import CTASection from "@/components/landing-page/CTASection";
+import TeamSection from "@/components/landing-page/about/TeamSection";
 
 const About = () => {
     return (
@@ -15,6 +16,7 @@ const About = () => {
                 <MissionSection />
                 <StorySection />
                 <ValuesSection />
+                <TeamSection />
                 <CTASection />
             </main>
             <Footer />

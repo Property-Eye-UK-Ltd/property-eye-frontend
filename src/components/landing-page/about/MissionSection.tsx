@@ -21,12 +21,12 @@ const MissionSection = () => {
 
                     {/* Right Content (Cards) */}
                     <div className="lg:w-3/5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
                             {/* Card 1 */}
-                            <div className="bg-primary rounded-2xl p-6 md:p-6 lg:p-6 flex flex-col min-h-0 md:min-h-[450px] transition-transform hover:translate-y-[-8px] duration-300">
+                            <div className="bg-primary rounded-2xl p-5 md:p-6 flex flex-col min-h-0 md:min-h-[450px] transition-transform hover:translate-y-[-8px] duration-300">
                                 {/* Icon */}
-                                <div className="mb-12 flex -space-x-5">
+                                <div className="mb-8 md:mb-12 flex -space-x-5">
                                     <ArrowRight2 className="w-8 h-8 text-white font-thin" variant="Linear" />
                                     <ArrowRight2 className="w-8 h-8 text-white font-thin" variant="Linear" />
                                 </div>
@@ -34,7 +34,7 @@ const MissionSection = () => {
                                 {/* Content */}
                                 <div className="mt-auto">
                                     <div className="text-secondary text-5xl md:text-6xl font-medium mb-4">
-                                        £2.4B<span style={{ color: '#FFF2CE' }}>+</span>
+                                        <span style={{ color: '#FFF2CE' }}>£</span>2.4B<span style={{ color: '#FFF2CE' }}>+</span>
                                     </div>
                                     <p className="text-white text-sm md:text-lg leading-relaxed max-w-[280px]">
                                         Lost annually to commission fraud in real estate in the United Kingdom.
@@ -43,9 +43,9 @@ const MissionSection = () => {
                             </div>
 
                             {/* Card 2 */}
-                            <div className="bg-primary rounded-2xl p-6 md:p-6 lg:p-6 flex flex-col min-h-0 md:min-h-[450px] transition-transform hover:translate-y-[-8px] duration-300">
+                            <div className="bg-primary rounded-2xl p-5 md:p-6 flex flex-col min-h-0 md:min-h-[450px] transition-transform hover:translate-y-[-8px] duration-300">
                                 {/* Icon */}
-                                <div className="mb-12">
+                                <div className="mb-8 md:mb-12">
                                     <ArrowUp className="w-8 h-8 text-white" variant="Linear" />
                                 </div>
 

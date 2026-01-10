@@ -61,21 +61,21 @@ const StorySection = () => {
                         <div
                             key={index}
                             className={cn(
-                                "flex flex-col mb-24 last:mb-0 relative",
+                                "flex flex-col mb-12 md:mb-24 last:mb-0 relative",
                                 story.position === "right" ? "items-end" : "items-start"
                             )}
                         >
                             {/* The Card */}
-                            <div className="w-full md:w-[45%] bg-white rounded-2xl p-8 md:p-10flex flex-col gap-6 relative z-20">
+                            <div className="w-full md:w-[45%] bg-white rounded-2xl p-5 md:p-8 lg:p-10 flex flex-col gap-4 md:gap-6 relative z-20">
                                 {/* Header Info */}
-                                <div className="flex items-center gap-4 mb-6">
+                                <div className="flex items-center gap-4 mb-4 md:mb-6">
                                     <div
-                                        className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                                        className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shrink-0"
                                         style={{ backgroundColor: `${story.color}15` }}
                                     >
                                         <story.icon
-                                            size={20}
-                                            className="w-6 h-6"
+                                            size={18}
+                                            className="w-5 h-5 md:w-6 md:h-6"
                                             style={{ color: story.color }}
                                         />
                                     </div>
@@ -89,10 +89,10 @@ const StorySection = () => {
 
                                 {/* Body Content */}
                                 <div>
-                                    <h3 className="text-xl md:text-2xl font-medium text-gray-900 mb-4">
+                                    <h3 className="text-lg md:text-2xl font-medium text-gray-900 mb-2 md:mb-4">
                                         {story.title}
                                     </h3>
-                                    <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+                                    <p className="text-gray-600 text-xs md:text-base leading-relaxed">
                                         {story.description}
                                     </p>
                                 </div>
