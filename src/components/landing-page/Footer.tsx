@@ -10,7 +10,7 @@ const Footer = () => {
                     <div className="space-y-6">
                         <Link to="/" className="inline-block">
                             <img
-                                src="/favicon.ico"
+                                src="/footer.png"
                                 alt="Property Eye Logo"
                                 className="h-10 w-auto"
                             />
