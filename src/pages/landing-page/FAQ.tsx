@@ -39,7 +39,7 @@ const FAQ = () => {
                 </div>
 
                 {/* Content Section - White bg, rounded top */}
-                <div className="bg-white rounded-t-[3rem] px-6 py-12 md:py-24 min-h-[600px]">
+                <div className="bg-white px-6 py-12 md:py-24 min-h-[600px]">
                     <div className="max-w-7xl mx-auto">
 
                         {/* Categories Tabs - Using reused component */}
@@ -58,7 +58,7 @@ const FAQ = () => {
                                     <AccordionItem
                                         key={index}
                                         value={`item-${index}`}
-                                        className="border rounded-2xl px-6 bg-gray-50/50 data-[state=open]:bg-gray-50 border-gray-50 transition-colors"
+                                        className="border rounded-2xl px-6 bg-page-background data-[state=open]:bg-page-background border-gray-50 transition-colors"
                                     >
                                         <AccordionTrigger className="text-left text-base font-medium text-gray-900 hover:no-underline py-4">
                                             {item.question}
