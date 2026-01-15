@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+
+.import { Link } from "react-router-dom";
 
 const Footer = () => {
     return (
@@ -16,7 +17,7 @@ const Footer = () => {
                             />
                         </Link>
                         <p className="text-white/60 text-sm max-w-[300px] leading-relaxed">
-                            Protecting real estate agencies from commission fraud since 2021.
+                            Protecting real estate agencies from commission fraud since 2026.
                         </p>
                     </div>
 
