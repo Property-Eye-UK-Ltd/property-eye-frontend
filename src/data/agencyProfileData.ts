@@ -6,25 +6,11 @@ export interface AgencyProfileData {
     email: string
     phone: string
     subscriptionPlan: string
-    checksUsed: number
-    checksTotal: number
-    checksPercentage: number
-    lastDataPull: string
-    dataPullStatus: "Active" | "Inactive"
+    integrationType: "ALTO" | "CSV" | "PDF" | "API" | "Reapit"
+    integrationStatus: "Active" | "Inactive"
     openCases: number
     recoveredCommission: string
-    overdueInvoices: number
     nextBillingDate: string
-    landRegistry: string
-    completionDate: string
-    buyerName: string
-}
-
-export interface TransactionMetadata {
-    paymentDate: string
-    payer: string
-    recipient: string
-    amount: string
 }
 
 export interface TimelineEvent {
@@ -39,25 +25,11 @@ export const mockAgencyProfile: AgencyProfileData = {
     email: "solicthomes@example.com",
     phone: "+44 207132 4567",
     subscriptionPlan: "Pro Plan",
-    checksUsed: 318,
-    checksTotal: 500,
-    checksPercentage: 60,
-    lastDataPull: "21 Oct, 2025, 14:23",
-    dataPullStatus: "Active",
+    integrationType: "ALTO",
+    integrationStatus: "Active",
     openCases: 43,
     recoveredCommission: "£45,317",
-    overdueInvoices: 7,
     nextBillingDate: "2 Nov, 2025",
-    landRegistry: "Land Registry",
-    completionDate: "2 Nov, 2025",
-    buyerName: "Kris Luther",
-}
-
-export const mockTransactionMetadata: TransactionMetadata = {
-    paymentDate: "2 Nov, 2025",
-    payer: "Kris Luther",
-    recipient: "Ryan Petz",
-    amount: "£135,325",
 }
 
 export const mockTimeline: TimelineEvent[] = [

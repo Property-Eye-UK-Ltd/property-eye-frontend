@@ -49,18 +49,11 @@ const AgencyProfile = () => {
         email: `${agencyData.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
         phone: "+44 207132 4567",
         subscriptionPlan: agencyData.planTier,
-        checksUsed: 318,
-        checksTotal: 500,
-        checksPercentage: 60,
-        lastDataPull: agencyData.lastDataSync,
-        dataPullStatus: agencyData.syncStatus,
-        openCases: agencyData.openCases,
+        integrationType: agencyData.integrationType,
+        integrationStatus: agencyData.syncHealth === "Healthy" ? "Active" : "Inactive",
+        openCases: agencyData.fraudDetected,
         recoveredCommission: "£45,317",
-        overdueInvoices: 7,
         nextBillingDate: "2 Nov, 2025",
-        landRegistry: "Land Registry",
-        completionDate: "2 Nov, 2025",
-        buyerName: "Kris Luther",
     }
 
     const tabs = [

@@ -1,80 +1,35 @@
-import { useState } from "react"
 import { SettingsTabShell } from "./SettingsTabShell"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { IntegrationSettings } from "@/data/settings-data"
+import { Monitor } from "iconsax-react"
 
-interface IntegrationTabProps {
-    settings: IntegrationSettings
-    onSave: (settings: IntegrationSettings) => void
-}
-
-export const IntegrationTab = ({ settings, onSave }: IntegrationTabProps) => {
-    const [isEditing, setIsEditing] = useState(false)
-    const [formData, setFormData] = useState<IntegrationSettings>(settings)
-
-    const handleEdit = () => setIsEditing(true)
-    const handleCancel = () => {
-        setFormData(settings)
-        setIsEditing(false)
-    }
-    const handleSave = () => {
-        onSave(formData)
-        setIsEditing(false)
-    }
-
-    const handleChange = (field: keyof IntegrationSettings, value: string) => {
-        setFormData({ ...formData, [field]: value })
-    }
-
+export const IntegrationTab = () => {
     return (
         <SettingsTabShell
             title="Integration"
             description="Manage your third-party integrations"
-            isEditing={isEditing}
-            onEdit={handleEdit}
-            onSave={handleSave}
-            onCancel={handleCancel}
+            isEditing={false}
+            onEdit={() => { }}
+            onSave={() => { }}
+            onCancel={() => { }}
+            useAlternativeCTA={true}
+            hasChanges={false}
+            saveButtonText="Connect"
         >
-            <div className="space-y-4 max-w-2xl">
-                <div className="space-y-2">
-                    <Label htmlFor="crmIntegration" className="text-sm font-medium text-foreground">
-                        CRM Integration
-                    </Label>
-                    <Input
-                        id="crmIntegration"
-                        value={formData.crmIntegration}
-                        onChange={(e) => handleChange("crmIntegration", e.target.value)}
-                        disabled={!isEditing}
-                        className="rounded-lg bg-muted border-0"
-                    />
+            <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
+                <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center">
+                    <Monitor size={40} variant="Bulk" className="text-primary" />
                 </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="apiKey" className="text-sm font-medium text-foreground">
-                        API Key
-                    </Label>
-                    <Input
-                        id="apiKey"
-                        type="password"
-                        value={formData.apiKey}
-                        onChange={(e) => handleChange("apiKey", e.target.value)}
-                        disabled={!isEditing}
-                        className="rounded-lg bg-muted border-0"
-                    />
+                <div className="space-y-2 max-w-sm">
+                    <h3 className="text-xl font-semibold text-foreground">Coming Soon</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                        We're working hard on building seamless integrations with top CRMs and property management platforms. Stay tuned!
+                    </p>
                 </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="webhookUrl" className="text-sm font-medium text-foreground">
-                        Webhook URL
-                    </Label>
-                    <Input
-                        id="webhookUrl"
-                        value={formData.webhookUrl}
-                        onChange={(e) => handleChange("webhookUrl", e.target.value)}
-                        disabled={!isEditing}
-                        className="rounded-lg bg-muted border-0"
-                    />
+                <div className="flex flex-wrap justify-center gap-3">
+                    {["Alto", "Reapit", "SME Professional", "Street.co.uk", "CSV/PDF"].map((tech) => (
+                        <div key={tech} className="px-4 py-2 bg-muted rounded-full text-xs font-medium text-muted-foreground border border-border/50">
+                            {tech}
+                        </div>
+                    ))}
                 </div>
             </div>
         </SettingsTabShell>

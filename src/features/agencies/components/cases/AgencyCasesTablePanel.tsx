@@ -2,11 +2,10 @@ import { useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { ChevronsUpDown } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { cn } from "@/lib/utils"
-import { AgencyCase, caseSeverityStyles, caseFraudTypeStyles } from "@/data/agencyCasesData"
+import { AgencyCase, caseSeverityStyles } from "@/data/agencyCasesData"
 
 interface AgencyCasesTablePanelProps {
     data: AgencyCase[]
@@ -53,15 +52,6 @@ export const AgencyCasesTablePanel = ({ data }: AgencyCasesTablePanelProps) => {
                         <TableRow className="bg-gray-50">
                             <TableHead className="px-4 font-medium">Case ID</TableHead>
                             <TableHead className="px-4 font-medium">Property Address</TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("fraudType")}
-                                >
-                                    Fraud Type
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                </button>
-                            </TableHead>
                             <TableHead className="px-4 font-medium">Score</TableHead>
                             <TableHead className="px-4 font-medium">
                                 <button
@@ -73,6 +63,7 @@ export const AgencyCasesTablePanel = ({ data }: AgencyCasesTablePanelProps) => {
                                 </button>
                             </TableHead>
                             <TableHead className="px-4 font-medium">Date Detected</TableHead>
+                            <TableHead className="px-4 font-medium">Date Property Sold</TableHead>
                             <TableHead className="px-4 font-medium">Action</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -81,11 +72,6 @@ export const AgencyCasesTablePanel = ({ data }: AgencyCasesTablePanelProps) => {
                             <TableRow key={caseItem.id} className="border-b border-border">
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.caseId}</TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.propertyAddress}</TableCell>
-                                <TableCell className="px-4 py-4">
-                                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal", caseFraudTypeStyles[caseItem.fraudType])}>
-                                        {caseItem.fraudType}
-                                    </Badge>
-                                </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.score}%</TableCell>
                                 <TableCell className="px-4 py-4">
                                     <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal", caseSeverityStyles[caseItem.severity])}>
@@ -93,6 +79,7 @@ export const AgencyCasesTablePanel = ({ data }: AgencyCasesTablePanelProps) => {
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.dateDetected}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.datePropertySold}</TableCell>
                                 <TableCell className="px-4 py-3">
                                     <button
                                         onClick={() => navigate(`/admin/cases/${encodeURIComponent(caseItem.caseId)}`, {

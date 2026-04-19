@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronsUpDown } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { cn } from "@/lib/utils"
-import { AgencyCase, caseSeverityStyles, caseFraudTypeStyles } from "@/data/agencyCasesData"
+import { AgencyCase, caseSeverityStyles } from "@/data/agencyCasesData"
 import { agenciesData } from "@/data/agenciesData"
 
 interface AdminCasesTableProps {
@@ -69,15 +69,6 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("fraudType")}
-                                >
-                                    Fraud Type
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                </button>
-                            </TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                                     onClick={() => handleSort("severity")}
                                 >
                                     Severity
@@ -85,6 +76,7 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                                 </button>
                             </TableHead>
                             <TableHead className="px-4 font-medium">Date Detected</TableHead>
+                            <TableHead className="px-4 font-medium">Date Property Sold</TableHead>
                             <TableHead className="px-4 font-medium">Action</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -101,19 +93,13 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.propertyAddress}</TableCell>
                                 <TableCell className="px-4 py-4">
                                     <Badge
-                                        className={cn("rounded-full px-3 py-1 text-xs font-normal", caseFraudTypeStyles[caseItem.fraudType])}
-                                    >
-                                        {caseItem.fraudType}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="px-4 py-4">
-                                    <Badge
                                         className={cn("rounded-full px-3 py-1 text-xs font-normal", caseSeverityStyles[caseItem.severity])}
                                     >
                                         {caseItem.severity}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.dateDetected}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.datePropertySold}</TableCell>
                                 <TableCell className="px-4 py-3">
                                     <button
                                         onClick={() => handleViewCase(caseItem.caseId)}

@@ -9,6 +9,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useSidebarContext } from "./SidebarContext"
+import { GlobalCheckRunner } from "./GlobalCheckRunner"
 
 interface DashboardHeaderProps {
     variant?: "agency" | "super-admin"
@@ -83,6 +84,9 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                             </div>
                         </>
                     )}
+
+                    {/* Global Check Runner */}
+                    <GlobalCheckRunner />
 
                     {/* Notification Icon */}
                     <NotificationMenu />

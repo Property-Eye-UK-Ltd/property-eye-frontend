@@ -5,9 +5,10 @@ export interface AgencyRecord {
     name: string
     planTier: string
     users: number
-    openCases: number
-    lastDataSync: string
-    syncStatus: "Active" | "Inactive"
+    integrationType: "ALTO" | "CSV" | "PDF" | "API" | "Reapit"
+    checksDone: number
+    fraudDetected: number
+    syncHealth: "Healthy" | "Unhealthy" | "-"
     accountStatus: "Active" | "Suspended" | "Pending"
 }
 
@@ -21,11 +22,11 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
             topBarClass: "bg-red-500",
         },
         {
-            title: "Self-handled Agencies",
-            value: "329",
+            title: "Commissions Recovered",
+            value: "£482,300",
             period: "All time",
-            change: "+2%",
-            topBarClass: "bg-purple-500",
+            change: "+£34,200",
+            topBarClass: "bg-green-500",
         },
         {
             title: "Total Agency Users",
@@ -39,7 +40,7 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
             value: "94",
             period: "All time",
             change: "+2%",
-            topBarClass: "bg-green-500",
+            topBarClass: "bg-purple-500",
         },
     ],
     "This Month": [
@@ -51,11 +52,11 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
             topBarClass: "bg-red-500",
         },
         {
-            title: "Self-handled Agencies",
-            value: "340",
+            title: "Commissions Recovered",
+            value: "£38,500",
             period: "This Month",
-            change: "+11",
-            topBarClass: "bg-purple-500",
+            change: "+£5,200",
+            topBarClass: "bg-green-500",
         },
         {
             title: "Total Agency Users",
@@ -69,7 +70,7 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
             value: "102",
             period: "This Month",
             change: "+8",
-            topBarClass: "bg-green-500",
+            topBarClass: "bg-purple-500",
         },
     ],
     "Last Week": [
@@ -81,11 +82,11 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
             topBarClass: "bg-red-500",
         },
         {
-            title: "Self-handled Agencies",
-            value: "331",
+            title: "Commissions Recovered",
+            value: "£9,800",
             period: "Last Week",
-            change: "+2",
-            topBarClass: "bg-purple-500",
+            change: "+£1,400",
+            topBarClass: "bg-green-500",
         },
         {
             title: "Total Agency Users",
@@ -99,7 +100,7 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
             value: "96",
             period: "Last Week",
             change: "+2",
-            topBarClass: "bg-green-500",
+            topBarClass: "bg-purple-500",
         },
     ],
 }
@@ -110,9 +111,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Baltimore Homes",
         planTier: "Pro Plan",
         users: 5,
-        openCases: 54,
-        lastDataSync: "8 Nov 2025, 14:23",
-        syncStatus: "Active",
+        integrationType: "ALTO",
+        checksDone: 124,
+        fraudDetected: 54,
+        syncHealth: "Healthy",
         accountStatus: "Suspended",
     },
     {
@@ -120,9 +122,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Dresscket",
         planTier: "Enterprise Plan",
         users: 24,
-        openCases: 98,
-        lastDataSync: "21 Oct, 2025, 14:23",
-        syncStatus: "Inactive",
+        integrationType: "API",
+        checksDone: 312,
+        fraudDetected: 98,
+        syncHealth: "Unhealthy",
         accountStatus: "Active",
     },
     {
@@ -130,9 +133,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Mindcraft Homes",
         planTier: "Pro Plan",
         users: 12,
-        openCases: 23,
-        lastDataSync: "21 Oct, 2025, 14:23",
-        syncStatus: "Inactive",
+        integrationType: "CSV",
+        checksDone: 89,
+        fraudDetected: 23,
+        syncHealth: "-",
         accountStatus: "Active",
     },
     {
@@ -140,9 +144,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Baltimore Homes",
         planTier: "Basic Plan",
         users: 2,
-        openCases: 63,
-        lastDataSync: "21 Oct, 2025, 14:23",
-        syncStatus: "Active",
+        integrationType: "PDF",
+        checksDone: 45,
+        fraudDetected: 63,
+        syncHealth: "-",
         accountStatus: "Pending",
     },
     {
@@ -150,9 +155,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Dresscket",
         planTier: "Pro Plan",
         users: 8,
-        openCases: 32,
-        lastDataSync: "21 Oct, 2025, 14:23",
-        syncStatus: "Active",
+        integrationType: "Reapit",
+        checksDone: 201,
+        fraudDetected: 32,
+        syncHealth: "Healthy",
         accountStatus: "Suspended",
     },
     {
@@ -160,9 +166,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Mindcraft Homes",
         planTier: "Basic Plan",
         users: 2,
-        openCases: 43,
-        lastDataSync: "21 Oct, 2025, 14:23",
-        syncStatus: "Inactive",
+        integrationType: "CSV",
+        checksDone: 67,
+        fraudDetected: 43,
+        syncHealth: "-",
         accountStatus: "Active",
     },
     {
@@ -170,9 +177,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Baltimore Homes",
         planTier: "Premium Plan",
         users: 4,
-        openCases: 45,
-        lastDataSync: "30 Sep, 2025, 14:23",
-        syncStatus: "Active",
+        integrationType: "ALTO",
+        checksDone: 156,
+        fraudDetected: 45,
+        syncHealth: "Healthy",
         accountStatus: "Suspended",
     },
     {
@@ -180,9 +188,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Dresscket",
         planTier: "Premium Plan",
         users: 2,
-        openCases: 32,
-        lastDataSync: "24 Sep, 2025, 14:23",
-        syncStatus: "Active",
+        integrationType: "API",
+        checksDone: 98,
+        fraudDetected: 32,
+        syncHealth: "Healthy",
         accountStatus: "Active",
     },
     {
@@ -190,9 +199,10 @@ export const agenciesData: AgencyRecord[] = [
         name: "Mindcraft Homes",
         planTier: "Enterprise Plan",
         users: 19,
-        openCases: 19,
-        lastDataSync: "24 Sep, 2025, 14:23",
-        syncStatus: "Inactive",
+        integrationType: "Reapit",
+        checksDone: 278,
+        fraudDetected: 19,
+        syncHealth: "Unhealthy",
         accountStatus: "Pending",
     },
 ]
@@ -203,7 +213,8 @@ export const accountStatusStyles: Record<AgencyRecord["accountStatus"], string> 
     Pending: "bg-orange-50 text-orange-600 border border-orange-100",
 }
 
-export const syncStatusStyles: Record<AgencyRecord["syncStatus"], string> = {
-    Active: "bg-green-50 text-green-600 border border-green-100",
-    Inactive: "bg-red-50 text-red-600 border border-red-100",
+export const syncHealthStyles: Record<AgencyRecord["syncHealth"], string> = {
+    Healthy: "bg-green-50 text-green-600 border border-green-100",
+    Unhealthy: "bg-red-50 text-red-600 border border-red-100",
+    "-": "bg-gray-50 text-gray-500 border border-gray-100",
 }

@@ -2,11 +2,10 @@ import { useState, useMemo } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
 import { ChevronsUpDown } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { cn } from "@/lib/utils"
-import { AgencyRecord, accountStatusStyles, syncStatusStyles } from "@/data/agenciesData"
+import { AgencyRecord, accountStatusStyles, syncHealthStyles } from "@/data/agenciesData"
 
 interface AgenciesTablePanelProps {
     data: AgencyRecord[]
@@ -54,8 +53,26 @@ export const AgenciesTablePanel = ({ data, onViewAgency }: AgenciesTablePanelPro
                             <TableHead className="px-4 font-medium">Agency Name</TableHead>
                             <TableHead className="px-4 font-medium">Plan Tier</TableHead>
                             <TableHead className="px-4 font-medium">Users</TableHead>
-                            <TableHead className="px-4 font-medium">Open Cases</TableHead>
-                            <TableHead className="px-4 font-medium">Last Data Sync & Status</TableHead>
+                            <TableHead className="px-4 font-medium">Integration Type</TableHead>
+                            <TableHead className="px-4 font-medium">
+                                <button
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                    onClick={() => handleSort("checksDone")}
+                                >
+                                    Checks Done
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                </button>
+                            </TableHead>
+                            <TableHead className="px-4 font-medium">
+                                <button
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                    onClick={() => handleSort("fraudDetected")}
+                                >
+                                    Fraud Detected
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                </button>
+                            </TableHead>
+                            <TableHead className="px-4 font-medium">Sync Health</TableHead>
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -79,16 +96,17 @@ export const AgenciesTablePanel = ({ data, onViewAgency }: AgenciesTablePanelPro
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{agency.planTier}</TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{agency.users}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{agency.openCases}</TableCell>
                                 <TableCell className="px-4 py-3">
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-sm text-muted-foreground">{agency.lastDataSync}</span>
-                                        <Badge
-                                            className={cn("rounded-full px-3 py-0.5 text-xs font-medium w-fit", syncStatusStyles[agency.syncStatus])}
-                                        >
-                                            {agency.syncStatus}
-                                        </Badge>
-                                    </div>
+                                    <Badge className="rounded-full px-3 py-0.5 text-xs font-medium bg-primary/5 text-primary border border-primary/10">
+                                        {agency.integrationType}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{agency.checksDone}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{agency.fraudDetected}</TableCell>
+                                <TableCell className="px-4 py-3">
+                                    <Badge className={cn("rounded-full px-3 py-0.5 text-xs font-medium", syncHealthStyles[agency.syncHealth])}>
+                                        {agency.syncHealth}
+                                    </Badge>
                                 </TableCell>
                                 <TableCell className="px-4 py-4">
                                     <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", accountStatusStyles[agency.accountStatus])}>

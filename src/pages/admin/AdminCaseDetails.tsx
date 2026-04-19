@@ -73,7 +73,12 @@ const AdminCaseDetails = () => {
 
     // Map case data to extended format
     const extendedCaseData: ExtendedCaseData = {
-        ...caseData,
+        caseId: caseData.caseId,
+        propertyAddress: caseData.propertyAddress,
+        fraudType: "Buyer Intro",
+        score: caseData.score,
+        severity: caseData.severity,
+        dateDetected: caseData.dateDetected,
         recoveryMode: "Managed",
         status: "--",
         commissionAtRisk: "£12,790",
