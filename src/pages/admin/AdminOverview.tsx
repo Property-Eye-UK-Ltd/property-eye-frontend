@@ -6,20 +6,20 @@ import { MetricCards } from "@/features/overview/components/MetricCards"
 import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
 import { FraudDetectionPanel } from "@/features/overview/components/FraudDetectionPanel"
 import { CaseQueuePanel } from "@/features/admin/components/CaseQueuePanel"
-import { MostCommonFraudTypesPanel } from "@/features/analytics/components/MostCommonFraudTypesPanel"
+import { FraudDistributionPanel } from "@/features/overview/components/FraudDistributionPanel"
+import { AnnualChecksTable } from "@/features/overview/components/AnnualChecksTable"
 import {
     adminMetricsData,
     adminRevenueData,
     adminCaseQueueData,
     adminSeverityStyles,
-    adminFraudTypeStyles,
     adminUsersActivityData,
     adminChartConfig,
-    adminFraudDetectionData,
-    adminFraudDetectionConfig,
+    adminFraudGrowthData,
+    adminFraudGrowthConfig,
     adminSeverityData,
-    adminFraudTypesData,
-    adminFraudTypesConfig,
+    fraudDistributionData,
+    annualChecksData,
 } from "@/data/adminOverviewData"
 
 const periods = ["All Time", "This Month", "Last Week"]
@@ -32,6 +32,7 @@ const AdminOverview = () => {
             <DynamicPageHeader
                 title="Overview"
                 actions={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
+                showSweepCountdown={true}
             />
 
             <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
@@ -51,7 +52,6 @@ const AdminOverview = () => {
                     <CaseQueuePanel
                         data={adminCaseQueueData}
                         severityStyles={adminSeverityStyles}
-                        fraudTypeStyles={adminFraudTypeStyles}
                     />
                     <CommissionBreakdownPanel
                         title="Subscription Revenue Breakdown"
@@ -60,28 +60,32 @@ const AdminOverview = () => {
                     />
                 </div>
 
-                {/* Fraud Detection Over Time */}
-                <FraudDetectionPanel
-                    title="Fraud Detection Over Time"
-                    data={adminFraudDetectionData}
-                    config={adminFraudDetectionConfig}
-                />
-
-                {/* Severity Distribution & Most Common Fraud Types */}
+                {/* Fraud Distribution Chart & Severity Distribution */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-                    <CommissionBreakdownPanel
-                        title="Severity Distribution"
-                        data={adminSeverityData}
-                        chartSize={200}
+                    <FraudDistributionPanel
+                        title="Fraud Distribution"
+                        data={fraudDistributionData}
                     />
                     <div className="lg:col-span-3">
-                        <MostCommonFraudTypesPanel
-                            data={adminFraudTypesData}
-                            config={adminFraudTypesConfig}
-                            height={320}
+                        <CommissionBreakdownPanel
+                            title="Severity Distribution"
+                            data={adminSeverityData}
+                            chartSize={220}
+                            isWide={true}
                         />
                     </div>
                 </div>
+
+                {/* Annual Checks Breakdown Table */}
+                <AnnualChecksTable data={annualChecksData} />
+
+                {/* Fraud Detection Over Time -> Replaced with Yearly Growth (No filters) */}
+                <FraudDetectionPanel
+                    title="Fraud Detection Growth"
+                    data={adminFraudGrowthData}
+                    config={adminFraudGrowthConfig}
+                    showCategoryFilter={false}
+                />
             </div>
         </DashboardLayout>
     )

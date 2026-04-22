@@ -4,14 +4,12 @@ import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { MetricCards } from "@/features/overview/components/MetricCards"
-import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
-import { FraudDetectionPanel } from "@/features/overview/components/FraudDetectionPanel"
 import { Button } from "@/components/ui/button"
 import { ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { TopAgenciesTable } from "@/features/reports/components/TopAgenciesTable"
 import { EventLogTable } from "@/features/reports/components/EventLogTable"
-import { reportsMetricsData, reportPeriods, topAgenciesData, checksConsumptionData, casesChartData, casesChartConfig, eventLogData } from "@/data/reportsData"
+import { DetailedPerformanceTable } from "@/features/reports/components/DetailedPerformanceTable"
+import { reportsMetricsData, reportPeriods, eventLogData, agencyPerformanceData } from "@/data/reportsData"
 
 const ReportsExports = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(reportPeriods[0])
@@ -50,29 +48,32 @@ const ReportsExports = () => {
             />
 
             {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
+            <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
                 {/* Metric Cards */}
                 <MetricCards metrics={reportsMetricsData[selectedPeriod]} />
 
-                {/* First Row - Pie Chart and Top Agencies Table */}
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-                    <CommissionBreakdownPanel data={checksConsumptionData} title="Checks Consumption by Plan" chartSize={150} />
-                    <TopAgenciesTable data={topAgenciesData} />
-                </div>
-
-                {/* Second Row - Cases Line Chart */}
-                <FraudDetectionPanel
-                    data={casesChartData}
-                    config={casesChartConfig}
-                    title="Cases Open vs Cases Closed"
-                    showCategoryFilter={true}
-                    showArea={false}
-                />
+                {/* Significant increase in report detail: Agency Performance Analytics */}
+                <DashboardPanel
+                    title="Agency Performance Report"
+                    description="Comprehensive breakdown of recovery and revenue metrics per agency"
+                    noPadding
+                    hasBorder
+                    actions={
+                        <Button
+                            variant="outline"
+                            className="rounded-full border-border text-foreground hover:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0"
+                        >
+                            View All Analytics
+                        </Button>
+                    }
+                >
+                    <DetailedPerformanceTable data={agencyPerformanceData} />
+                </DashboardPanel>
 
                 {/* Third Row - Event Log Table */}
                 <DashboardPanel
-                    title="Event Log"
-                    description="View all events recorded across Property Eye Platform"
+                    title="System Event Log"
+                    description="Audit trail of all administrative actions and system events"
                     noPadding
                     hasBorder
                     actions={
@@ -82,7 +83,7 @@ const ReportsExports = () => {
                                     variant="outline"
                                     className="rounded-full border-border text-foreground hover:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0"
                                 >
-                                    Export
+                                    Export Log
                                     <ArrowDown2 size={18} variant="Outline" className="ml-2" />
                                 </Button>
                             </DropdownMenuTrigger>

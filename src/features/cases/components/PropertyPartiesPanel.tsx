@@ -1,16 +1,16 @@
 export interface PropertyPartiesData {
   owner: string
-  agent: string
   agency: string
-  introducedBuyers: string[]
+  dateWithdrawn: string
+  dateSold: string
+  soldAmount: string
+  soldTo: string
   landRegistry: {
     completionDate: string
     buyerName: string
   }
   transactionMetadata: {
     paymentDate: string
-    recipient: string
-    payer: string
     amount: string
   }
 }
@@ -20,8 +20,6 @@ interface PropertyPartiesPanelProps {
 }
 
 export const PropertyPartiesPanel = ({ data }: PropertyPartiesPanelProps) => {
-  const introducedBuyers = data.introducedBuyers.join(", ")
-
   return (
     <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
       <div className="space-y-6">
@@ -37,12 +35,20 @@ export const PropertyPartiesPanel = ({ data }: PropertyPartiesPanelProps) => {
               <p className="text-sm text-primary">{data.agency}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Agent</p>
-              <p className="text-sm text-primary">{data.agent}</p>
+              <p className="text-xs text-muted-foreground mb-1">Date Withdrawn</p>
+              <p className="text-sm text-primary">{data.dateWithdrawn}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Introduced Buyers</p>
-              <p className="text-sm text-primary">{introducedBuyers}</p>
+              <p className="text-xs text-muted-foreground mb-1">Date Sold</p>
+              <p className="text-sm text-primary">{data.dateSold}</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">Sold Amount</p>
+              <p className="text-sm text-primary">{data.soldAmount}</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">Sold To (Buyer)</p>
+              <p className="text-sm text-primary">{data.soldTo}</p>
             </div>
           </div>
         </div>
@@ -67,14 +73,6 @@ export const PropertyPartiesPanel = ({ data }: PropertyPartiesPanelProps) => {
             <div>
               <p className="text-xs text-muted-foreground mb-1">Payment Date</p>
               <p className="text-sm text-primary">{data.transactionMetadata.paymentDate}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Payer</p>
-              <p className="text-sm text-primary">{data.transactionMetadata.payer}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Recipient</p>
-              <p className="text-sm text-primary">{data.transactionMetadata.recipient}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Amount</p>

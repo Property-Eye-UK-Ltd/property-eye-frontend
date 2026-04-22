@@ -1,6 +1,7 @@
 import { ReactNode } from "react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Calendar } from "iconsax-react"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -27,6 +28,7 @@ interface DynamicPageHeaderProps {
     breadcrumbs?: BreadcrumbItem[]
     actions?: ReactNode | ActionButton[]
     tabs?: ReactNode
+    showSweepCountdown?: boolean
 }
 
 export const DynamicPageHeader = ({
@@ -34,16 +36,15 @@ export const DynamicPageHeader = ({
     breadcrumbs,
     actions,
     tabs,
+    showSweepCountdown,
 }: DynamicPageHeaderProps) => {
     const renderActions = () => {
         if (!actions) return null
 
-        // If actions is a ReactNode (custom component), render it directly
         if (!Array.isArray(actions)) {
             return <div className="flex items-center gap-2">{actions}</div>
         }
 
-        // If actions is an array of ActionButton objects, render buttons
         return (
             <div className="flex items-center gap-2">
                 {actions.map((action, index) => (
@@ -68,7 +69,21 @@ export const DynamicPageHeader = ({
             <div className="max-w-7xl mx-auto w-full px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex flex-col gap-2">
-                        <h1 className="text-3xl font-medium text-foreground">{title}</h1>
+                        <div className="flex items-center gap-4">
+                            <h1 className="text-3xl font-medium text-foreground">{title}</h1>
+                            {showSweepCountdown && (
+                                <div className="flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1.5 border border-amber-100">
+                                    <Calendar size={16} variant="Bulk" className="text-amber-600" />
+                                    <span className="text-xs font-medium text-amber-700">
+                                        Next Sweep: <span className="font-medium">July 1st, 2025</span>
+                                    </span>
+                                    <div className="h-3 w-px bg-amber-200 mx-1" />
+                                    <span className="text-xs font-medium text-amber-600">
+                                        68 Days Left
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                         {breadcrumbs && breadcrumbs.length > 0 && (
                             <Breadcrumb>
                                 <BreadcrumbList>

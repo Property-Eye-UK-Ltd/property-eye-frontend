@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { ChevronsUpDown } from "lucide-react"
-import { ArrowLeft, ArrowRight } from "iconsax-react"
+import { ArrowLeft, ArrowRight, Profile } from "iconsax-react"
 import { cn } from "@/lib/utils"
-import { StaffMember, staffStatusStyles } from "@/data/teamManagementData"
+import { StaffMember, staffStatusStyles, roleStyles } from "@/data/teamManagementData"
 
 interface StaffListTableProps {
     data: StaffMember[]
@@ -82,9 +82,20 @@ export const StaffListTable = ({ data }: StaffListTableProps) => {
                     <TableBody>
                         {sortedData.map((staff) => (
                             <TableRow key={staff.id} className="border-b border-border">
-                                <TableCell className="px-4 py-3 text-muted-foreground">{staff.name}</TableCell>
+                                <TableCell className="px-4 py-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-progress/30">
+                                            <Profile size={18} variant="Bulk" className="text-primary" />
+                                        </div>
+                                        <span className="text-sm text-foreground">{staff.name}</span>
+                                    </div>
+                                </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{staff.email}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{staff.role}</TableCell>
+                                <TableCell className="px-4 py-3">
+                                    <Badge className={cn("rounded-full px-3 py-0.5 text-xs font-medium", roleStyles[staff.role])}>
+                                        {staff.role}
+                                    </Badge>
+                                </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{staff.lastActiveDate}</TableCell>
                                 <TableCell className="px-4 py-4">
                                     <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal", staffStatusStyles[staff.status])}>

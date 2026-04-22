@@ -103,7 +103,7 @@ export const billingStatusStyles: Record<BillingTransaction["status"], string> =
 export const billingMetricsData: Record<string, MetricCard[]> = {
   "All Time": [
     {
-      title: "Revenue Generated",
+      title: "Total Subscription Revenue",
       value: "£94,320",
       period: "All time",
       change: "+2%",
@@ -133,7 +133,7 @@ export const billingMetricsData: Record<string, MetricCard[]> = {
   ],
   "This Month": [
     {
-      title: "Revenue Generated",
+      title: "Total Subscription Revenue",
       value: "£8,450",
       period: "This Month",
       change: "+5%",
@@ -163,7 +163,7 @@ export const billingMetricsData: Record<string, MetricCard[]> = {
   ],
   "Last Week": [
     {
-      title: "Revenue Generated",
+      title: "Total Subscription Revenue",
       value: "£2,100",
       period: "Last Week",
       change: "-1%",

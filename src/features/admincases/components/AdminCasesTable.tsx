@@ -3,12 +3,10 @@ import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
 import { ChevronsUpDown } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { cn } from "@/lib/utils"
-import { AgencyCase, caseSeverityStyles } from "@/data/agencyCasesData"
-import { agenciesData } from "@/data/agenciesData"
+import { AgencyCase } from "@/data/agencyCasesData"
 
 interface AdminCasesTableProps {
     data: AgencyCase[]
@@ -44,18 +42,9 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
             if (typeof aValue === "string" && typeof bValue === "string") {
                 return aValue.localeCompare(bValue) * direction
             }
-            if (typeof aValue === "number" && typeof bValue === "number") {
-                return (aValue - bValue) * direction
-            }
             return 0
         })
     }, [data, sortColumn, sortDirection])
-
-    // Add agency names to cases
-    const casesWithAgencies = sortedCases.map((caseItem) => {
-        const randomAgency = agenciesData[Math.floor(Math.random() * agenciesData.length)]
-        return { ...caseItem, agencyName: randomAgency.name }
-    })
 
     return (
         <>
@@ -69,19 +58,27 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("severity")}
+                                    onClick={() => handleSort("completionDate")}
                                 >
-                                    Severity
+                                    Completion Date
                                     <ChevronsUpDown className="h-4 w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium">Date Detected</TableHead>
-                            <TableHead className="px-4 font-medium">Date Property Sold</TableHead>
-                            <TableHead className="px-4 font-medium">Action</TableHead>
+                            <TableHead className="px-4 font-medium">
+                                <button
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                    onClick={() => handleSort("buyerName")}
+                                >
+                                    Buyer Name
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                </button>
+                            </TableHead>
+                            <TableHead className="px-4 font-medium">Status</TableHead>
+                            <TableHead className="px-4 font-medium text-right">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {casesWithAgencies.map((caseItem) => (
+                        {sortedCases.map((caseItem) => (
                             <TableRow key={caseItem.id} className="border-b border-border">
                                 <TableCell className="px-4 py-3">
                                     <div className="flex items-center gap-3">
@@ -91,16 +88,20 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.agencyName}</TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.propertyAddress}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.completionDate}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.buyerName}</TableCell>
                                 <TableCell className="px-4 py-4">
-                                    <Badge
-                                        className={cn("rounded-full px-3 py-1 text-xs font-normal", caseSeverityStyles[caseItem.severity])}
-                                    >
-                                        {caseItem.severity}
-                                    </Badge>
+                                    {caseItem.status === "CHECKED" ? (
+                                        <Badge className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-600 border border-green-100">
+                                            CHECKED
+                                        </Badge>
+                                    ) : (
+                                        <Badge className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-600 border border-amber-100">
+                                            PENDING
+                                        </Badge>
+                                    )}
                                 </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.dateDetected}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.datePropertySold}</TableCell>
-                                <TableCell className="px-4 py-3">
+                                <TableCell className="px-4 py-3 text-right">
                                     <button
                                         onClick={() => handleViewCase(caseItem.caseId)}
                                         className="text-sm font-medium transition-colors hover:underline"

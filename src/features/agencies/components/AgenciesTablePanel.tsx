@@ -105,7 +105,7 @@ export const AgenciesTablePanel = ({ data, onViewAgency }: AgenciesTablePanelPro
                                 <TableCell className="px-4 py-3 text-muted-foreground">{agency.fraudDetected}</TableCell>
                                 <TableCell className="px-4 py-3">
                                     <Badge className={cn("rounded-full px-3 py-0.5 text-xs font-medium", syncHealthStyles[agency.syncHealth])}>
-                                        {agency.syncHealth}
+                                        {agency.syncHealth === "-" ? "Offline" : agency.syncHealth}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="px-4 py-4">

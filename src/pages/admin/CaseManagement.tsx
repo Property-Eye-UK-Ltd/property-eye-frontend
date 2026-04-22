@@ -5,18 +5,27 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { SearchNormal, Filter, ArrowDown2 } from "iconsax-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { SearchNormal, ArrowDown2 } from "iconsax-react"
 import { AdminCasesTable } from "@/features/admincases/components/AdminCasesTable"
 import { mockAgencyCases } from "@/data/agencyCasesData"
+import { agenciesData } from "@/data/agenciesData"
 
 const AdminCaseManagement = () => {
     const [searchQuery, setSearchQuery] = useState("")
+    const [selectedAgency, setSelectedAgency] = useState<string>("all")
 
     const filteredCases = mockAgencyCases.filter(
-        (c) =>
-            c.caseId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            c.propertyAddress.toLowerCase().includes(searchQuery.toLowerCase())
+        (c) => {
+            const matchesSearch = c.caseId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                 c.propertyAddress.toLowerCase().includes(searchQuery.toLowerCase())
+            const matchesAgency = selectedAgency === "all" || c.agencyName === selectedAgency
+            return matchesSearch && matchesAgency
+        }
     )
+
+    // Get unique agency names for the filter
+    const uniqueAgencies = Array.from(new Set(agenciesData.map((a) => a.name)))
 
     return (
         <DashboardLayout variant="super-admin">
@@ -32,7 +41,7 @@ const AdminCaseManagement = () => {
                     hasBorder
                     actions={
                         <div className="flex items-center gap-3">
-                            {/* Search */}
+                            {/* Search bar on the left */}
                             <div className="relative">
                                 <SearchNormal
                                     size={18}
@@ -40,21 +49,27 @@ const AdminCaseManagement = () => {
                                     className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                                 />
                                 <Input
-                                    placeholder="Search"
+                                    placeholder="Search Case ID or Address"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="w-64 rounded-full border-border bg-background pl-10 pr-4 focus-visible:ring-0 focus-visible:ring-offset-0"
                                 />
                             </div>
 
-                            {/* Filter Button */}
-                            <Button
-                                variant="outline"
-                                className="rounded-full border-border text-foreground hover:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0"
-                            >
-                                <Filter size={18} variant="Outline" className="mr-2" />
-                                Filter
-                            </Button>
+                            {/* Agency Filter on the right of search bar */}
+                            <Select value={selectedAgency} onValueChange={setSelectedAgency}>
+                                <SelectTrigger className="w-48 rounded-full border-border bg-background px-4 focus:ring-0 focus:ring-offset-0">
+                                    <SelectValue placeholder="All Agencies" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Agencies</SelectItem>
+                                    {uniqueAgencies.map((agencyName) => (
+                                        <SelectItem key={agencyName} value={agencyName}>
+                                            {agencyName}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
 
                             {/* Export Dropdown */}
                             <DropdownMenu>
