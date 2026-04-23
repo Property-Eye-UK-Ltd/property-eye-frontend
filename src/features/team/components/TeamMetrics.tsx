@@ -41,7 +41,7 @@ export const TeamMetrics = () => {
                 <div className="absolute top-0 left-0 right-0 h-2 bg-purple-500" />
                 <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row items-center justify-around gap-8 h-full">
-                        {/* Chart 1 */}
+                        {/* Chart 1: Conversion Rate */}
                         <div className="flex items-center gap-4">
                             <div className="h-16 w-16 relative">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -69,12 +69,12 @@ export const TeamMetrics = () => {
                                     <div className="w-2 h-2 rounded-full bg-blue-500" />
                                     <span className="text-sm font-medium text-muted-foreground">Cases Opened</span>
                                 </div>
-                                <span className="text-xl font-semibold text-foreground">831</span>
-                                <span className="text-xs text-muted-foreground">50%</span>
+                                <span className="text-xl font-medium text-foreground">831</span>
+                                <span className="text-[10px] text-muted-foreground leading-tight">(Withdrawn & Sold / Total Checks)</span>
                             </div>
                         </div>
 
-                        {/* Chart 2 */}
+                        {/* Chart 2: Fraud Percentage */}
                         <div className="flex items-center gap-4">
                             <div className="h-16 w-16 relative">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -100,10 +100,10 @@ export const TeamMetrics = () => {
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-2 mb-1">
                                     <div className="w-2 h-2 rounded-full bg-orange-500" />
-                                    <span className="text-sm font-medium text-muted-foreground">Evidence Uploaded</span>
+                                    <span className="text-sm font-medium text-muted-foreground">Fraud Percentage</span>
                                 </div>
-                                <span className="text-xl font-semibold text-foreground">261</span>
-                                <span className="text-xs text-muted-foreground">19%</span>
+                                <span className="text-xl font-medium text-foreground">261</span>
+                                <span className="text-[10px] text-muted-foreground leading-tight">(Fraud / Withdrawn & Sold)</span>
                             </div>
                         </div>
                     </div>

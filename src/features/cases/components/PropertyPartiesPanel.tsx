@@ -9,10 +9,6 @@ export interface PropertyPartiesData {
     completionDate: string
     buyerName: string
   }
-  transactionMetadata: {
-    paymentDate: string
-    amount: string
-  }
 }
 
 interface PropertyPartiesPanelProps {
@@ -67,19 +63,6 @@ export const PropertyPartiesPanel = ({ data }: PropertyPartiesPanelProps) => {
           </div>
         </div>
 
-        <div className="border-t border-border pt-6">
-          <p className="text-xs text-muted-foreground mb-4">Transaction Metadata</p>
-          <div className="grid gap-y-4 gap-x-12 md:grid-cols-2">
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Payment Date</p>
-              <p className="text-sm text-primary">{data.transactionMetadata.paymentDate}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Amount</p>
-              <p className="text-sm text-primary">{data.transactionMetadata.amount}</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )

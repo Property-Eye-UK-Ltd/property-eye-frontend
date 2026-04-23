@@ -2,33 +2,21 @@ import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
-import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
-import { CaseListPanel, CaseRecord } from "@/features/cases/components/CaseListPanel"
+import { CaseListPanel } from "@/features/cases/components/CaseListPanel"
 import {
   periods,
   metricsData,
   allCasesData,
-  severityStyles,
-  fraudTypeStyles,
 } from "@/data/caseManagementData"
-
-const getCaseTypeTabs = (allCases: typeof allCasesData) => {
-  const managedCount = allCases.filter((c) => c.caseType === "managed").length
-  const selfHandledCount = allCases.filter((c) => c.caseType === "self-handled").length
-  return [
-    { label: "Managed Cases", count: managedCount, value: "managed" },
-    { label: "Self-handled Cases", count: selfHandledCount, value: "self-handled" },
-  ]
-}
 
 const CaseManagement = () => {
   const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
-  const [selectedCaseType, setSelectedCaseType] = useState("managed")
 
-  const caseTypeTabs = getCaseTypeTabs(allCasesData)
-  const filteredCases = allCasesData.filter((c) => c.caseType === selectedCaseType)
-  const casesData: CaseRecord[] = filteredCases.map(({ caseType, ...rest }) => rest)
+  // Filter out the metrics we don't want (False Positive and Recovery Rate)
+  const filteredMetrics = metricsData[selectedPeriod].filter(
+    m => !["False Positive Rate", "Recovery Rate"].includes(m.title)
+  )
 
   return (
     <DashboardLayout>
@@ -38,14 +26,12 @@ const CaseManagement = () => {
       />
 
       <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
-        <MetricCards metrics={metricsData[selectedPeriod]} />
+        {/* Metric cards (now 2 cards filling the row) */}
+        <MetricCards metrics={filteredMetrics} columns={2} />
 
-        <CaseTypeTabs tabs={caseTypeTabs} selected={selectedCaseType} onSelect={setSelectedCaseType} />
-
+        {/* Case List Panel (Tabs removed, list is direct) */}
         <CaseListPanel
-          data={casesData}
-          severityStyles={severityStyles}
-          fraudTypeStyles={fraudTypeStyles}
+          data={allCasesData}
         />
       </div>
     </DashboardLayout>
@@ -53,4 +39,3 @@ const CaseManagement = () => {
 }
 
 export default CaseManagement
-

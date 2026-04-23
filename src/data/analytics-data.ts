@@ -1,11 +1,11 @@
 import { FraudDataPoint, FraudSeriesConfig } from "@/features/overview/components/FraudDetectionPanel"
 import { CommissionBreakdownDatum } from "@/features/overview/components/CommissionBreakdownPanel"
 import { RepeatOffender } from "@/features/overview/components/RepeatOffendersPanel"
-import { FraudTypeData, FraudTypeConfig } from "@/features/analytics/components/MostCommonFraudTypesPanel"
 import { TimingGapData } from "@/features/analytics/components/TimingGapsDistributionPanel"
 import { MetricCard } from "@/features/overview/components/MetricCards"
+import { EventLogEntry } from "@/data/reportsData"
 
-export const periods = ["All Time", "This Month", "Last Week"]
+export const periods = ["All Time", "First Half of Year", "Second Half of Year"]
 
 export const analyticsTabs = [
     { label: "Overview", value: "overview" },
@@ -15,98 +15,39 @@ export const analyticsTabs = [
 
 export const metricsData: Record<string, MetricCard[]> = {
     "All Time": [
-        {
-            title: "Total fraud Alerts",
-            value: "1,459",
-            period: "All time",
-            change: "+221",
-            topBarClass: "bg-red-500",
-        },
-        {
-            title: "Commission at Risk",
-            value: "£12,898",
-            period: "All time",
-            change: "+£2,233",
-            topBarClass: "bg-orange-500",
-        },
-        {
-            title: "Total Recoveries",
-            value: "324",
-            period: "All time",
-            change: "+2",
-            topBarClass: "bg-green-500",
-        },
-        {
-            title: "Avg. Fraud Likelihood",
-            value: "37%",
-            period: "All time",
-            change: "+2%",
-            topBarClass: "bg-purple-500",
-        },
+        { title: "Total Fraud Alerts", value: "1,459", period: "All time", change: "+221", topBarClass: "bg-red-500" },
+        { title: "Open Cases", value: "152", period: "All time", change: "+5", topBarClass: "bg-purple-500" },
+        { title: "All Time Closed Cases", value: "1,307", period: "All time", change: "+216", topBarClass: "bg-green-500" },
+        { title: "Avg. Fraud Likelihood", value: "37%", period: "All time", change: "+2%", topBarClass: "bg-blue-500" },
     ],
-    "This Month": [
-        {
-            title: "Total fraud Alerts",
-            value: "128",
-            period: "This Month",
-            change: "+15",
-            topBarClass: "bg-red-500",
-        },
-        {
-            title: "Commission at Risk",
-            value: "£1,250",
-            period: "This Month",
-            change: "+£150",
-            topBarClass: "bg-orange-500",
-        },
-        {
-            title: "Total Recoveries",
-            value: "22",
-            period: "This Month",
-            change: "+3",
-            topBarClass: "bg-green-500",
-        },
-        {
-            title: "Avg. Fraud Likelihood",
-            value: "35%",
-            period: "This Month",
-            change: "-1%",
-            topBarClass: "bg-purple-500",
-        },
+    "First Half of Year": [
+        { title: "Total Fraud Alerts", value: "842", period: "H1 2025", change: "+45", topBarClass: "bg-red-500" },
+        { title: "Open Cases", value: "85", period: "H1 2025", change: "+12", topBarClass: "bg-purple-500" },
+        { title: "All Time Closed Cases", value: "650", period: "H1 2025", change: "+85", topBarClass: "bg-green-500" },
+        { title: "Avg. Fraud Likelihood", value: "38%", period: "H1 2025", change: "+2%", topBarClass: "bg-blue-500" },
     ],
-    "Last Week": [
-        {
-            title: "Total fraud Alerts",
-            value: "34",
-            period: "Last Week",
-            change: "-2",
-            topBarClass: "bg-red-500",
-        },
-        {
-            title: "Commission at Risk",
-            value: "£450",
-            period: "Last Week",
-            change: "-£50",
-            topBarClass: "bg-orange-500",
-        },
-        {
-            title: "Total Recoveries",
-            value: "5",
-            period: "Last Week",
-            change: "+1",
-            topBarClass: "bg-green-500",
-        },
-        {
-            title: "Avg. Fraud Likelihood",
-            value: "33%",
-            period: "Last Week",
-            change: "-3%",
-            topBarClass: "bg-purple-500",
-        },
+    "Second Half of Year": [
+        { title: "Total Fraud Alerts", value: "617", period: "H2 2025", change: "+12", topBarClass: "bg-red-500" },
+        { title: "Open Cases", value: "67", period: "H2 2025", change: "-18", topBarClass: "bg-purple-500" },
+        { title: "All Time Closed Cases", value: "657", period: "H2 2025", change: "+131", topBarClass: "bg-green-500" },
+        { title: "Avg. Fraud Likelihood", value: "35%", period: "H2 2025", change: "-3%", topBarClass: "bg-blue-500" },
     ],
 }
 
-// Overview Tab Data
+export const eventLogsData: EventLogEntry[] = [
+    { actor: "Sarah Jenkins", role: "Manager", actionType: "Triggered Case", targetObject: "Case", date: "24 Nov, 2025" },
+    { actor: "Michael Thorne", role: "Agent", actionType: "Closed Case", targetObject: "Case", date: "24 Nov, 2025" },
+    { actor: "Sarah Jenkins", role: "Manager", actionType: "Role Override", targetObject: "Agency", date: "23 Nov, 2025" },
+    { actor: "Sarah Jenkins", role: "Manager", actionType: "Printed Invoice", targetObject: "Invoice", date: "23 Nov, 2025" },
+    { actor: "Michael Thorne", role: "Agent", actionType: "Closed Case", targetObject: "Case", date: "22 Nov, 2025" },
+]
+
+export const closedCasesData = [
+    { id: "#367282", address: "12 High Street, London", closedBy: "Admin", closedDate: "22 Nov, 2025", reason: "Verified Sale" },
+    { id: "#367285", address: "56 Victoria Road, Bristol", closedBy: "Admin", closedDate: "20 Nov, 2025", reason: "Direct Instruction" },
+    { id: "#367288", address: "67 Park Avenue, Sheffield", closedBy: "Admin", closedDate: "15 Nov, 2025", reason: "No Fraud Found" },
+]
+
 export const fraudRateData: FraudDataPoint[] = [
     { month: "Jan", rate: 72 },
     { month: "Feb", rate: 18 },
@@ -153,26 +94,13 @@ export const detectionConfig: Record<string, FraudSeriesConfig> = {
     falsePositive: { label: "False Positive Ratio", color: "#EF4444" },
 }
 
-// Fraud Patterns Tab Data
-export const fraudTypesData: FraudTypeData[] = [
-    { type: "Private Sale", privateSale: 55, buyerIntro: 0, dualAgency: 0 },
-    { type: "Buyer Intro", privateSale: 0, buyerIntro: 78, dualAgency: 0 },
-    { type: "Dual Agency", privateSale: 0, buyerIntro: 0, dualAgency: 72 },
-]
-
-export const fraudTypesConfig: Record<string, FraudTypeConfig> = {
-    privateSale: { label: "Private Sale", color: "#9333EA" },
-    buyerIntro: { label: "Buyer Intro", color: "#3B82F6" },
-    dualAgency: { label: "Dual Agency", color: "#1E40AF" },
-}
-
 export const repeatOffenders: RepeatOffender[] = [
     { name: "Fredrick Hunt", location: "Ashfield Road", offenses: 24 },
     { name: "Madeline Kahro", location: "Picadilly", offenses: 22 },
     { name: "Fredrick Hunt", location: "Leicester", offenses: 19 },
     { name: "Fredrick Hunt", location: "Manchester", offenses: 19 },
-    { name: "Fredrick Hunt", location: "London", offenses: 12 },
-    { name: "Fredrick Hunt", location: "London", offenses: 12 },
+    { name: "Fredrick Hunt", location: "Birmingham", offenses: 18 },
+    { name: "James Bond", location: "Kirkshire", offenses: 10 },
 ]
 
 export const timingGapsData: TimingGapData[] = [
@@ -197,7 +125,6 @@ export const timingGapsData: TimingGapData[] = [
     { range: "900", count: 3 },
 ]
 
-// Financial Impact Tab Data
 export const commissionAvoidedData: FraudDataPoint[] = [
     { month: "Jan", avoided: 70 },
     { month: "Feb", avoided: 15 },

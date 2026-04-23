@@ -125,19 +125,19 @@ export const EventLogTable = ({ data }: EventLogTableProps) => {
                     <TableBody>
                         {currentData.map((entry, index) => (
                             <TableRow key={index} className="border-b border-border">
-                                <TableCell className="px-6 py-4 text-sm text-foreground">{entry.actor}</TableCell>
-                                <TableCell className="px-6 py-4 text-sm text-muted-foreground">{entry.role}</TableCell>
-                                <TableCell className="px-6 py-4">
+                                <TableCell className="px-6 py-3 text-sm text-foreground">{entry.actor}</TableCell>
+                                <TableCell className="px-6 py-3 text-sm text-muted-foreground">{entry.role}</TableCell>
+                                <TableCell className="px-6 py-3">
                                     <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal shadow-none", actionTypeStyles[entry.actionType])}>
                                         {entry.actionType}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-6 py-4">
+                                <TableCell className="px-6 py-3">
                                     <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal shadow-none", targetObjectStyles[entry.targetObject])}>
                                         {entry.targetObject}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-6 py-4 text-sm text-muted-foreground">{entry.date}</TableCell>
+                                <TableCell className="px-6 py-3 text-sm text-muted-foreground">{entry.date}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

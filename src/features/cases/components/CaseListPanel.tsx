@@ -5,54 +5,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
-import { ChevronsUpDown } from "lucide-react"
-
-export interface CaseRecord {
-  caseId: string
-  propertyAddress: string
-  fraudType: "Buyer Intro" | "Private Sale" | "Dual Agency"
-  score: number
-  severity: "Critical" | "High" | "Medium" | "Low"
-  dateDetected: string
-}
+import { CaseRecord } from "@/data/caseManagementData"
 
 interface CaseListPanelProps {
   data: CaseRecord[]
-  severityStyles: Record<CaseRecord["severity"], string>
-  fraudTypeStyles: Record<CaseRecord["fraudType"], string>
 }
 
 export const CaseListPanel = ({
   data,
-  severityStyles,
-  fraudTypeStyles,
 }: CaseListPanelProps) => {
   const navigate = useNavigate()
-  const [sortColumn, setSortColumn] = useState<"fraudType" | "severity" | null>(null)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
-  const severityWeight: Record<CaseRecord["severity"], number> = {
-    Critical: 3,
-    High: 2,
-    Medium: 1,
-    Low: 0,
-  }
-
   const sortedCases = useMemo(() => {
-    let sorted = [...data]
-    if (sortColumn) {
-      const direction = sortDirection === "asc" ? 1 : -1
-      sorted = sorted.sort((a, b) => {
-        if (sortColumn === "fraudType") {
-          return a.fraudType.localeCompare(b.fraudType) * direction
-        }
-        return (severityWeight[a.severity] - severityWeight[b.severity]) * direction
-      })
-    }
-    return sorted
-  }, [data, sortColumn, sortDirection, severityWeight])
+    return [...data]
+  }, [data])
 
   const paginatedCases = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage
@@ -62,7 +30,6 @@ export const CaseListPanel = ({
 
   const totalPages = Math.ceil(sortedCases.length / itemsPerPage)
 
-  // Reset to page 1 when data changes, or adjust if current page exceeds total pages
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1)
@@ -97,19 +64,10 @@ export const CaseListPanel = ({
 
   const paginationItems = generatePagination()
 
-  const handleSort = (column: "fraudType" | "severity") => {
-    if (sortColumn === column) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
-    } else {
-      setSortColumn(column)
-      setSortDirection("asc")
-    }
-  }
-
   return (
     <DashboardPanel
       title="Case List"
-      description="Monitor property-related fraud cases and recovery outcomes."
+      description="Monitor property withdrawals and sales verified via Price Paid Dataset."
       className="overflow-hidden"
       noPadding
       hasBorder
@@ -120,52 +78,35 @@ export const CaseListPanel = ({
             <TableRow className="bg-gray-50">
               <TableHead className="px-4 font-medium">Case ID</TableHead>
               <TableHead className="px-4 font-medium">Property Address</TableHead>
-              <TableHead className="px-4 font-medium">
-                <button
-                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                  onClick={() => handleSort("fraudType")}
-                >
-                  Fraud Type
-                  <ChevronsUpDown className="h-4 w-4" />
-                </button>
-              </TableHead>
-              <TableHead className="px-4 font-medium">Score</TableHead>
-              <TableHead className="px-4 font-medium">
-                <button
-                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                  onClick={() => handleSort("severity")}
-                >
-                  Severity
-                  <ChevronsUpDown className="h-4 w-4" />
-                </button>
-              </TableHead>
-              <TableHead className="px-4 font-medium">Date Detected</TableHead>
-              <TableHead className="px-4 font-medium">Action</TableHead>
+              <TableHead className="px-4 font-medium">Completion Date</TableHead>
+              <TableHead className="px-4 font-medium">Buyer Name</TableHead>
+              <TableHead className="px-4 font-medium text-center">Status</TableHead>
+              <TableHead className="px-4 font-medium text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedCases.map((caseRecord, index) => (
               <TableRow
-                key={`${caseRecord.caseId}-${caseRecord.dateDetected}-${index}`}
+                key={`${caseRecord.caseId}-${index}`}
                 className="border-b border-border"
               >
-                <TableCell className="px-4 py-3 font-normal">{caseRecord.caseId}</TableCell>
-                <TableCell className="px-4 py-3 font-normal">{caseRecord.propertyAddress}</TableCell>
-                <TableCell className="px-4 py-3">
-                  <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", fraudTypeStyles[caseRecord.fraudType])}>
-                    {caseRecord.fraudType}
+                <TableCell className="px-4 py-3 font-normal text-muted-foreground">{caseRecord.caseId}</TableCell>
+                <TableCell className="px-4 py-3 font-normal text-foreground">{caseRecord.propertyAddress}</TableCell>
+                <TableCell className="px-4 py-3 text-muted-foreground">{caseRecord.completionDate}</TableCell>
+                <TableCell className="px-4 py-3 text-foreground font-medium">{caseRecord.buyerName}</TableCell>
+                <TableCell className="px-4 py-4 text-center">
+                  <Badge className={cn(
+                    "rounded-full px-3 py-1 text-[10px] font-medium",
+                    caseRecord.status === "Checked" 
+                      ? "bg-green-50 text-green-600 border border-green-100" 
+                      : "bg-amber-50 text-amber-600 border border-amber-100"
+                  )}>
+                    {caseRecord.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="px-4 py-3">{caseRecord.score}%</TableCell>
-                <TableCell className="px-4 py-4">
-                  <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", severityStyles[caseRecord.severity])}>
-                    {caseRecord.severity}
-                  </Badge>
-                </TableCell>
-                <TableCell className="px-4 py-3">{caseRecord.dateDetected}</TableCell>
-                <TableCell className="px-4 py-3">
+                <TableCell className="px-4 py-3 text-right">
                   <button
-                    onClick={() => navigate(`/dashboard/cases/${encodeURIComponent(caseRecord.caseId)}`)}
+                    onClick={() => navigate(`/dashboard/cases/${encodeURIComponent(caseRecord.caseId.replace("#", ""))}`)}
                     className="text-sm font-medium transition-colors hover:underline"
                     style={{ color: "var(--progress)" }}
                   >
@@ -220,4 +161,3 @@ export const CaseListPanel = ({
     </DashboardPanel>
   )
 }
-

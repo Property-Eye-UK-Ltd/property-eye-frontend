@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Filter, ArrowDown2, ArrowLeft, ArrowRight } from "iconsax-react"
+import { Filter, ArrowDown2, ArrowLeft, ArrowRight, Profile } from "iconsax-react"
 import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { users, User } from "@/data/team-data"
@@ -140,15 +140,9 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                             <TableRow key={user.id} className="border-b border-border">
                                 <TableCell className="px-4 py-3">
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="h-9 w-9">
-                                            <AvatarImage src={user.avatar} alt={user.name} />
-                                            <AvatarFallback className={cn(
-                                                "text-xs font-medium",
-                                                user.id === "2" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
-                                            )}>
-                                                {user.name.split(" ").map(n => n[0]).join("")}
-                                            </AvatarFallback>
-                                        </Avatar>
+                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-progress/30">
+                                            <Profile size={18} variant="Bulk" className="text-primary" />
+                                        </div>
                                         <span className="font-normal text-foreground">{user.name}</span>
                                     </div>
                                 </TableCell>
