@@ -41,7 +41,7 @@ const AdminCaseManagement = () => {
                     hasBorder
                     actions={
                         <div className="flex flex-nowrap items-center gap-1.5 lg:gap-2">
-                            <div className="relative w-36 shrink-0 sm:w-44 lg:w-56">
+                            <div className="relative min-w-[9rem] flex-1 sm:min-w-0 sm:flex-none sm:w-44 lg:w-56">
                                 <SearchNormal
                                     size={16}
                                     variant="Outline"
