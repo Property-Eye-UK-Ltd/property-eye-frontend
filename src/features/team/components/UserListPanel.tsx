@@ -79,6 +79,52 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
 
     const pagination = getPaginationArray()
 
+    const paginationFooter = (
+        <div className="flex flex-col gap-3 border-t border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between lg:gap-4 lg:px-4 lg:py-4">
+            <div className="flex flex-wrap items-center gap-2">
+                {pagination.map((item, idx) =>
+                    item === "ellipsis" ? (
+                        <div
+                            key={`ellipsis-${idx}`}
+                            className="flex h-9 w-9 items-center justify-center rounded-full border border-primary text-primary"
+                        >
+                            ...
+                        </div>
+                    ) : (
+                        <button
+                            key={item}
+                            onClick={() => setCurrentPage(item)}
+                            className={cn(
+                                "h-9 w-9 rounded-full border border-primary text-sm font-normal transition-colors",
+                                currentPage === item ? "bg-primary text-secondary" : "text-primary"
+                            )}
+                        >
+                            {item}
+                        </button>
+                    )
+                )}
+            </div>
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
+                >
+                    <ArrowLeft size={16} variant="Outline" className="text-primary" />
+                    Previous
+                </button>
+                <button
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
+                >
+                    Next
+                    <ArrowRight size={16} variant="Outline" className="text-primary" />
+                </button>
+            </div>
+        </div>
+    )
+
     return (
         <DashboardPanel
             title="User List"
@@ -99,8 +145,8 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                 </div>
             }
         >
-            <div className="overflow-x-auto">
-                <Table>
+            <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                <Table className="min-w-[800px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className="px-4 font-medium">Name</TableHead>
@@ -174,47 +220,8 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                         ))}
                     </TableBody>
                 </Table>
-                <div className="flex flex-col gap-4 border-t border-border px-4 py-4 text-white md:flex-row md:items-center md:justify-between">
-                    <div className="flex flex-wrap items-center gap-2">
-                        {pagination.map((item, idx) =>
-                            item === "ellipsis" ? (
-                                <div key={`ellipsis-${idx}`} className="flex h-9 w-9 items-center justify-center rounded-full border border-primary text-primary">
-                                    ...
-                                </div>
-                            ) : (
-                                <button
-                                    key={item}
-                                    onClick={() => setCurrentPage(item)}
-                                    className={cn(
-                                        "h-9 w-9 rounded-full border border-primary text-sm font-normal transition-colors",
-                                        currentPage === item ? "bg-primary text-secondary" : "text-primary"
-                                    )}
-                                >
-                                    {item}
-                                </button>
-                            )
-                        )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                            disabled={currentPage === 1}
-                            className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
-                        >
-                            <ArrowLeft size={16} variant="Outline" className="text-primary" />
-                            Previous
-                        </button>
-                        <button
-                            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                            disabled={currentPage === totalPages}
-                            className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
-                        >
-                            Next
-                            <ArrowRight size={16} variant="Outline" className="text-primary" />
-                        </button>
-                    </div>
-                </div>
             </div>
+            {paginationFooter}
         </DashboardPanel>
     )
 }

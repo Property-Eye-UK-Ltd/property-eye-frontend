@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { CurrentPlanCard } from "@/features/billing/components/CurrentPlanCard"
 import { PaymentHistoryTable } from "@/features/billing/components/PaymentHistoryTable"
 import { EmptyPlanCard } from "@/features/billing/components/EmptyPlanCard"
@@ -17,7 +18,6 @@ const AccountBilling = () => {
     const [isFormModalOpen, setIsFormModalOpen] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    // Check if user has an active plan (in real app, this would come from API/state)
     const hasActivePlan = currentPlan !== null
     const hasPaymentHistory = paymentHistory.length > 0
 
@@ -36,13 +36,10 @@ const AccountBilling = () => {
 
     const handleFormSubmit = async (values: CancelSubscriptionFormValues) => {
         setIsSubmitting(true)
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        await new Promise((resolve) => setTimeout(resolve, 1500))
         console.log("Cancelling subscription:", values)
         setIsSubmitting(false)
         setIsFormModalOpen(false)
-
-        // Show success toast
         toast.success("Subscription cancelled successfully", {
             description: "Your subscription has been cancelled",
         })
@@ -51,8 +48,7 @@ const AccountBilling = () => {
     return (
         <DashboardLayout>
             <DynamicPageHeader title="Account & Billing" />
-            <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
-                {/* Current Plan - Shows empty state if no active plan */}
+            <DashboardPageContent>
                 {hasActivePlan ? (
                     <CurrentPlanCard
                         onCancelPlan={handleCancelPlanClick}
@@ -62,22 +58,19 @@ const AccountBilling = () => {
                     <EmptyPlanCard onChoosePlan={handleChangePlanClick} />
                 )}
 
-                {/* Payment History - Shows empty state if no payment history */}
                 {hasPaymentHistory ? (
                     <PaymentHistoryTable />
                 ) : (
                     <EmptyPaymentHistory />
                 )}
-            </div>
+            </DashboardPageContent>
 
-            {/* Cancel Subscription Confirm Modal */}
             <CancelSubscriptionConfirmModal
                 open={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
                 onConfirm={handleConfirmCancel}
             />
 
-            {/* Cancel Subscription Form Modal */}
             <CancelSubscriptionFormModal
                 open={isFormModalOpen}
                 onClose={() => setIsFormModalOpen(false)}

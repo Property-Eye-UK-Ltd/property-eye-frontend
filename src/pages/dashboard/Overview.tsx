@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
@@ -28,28 +29,27 @@ const Overview = () => {
         actions={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
       />
 
-      <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
+      <DashboardPageContent>
         <MetricCards metrics={metricsData[selectedPeriod]} />
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-          <CommissionBreakdownPanel 
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-5 lg:gap-4">
+          <CommissionBreakdownPanel
             title="Severity Distribution"
-            data={severityData} 
-            chartSize={220} 
-            isWide={false}
+            data={severityData}
+            chartSize={220}
           />
           <TopPropertiesPanel properties={topProperties} />
         </div>
 
-        <FraudDetectionPanel 
-            title="Fraud Detection Growth"
-            data={lineChartData} 
-            config={chartConfig} 
-            showCategoryFilter={false}
+        <FraudDetectionPanel
+          title="Fraud Detection Growth"
+          data={lineChartData}
+          config={chartConfig}
+          showCategoryFilter={false}
         />
 
         <ActiveAlertsPanel data={alertsData} severityStyles={severityStyles} />
-      </div>
+      </DashboardPageContent>
     </DashboardLayout>
   )
 }

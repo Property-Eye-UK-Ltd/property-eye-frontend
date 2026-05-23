@@ -4,13 +4,18 @@ import { Play, TickCircle } from "iconsax-react"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export const GlobalCheckRunner = () => {
+interface GlobalCheckRunnerProps {
+    className?: string
+    /** Icon-only circular button for mobile header */
+    compact?: boolean
+}
+
+export const GlobalCheckRunner = ({ className, compact = false }: GlobalCheckRunnerProps) => {
     const [isRunning, setIsRunning] = React.useState(false)
     const [progress, setProgress] = React.useState(0)
     const [isComplete, setIsComplete] = React.useState(false)
-    
-    // Mock scheduling logic
-    const [canRun, setCanRun] = React.useState(true) 
+
+    const [canRun] = React.useState(true)
 
     const handleRunChecks = () => {
         if (!canRun || isRunning) return
@@ -26,7 +31,6 @@ export const GlobalCheckRunner = () => {
                     setTimeout(() => {
                         setIsRunning(false)
                         setIsComplete(true)
-                        // Reset after showing completion for 3 seconds
                         setTimeout(() => setIsComplete(false), 3000)
                     }, 500)
                     return 100
@@ -37,15 +41,49 @@ export const GlobalCheckRunner = () => {
         }, 300)
     }
 
+    if (compact) {
+        return (
+            <Button
+                size="icon"
+                onClick={handleRunChecks}
+                disabled={!canRun || isRunning || isComplete}
+                aria-label={
+                    isRunning
+                        ? `Checks running ${progress}%`
+                        : isComplete
+                          ? "Checks complete"
+                          : "Run checks"
+                }
+                className={cn(
+                    "h-10 w-10 shrink-0 rounded-full",
+                    isComplete
+                        ? "border-0 bg-success text-white hover:bg-success"
+                        : "bg-primary text-white hover:bg-primary/90",
+                    className
+                )}
+            >
+                {isRunning ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-secondary" />
+                ) : isComplete ? (
+                    <TickCircle size={18} variant="Bold" />
+                ) : (
+                    <Play size={18} variant="Bold" />
+                )}
+            </Button>
+        )
+    }
+
     return (
-        <div className="flex items-center gap-2">
+        <div className={cn("flex items-center gap-2", className)}>
             <Button
                 size="sm"
                 onClick={handleRunChecks}
                 disabled={!canRun || isRunning || isComplete}
                 className={cn(
-                    "rounded-full px-6 transition-all duration-300 min-w-[180px] h-10",
-                    isComplete ? "bg-success hover:bg-success text-white border-0" : "bg-primary hover:bg-primary/90 text-white"
+                    "h-10 min-w-[180px] rounded-full px-6 transition-all duration-300",
+                    isComplete
+                        ? "border-0 bg-success text-white hover:bg-success"
+                        : "bg-primary text-white hover:bg-primary/90"
                 )}
             >
                 {isRunning ? (
@@ -54,7 +92,7 @@ export const GlobalCheckRunner = () => {
                         <span className="font-medium">Checks Running... {progress}%</span>
                     </div>
                 ) : isComplete ? (
-                    <div className="flex items-center gap-2 animate-in zoom-in-95 duration-300">
+                    <div className="flex animate-in items-center gap-2 duration-300 zoom-in-95">
                         <TickCircle size={18} variant="Bold" />
                         <span>Checks Done</span>
                     </div>

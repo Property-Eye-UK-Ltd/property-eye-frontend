@@ -77,10 +77,49 @@ export const EventLogTable = ({ data }: EventLogTableProps) => {
         setCurrentPage((prev) => Math.min(prev + 1, totalPages))
     }
 
+    const paginationFooter = (
+        <div className="flex flex-col gap-3 border-t border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between lg:px-6 lg:py-4">
+            <div className="flex flex-wrap items-center gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={cn(
+                            "h-9 w-9 rounded-full border text-sm font-medium transition-colors",
+                            currentPage === page
+                                ? "border-primary bg-primary text-secondary"
+                                : "border-transparent text-primary hover:border-primary"
+                        )}
+                    >
+                        {page}
+                    </button>
+                ))}
+            </div>
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={handlePrevious}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50"
+                >
+                    <ArrowLeft size={16} variant="Outline" className="text-primary" />
+                    Previous
+                </button>
+                <button
+                    onClick={handleNext}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50"
+                >
+                    Next
+                    <ArrowRight size={16} variant="Outline" className="text-primary" />
+                </button>
+            </div>
+        </div>
+    )
+
     return (
         <>
-            <div className="overflow-x-auto">
-                <Table>
+            <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                <Table className="min-w-[700px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className="px-6 py-3 font-medium text-muted-foreground">Actor</TableHead>
@@ -143,45 +182,7 @@ export const EventLogTable = ({ data }: EventLogTableProps) => {
                     </TableBody>
                 </Table>
             </div>
-
-            {/* Pagination */}
-            <div className="flex items-center justify-between border-t border-border px-6 py-4">
-                <div className="flex items-center gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={cn(
-                                "h-9 w-9 rounded-full border text-sm font-medium transition-colors",
-                                currentPage === page
-                                    ? "bg-primary text-secondary border-primary"
-                                    : "text-primary border-transparent hover:border-primary"
-                            )}
-                        >
-                            {page}
-                        </button>
-                    ))}
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={handlePrevious}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-                    >
-                        <ArrowLeft size={16} variant="Outline" className="text-primary" />
-                        Previous
-                    </button>
-                    <button
-                        onClick={handleNext}
-                        disabled={currentPage === totalPages}
-                        className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-                    >
-                        Next
-                        <ArrowRight size={16} variant="Outline" className="text-primary" />
-                    </button>
-                </div>
-            </div>
+            {paginationFooter}
         </>
     )
 }

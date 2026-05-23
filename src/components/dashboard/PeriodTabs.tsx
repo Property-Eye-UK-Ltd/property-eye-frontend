@@ -7,14 +7,15 @@ interface PeriodTabsProps {
 }
 
 export const PeriodTabs = ({ periods, selected, onSelect }: PeriodTabsProps) => (
-  <div className="inline-flex rounded-lg border border-border bg-white overflow-hidden">
+  <div className="inline-flex max-w-full overflow-x-auto rounded-md border border-border bg-white lg:rounded-lg [-webkit-overflow-scrolling:touch]">
     {periods.map((period, index) => {
       const isActive = selected === period
       return (
         <button
           key={period}
+          type="button"
           className={cn(
-            "px-5 py-2 text-sm font-medium transition-colors focus:outline-none",
+            "shrink-0 px-2.5 py-1.5 text-xs font-medium transition-colors focus:outline-none lg:px-5 lg:py-2 lg:text-sm",
             index !== 0 && "border-l border-border/70",
             isActive ? "bg-[#F4F6F9] text-foreground" : "text-muted-foreground hover:bg-muted/30"
           )}
@@ -26,4 +27,3 @@ export const PeriodTabs = ({ periods, selected, onSelect }: PeriodTabsProps) => 
     })}
   </div>
 )
-

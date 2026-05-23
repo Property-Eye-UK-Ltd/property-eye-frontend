@@ -34,7 +34,11 @@ export const NotificationMenu = () => {
                     )}
                 </button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-[480px] rounded-2xl p-0 shadow-lg border-border" sideOffset={8}>
+            <PopoverContent
+                align="end"
+                className="w-[min(480px,calc(100vw-2rem))] rounded-2xl border-border p-0 shadow-lg"
+                sideOffset={8}
+            >
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4">
                     <h4 className="font-medium text-foreground">Notification</h4>

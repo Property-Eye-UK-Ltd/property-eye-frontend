@@ -39,14 +39,13 @@ const timeRangeOptions = [
   { label: "Last 2 Years", value: "24" },
 ]
 
-// Generate daily data for last month (mock data)
 const generateDailyData = (categories: string[]): FraudDataPoint[] => {
   const days = 30
   const dailyData: FraudDataPoint[] = []
 
   for (let i = 1; i <= days; i++) {
     const dataPoint: FraudDataPoint = { month: `Day ${i}` }
-    categories.forEach(category => {
+    categories.forEach((category) => {
       dataPoint[category] = Math.floor(Math.random() * 100)
     })
     dailyData.push(dataPoint)
@@ -55,18 +54,15 @@ const generateDailyData = (categories: string[]): FraudDataPoint[] => {
   return dailyData
 }
 
-// Generate extended monthly data by repeating the base data
 const generateExtendedMonthlyData = (baseData: FraudDataPoint[], monthsNeeded: number): FraudDataPoint[] => {
   const extended: FraudDataPoint[] = []
   const baseLength = baseData.length
 
-  // Repeat the base data to fill the required months
   for (let i = 0; i < monthsNeeded; i++) {
     const baseIndex = i % baseLength
     const yearOffset = Math.floor(i / baseLength)
     const dataPoint = { ...baseData[baseIndex] }
 
-    // Add year suffix for multi-year views
     if (yearOffset > 0) {
       dataPoint.month = `${dataPoint.month} '${24 - yearOffset}`
     }
@@ -104,7 +100,7 @@ const FraudTooltip = ({ active, payload, label, config }: TooltipProps<number, s
             <div key={entry.dataKey} className="flex items-center justify-between gap-4 text-xs text-foreground">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <span
-                  className="h-2.5 w-2.5 rounded-full flex-shrink-0"
+                  className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                   style={{ backgroundColor: color }}
                 />
                 <span>{entry.name}</span>
@@ -127,17 +123,14 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, s
   const filteredData = useMemo(() => {
     const monthsToShow = parseInt(timeRange)
 
-    // If "Last Month" is selected, generate daily data
     if (monthsToShow === 1) {
       return generateDailyData(Object.keys(config))
     }
 
-    // If we need more months than we have, generate extended data
     if (monthsToShow > data.length) {
       return generateExtendedMonthlyData(data, monthsToShow)
     }
 
-    // Otherwise, slice the monthly data
     return data.slice(-monthsToShow)
   }, [data, timeRange, config])
 
@@ -150,7 +143,6 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, s
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) => {
       if (prev.includes(category)) {
-        // Don't allow deselecting all categories
         if (prev.length === 1) return prev
         return prev.filter((c) => c !== category)
       }
@@ -163,11 +155,11 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, s
       title={title}
       icon={<Diagram size={16} variant="TwoTone" className="text-muted-foreground" />}
       hasBorder
+      compactContent
       actions={
-        <div className="flex items-center gap-4">
-          {/* Time Range Filter */}
+        <div className="flex max-w-none flex-nowrap items-center justify-end gap-1.5 overflow-x-auto [-webkit-overflow-scrolling:touch]">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="h-8 w-[140px] text-xs rounded-full">
+            <SelectTrigger className="h-7 w-[108px] shrink-0 rounded-full text-[11px] lg:h-8 lg:w-[130px] lg:text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -179,38 +171,35 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, s
             </SelectContent>
           </Select>
 
-          {/* Category Filter Pills - Conditionally rendered */}
-          {showCategoryFilter && (
-            <div className="flex items-center gap-2">
-              {Object.entries(config).map(([key, value]) => {
-                const isActive = selectedCategories.includes(key)
-                return (
-                  <button
-                    key={key}
-                    onClick={() => toggleCategory(key)}
-                    className={cn(
-                      "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
-                      isActive
-                        ? "bg-muted text-foreground border border-progress"
-                        : "bg-muted text-muted-foreground border border-transparent hover:border-border"
-                    )}
-                  >
-                    <div
-                      className="h-2 w-2 rounded-full"
-                      style={{ backgroundColor: value.color }}
-                    />
-                    {value.label}
-                  </button>
-                )
-              })}
-            </div>
-          )}
+          {showCategoryFilter &&
+            Object.entries(config).map(([key, value]) => {
+              const isActive = selectedCategories.includes(key)
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => toggleCategory(key)}
+                  className={cn(
+                    "flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium transition-all lg:gap-1.5 lg:px-2.5 lg:py-1.5 lg:text-xs",
+                    isActive
+                      ? "border border-progress bg-muted text-foreground"
+                      : "border border-transparent bg-muted text-muted-foreground hover:border-border"
+                  )}
+                >
+                  <div
+                    className="h-1.5 w-1.5 shrink-0 rounded-full lg:h-2 lg:w-2"
+                    style={{ backgroundColor: value.color }}
+                  />
+                  <span className="whitespace-nowrap">{value.label}</span>
+                </button>
+              )
+            })}
         </div>
       }
     >
-      <ChartContainer config={filteredConfig} className="h-[280px] w-full -ml-6">
+      <ChartContainer config={filteredConfig} className="h-[240px] w-full sm:h-[260px] lg:h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={filteredData} margin={{ left: 0, right: 0, top: 0, bottom: 0 }}>
+          <ComposedChart data={filteredData} margin={{ left: -8, right: 4, top: 4, bottom: 0 }}>
             <defs>
               {Object.entries(filteredConfig).map(([key, value]) => (
                 <linearGradient key={key} id={`gradient${key}`} x1="0" y1="0" x2="0" y2="1">
@@ -222,14 +211,14 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, s
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
             <XAxis
               dataKey="month"
-              fontSize={12}
+              fontSize={11}
               stroke="#64748B"
-              interval={0}
+              interval="preserveStartEnd"
               angle={filteredData.length > 12 ? -45 : 0}
               textAnchor={filteredData.length > 12 ? "end" : "middle"}
-              height={filteredData.length > 12 ? 60 : 30}
+              height={filteredData.length > 12 ? 48 : 24}
             />
-            <YAxis domain={[0, 100]} fontSize={12} stroke="#64748B" />
+            <YAxis domain={[0, 100]} fontSize={11} stroke="#64748B" width={32} />
             <ChartTooltip content={<FraudTooltip config={config} />} />
             {(showArea ?? true) && Object.keys(filteredConfig).map((key) => (
               <Area key={`area-${key}`} type="linear" dataKey={key} fill={`url(#gradient${key})`} stroke="none" />
@@ -242,8 +231,8 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, s
                 stroke={value.color}
                 strokeWidth={1.5}
                 strokeOpacity={value.strokeOpacity ?? 0.4}
-                dot={{ r: 3, fill: value.color, fillOpacity: value.strokeOpacity ?? 0.4 }}
-                activeDot={{ r: 5, fill: value.color, fillOpacity: value.strokeOpacity ?? 0.4 }}
+                dot={{ r: 2, fill: value.color, fillOpacity: value.strokeOpacity ?? 0.4 }}
+                activeDot={{ r: 4, fill: value.color, fillOpacity: value.strokeOpacity ?? 0.4 }}
               />
             ))}
           </ComposedChart>

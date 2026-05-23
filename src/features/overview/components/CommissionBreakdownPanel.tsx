@@ -20,8 +20,9 @@ export const CommissionBreakdownPanel = ({ data, title = "Commission Avoidance B
     icon={<ChartCircle size={18} variant="Bulk" className="text-muted-foreground" />}
     className="lg:col-span-2"
     hasBorder
+    compactContent
   >
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-4 lg:gap-6">
       <div className="relative flex-shrink-0">
         <ResponsiveContainer width={chartSize} height={chartSize}>
           <PieChart>

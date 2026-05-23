@@ -1,7 +1,16 @@
-import { Refresh2, Sort, ArrowDown2, LogoutCurve, SidebarLeft, SidebarRight, SearchNormal } from "iconsax-react"
+import {
+    Refresh2,
+    Sort,
+    LogoutCurve,
+    SidebarLeft,
+    SidebarRight,
+    SearchNormal,
+    HambergerMenu,
+} from "iconsax-react"
 import { NotificationMenu } from "./NotificationMenu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,40 +19,52 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useSidebarContext } from "./SidebarContext"
 import { GlobalCheckRunner } from "./GlobalCheckRunner"
+import { cn } from "@/lib/utils"
 
 interface DashboardHeaderProps {
     variant?: "agency" | "super-admin"
 }
 
+const iconTriggerClass =
+    "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted transition-colors hover:bg-muted/80"
+
 export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) => {
-    const { isCollapsed, setIsCollapsed } = useSidebarContext()
+    const { isCollapsed, toggleSidebar, isDesktop } = useSidebarContext()
 
     const handleLogout = () => {
-        // Handle logout logic here
         console.log("Logout clicked")
     }
 
     return (
-        <header className="bg-background border-b border-border px-6 py-4 sticky top-0 z-20">
-            <div className="flex items-center justify-between gap-4">
-                {/* Sidebar Toggle - Left Side */}
-                <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0"
-                    aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                >
-                    {isCollapsed ? (
-                        <SidebarRight size={20} variant="Outline" className="text-primary" />
-                    ) : (
-                        <SidebarLeft size={20} variant="Outline" className="text-primary" />
-                    )}
-                </button>
+        <header className="sticky top-0 z-20 border-b border-border bg-background">
+            <div className="flex items-center justify-between gap-2 px-3 py-2.5 lg:gap-4 lg:px-6 lg:py-4">
+                <div className="flex flex-shrink-0 items-center">
+                    <button
+                        onClick={toggleSidebar}
+                        className={cn(iconTriggerClass, "lg:h-auto lg:w-auto lg:bg-transparent lg:p-2 lg:hover:bg-muted")}
+                        aria-label={
+                            isDesktop
+                                ? isCollapsed
+                                    ? "Expand sidebar"
+                                    : "Collapse sidebar"
+                                : "Open navigation menu"
+                        }
+                    >
+                        {isDesktop ? (
+                            isCollapsed ? (
+                                <SidebarRight size={20} variant="Outline" className="text-primary" />
+                            ) : (
+                                <SidebarLeft size={20} variant="Outline" className="text-primary" />
+                            )
+                        ) : (
+                            <HambergerMenu size={22} variant="Outline" className="text-primary" />
+                        )}
+                    </button>
+                </div>
 
-                {/* Right Side Content */}
-                <div className="flex items-center justify-end gap-4 flex-1">
+                <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2 lg:gap-4">
                     {variant === "super-admin" ? (
-                        /* Search Bar for Super Admin */
-                        <div className="relative flex-1 max-w-md">
+                        <div className="relative hidden min-w-0 max-w-md flex-1 sm:block">
                             <SearchNormal
                                 size={20}
                                 variant="TwoTone"
@@ -52,29 +73,63 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                             <Input
                                 type="search"
                                 placeholder="Search"
-                                className="pl-10 bg-background border-border rounded-full"
+                                className="rounded-full border-border bg-background pl-10"
                             />
                         </div>
                     ) : (
-                        /* Last Data Pull & Points for Agency Admin */
                         <>
-                            {/* Last Data Pull - Leftmost */}
-                            <div className="flex items-center gap-2">
+                            {/* Desktop: inline last data pull */}
+                            <div className="hidden items-center gap-2 lg:flex">
                                 <button
-                                    className="p-1.5 hover:bg-muted rounded-full transition-colors"
+                                    className="rounded-full p-1.5 transition-colors hover:bg-muted"
                                     aria-label="Refresh data"
                                 >
                                     <Refresh2 size={20} variant="Bulk" className="text-primary" />
                                 </button>
                                 <div className="text-left">
                                     <p className="text-xs font-medium text-foreground">Last data pull:</p>
-                                    <p className="text-xs text-muted-foreground">8 Nov 2025, 14:23 GMT</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        8 Nov 2025, 14:23 GMT
+                                    </p>
                                 </div>
                             </div>
 
-                            {/* Progress Badge/Tag */}
-                            <div className="flex items-center gap-2 bg-muted rounded-full px-3 py-1.5">
-                                <div className="bg-primary rounded-full p-1">
+                            {/* Mobile: last data pull menu */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        type="button"
+                                        className={cn(iconTriggerClass, "lg:hidden")}
+                                        aria-label="Last data pull"
+                                    >
+                                        <Refresh2 size={20} variant="Bulk" className="text-primary" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-56 rounded-xl p-0">
+                                    <div className="space-y-3 p-4">
+                                        <div>
+                                            <p className="text-xs font-medium text-foreground">
+                                                Last data pull
+                                            </p>
+                                            <p className="mt-0.5 text-xs text-muted-foreground">
+                                                8 Nov 2025, 14:23 GMT
+                                            </p>
+                                        </div>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="h-9 w-full rounded-full"
+                                        >
+                                            <Refresh2 size={16} variant="Bulk" className="mr-2 text-primary" />
+                                            Refresh now
+                                        </Button>
+                                    </div>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
+                            {/* Desktop: points badge */}
+                            <div className="hidden items-center gap-2 rounded-full bg-muted px-3 py-1.5 lg:flex">
+                                <div className="rounded-full bg-primary p-1">
                                     <Sort size={16} variant="Outline" className="text-secondary" />
                                 </div>
                                 <span className="text-sm font-medium">
@@ -82,54 +137,115 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                                     <span className="text-muted-foreground">/500</span>
                                 </span>
                             </div>
+
+                            {/* Mobile: points menu */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        type="button"
+                                        className={cn(iconTriggerClass, "lg:hidden")}
+                                        aria-label="Check credits"
+                                    >
+                                        <div className="rounded-full bg-primary p-1.5">
+                                            <Sort size={16} variant="Outline" className="text-secondary" />
+                                        </div>
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-52 rounded-xl p-4">
+                                    <p className="text-xs font-medium text-muted-foreground">
+                                        Check credits
+                                    </p>
+                                    <p className="mt-1 text-2xl font-medium text-foreground">
+                                        <span style={{ color: "#4D66EA" }}>450</span>
+                                        <span className="text-base text-muted-foreground">/500</span>
+                                    </p>
+                                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                                        <div
+                                            className="h-full rounded-full bg-primary"
+                                            style={{ width: "90%" }}
+                                        />
+                                    </div>
+                                    <p className="mt-2 text-xs text-muted-foreground">
+                                        50 checks remaining this cycle
+                                    </p>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </>
                     )}
 
-                    {/* Global Check Runner */}
-                    <GlobalCheckRunner />
+                    {/* Run checks — compact on mobile, full on desktop */}
+                    <div className="lg:hidden">
+                        <GlobalCheckRunner compact />
+                    </div>
+                    <div className="hidden lg:block">
+                        <GlobalCheckRunner />
+                    </div>
 
-                    {/* Notification Icon */}
                     <NotificationMenu />
 
-                    {/* Separator */}
-                    <div className="h-6 w-px bg-border" />
+                    <div className="hidden h-6 w-px bg-border lg:block" />
 
-                    {/* User Info - Rightmost */}
-                    <div className="flex items-center gap-3">
-                        <div className="text-left">
+                    <div className="flex items-center gap-1 sm:gap-2">
+                        <div className="hidden text-left lg:block">
                             <p className="text-sm font-medium text-foreground">Admin</p>
-                            <p className="text-xs text-muted-foreground">
-                                amanda@solicthomes.com
-                            </p>
+                            <p className="text-xs text-muted-foreground">amanda@solicthomes.com</p>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <div className="flex items-center gap-2 cursor-pointer">
-                                    <Avatar className="h-10 w-10">
-                                        <AvatarImage src="https://i.pravatar.cc/150?img=1" alt="Admin" />
+                                <button
+                                    type="button"
+                                    className="flex cursor-pointer items-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    aria-label="User menu"
+                                >
+                                    <Avatar className="h-9 w-9 lg:h-10 lg:w-10">
+                                        <AvatarImage
+                                            src="https://i.pravatar.cc/150?img=1"
+                                            alt="Admin"
+                                        />
                                         <AvatarFallback>AM</AvatarFallback>
                                     </Avatar>
-                                    <button
-                                        className="p-1 hover:bg-muted rounded-md transition-colors"
-                                        aria-label="User menu"
-                                    >
-                                        <ArrowDown2 size={16} variant="Outline" />
-                                    </button>
-                                </div>
+                                </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuContent align="end" className="w-48">
+                                <div className="border-b border-border px-3 py-2 lg:hidden">
+                                    <p className="text-sm font-medium text-foreground">Admin</p>
+                                    <p className="truncate text-xs text-muted-foreground">
+                                        amanda@solicthomes.com
+                                    </p>
+                                </div>
                                 <DropdownMenuItem
                                     onClick={handleLogout}
-                                    className="text-destructive focus:text-destructive focus:bg-destructive/10 cursor-pointer"
+                                    className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive"
                                 >
-                                    <LogoutCurve size={16} variant="TwoTone" className="mr-2 text-destructive" />
-                                    <span>Logout</span>
+                                    <LogoutCurve
+                                        size={16}
+                                        variant="TwoTone"
+                                        className="mr-2 text-destructive"
+                                    />
+                                    Logout
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
                 </div>
             </div>
+
+            {variant === "super-admin" && (
+                <div className="border-t border-border px-3 pb-2.5 sm:hidden">
+                    <div className="relative">
+                        <SearchNormal
+                            size={20}
+                            variant="TwoTone"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        />
+                        <Input
+                            type="search"
+                            placeholder="Search"
+                            className="h-9 rounded-full border-border bg-background pl-10 text-sm"
+                        />
+                    </div>
+                </div>
+            )}
         </header>
     )
 }

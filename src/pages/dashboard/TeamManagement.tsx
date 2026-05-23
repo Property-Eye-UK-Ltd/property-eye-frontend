@@ -5,6 +5,7 @@ import { TeamMetrics } from "@/features/team/components/TeamMetrics"
 import { UserListPanel } from "@/features/team/components/UserListPanel"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { AddUserModal, AddUserFormValues } from "@/features/team/components/modals/AddUserModal"
 import { EditUserModal, EditUserFormValues } from "@/features/team/components/modals/EditUserModal"
 import { DisableUserModal, DisableUserFormValues } from "@/features/team/components/modals/DisableUserModal"
@@ -20,13 +21,10 @@ const TeamManagement = () => {
 
     const handleAddUser = async (values: AddUserFormValues) => {
         setIsSubmitting(true)
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        await new Promise((resolve) => setTimeout(resolve, 1500))
         console.log("Adding user:", values)
         setIsSubmitting(false)
         setIsAddUserModalOpen(false)
-
-        // Show success toast
         toast.success("User invited successfully", {
             description: `An invitation has been sent to ${values.email}`,
         })
@@ -40,13 +38,10 @@ const TeamManagement = () => {
     const handleEditUser = async (values: EditUserFormValues) => {
         if (!selectedUser) return
         setIsSubmitting(true)
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        await new Promise((resolve) => setTimeout(resolve, 1500))
         console.log("Editing user:", selectedUser.id, values)
         setIsSubmitting(false)
         setIsEditModalOpen(false)
-
-        // Show success toast
         toast.success("User updated successfully", {
             description: `Changes to ${values.name} have been saved`,
         })
@@ -60,13 +55,10 @@ const TeamManagement = () => {
     const handleDisableUser = async (values: DisableUserFormValues) => {
         if (!selectedUser) return
         setIsSubmitting(true)
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        await new Promise((resolve) => setTimeout(resolve, 1500))
         console.log("Disabling user:", selectedUser.id, values)
         setIsSubmitting(false)
         setIsDisableModalOpen(false)
-
-        // Show success toast
         toast.success("User disabled successfully", {
             description: "The user has been disabled",
         })
@@ -78,7 +70,7 @@ const TeamManagement = () => {
                 title="Team Management"
                 actions={
                     <Button
-                        className="gap-2 rounded-full bg-[#00072C] hover:bg-[#00072C]/90"
+                        className="h-9 gap-2 rounded-full bg-[#00072C] px-4 text-sm hover:bg-[#00072C]/90 lg:h-10"
                         onClick={() => setIsAddUserModalOpen(true)}
                     >
                         <ProfileAdd size={18} variant="Outline" />
@@ -86,15 +78,11 @@ const TeamManagement = () => {
                     </Button>
                 }
             />
-            <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
-                {/* Metrics */}
+            <DashboardPageContent>
                 <TeamMetrics />
-
-                {/* User List */}
                 <UserListPanel onEditClick={handleEditClick} />
-            </div>
+            </DashboardPageContent>
 
-            {/* Add User Modal */}
             <AddUserModal
                 open={isAddUserModalOpen}
                 onClose={() => setIsAddUserModalOpen(false)}
@@ -102,7 +90,6 @@ const TeamManagement = () => {
                 isSubmitting={isSubmitting}
             />
 
-            {/* Edit User Modal */}
             <EditUserModal
                 open={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
@@ -112,7 +99,6 @@ const TeamManagement = () => {
                 isSubmitting={isSubmitting}
             />
 
-            {/* Disable User Modal */}
             <DisableUserModal
                 open={isDisableModalOpen}
                 onClose={() => setIsDisableModalOpen(false)}

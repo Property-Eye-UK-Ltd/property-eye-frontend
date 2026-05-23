@@ -26,23 +26,25 @@ export const RepeatOffendersPanel = ({
         noPadding
         hasBorder
     >
-        <Table>
-            <TableHeader>
-                <TableRow className="bg-gray-50">
-                    <TableHead className="px-4 font-normal">Name</TableHead>
-                    <TableHead className="px-4 font-normal">Location</TableHead>
-                    <TableHead className="px-4 font-normal text-right">Offense Counter</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {offenders.map((row) => (
-                    <TableRow key={`${row.name}-${row.location}`} className="border-b border-border">
-                        <TableCell className="px-4 py-3 font-normal">{row.name}</TableCell>
-                        <TableCell className="px-4 py-3">{row.location}</TableCell>
-                        <TableCell className="px-4 py-3 text-right font-normal">{row.offenses}</TableCell>
+        <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+            <Table className="min-w-[400px]">
+                <TableHeader>
+                    <TableRow className="bg-gray-50">
+                        <TableHead className="px-4 font-normal">Name</TableHead>
+                        <TableHead className="px-4 font-normal">Location</TableHead>
+                        <TableHead className="px-4 text-right font-normal">Offense Counter</TableHead>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                </TableHeader>
+                <TableBody>
+                    {offenders.map((row) => (
+                        <TableRow key={`${row.name}-${row.location}`} className="border-b border-border">
+                            <TableCell className="px-4 py-3 font-normal">{row.name}</TableCell>
+                            <TableCell className="px-4 py-3">{row.location}</TableCell>
+                            <TableCell className="px-4 py-3 text-right font-normal">{row.offenses}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
     </DashboardPanel>
 )
