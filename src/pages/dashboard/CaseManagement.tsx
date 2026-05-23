@@ -25,7 +25,7 @@ const CaseManagement = () => {
         filters={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
       />
 
-      <DashboardPageContent>
+      <DashboardPageContent className="space-y-3 lg:space-y-6">
         <MetricCards metrics={filteredMetrics} columns={2} />
         <CaseListPanel data={allCasesData} />
       </DashboardPageContent>

@@ -8,19 +8,16 @@ export const periods = ["All Time", "First Half of Year", "Second Half of Year"]
 export const metricsData: Record<string, MetricCard[]> = {
     "All Time": [
         { title: "Total Fraud Alerts", value: "1,459", period: "All time", change: "+221", topBarClass: "bg-red-500" },
-        { title: "Commission at Risk", value: "£12,898", period: "All time", change: "+£2,233", topBarClass: "bg-orange-700" },
         { title: "Total Recoveries", value: "324", period: "All time", change: "+2", topBarClass: "bg-green-500" },
         { title: "Total Checks", value: "12,450", period: "All time", change: "+1,200", topBarClass: "bg-purple-500" },
     ],
     "First Half of Year": [
         { title: "Total Fraud Alerts", value: "842", period: "H1 2025", change: "+45", topBarClass: "bg-red-500" },
-        { title: "Commission at Risk", value: "£7,450", period: "H1 2025", change: "+£1,200", topBarClass: "bg-orange-700" },
         { title: "Total Recoveries", value: "185", period: "H1 2025", change: "+12", topBarClass: "bg-green-500" },
         { title: "Total Checks", value: "6,120", period: "H1 2025", change: "+540", topBarClass: "bg-purple-500" },
     ],
     "Second Half of Year": [
         { title: "Total Fraud Alerts", value: "617", period: "H2 2025", change: "+12", topBarClass: "bg-red-500" },
-        { title: "Commission at Risk", value: "£5,448", period: "H2 2025", change: "+£1,033", topBarClass: "bg-orange-700" },
         { title: "Total Recoveries", value: "139", period: "H2 2025", change: "+2", topBarClass: "bg-green-500" },
         { title: "Total Checks", value: "6,330", period: "H2 2025", change: "+660", topBarClass: "bg-purple-500" },
     ],

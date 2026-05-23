@@ -66,17 +66,17 @@ export const CurrentPlanCard = ({ onCancelPlan, onChangePlan }: CurrentPlanCardP
                     </div>
                 </div>
 
-                <div className="flex flex-row flex-wrap items-center justify-end gap-2 pt-1 sm:gap-3">
+                <div className="flex w-full flex-row gap-2 pt-1">
                     <Button
                         variant="outline"
                         onClick={onCancelPlan}
-                        className="h-9 rounded-full border-red-200 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 lg:h-10"
+                        className="h-9 flex-1 rounded-full border-red-200 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 lg:h-10"
                     >
                         Cancel Plan
                     </Button>
                     <Button
                         onClick={onChangePlan}
-                        className="h-9 rounded-full bg-[#00072C] text-sm hover:bg-[#00072C]/90 lg:h-10"
+                        className="h-9 flex-1 rounded-full bg-[#00072C] text-sm hover:bg-[#00072C]/90 lg:h-10"
                     >
                         Change Plan
                     </Button>

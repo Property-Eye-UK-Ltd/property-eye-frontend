@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useIsDesktop } from "@/hooks/use-desktop"
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
 
 const donutData1 = [
@@ -11,81 +12,59 @@ const donutData2 = [
     { name: "Remaining", value: 1100, color: "#E5E7EB" },
 ]
 
-const CasesOpenedChart = () => (
-    <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-4">
-        <div className="relative h-12 w-12 shrink-0 sm:h-16 sm:w-16">
-            <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                    <Pie
-                        data={donutData1}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={20}
-                        outerRadius={26}
-                        startAngle={90}
-                        endAngle={-270}
-                        dataKey="value"
-                        strokeWidth={0}
-                    >
-                        {donutData1.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                    </Pie>
-                </PieChart>
-            </ResponsiveContainer>
-        </div>
-        <div className="min-w-0 flex flex-col">
-            <div className="mb-0.5 flex items-center gap-1.5">
-                <div className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
-                <span className="truncate text-[11px] font-medium text-muted-foreground sm:text-sm">
-                    Cases Opened
-                </span>
-            </div>
-            <span className="text-lg font-medium text-foreground sm:text-xl">831</span>
-            <span className="hidden text-[10px] leading-tight text-muted-foreground sm:block">
-                (Withdrawn & Sold / Total Checks)
-            </span>
-        </div>
-    </div>
-)
+interface DonutMetricProps {
+    data: typeof donutData1
+    dotClassName: string
+    title: string
+    value: string
+    subtitle: string
+}
 
-const FraudPercentageChart = () => (
-    <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-4">
-        <div className="relative h-12 w-12 shrink-0 sm:h-16 sm:w-16">
-            <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                    <Pie
-                        data={donutData2}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={20}
-                        outerRadius={26}
-                        startAngle={90}
-                        endAngle={-270}
-                        dataKey="value"
-                        strokeWidth={0}
-                    >
-                        {donutData2.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                    </Pie>
-                </PieChart>
-            </ResponsiveContainer>
-        </div>
-        <div className="min-w-0 flex flex-col">
-            <div className="mb-0.5 flex items-center gap-1.5">
-                <div className="h-2 w-2 shrink-0 rounded-full bg-orange-500" />
-                <span className="truncate text-[11px] font-medium text-muted-foreground sm:text-sm">
-                    Fraud %
+const DonutMetric = ({ data, dotClassName, title, value, subtitle }: DonutMetricProps) => {
+    const isDesktop = useIsDesktop()
+    const innerRadius = isDesktop ? 26 : 10
+    const outerRadius = isDesktop ? 32 : 14
+
+    return (
+        <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-4">
+            <div
+                className={`relative shrink-0 ${isDesktop ? "h-16 w-16" : "h-8 w-8"}`}
+            >
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                        <Pie
+                            data={data}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={innerRadius}
+                            outerRadius={outerRadius}
+                            startAngle={90}
+                            endAngle={-270}
+                            dataKey="value"
+                            strokeWidth={0}
+                        >
+                            {data.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                        </Pie>
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
+            <div className="min-w-0 flex flex-col">
+                <div className="mb-0.5 flex items-center gap-1">
+                    <div className={`h-1.5 w-1.5 shrink-0 rounded-full sm:h-2 sm:w-2 ${dotClassName}`} />
+                    <span className="truncate text-[10px] font-medium text-muted-foreground sm:text-sm">
+                        {title}
+                    </span>
+                </div>
+                <span className="text-base font-medium text-foreground sm:text-xl">{value}</span>
+                <span className="hidden text-[10px] leading-tight text-muted-foreground sm:block">
+                    {subtitle}
                 </span>
             </div>
-            <span className="text-lg font-medium text-foreground sm:text-xl">261</span>
-            <span className="hidden text-[10px] leading-tight text-muted-foreground sm:block">
-                (Fraud / Withdrawn & Sold)
-            </span>
         </div>
-    </div>
-)
+    )
+}
 
 export const TeamMetrics = () => {
     return (
@@ -116,11 +95,23 @@ export const TeamMetrics = () => {
 
             <Card className="relative col-span-2 overflow-hidden">
                 <div className="absolute left-0 right-0 top-0 h-2 bg-purple-500" />
-                <CardContent className="p-3 lg:p-6">
-                    <div className="flex flex-row items-stretch justify-between gap-2 sm:gap-6">
-                        <CasesOpenedChart />
+                <CardContent className="p-2.5 sm:p-3 lg:p-6">
+                    <div className="flex flex-row items-stretch justify-between gap-1 sm:gap-6">
+                        <DonutMetric
+                            data={donutData1}
+                            dotClassName="bg-blue-500"
+                            title="Cases Opened"
+                            value="831"
+                            subtitle="(Withdrawn & Sold / Total Checks)"
+                        />
                         <div className="w-px shrink-0 bg-border" />
-                        <FraudPercentageChart />
+                        <DonutMetric
+                            data={donutData2}
+                            dotClassName="bg-orange-500"
+                            title="Fraud %"
+                            value="261"
+                            subtitle="(Fraud / Withdrawn & Sold)"
+                        />
                     </div>
                 </CardContent>
             </Card>

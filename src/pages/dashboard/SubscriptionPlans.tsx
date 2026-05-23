@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PlanCard } from "@/features/billing/components/PlanCard"
 import { subscriptionPlans } from "@/data/subscription-plans-data"
@@ -26,16 +27,15 @@ const SubscriptionPlans = () => {
                     { label: "Subscription Plans" },
                 ]}
             />
-            <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
-                {/* Plans Container - White Card */}
-                <div className="rounded-2xl bg-white p-6 shadow-sm">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <DashboardPageContent>
+                <div className="rounded-2xl bg-white p-3 shadow-sm sm:p-4 lg:p-6">
+                    <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4">
                         {subscriptionPlans.map((plan) => (
                             <PlanCard key={plan.id} plan={plan} onSelectPlan={handleSelectPlan} />
                         ))}
                     </div>
                 </div>
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }
