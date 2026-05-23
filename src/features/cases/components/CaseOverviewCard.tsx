@@ -14,9 +14,9 @@ export const CaseOverviewCard = ({
   caseData,
 }: CaseOverviewCardProps) => {
   return (
-    <div className="rounded-2xl bg-white border border-border p-6 lg:sticky lg:top-4">
-      <p className="text-xs text-muted-foreground mb-4">Case Overview</p>
-      <div className="grid grid-cols-1 gap-4">
+    <div className="rounded-2xl border border-border bg-white p-3 sm:p-4 lg:sticky lg:top-4 lg:p-6">
+      <p className="mb-3 text-xs text-muted-foreground sm:mb-4">Case Overview</p>
+      <div className="grid grid-cols-1 gap-3 sm:gap-4">
         <div>
           <p className="text-xs text-muted-foreground mb-1">Case ID</p>
           <p className="text-sm text-primary">#{caseData.caseId.replace("#", "")}</p>

@@ -18,16 +18,16 @@ export const CloseCaseModal = ({ open, onCancel, onConfirm }: CloseCaseModalProp
         You have initiated to close the case. Are you sure you{" "}
         <br className="hidden sm:block" /> want to close the case?
       </p>
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+      <div className="mt-6 flex flex-row gap-2 sm:mt-8 sm:gap-3">
         <button
           onClick={onCancel}
-          className="w-full rounded-full bg-muted px-8 py-3 text-sm font-medium text-foreground sm:w-auto"
+          className="min-w-0 flex-1 rounded-full bg-muted px-3 py-2.5 text-xs font-medium text-foreground sm:px-8 sm:py-3 sm:text-sm"
         >
           Close
         </button>
         <button
           onClick={onConfirm}
-          className="w-full rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground sm:w-auto"
+          className="min-w-0 flex-1 rounded-full bg-primary px-3 py-2.5 text-xs font-medium text-primary-foreground sm:px-8 sm:py-3 sm:text-sm"
         >
           Confirm
         </button>

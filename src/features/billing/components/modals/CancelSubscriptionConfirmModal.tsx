@@ -25,16 +25,16 @@ export const CancelSubscriptionConfirmModal = ({
                 <br className="hidden sm:block" />
                 subscription?
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <div className="mt-6 flex flex-row gap-2 sm:mt-8 sm:gap-3">
                 <button
                     onClick={onClose}
-                    className="w-full rounded-full bg-muted px-8 py-3 text-sm font-medium text-foreground sm:w-auto"
+                    className="min-w-0 flex-1 rounded-full bg-muted px-3 py-2.5 text-xs font-medium text-foreground sm:px-8 sm:py-3 sm:text-sm"
                 >
                     Close
                 </button>
                 <button
                     onClick={onConfirm}
-                    className="w-full rounded-full bg-red-50 px-8 py-3 text-sm font-medium text-red-600 hover:bg-red-100 sm:w-auto"
+                    className="min-w-0 flex-1 rounded-full bg-red-50 px-3 py-2.5 text-xs font-medium text-red-600 hover:bg-red-100 sm:px-8 sm:py-3 sm:text-sm"
                 >
                     Cancel Subscription
                 </button>

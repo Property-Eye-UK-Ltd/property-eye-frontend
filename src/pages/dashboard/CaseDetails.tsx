@@ -1,6 +1,6 @@
-import { useState } from "react"
 import { useParams, useLocation } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PropertyPartiesPanel, PropertyPartiesData } from "@/features/cases/components/PropertyPartiesPanel"
 import { TimelineAuditTrailPanel, TimelineRecord } from "@/features/cases/components/TimelineAuditTrailPanel"
@@ -78,22 +78,20 @@ const CaseDetails = () => {
         ]}
       />
 
-      <div className="mx-auto w-full max-w-7xl px-6 py-6">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-start">
-          {/* Left Column - Scrollable Cards */}
-          <div className="lg:col-span-2 space-y-4">
+      <DashboardPageContent>
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:items-start lg:gap-4">
+          <div className="space-y-3 lg:col-span-2 lg:space-y-4">
             <PropertyPartiesPanel data={mockPropertyParties} />
             <TimelineAuditTrailPanel data={mockTimeline} />
           </div>
 
-          {/* Right Column - Fixed Case Overview */}
           <div className="lg:col-span-1 lg:sticky lg:top-28 lg:self-start">
             <CaseOverviewCard
               caseData={caseData}
             />
           </div>
         </div>
-      </div>
+      </DashboardPageContent>
     </DashboardLayout>
   )
 }

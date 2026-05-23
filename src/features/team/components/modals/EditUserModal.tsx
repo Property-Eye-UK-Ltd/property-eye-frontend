@@ -174,18 +174,18 @@ export const EditUserModal = ({
                 </div>
 
                 <div className="shrink-0 bg-white px-4 py-4 sm:px-8 sm:py-6">
-                    <div className="flex flex-col gap-3 sm:flex-row">
+                    <div className="flex flex-row gap-2 sm:gap-3">
                         <button
                             type="button"
                             onClick={onDisable}
-                            className="w-full rounded-full bg-red-50 px-8 py-3 text-sm font-medium text-red-600 hover:bg-red-100 sm:flex-1"
+                            className="min-w-0 flex-1 rounded-full bg-red-50 px-3 py-2.5 text-xs font-medium text-red-600 hover:bg-red-100 sm:px-8 sm:py-3 sm:text-sm"
                         >
                             Disable User
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitDisabled}
-                            className="w-full rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground disabled:opacity-60 sm:flex-1"
+                            className="min-w-0 flex-1 rounded-full bg-primary px-3 py-2.5 text-xs font-medium text-primary-foreground disabled:opacity-60 sm:px-8 sm:py-3 sm:text-sm"
                         >
                             {isSubmitting ? "Saving..." : "Save Changes"}
                         </button>

@@ -41,16 +41,16 @@ export const ViewEvidenceModal = ({
         </div>
 
         <div className="bg-white px-4 py-4 sm:px-8 sm:py-6">
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-row gap-2 sm:gap-3">
             <button
               onClick={onClose}
-              className="w-full rounded-full bg-muted px-8 py-3 text-sm font-medium text-foreground whitespace-nowrap sm:flex-1"
+              className="min-w-0 flex-1 rounded-full bg-muted px-3 py-2.5 text-xs font-medium text-foreground sm:px-8 sm:py-3 sm:text-sm"
             >
               Cancel
             </button>
             <button
               onClick={handleDownload}
-              className="w-full rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground whitespace-nowrap sm:flex-1"
+              className="min-w-0 flex-1 rounded-full bg-primary px-3 py-2.5 text-xs font-medium text-primary-foreground sm:px-8 sm:py-3 sm:text-sm"
               disabled={!evidence}
             >
               Download Evidence
