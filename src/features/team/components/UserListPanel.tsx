@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Filter, ArrowDown2, ArrowLeft, ArrowRight, Profile } from "iconsax-react"
+import { Filter, ArrowDown2, Profile } from "iconsax-react"
+import { TablePagination } from "@/components/dashboard/TablePagination"
 import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { users, User } from "@/data/team-data"
@@ -60,71 +61,6 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
     const endIndex = startIndex + ITEMS_PER_PAGE
     const paginatedUsers = sortedUsers.slice(startIndex, endIndex)
 
-    // Generate pagination array
-    const getPaginationArray = () => {
-        const pages: (number | "ellipsis")[] = []
-
-        if (totalPages <= 7) {
-            for (let i = 1; i <= totalPages; i++) {
-                pages.push(i)
-            }
-        } else {
-            pages.push(1, 2, 3)
-            pages.push("ellipsis")
-            pages.push(totalPages - 2, totalPages - 1, totalPages)
-        }
-
-        return pages
-    }
-
-    const pagination = getPaginationArray()
-
-    const paginationFooter = (
-        <div className="flex flex-col gap-3 border-t border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between lg:gap-4 lg:px-4 lg:py-4">
-            <div className="flex flex-wrap items-center gap-2">
-                {pagination.map((item, idx) =>
-                    item === "ellipsis" ? (
-                        <div
-                            key={`ellipsis-${idx}`}
-                            className="flex h-9 w-9 items-center justify-center rounded-full border border-primary text-primary"
-                        >
-                            ...
-                        </div>
-                    ) : (
-                        <button
-                            key={item}
-                            onClick={() => setCurrentPage(item)}
-                            className={cn(
-                                "h-9 w-9 rounded-full border border-primary text-sm font-normal transition-colors",
-                                currentPage === item ? "bg-primary text-secondary" : "text-primary"
-                            )}
-                        >
-                            {item}
-                        </button>
-                    )
-                )}
-            </div>
-            <div className="flex items-center gap-3">
-                <button
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
-                >
-                    <ArrowLeft size={16} variant="Outline" className="text-primary" />
-                    Previous
-                </button>
-                <button
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
-                >
-                    Next
-                    <ArrowRight size={16} variant="Outline" className="text-primary" />
-                </button>
-            </div>
-        </div>
-    )
-
     return (
         <DashboardPanel
             title="User List"
@@ -149,8 +85,8 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                 <Table className="min-w-[800px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className="px-4 font-medium">Name</TableHead>
-                            <TableHead className="px-4 font-medium">Email</TableHead>
+                            <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">Name</TableHead>
+                            <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">Email</TableHead>
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -178,24 +114,24 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                                     <ChevronsUpDown className="h-4 w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium text-right">Action</TableHead>
+                            <TableHead className="px-2 py-2 text-right text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {paginatedUsers.map((user) => (
                             <TableRow key={user.id} className="border-b border-border">
-                                <TableCell className="px-4 py-3">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-progress/30">
-                                            <Profile size={18} variant="Bulk" className="text-primary" />
+                                <TableCell className="px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm">
+                                    <div className="flex items-center gap-2 lg:gap-3">
+                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-progress/30 lg:h-9 lg:w-9">
+                                            <Profile size={16} variant="Bulk" className="text-primary lg:h-[18px] lg:w-[18px]" />
                                         </div>
-                                        <span className="font-normal text-foreground">{user.name}</span>
+                                        <span className="max-w-[80px] truncate font-normal text-foreground sm:max-w-none">{user.name}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{user.email}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{user.role}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{user.lastActive}</TableCell>
-                                <TableCell className="px-4 py-4">
+                                <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3 lg:text-sm">{user.email}</TableCell>
+                                <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3 lg:text-sm">{user.role}</TableCell>
+                                <TableCell className="whitespace-nowrap px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3 lg:text-sm">{user.lastActive}</TableCell>
+                                <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
                                     <Badge
                                         className={cn(
                                             "rounded-full px-3 py-1 text-xs font-normal",
@@ -207,10 +143,11 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                                         {user.status}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-4 py-3 text-right">
+                                <TableCell className="px-2 py-2 text-right text-xs lg:px-4 lg:py-3 lg:text-sm">
                                     <button
+                                        type="button"
                                         onClick={() => onEditClick(user)}
-                                        className="text-sm font-normal transition-colors hover:underline"
+                                        className="text-xs font-normal transition-colors hover:underline lg:text-sm"
                                         style={{ color: "var(--progress)" }}
                                     >
                                         Edit
@@ -221,7 +158,13 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                     </TableBody>
                 </Table>
             </div>
-            {paginationFooter}
+            {totalPages > 1 && (
+                <TablePagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </DashboardPanel>
     )
 }

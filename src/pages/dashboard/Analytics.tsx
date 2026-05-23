@@ -86,12 +86,14 @@ const Analytics = () => {
                         </DropdownMenu>
                     </>
                 }
-                tabs={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
+                filters={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
             />
 
             <DashboardPageContent>
                 <MetricCards metrics={metricsData[selectedPeriod]} />
-                <CaseTypeTabs tabs={analyticsTabs} selected={selectedTab} onSelect={setSelectedTab} />
+                <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                    <CaseTypeTabs tabs={analyticsTabs} selected={selectedTab} onSelect={setSelectedTab} />
+                </div>
 
                 {selectedTab === "overview" && (
                     <>
@@ -116,10 +118,10 @@ const Analytics = () => {
 
                 {selectedTab === "fraud-patterns" && (
                     <>
-                        <ResponsivePanelGroup className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+                        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-5 lg:gap-4">
                             <CommissionBreakdownPanel data={severityData} title="Severity Distribution" />
                             <RepeatOffendersPanel offenders={repeatOffenders} />
-                        </ResponsivePanelGroup>
+                        </div>
                         <TimingGapsDistributionPanel data={timingGapsData} />
                     </>
                 )}

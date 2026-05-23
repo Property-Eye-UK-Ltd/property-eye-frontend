@@ -22,7 +22,7 @@ const CaseManagement = () => {
     <DashboardLayout>
       <DynamicPageHeader
         title="Case Management"
-        actions={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
+        filters={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
       />
 
       <DashboardPageContent>

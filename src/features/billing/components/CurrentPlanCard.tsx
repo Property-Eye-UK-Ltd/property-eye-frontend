@@ -16,69 +16,67 @@ export const CurrentPlanCard = ({ onCancelPlan, onChangePlan }: CurrentPlanCardP
 
     return (
         <DashboardPanel className="overflow-hidden" hasBorder>
-            <div className="space-y-6">
-                {/* Header */}
-                <div className="flex items-start justify-between">
+            <div className="space-y-4 lg:space-y-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                            <h3 className="text-lg font-medium text-foreground">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-base font-medium text-foreground lg:text-lg">
                                 Current Plan ({currentPlan.name})
                             </h3>
-                            <Badge className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700 hover:bg-purple-100">
+                            <Badge className="rounded-full bg-purple-100 px-2.5 py-0.5 text-[10px] font-medium text-purple-700 hover:bg-purple-100 lg:px-3 lg:text-xs">
                                 {currentPlan.billingCycle}
                             </Badge>
                         </div>
-                        <p className="text-3xl font-medium text-foreground">
+                        <p className="text-2xl font-medium text-foreground lg:text-3xl">
                             £{currentPlan.price}
-                            <span className="text-base font-normal text-muted-foreground">/month</span>
+                            <span className="text-sm font-normal text-muted-foreground lg:text-base">/month</span>
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <p className="text-sm text-muted-foreground">
-                            Next billing date: <span className="text-foreground">{currentPlan.nextBillingDate}</span>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <p className="text-xs text-muted-foreground lg:text-sm">
+                            Next billing:{" "}
+                            <span className="text-foreground">{currentPlan.nextBillingDate}</span>
                         </p>
                         <DonutChart value={75} size={25} strokeWidth={3} />
                     </div>
                 </div>
 
-                {/* Progress Bars - Side by Side */}
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
                     <div className="flex-1 space-y-2">
-                        <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center justify-between text-xs lg:text-sm">
                             <span className="text-muted-foreground">
-                                {currentPlan.checksUsed} checks out of {currentPlan.checksTotal} checks remaining
+                                {currentPlan.checksUsed}/{currentPlan.checksTotal} checks
                             </span>
                             <span className="font-medium text-foreground">{checksPercentage}%</span>
                         </div>
-                        <Progress value={checksPercentage} className="h-1.5 [&>div]:bg-primary [&>div]:rounded-full" />
+                        <Progress value={checksPercentage} className="h-1.5 [&>div]:rounded-full [&>div]:bg-primary" />
                     </div>
 
-                    <div className="h-12 w-px bg-border" />
+                    <div className="hidden h-12 w-px bg-border lg:block" />
 
                     <div className="flex-1 space-y-2">
-                        <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center justify-between text-xs lg:text-sm">
                             <span className="text-muted-foreground">
-                                CRM Integration: {currentPlan.crmUsersUsed} Users out of {currentPlan.crmUsersTotal} remaining
+                                CRM: {currentPlan.crmUsersUsed}/{currentPlan.crmUsersTotal} users
                             </span>
                             <span className="font-medium text-foreground">{crmPercentage}%</span>
                         </div>
-                        <Progress value={crmPercentage} className="h-1.5 [&>div]:bg-primary [&>div]:rounded-full" />
+                        <Progress value={crmPercentage} className="h-1.5 [&>div]:rounded-full [&>div]:bg-primary" />
                     </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex items-center justify-end gap-3 pt-2">
+                <div className="flex flex-row flex-wrap items-center justify-end gap-2 pt-1 sm:gap-3">
                     <Button
                         variant="outline"
                         onClick={onCancelPlan}
-                        className="rounded-full border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                        className="h-9 rounded-full border-red-200 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 lg:h-10"
                     >
                         Cancel Plan
                     </Button>
                     <Button
                         onClick={onChangePlan}
-                        className="rounded-full bg-[#00072C] hover:bg-[#00072C]/90"
+                        className="h-9 rounded-full bg-[#00072C] text-sm hover:bg-[#00072C]/90 lg:h-10"
                     >
                         Change Plan
                     </Button>

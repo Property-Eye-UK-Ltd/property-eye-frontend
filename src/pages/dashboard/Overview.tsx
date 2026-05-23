@@ -26,7 +26,7 @@ const Overview = () => {
     <DashboardLayout>
       <DynamicPageHeader
         title="Overview"
-        actions={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
+        filters={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
       />
 
       <DashboardPageContent>

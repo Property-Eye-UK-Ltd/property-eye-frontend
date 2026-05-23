@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { SettingsTabs } from "@/features/settings/components/SettingsTabs"
 import { ProfileTab } from "@/features/settings/components/ProfileTab"
 import { NotificationsTab } from "@/features/settings/components/NotificationsTab"
@@ -33,7 +34,7 @@ const Settings = () => {
         { label: "Scheduling", value: "automation" },
         { label: "Integration", value: "integration" },
         { label: "Security", value: "security" },
-        { label: "Data Retention Policy", value: "data-retention" },
+        { label: "Data Retention", value: "data-retention" },
     ]
 
     const handleSaveProfile = (settings: ProfileSettings) => {
@@ -59,32 +60,24 @@ const Settings = () => {
     return (
         <DashboardLayout>
             <DynamicPageHeader title="Settings" />
-            <div className="mx-auto w-full max-w-7xl px-6 py-6">
-                <div className="space-y-6">
-                    {/* Settings Tabs */}
-                    <SettingsTabs tabs={tabs} selected={selectedTab} onSelect={setSelectedTab} />
+            <DashboardPageContent className="space-y-4 lg:space-y-6">
+                <SettingsTabs tabs={tabs} selected={selectedTab} onSelect={setSelectedTab} />
 
-                    {/* Tab Content */}
-                    {selectedTab === "profile" && (
-                        <ProfileTab settings={profileSettings} onSave={handleSaveProfile} />
-                    )}
-                    {selectedTab === "notifications" && (
-                        <NotificationsTab settings={notificationSettings} onSave={handleSaveNotifications} />
-                    )}
-                    {selectedTab === "automation" && (
-                        <AutomationTab />
-                    )}
-                    {selectedTab === "integration" && (
-                        <IntegrationTab />
-                    )}
-                    {selectedTab === "security" && (
-                        <SecurityTab settings={securitySettings} onSave={handleSaveSecurity} />
-                    )}
-                    {selectedTab === "data-retention" && (
-                        <DataRetentionTab settings={dataRetentionSettings} onSave={handleSaveDataRetention} />
-                    )}
-                </div>
-            </div>
+                {selectedTab === "profile" && (
+                    <ProfileTab settings={profileSettings} onSave={handleSaveProfile} />
+                )}
+                {selectedTab === "notifications" && (
+                    <NotificationsTab settings={notificationSettings} onSave={handleSaveNotifications} />
+                )}
+                {selectedTab === "automation" && <AutomationTab />}
+                {selectedTab === "integration" && <IntegrationTab />}
+                {selectedTab === "security" && (
+                    <SecurityTab settings={securitySettings} onSave={handleSaveSecurity} />
+                )}
+                {selectedTab === "data-retention" && (
+                    <DataRetentionTab settings={dataRetentionSettings} onSave={handleSaveDataRetention} />
+                )}
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }

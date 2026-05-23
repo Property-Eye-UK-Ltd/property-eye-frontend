@@ -10,7 +10,8 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Filter, ArrowDown2, ArrowLeft, ArrowRight } from "iconsax-react"
+import { Filter, ArrowDown2 } from "iconsax-react"
+import { TablePagination } from "@/components/dashboard/TablePagination"
 import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { paymentHistory } from "@/data/billing-data"
@@ -56,43 +57,6 @@ export const PaymentHistoryTable = () => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
     const endIndex = startIndex + ITEMS_PER_PAGE
     const paginatedPayments = sortedPayments.slice(startIndex, endIndex)
-
-    const paginationFooter = (
-        <div className="flex flex-col gap-3 border-t border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between lg:gap-4 lg:px-4 lg:py-4">
-            <div className="flex flex-wrap items-center gap-2">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={cn(
-                            "h-9 w-9 rounded-full border border-primary text-sm font-medium transition-colors",
-                            currentPage === page ? "bg-primary text-secondary" : "text-primary"
-                        )}
-                    >
-                        {page}
-                    </button>
-                ))}
-            </div>
-            <div className="flex items-center gap-3">
-                <button
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
-                >
-                    <ArrowLeft size={16} variant="Outline" className="text-primary" />
-                    Previous
-                </button>
-                <button
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50"
-                >
-                    Next
-                    <ArrowRight size={16} variant="Outline" className="text-primary" />
-                </button>
-            </div>
-        </div>
-    )
 
     return (
         <DashboardPanel
@@ -190,7 +154,13 @@ export const PaymentHistoryTable = () => {
                     </TableBody>
                 </Table>
             </div>
-            {paginationFooter}
+            {totalPages > 1 && (
+                <TablePagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </DashboardPanel>
     )
 }

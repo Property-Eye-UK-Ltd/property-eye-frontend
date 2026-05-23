@@ -19,11 +19,12 @@ export const TimingGapsDistributionPanel = ({ data, color = "#F97316" }: TimingG
             title="Timing Gaps Distribution"
             icon={<AlignBottom size={16} variant="TwoTone" className="text-muted-foreground" />}
             hasBorder
+            compactContent
             className="col-span-full"
         >
-            <ChartContainer config={{}} className="h-[320px] w-full -ml-6">
+            <ChartContainer config={{}} className="h-[240px] w-full sm:h-[280px] lg:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data} margin={{ left: 20, right: 20, top: 20, bottom: 40 }}>
+                    <BarChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 32 }}>
                         <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" vertical={false} />
                         <XAxis
                             dataKey="range"

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ArrowLeft, ArrowRight } from "iconsax-react"
+import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Badge } from "@/components/ui/badge"
 import { EventLogEntry } from "@/data/reportsData"
 import { cn } from "@/lib/utils"
@@ -69,60 +69,13 @@ export const EventLogTable = ({ data }: EventLogTableProps) => {
     const endIndex = startIndex + ITEMS_PER_PAGE
     const currentData = sortedData.slice(startIndex, endIndex)
 
-    const handlePrevious = () => {
-        setCurrentPage((prev) => Math.max(prev - 1, 1))
-    }
-
-    const handleNext = () => {
-        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-    }
-
-    const paginationFooter = (
-        <div className="flex flex-col gap-3 border-t border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between lg:px-6 lg:py-4">
-            <div className="flex flex-wrap items-center gap-2">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={cn(
-                            "h-9 w-9 rounded-full border text-sm font-medium transition-colors",
-                            currentPage === page
-                                ? "border-primary bg-primary text-secondary"
-                                : "border-transparent text-primary hover:border-primary"
-                        )}
-                    >
-                        {page}
-                    </button>
-                ))}
-            </div>
-            <div className="flex items-center gap-3">
-                <button
-                    onClick={handlePrevious}
-                    disabled={currentPage === 1}
-                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50"
-                >
-                    <ArrowLeft size={16} variant="Outline" className="text-primary" />
-                    Previous
-                </button>
-                <button
-                    onClick={handleNext}
-                    disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50"
-                >
-                    Next
-                    <ArrowRight size={16} variant="Outline" className="text-primary" />
-                </button>
-            </div>
-        </div>
-    )
-
     return (
         <>
             <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
                 <Table className="min-w-[700px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className="px-6 py-3 font-medium text-muted-foreground">Actor</TableHead>
+                            <TableHead className="px-2 py-2 text-xs font-medium text-muted-foreground lg:px-6 lg:py-3 lg:text-sm">Actor</TableHead>
                             <TableHead className="px-6 py-3 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -164,25 +117,31 @@ export const EventLogTable = ({ data }: EventLogTableProps) => {
                     <TableBody>
                         {currentData.map((entry, index) => (
                             <TableRow key={index} className="border-b border-border">
-                                <TableCell className="px-6 py-3 text-sm text-foreground">{entry.actor}</TableCell>
-                                <TableCell className="px-6 py-3 text-sm text-muted-foreground">{entry.role}</TableCell>
-                                <TableCell className="px-6 py-3">
-                                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal shadow-none", actionTypeStyles[entry.actionType])}>
+                                <TableCell className="px-2 py-2 text-xs text-foreground lg:px-6 lg:py-3 lg:text-sm">{entry.actor}</TableCell>
+                                <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-6 lg:py-3 lg:text-sm">{entry.role}</TableCell>
+                                <TableCell className="px-2 py-2 lg:px-6 lg:py-3">
+                                    <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-normal shadow-none lg:px-3 lg:py-1 lg:text-xs", actionTypeStyles[entry.actionType])}>
                                         {entry.actionType}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-6 py-3">
-                                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal shadow-none", targetObjectStyles[entry.targetObject])}>
+                                <TableCell className="px-2 py-2 lg:px-6 lg:py-3">
+                                    <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-normal shadow-none lg:px-3 lg:py-1 lg:text-xs", targetObjectStyles[entry.targetObject])}>
                                         {entry.targetObject}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-6 py-3 text-sm text-muted-foreground">{entry.date}</TableCell>
+                                <TableCell className="whitespace-nowrap px-2 py-2 text-xs text-muted-foreground lg:px-6 lg:py-3 lg:text-sm">{entry.date}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </div>
-            {paginationFooter}
+            {totalPages > 1 && (
+                <TablePagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </>
     )
 }
