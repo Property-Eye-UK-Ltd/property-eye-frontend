@@ -12,29 +12,46 @@ import { EventLogTable } from "@/features/reports/components/EventLogTable"
 import { DetailedPerformanceTable } from "@/features/reports/components/DetailedPerformanceTable"
 import { reportsMetricsData, reportPeriods, eventLogData, agencyPerformanceData } from "@/data/reportsData"
 
+const panelBtnClass =
+    "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-10 lg:px-4 lg:text-sm"
+
+const reportCtaOutlineClass =
+    "h-9 shrink-0 rounded-full border-border px-3 text-xs lg:h-10 lg:px-4 lg:text-sm"
+
+const reportCtaPrimaryClass =
+    "h-9 shrink-0 rounded-full bg-primary px-3 text-xs text-white hover:bg-primary/90 lg:h-10 lg:px-4 lg:text-sm"
+
 const ReportsExports = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(reportPeriods[0])
+    const [isExportOpen, setIsExportOpen] = useState(false)
 
     const handleScheduleReport = () => {
         console.log("Schedule report clicked")
-        // In real app, would open schedule report modal
     }
 
     return (
         <DashboardLayout variant="super-admin">
-            {/* Page Header */}
             <DynamicPageHeader
                 title="Reports & Exports"
+                stackActionsBelowTitle
                 actions={
-                    <div className="flex items-center gap-3">
-                        <Button onClick={handleScheduleReport} variant="outline" className="rounded-full">
+                    <>
+                        <Button
+                            onClick={handleScheduleReport}
+                            variant="outline"
+                            className={reportCtaOutlineClass}
+                        >
                             Schedule Reports
                         </Button>
-                        <DropdownMenu>
+                        <DropdownMenu onOpenChange={setIsExportOpen}>
                             <DropdownMenuTrigger asChild>
-                                <Button className="rounded-full bg-primary text-white">
+                                <Button className={reportCtaPrimaryClass}>
                                     Export Reports
-                                    <ArrowDown2 size={18} variant="Outline" className="ml-2" />
+                                    <ArrowDown2
+                                        size={16}
+                                        variant="Outline"
+                                        className={`ml-1 transition-transform duration-200 lg:ml-2 ${isExportOpen ? "rotate-180" : ""}`}
+                                    />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">
@@ -43,7 +60,7 @@ const ReportsExports = () => {
                                 <DropdownMenuItem className="cursor-pointer">Export as Excel</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                    </div>
+                    </>
                 }
                 filters={
                     <PeriodTabs
@@ -55,20 +72,15 @@ const ReportsExports = () => {
             />
 
             <DashboardPageContent className="space-y-3 lg:space-y-6">
-                {/* Metric Cards */}
                 <MetricCards metrics={reportsMetricsData[selectedPeriod]} />
 
-                {/* Significant increase in report detail: Agency Performance Analytics */}
                 <DashboardPanel
                     title="Agency Performance Report"
                     description="Comprehensive breakdown of recovery and revenue metrics per agency"
                     noPadding
                     hasBorder
                     actions={
-                        <Button
-                            variant="outline"
-                            className="rounded-full border-border text-foreground hover:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0"
-                        >
+                        <Button variant="outline" className={panelBtnClass}>
                             View All Analytics
                         </Button>
                     }
@@ -76,7 +88,6 @@ const ReportsExports = () => {
                     <DetailedPerformanceTable data={agencyPerformanceData} />
                 </DashboardPanel>
 
-                {/* Third Row - Event Log Table */}
                 <DashboardPanel
                     title="System Event Log"
                     description="Audit trail of all administrative actions and system events"
@@ -85,12 +96,9 @@ const ReportsExports = () => {
                     actions={
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="rounded-full border-border text-foreground hover:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0"
-                                >
+                                <Button variant="outline" className={panelBtnClass}>
                                     Export Log
-                                    <ArrowDown2 size={18} variant="Outline" className="ml-2" />
+                                    <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">

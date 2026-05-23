@@ -2,7 +2,6 @@ import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
-import { ResponsivePanelGroup } from "@/components/dashboard/MobilePanelCarousel"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
@@ -53,7 +52,7 @@ const AdminOverview = () => {
                     showCategoryFilter={false}
                 />
 
-                <ResponsivePanelGroup className="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-4">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-4">
                     <CaseQueuePanel
                         data={adminCaseQueueData}
                         severityStyles={adminSeverityStyles}
@@ -63,9 +62,9 @@ const AdminOverview = () => {
                         data={adminRevenueData}
                         chartSize={200}
                     />
-                </ResponsivePanelGroup>
+                </div>
 
-                <ResponsivePanelGroup className="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-4">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-4">
                     <FraudDistributionPanel title="Fraud Distribution" data={fraudDistributionData} />
                     <div className="lg:col-span-3">
                         <CommissionBreakdownPanel
@@ -74,7 +73,7 @@ const AdminOverview = () => {
                             chartSize={200}
                         />
                     </div>
-                </ResponsivePanelGroup>
+                </div>
 
                 <AnnualChecksTable data={annualChecksData} />
 

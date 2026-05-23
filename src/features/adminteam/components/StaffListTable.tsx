@@ -1,11 +1,15 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Badge } from "@/components/ui/badge"
 import { ChevronsUpDown } from "lucide-react"
-import { ArrowLeft, ArrowRight, Profile } from "iconsax-react"
+import { Profile } from "iconsax-react"
 import { cn } from "@/lib/utils"
 import { StaffMember, staffStatusStyles, roleStyles } from "@/data/teamManagementData"
+
+const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
+const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
 interface StaffListTableProps {
     data: StaffMember[]
@@ -16,6 +20,7 @@ export const StaffListTable = ({ data }: StaffListTableProps) => {
     const [sortColumn, setSortColumn] = useState<keyof StaffMember | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
 
     const handleSort = (column: keyof StaffMember) => {
         if (sortColumn === column) {
@@ -41,72 +46,92 @@ export const StaffListTable = ({ data }: StaffListTableProps) => {
         })
     }, [data, sortColumn, sortDirection])
 
+    const paginatedData = useMemo(() => {
+        const start = (currentPage - 1) * itemsPerPage
+        return sortedData.slice(start, start + itemsPerPage)
+    }, [sortedData, currentPage, itemsPerPage])
+
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage) || 1
+
+    useEffect(() => {
+        if (currentPage > totalPages) setCurrentPage(1)
+    }, [totalPages, currentPage])
+
+    const sortBtnClass =
+        "flex items-center gap-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground lg:text-sm"
+
     return (
         <>
-            <div className="overflow-x-auto">
-                <Table>
+            <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                <Table className="min-w-[720px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className="px-4 font-medium">Name</TableHead>
-                            <TableHead className="px-4 font-medium">Email</TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("role")}
-                                >
+                            <TableHead className={th}>Name</TableHead>
+                            <TableHead className={th}>Email</TableHead>
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("role")}>
                                     Role
-                                    <ChevronsUpDown className="h-4 w-4" />
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("lastActiveDate")}
-                                >
-                                    Last Active Date
-                                    <ChevronsUpDown className="h-4 w-4" />
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("lastActiveDate")}>
+                                    Last Active
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("status")}
-                                >
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("status")}>
                                     Status
-                                    <ChevronsUpDown className="h-4 w-4" />
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium">Action</TableHead>
+                            <TableHead className={th}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {sortedData.map((staff) => (
+                        {paginatedData.map((staff) => (
                             <TableRow key={staff.id} className="border-b border-border">
-                                <TableCell className="px-4 py-3">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-progress/30">
-                                            <Profile size={18} variant="Bulk" className="text-primary" />
+                                <TableCell className={td}>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-progress/30 lg:h-9 lg:w-9">
+                                            <Profile size={16} variant="Bulk" className="text-primary lg:h-[18px] lg:w-[18px]" />
                                         </div>
-                                        <span className="text-sm text-foreground">{staff.name}</span>
+                                        <span className="whitespace-nowrap font-normal text-foreground">
+                                            {staff.name}
+                                        </span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{staff.email}</TableCell>
-                                <TableCell className="px-4 py-3">
-                                    <Badge className={cn("rounded-full px-3 py-0.5 text-xs font-medium", roleStyles[staff.role])}>
+                                <TableCell className={cn(td, "max-w-[140px] truncate text-muted-foreground lg:max-w-none")}>
+                                    {staff.email}
+                                </TableCell>
+                                <TableCell className={td}>
+                                    <Badge
+                                        className={cn(
+                                            "rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:text-xs",
+                                            roleStyles[staff.role]
+                                        )}
+                                    >
                                         {staff.role}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{staff.lastActiveDate}</TableCell>
-                                <TableCell className="px-4 py-4">
-                                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal", staffStatusStyles[staff.status])}>
+                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
+                                    {staff.lastActiveDate}
+                                </TableCell>
+                                <TableCell className={td}>
+                                    <Badge
+                                        className={cn(
+                                            "rounded-full px-2 py-0.5 text-[10px] font-normal lg:px-3 lg:py-1 lg:text-xs",
+                                            staffStatusStyles[staff.status]
+                                        )}
+                                    >
                                         {staff.status}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-4 py-3">
+                                <TableCell className={td}>
                                     <button
                                         onClick={() => navigate(`/admin/team/staff/${staff.id}`)}
-                                        className="text-sm font-medium transition-colors hover:underline"
-                                        style={{ color: "var(--progress)" }}
+                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
                                     >
                                         View
                                     </button>
@@ -117,38 +142,11 @@ export const StaffListTable = ({ data }: StaffListTableProps) => {
                 </Table>
             </div>
 
-            {/* Pagination */}
-            <div className="flex items-center justify-between border-t border-border px-6 py-4">
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setCurrentPage(1)}
-                        className={cn(
-                            "h-9 w-9 rounded-full border border-primary text-sm font-medium transition-colors",
-                            currentPage === 1 ? "bg-primary text-secondary" : "text-primary"
-                        )}
-                    >
-                        1
-                    </button>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ArrowLeft size={16} variant="Outline" className="text-primary" />
-                        Previous
-                    </button>
-                    <button
-                        onClick={() => setCurrentPage((prev) => prev + 1)}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Next
-                        <ArrowRight size={16} variant="Outline" className="text-primary" />
-                    </button>
-                </div>
-            </div>
+            <TablePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </>
     )
 }

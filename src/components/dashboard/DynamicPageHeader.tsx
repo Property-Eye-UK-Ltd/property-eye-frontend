@@ -1,5 +1,6 @@
 import { ReactNode, Children, isValidElement, Fragment } from "react"
 import { Link } from "react-router-dom"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "iconsax-react"
 import {
@@ -31,6 +32,8 @@ interface DynamicPageHeaderProps {
     actions?: ReactNode | ActionButton[]
     tabs?: ReactNode
     showSweepCountdown?: boolean
+    /** Mobile: all CTAs in a row below the title; filters remain underneath. Desktop unchanged. */
+    stackActionsBelowTitle?: boolean
 }
 
 const flattenActions = (actions: ReactNode): ReactNode[] => {
@@ -49,6 +52,7 @@ export const DynamicPageHeader = ({
     actions,
     tabs,
     showSweepCountdown,
+    stackActionsBelowTitle = false,
 }: DynamicPageHeaderProps) => {
     const actionNodes: ReactNode[] = (() => {
         if (!actions) return []
@@ -75,6 +79,7 @@ export const DynamicPageHeader = ({
     const isMultiCta = actionNodes.length > 1
     const primaryCta = isMultiCta ? actionNodes[actionNodes.length - 1] : null
     const secondaryCtas = isMultiCta ? actionNodes.slice(0, -1) : []
+    const stackMobileActions = stackActionsBelowTitle && actionNodes.length > 0
 
     return (
         <div className="sticky top-0 z-10 w-full border-b border-border bg-white">
@@ -134,12 +139,31 @@ export const DynamicPageHeader = ({
                         )}
                     </div>
 
-                    {isSingleCta && <div className="shrink-0">{actionNodes[0]}</div>}
-                    {isMultiCta && primaryCta && <div className="shrink-0">{primaryCta}</div>}
+                    {isSingleCta && (
+                        <div className={cn("shrink-0", stackMobileActions && "hidden lg:block")}>
+                            {actionNodes[0]}
+                        </div>
+                    )}
+                    {isMultiCta && primaryCta && (
+                        <div className={cn("shrink-0", stackMobileActions && "hidden lg:block")}>
+                            {primaryCta}
+                        </div>
+                    )}
                 </div>
 
+                {stackMobileActions && (
+                    <div className="mt-2 flex flex-row flex-wrap gap-2 lg:hidden">{actionNodes}</div>
+                )}
+
                 {isMultiCta && secondaryCtas.length > 0 && (
-                    <div className="mt-2 flex flex-wrap items-center gap-2">{secondaryCtas}</div>
+                    <div
+                        className={cn(
+                            "mt-2 flex flex-wrap items-center gap-2",
+                            stackMobileActions && "hidden lg:flex"
+                        )}
+                    >
+                        {secondaryCtas}
+                    </div>
                 )}
 
                 {filters && (

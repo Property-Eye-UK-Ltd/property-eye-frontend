@@ -12,7 +12,9 @@ interface EventLogTableProps {
 
 const ITEMS_PER_PAGE = 9
 
-// Badge styles for different action types
+const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-6 lg:py-3 lg:text-sm"
+const td = "px-2 py-2 text-xs lg:px-6 lg:py-3 lg:text-sm"
+
 const actionTypeStyles: Record<string, string> = {
     "Triggered Case": "bg-red-50 text-red-600 border border-red-100",
     "Closed Case": "bg-red-50 text-red-600 border border-red-100",
@@ -21,11 +23,10 @@ const actionTypeStyles: Record<string, string> = {
     "Printed Invoice": "bg-gray-50 text-gray-600 border border-gray-200",
 }
 
-// Badge styles for different target objects
 const targetObjectStyles: Record<string, string> = {
-    "Case": "bg-purple-50 text-purple-600 border border-purple-100",
-    "Agency": "bg-yellow-50 text-yellow-600 border border-yellow-100",
-    "Invoice": "bg-blue-50 text-blue-600 border border-blue-100",
+    Case: "bg-purple-50 text-purple-600 border border-purple-100",
+    Agency: "bg-yellow-50 text-yellow-600 border border-yellow-100",
+    Invoice: "bg-blue-50 text-blue-600 border border-blue-100",
 }
 
 type SortField = "actor" | "role" | "actionType" | "targetObject" | "date"
@@ -66,50 +67,40 @@ export const EventLogTable = ({ data }: EventLogTableProps) => {
 
     const totalPages = Math.ceil(sortedData.length / ITEMS_PER_PAGE)
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-    const endIndex = startIndex + ITEMS_PER_PAGE
-    const currentData = sortedData.slice(startIndex, endIndex)
+    const currentData = sortedData.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+
+    const sortBtnClass =
+        "flex items-center gap-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground lg:text-sm"
 
     return (
         <>
             <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-                <Table className="min-w-[700px]">
+                <Table className="min-w-[640px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className="px-2 py-2 text-xs font-medium text-muted-foreground lg:px-6 lg:py-3 lg:text-sm">Actor</TableHead>
-                            <TableHead className="px-6 py-3 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("role")}
-                                >
+                            <TableHead className={cn(th, "text-muted-foreground")}>Actor</TableHead>
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("role")}>
                                     Role
-                                    <ChevronsUpDown className="h-4 w-4" />
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-6 py-3 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("actionType")}
-                                >
-                                    Action Type
-                                    <ChevronsUpDown className="h-4 w-4" />
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("actionType")}>
+                                    Action
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-6 py-3 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("targetObject")}
-                                >
-                                    Target Object
-                                    <ChevronsUpDown className="h-4 w-4" />
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("targetObject")}>
+                                    Target
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-6 py-3 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("date")}
-                                >
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("date")}>
                                     Date
-                                    <ChevronsUpDown className="h-4 w-4" />
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
                         </TableRow>
@@ -117,19 +108,31 @@ export const EventLogTable = ({ data }: EventLogTableProps) => {
                     <TableBody>
                         {currentData.map((entry, index) => (
                             <TableRow key={index} className="border-b border-border">
-                                <TableCell className="px-2 py-2 text-xs text-foreground lg:px-6 lg:py-3 lg:text-sm">{entry.actor}</TableCell>
-                                <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-6 lg:py-3 lg:text-sm">{entry.role}</TableCell>
-                                <TableCell className="px-2 py-2 lg:px-6 lg:py-3">
-                                    <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-normal shadow-none lg:px-3 lg:py-1 lg:text-xs", actionTypeStyles[entry.actionType])}>
+                                <TableCell className={cn(td, "text-foreground")}>{entry.actor}</TableCell>
+                                <TableCell className={cn(td, "text-muted-foreground")}>{entry.role}</TableCell>
+                                <TableCell className={td}>
+                                    <Badge
+                                        className={cn(
+                                            "rounded-full px-2 py-0.5 text-[10px] font-normal shadow-none lg:px-3 lg:py-1 lg:text-xs",
+                                            actionTypeStyles[entry.actionType]
+                                        )}
+                                    >
                                         {entry.actionType}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-2 py-2 lg:px-6 lg:py-3">
-                                    <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-normal shadow-none lg:px-3 lg:py-1 lg:text-xs", targetObjectStyles[entry.targetObject])}>
+                                <TableCell className={td}>
+                                    <Badge
+                                        className={cn(
+                                            "rounded-full px-2 py-0.5 text-[10px] font-normal shadow-none lg:px-3 lg:py-1 lg:text-xs",
+                                            targetObjectStyles[entry.targetObject]
+                                        )}
+                                    >
                                         {entry.targetObject}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="whitespace-nowrap px-2 py-2 text-xs text-muted-foreground lg:px-6 lg:py-3 lg:text-sm">{entry.date}</TableCell>
+                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
+                                    {entry.date}
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
