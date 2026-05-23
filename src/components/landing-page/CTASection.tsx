@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SecuritySafe } from "iconsax-react";
 
@@ -29,8 +30,11 @@ const CTASection = () => {
                         </p>
 
                         <div className="flex flex-col items-center gap-8">
-                            <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-12 h-14 text-base font-semibold transition-all hover:scale-105">
-                                Request a Demo
+                            <Button
+                                asChild
+                                className="bg-primary hover:bg-primary/90 text-white rounded-full px-12 h-14 text-base font-semibold transition-all hover:scale-105"
+                            >
+                                <Link to="/contact">Contact Us</Link>
                             </Button>
 
                             <div className="flex items-center gap-3 text-white/70 text-xs md:text-sm">

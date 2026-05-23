@@ -16,8 +16,7 @@ const Pricing = () => {
     const navigate = useNavigate();
 
     const handleSelectPlan = (planId: string) => {
-        // For now, redirect to request demo or signup
-        navigate("/request-demo");
+        navigate("/contact");
     };
 
     return (

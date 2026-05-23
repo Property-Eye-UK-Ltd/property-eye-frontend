@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/landing-page/Home";
 import Contact from "./pages/landing-page/Contact";
-import RequestDemo from "./pages/landing-page/RequestDemo";
+// RequestDemo page kept at ./pages/landing-page/RequestDemo.tsx — route hidden
 import ScrollToTop from "./components/ScrollToTop";
 import PrivacyPolicy from "./pages/landing-page/PrivacyPolicy";
 import CookiePolicy from "./pages/landing-page/CookiePolicy";
@@ -57,7 +57,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/request-demo" element={<RequestDemo />} />
+          {/* /request-demo route hidden — page file retained for future use */}
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

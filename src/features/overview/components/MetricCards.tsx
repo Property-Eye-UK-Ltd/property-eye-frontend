@@ -16,10 +16,10 @@ interface MetricCardsProps {
 }
 
 export const MetricCards = ({ metrics, columns = 4 }: MetricCardsProps) => {
-  const gridClass = cn("grid grid-cols-2 gap-3 lg:gap-4", {
-    "lg:grid-cols-2": columns === 2,
-    "lg:grid-cols-3": columns === 3,
-    "lg:grid-cols-4": columns === 4,
+  const gridClass = cn("grid gap-3 lg:gap-4", {
+    "grid-cols-2 lg:grid-cols-2": columns === 2,
+    "grid-cols-3 lg:grid-cols-3": columns === 3,
+    "grid-cols-2 lg:grid-cols-4": columns === 4,
   })
 
   return (

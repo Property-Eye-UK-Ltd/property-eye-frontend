@@ -62,9 +62,9 @@ const Header = () => {
                 </nav>
 
                 <div className="hidden lg:block">
-                    <Link to="/request-demo">
+                    <Link to="/contact">
                         <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 h-10 text-sm font-normal">
-                            Request a Demo
+                            Contact Us
                         </Button>
                     </Link>
                 </div>
@@ -108,9 +108,9 @@ const Header = () => {
                             </Link>
                         );
                     })}
-                    <Link to="/request-demo" className="w-full max-w-xs" onClick={() => setIsMenuOpen(false)}>
+                    <Link to="/contact" className="w-full max-w-xs" onClick={() => setIsMenuOpen(false)}>
                         <Button className="bg-primary hover:bg-primary/90 text-white rounded-full w-full h-12 font-normal mt-4">
-                            Request a Demo
+                            Contact Us
                         </Button>
                     </Link>
                 </div>

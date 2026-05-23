@@ -30,7 +30,7 @@ const Overview = () => {
       />
 
       <DashboardPageContent>
-        <MetricCards metrics={metricsData[selectedPeriod]} />
+        <MetricCards metrics={metricsData[selectedPeriod]} columns={3} />
 
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-5 lg:gap-4">
           <CommissionBreakdownPanel
