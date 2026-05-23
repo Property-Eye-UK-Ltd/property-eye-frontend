@@ -41,7 +41,7 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
         <header className="sticky top-0 z-20 border-b border-border bg-background">
             <div
                 className={cn(
-                    "flex items-center gap-2 px-3 py-2.5 lg:gap-4 lg:px-6 lg:py-4",
+                    "flex items-center gap-2 px-3 py-2.5 lg:gap-3 lg:px-6 lg:py-4",
                     !isAdmin && "justify-between"
                 )}
             >
@@ -49,7 +49,7 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                     onClick={toggleSidebar}
                     className={cn(
                         iconTriggerClass,
-                        "flex-shrink-0 lg:h-auto lg:w-auto lg:bg-transparent lg:p-2 lg:hover:bg-muted"
+                        "shrink-0 lg:h-auto lg:w-auto lg:bg-transparent lg:p-2 lg:hover:bg-muted"
                     )}
                     aria-label={
                         isDesktop
@@ -71,26 +71,43 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                 </button>
 
                 {isAdmin && (
-                    <div className="relative min-w-0 flex-1">
+                    <div className="relative min-w-0 flex-1 lg:hidden">
                         <SearchNormal
                             size={18}
                             variant="TwoTone"
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground lg:left-3.5"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                         />
                         <Input
                             type="search"
                             placeholder="Search"
-                            className="h-9 rounded-full border-border bg-background pl-9 text-sm lg:h-10 lg:pl-10"
+                            className="h-9 w-full rounded-full border-border bg-background pl-9 text-sm"
                         />
                     </div>
                 )}
 
+                {isAdmin && <div className="hidden min-w-0 flex-1 lg:block" aria-hidden />}
+
                 <div
                     className={cn(
-                        "flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-4",
+                        "flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-3",
                         !isAdmin && "min-w-0 flex-1 justify-end"
                     )}
                 >
+                    {isAdmin && (
+                        <div className="relative hidden h-9 w-40 shrink-0 lg:block xl:w-48">
+                            <SearchNormal
+                                size={18}
+                                variant="TwoTone"
+                                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                            />
+                            <Input
+                                type="search"
+                                placeholder="Search"
+                                className="h-9 w-full rounded-full border-border bg-background pl-9 text-sm lg:h-10 lg:pl-10"
+                            />
+                        </div>
+                    )}
+
                     {!isAdmin && (
                         <>
                             <div className="hidden items-center gap-2 lg:flex">

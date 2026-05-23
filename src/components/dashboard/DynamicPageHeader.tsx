@@ -27,12 +27,12 @@ interface ActionButton {
 interface DynamicPageHeaderProps {
     title: string
     breadcrumbs?: BreadcrumbItem[]
-    /** Period/year filter — rendered below the title row */
+    /** Period/year filter — below title on mobile; right on desktop when there are no CTAs */
     filters?: ReactNode
     actions?: ReactNode | ActionButton[]
     tabs?: ReactNode
     showSweepCountdown?: boolean
-    /** Mobile: all CTAs in a row below the title; filters remain underneath. Desktop unchanged. */
+    /** Mobile: CTAs in a row below the title. Desktop: all CTAs top-right together. */
     stackActionsBelowTitle?: boolean
 }
 
@@ -75,11 +75,31 @@ export const DynamicPageHeader = ({
         return flattenActions(actions as ReactNode)
     })()
 
+    const hasActions = actionNodes.length > 0
     const isSingleCta = actionNodes.length === 1
     const isMultiCta = actionNodes.length > 1
     const primaryCta = isMultiCta ? actionNodes[actionNodes.length - 1] : null
     const secondaryCtas = isMultiCta ? actionNodes.slice(0, -1) : []
-    const stackMobileActions = stackActionsBelowTitle && actionNodes.length > 0
+    const stackMobileActions = stackActionsBelowTitle && hasActions
+    const filtersRightOnDesktop = Boolean(filters) && !hasActions
+
+    const desktopTopRight = () => {
+        if (stackMobileActions) {
+            return (
+                <div className="hidden shrink-0 items-center gap-2 lg:flex">{actionNodes}</div>
+            )
+        }
+        if (isSingleCta) {
+            return <div className="shrink-0">{actionNodes[0]}</div>
+        }
+        if (isMultiCta && primaryCta) {
+            return <div className="shrink-0">{primaryCta}</div>
+        }
+        if (filtersRightOnDesktop) {
+            return <div className="hidden shrink-0 lg:block">{filters}</div>
+        }
+        return null
+    }
 
     return (
         <div className="sticky top-0 z-10 w-full border-b border-border bg-white">
@@ -139,35 +159,24 @@ export const DynamicPageHeader = ({
                         )}
                     </div>
 
-                    {isSingleCta && (
-                        <div className={cn("shrink-0", stackMobileActions && "hidden lg:block")}>
-                            {actionNodes[0]}
-                        </div>
-                    )}
-                    {isMultiCta && primaryCta && (
-                        <div className={cn("shrink-0", stackMobileActions && "hidden lg:block")}>
-                            {primaryCta}
-                        </div>
-                    )}
+                    {desktopTopRight()}
                 </div>
 
                 {stackMobileActions && (
                     <div className="mt-2 flex flex-row flex-wrap gap-2 lg:hidden">{actionNodes}</div>
                 )}
 
-                {isMultiCta && secondaryCtas.length > 0 && (
-                    <div
-                        className={cn(
-                            "mt-2 flex flex-wrap items-center gap-2",
-                            stackMobileActions && "hidden lg:flex"
-                        )}
-                    >
-                        {secondaryCtas}
-                    </div>
+                {isMultiCta && secondaryCtas.length > 0 && !stackMobileActions && (
+                    <div className="mt-2 flex flex-wrap items-center gap-2">{secondaryCtas}</div>
                 )}
 
                 {filters && (
-                    <div className="mt-2.5 min-w-0 overflow-x-auto [-webkit-overflow-scrolling:touch] lg:mt-3">
+                    <div
+                        className={cn(
+                            "mt-2.5 min-w-0 overflow-x-auto [-webkit-overflow-scrolling:touch] lg:mt-3",
+                            filtersRightOnDesktop && "lg:hidden"
+                        )}
+                    >
                         {filters}
                     </div>
                 )}

@@ -55,6 +55,7 @@ const Analytics = () => {
         <DashboardLayout>
             <DynamicPageHeader
                 title="Analytics & Reports"
+                stackActionsBelowTitle
                 actions={
                     <>
                         <Button
