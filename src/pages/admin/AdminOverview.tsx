@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
+import { ResponsivePanelGroup } from "@/components/dashboard/MobilePanelCarousel"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
@@ -31,15 +33,19 @@ const AdminOverview = () => {
         <DashboardLayout variant="super-admin">
             <DynamicPageHeader
                 title="Overview"
-                actions={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
-                showSweepCountdown={true}
+                filters={
+                    <PeriodTabs
+                        periods={periods}
+                        selected={selectedPeriod}
+                        onSelect={setSelectedPeriod}
+                    />
+                }
+                showSweepCountdown
             />
 
-            <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
-                {/* Metric Cards */}
+            <DashboardPageContent className="space-y-3 lg:space-y-4">
                 <MetricCards metrics={adminMetricsData[selectedPeriod]} />
 
-                {/* Users Activity Chart */}
                 <FraudDetectionPanel
                     title="Users Activity"
                     data={adminUsersActivityData}
@@ -47,8 +53,7 @@ const AdminOverview = () => {
                     showCategoryFilter={false}
                 />
 
-                {/* Case Queue & Revenue Breakdown */}
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+                <ResponsivePanelGroup className="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-4">
                     <CaseQueuePanel
                         data={adminCaseQueueData}
                         severityStyles={adminSeverityStyles}
@@ -56,37 +61,30 @@ const AdminOverview = () => {
                     <CommissionBreakdownPanel
                         title="Subscription Revenue Breakdown"
                         data={adminRevenueData}
-                        chartSize={220}
+                        chartSize={200}
                     />
-                </div>
+                </ResponsivePanelGroup>
 
-                {/* Fraud Distribution Chart & Severity Distribution */}
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-                    <FraudDistributionPanel
-                        title="Fraud Distribution"
-                        data={fraudDistributionData}
-                    />
+                <ResponsivePanelGroup className="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-4">
+                    <FraudDistributionPanel title="Fraud Distribution" data={fraudDistributionData} />
                     <div className="lg:col-span-3">
                         <CommissionBreakdownPanel
                             title="Severity Distribution"
                             data={adminSeverityData}
-                            chartSize={220}
-                            isWide={true}
+                            chartSize={200}
                         />
                     </div>
-                </div>
+                </ResponsivePanelGroup>
 
-                {/* Annual Checks Breakdown Table */}
                 <AnnualChecksTable data={annualChecksData} />
 
-                {/* Fraud Detection Over Time -> Replaced with Yearly Growth (No filters) */}
                 <FraudDetectionPanel
                     title="Fraud Detection Growth"
                     data={adminFraudGrowthData}
                     config={adminFraudGrowthConfig}
                     showCategoryFilter={false}
                 />
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }

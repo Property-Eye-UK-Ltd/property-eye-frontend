@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { Button } from "@/components/ui/button"
 import { useParams, useNavigate } from "react-router-dom"
@@ -22,9 +23,9 @@ const StaffDetails = () => {
     if (!staff) {
         return (
             <DashboardLayout variant="super-admin">
-                <div className="mx-auto w-full max-w-7xl px-6 py-6">
+                <DashboardPageContent>
                     <p>Staff not found</p>
-                </div>
+                </DashboardPageContent>
             </DashboardLayout>
         )
     }
@@ -48,14 +49,17 @@ const StaffDetails = () => {
                 title="Staff Details"
                 breadcrumbs={[{ label: "Team Management", href: "/admin/team" }, { label: staff.name || "Staff Details" }]}
                 actions={
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-row gap-2">
                         <Button
                             onClick={() => setIsSuspendModalOpen(true)}
-                            className="rounded-full bg-red-50 text-red-600 hover:bg-red-100 border-0"
+                            className="h-9 flex-1 rounded-full border-0 bg-red-50 px-3 text-xs text-red-600 hover:bg-red-100 sm:flex-none sm:px-4 sm:text-sm"
                         >
                             Suspend Staff
                         </Button>
-                        <Button onClick={() => setIsEditRoleModalOpen(true)} className="rounded-full bg-primary font-normal text-white">
+                        <Button
+                            onClick={() => setIsEditRoleModalOpen(true)}
+                            className="h-9 flex-1 rounded-full bg-primary px-3 text-xs font-normal text-white sm:flex-none sm:px-4 sm:text-sm"
+                        >
                             Edit Role
                         </Button>
                     </div>
@@ -63,8 +67,8 @@ const StaffDetails = () => {
             />
 
             {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl px-6 py-6">
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <DashboardPageContent>
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:gap-4">
                     {/* Left Column - Activity Log */}
                     <div className="lg:col-span-2">
                         <ActivityLogPanel data={mockActivityLog} />
@@ -75,7 +79,7 @@ const StaffDetails = () => {
                         <StaffInformationCard staff={staff} />
                     </div>
                 </div>
-            </div>
+            </DashboardPageContent>
 
             {/* Modals */}
             <SuspendStaffModal

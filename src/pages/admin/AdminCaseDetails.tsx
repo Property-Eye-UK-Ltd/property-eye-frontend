@@ -1,5 +1,6 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PropertyPartiesPanel } from "@/features/cases/components/PropertyPartiesPanel"
 import { TimelineAuditTrailPanel } from "@/features/cases/components/TimelineAuditTrailPanel"
@@ -22,9 +23,9 @@ const AdminCaseDetails = () => {
     if (!caseData) {
         return (
             <DashboardLayout variant="super-admin">
-                <div className="mx-auto w-full max-w-7xl px-6 py-6">
+                <DashboardPageContent>
                     <p>Case not found</p>
-                </div>
+                </DashboardPageContent>
             </DashboardLayout>
         )
     }
@@ -53,10 +54,9 @@ const AdminCaseDetails = () => {
             />
 
             {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl px-6 py-6">
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    {/* Left Column - Property & Parties, Timeline */}
-                    <div className="space-y-6 lg:col-span-2">
+            <DashboardPageContent>
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:gap-4">
+                    <div className="space-y-3 lg:col-span-2 lg:space-y-4">
                         <PropertyPartiesPanel data={{ ...mockAdminCasePropertyParties, agency: randomAgency.name }} />
                         {/* Evidence Overview Table Deleted as requested */}
                         <TimelineAuditTrailPanel data={mockAdminCaseTimeline} />
@@ -70,7 +70,7 @@ const AdminCaseDetails = () => {
                         />
                     </div>
                 </div>
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }

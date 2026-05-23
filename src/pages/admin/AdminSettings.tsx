@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { SettingsTabs } from "@/features/settings/components/SettingsTabs"
 import { ProfileTab } from "@/features/settings/components/ProfileTab"
@@ -55,8 +56,7 @@ const AdminSettings = () => {
     return (
         <DashboardLayout variant="super-admin">
             <DynamicPageHeader title="Settings" />
-            <div className="mx-auto w-full max-w-7xl px-6 py-6">
-                <div className="space-y-6">
+            <DashboardPageContent className="space-y-3 lg:space-y-6">
                     {/* Settings Tabs */}
                     <SettingsTabs tabs={tabs} selected={selectedTab} onSelect={setSelectedTab} />
 
@@ -73,8 +73,7 @@ const AdminSettings = () => {
                     {selectedTab === "security" && (
                         <SecurityTab settings={securitySettings} onSave={handleSaveSecurity} />
                     )}
-                </div>
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }

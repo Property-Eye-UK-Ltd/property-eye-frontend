@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
@@ -26,11 +27,16 @@ const BillingFinance = () => {
             {/* Page Header */}
             <DynamicPageHeader
                 title="Billing & Finance"
-                actions={<PeriodTabs periods={billingPeriods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
+                filters={
+                    <PeriodTabs
+                        periods={billingPeriods}
+                        selected={selectedPeriod}
+                        onSelect={setSelectedPeriod}
+                    />
+                }
             />
 
-            {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
+            <DashboardPageContent className="space-y-3 lg:space-y-4">
                 {/* Metric Cards */}
                 <MetricCards metrics={billingMetricsData[selectedPeriod]} />
 
@@ -41,40 +47,37 @@ const BillingFinance = () => {
                     noPadding
                     hasBorder
                     actions={
-                        <div className="flex items-center gap-3">
-                            {/* Search */}
-                            <div className="relative">
+                        <div className="flex flex-nowrap items-center gap-1.5 lg:gap-2">
+                            <div className="relative w-32 shrink-0 sm:w-44 lg:w-56">
                                 <SearchNormal
-                                    size={18}
+                                    size={16}
                                     variant="Outline"
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                                 />
                                 <Input
                                     placeholder="Search"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-64 rounded-full border-border bg-background pl-10 pr-4 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                    className="h-8 rounded-full border-border bg-background pl-8 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-9 lg:pl-10 lg:text-sm"
                                 />
                             </div>
 
-                            {/* Filter Button */}
                             <Button
                                 variant="outline"
-                                className="rounded-full border-border text-foreground hover:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0"
+                                className="h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
                             >
-                                <Filter size={18} variant="Outline" className="mr-2" />
+                                <Filter size={16} variant="Outline" className="mr-1 lg:mr-2" />
                                 Filter
                             </Button>
 
-                            {/* Export Dropdown */}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className="rounded-full border-border text-foreground hover:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0"
+                                        className="h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
                                     >
                                         Export
-                                        <ArrowDown2 size={18} variant="Outline" className="ml-2" />
+                                        <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">
@@ -87,7 +90,7 @@ const BillingFinance = () => {
                 >
                     <BillingHistoryTable data={filteredTransactions} />
                 </DashboardPanel>
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }

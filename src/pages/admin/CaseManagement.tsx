@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Input } from "@/components/ui/input"
@@ -11,54 +12,51 @@ import { AdminCasesTable } from "@/features/admincases/components/AdminCasesTabl
 import { mockAgencyCases } from "@/data/agencyCasesData"
 import { agenciesData } from "@/data/agenciesData"
 
+const panelBtnClass =
+    "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
+
 const AdminCaseManagement = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedAgency, setSelectedAgency] = useState<string>("all")
 
-    const filteredCases = mockAgencyCases.filter(
-        (c) => {
-            const matchesSearch = c.caseId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                 c.propertyAddress.toLowerCase().includes(searchQuery.toLowerCase())
-            const matchesAgency = selectedAgency === "all" || c.agencyName === selectedAgency
-            return matchesSearch && matchesAgency
-        }
-    )
+    const filteredCases = mockAgencyCases.filter((c) => {
+        const matchesSearch =
+            c.caseId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            c.propertyAddress.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesAgency = selectedAgency === "all" || c.agencyName === selectedAgency
+        return matchesSearch && matchesAgency
+    })
 
-    // Get unique agency names for the filter
     const uniqueAgencies = Array.from(new Set(agenciesData.map((a) => a.name)))
 
     return (
         <DashboardLayout variant="super-admin">
-            {/* Page Header */}
             <DynamicPageHeader title="Case Management" />
 
-            {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl px-6 py-6">
+            <DashboardPageContent>
                 <DashboardPanel
                     title="Case List"
                     description="Monitor property-related fraud cases on Property Eye System"
                     noPadding
                     hasBorder
                     actions={
-                        <div className="flex items-center gap-3">
-                            {/* Search bar on the left */}
-                            <div className="relative">
+                        <div className="flex flex-nowrap items-center gap-1.5 lg:gap-2">
+                            <div className="relative w-36 shrink-0 sm:w-44 lg:w-56">
                                 <SearchNormal
-                                    size={18}
+                                    size={16}
                                     variant="Outline"
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                                 />
                                 <Input
-                                    placeholder="Search Case ID or Address"
+                                    placeholder="Search"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-64 rounded-full border-border bg-background pl-10 pr-4 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                    className="h-8 rounded-full border-border bg-background pl-8 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-9 lg:pl-10 lg:text-sm"
                                 />
                             </div>
 
-                            {/* Agency Filter on the right of search bar */}
                             <Select value={selectedAgency} onValueChange={setSelectedAgency}>
-                                <SelectTrigger className="w-48 rounded-full border-border bg-background px-4 focus:ring-0 focus:ring-offset-0">
+                                <SelectTrigger className="h-8 w-28 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-40 lg:px-4 lg:text-sm">
                                     <SelectValue placeholder="All Agencies" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -71,15 +69,11 @@ const AdminCaseManagement = () => {
                                 </SelectContent>
                             </Select>
 
-                            {/* Export Dropdown */}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className="rounded-full border-border text-foreground hover:bg-muted focus-visible:ring-0 focus-visible:ring-offset-0"
-                                    >
+                                    <Button variant="outline" className={panelBtnClass}>
                                         Export
-                                        <ArrowDown2 size={18} variant="Outline" className="ml-2" />
+                                        <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">
@@ -92,7 +86,7 @@ const AdminCaseManagement = () => {
                 >
                     <AdminCasesTable data={filteredCases} />
                 </DashboardPanel>
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }

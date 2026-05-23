@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { Button } from "@/components/ui/button"
@@ -34,9 +35,9 @@ const AgencyProfile = () => {
     if (!agencyData) {
         return (
             <DashboardLayout variant="super-admin">
-                <div className="mx-auto w-full max-w-7xl px-6 py-6">
+                <DashboardPageContent>
                     <p>Agency not found</p>
-                </div>
+                </DashboardPageContent>
             </DashboardLayout>
         )
     }
@@ -110,17 +111,16 @@ const AgencyProfile = () => {
                 }
             />
 
-            {/* Tabs */}
-            <div className="mx-auto w-full max-w-7xl px-6 py-4">
-                <CaseTypeTabs
-                    tabs={tabs}
-                    selected={activeTab}
-                    onSelect={(value) => setActiveTab(value as "summary" | "users" | "cases")}
-                />
-            </div>
+            <DashboardPageContent className="space-y-3 lg:space-y-4">
+                <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                    <CaseTypeTabs
+                        tabs={tabs}
+                        selected={activeTab}
+                        onSelect={(value) => setActiveTab(value as "summary" | "users" | "cases")}
+                    />
+                </div>
 
-            {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl px-6 py-4">
+                <div>
                 {activeTab === "summary" && (
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                         {/* Left Column - Stats and Timeline */}
@@ -187,7 +187,8 @@ const AgencyProfile = () => {
                         <AgencyCasesTablePanel data={mockAgencyCases} />
                     </DashboardPanel>
                 )}
-            </div>
+                </div>
+            </DashboardPageContent>
 
             <SuspendAccountModal
                 open={isSuspendModalOpen}

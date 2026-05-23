@@ -42,29 +42,29 @@ export const AnnualChecksTable = ({ data }: AnnualChecksTableProps) => {
                 </div>
             }
         >
-            <div className="overflow-x-auto">
-                <Table>
+            <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                <Table className="min-w-[480px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className="px-6 font-medium">Agency Name</TableHead>
-                            <TableHead className="px-6 font-medium text-center">First Half Checks</TableHead>
-                            <TableHead className="px-6 font-medium text-center">Second Half Checks</TableHead>
-                            <TableHead className="px-6 font-medium text-right">Total Annual Checks</TableHead>
+                            <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">Agency</TableHead>
+                            <TableHead className="px-2 py-2 text-center text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">H1</TableHead>
+                            <TableHead className="px-2 py-2 text-center text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">H2</TableHead>
+                            <TableHead className="px-2 py-2 text-right text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">Total</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {data.map((record) => (
                             <TableRow key={record.id} className="border-b border-border">
-                                <TableCell className="px-6 py-3 font-medium text-foreground">
+                                <TableCell className="px-2 py-2 text-xs font-medium text-foreground lg:px-4 lg:py-3 lg:text-sm">
                                     {record.agencyName}
                                 </TableCell>
-                                <TableCell className="px-6 py-3 text-center text-muted-foreground">
+                                <TableCell className="px-2 py-2 text-center text-xs text-muted-foreground lg:px-4 lg:py-3 lg:text-sm">
                                     {record.period1Checks.toLocaleString()}
                                 </TableCell>
-                                <TableCell className="px-6 py-3 text-center text-muted-foreground">
+                                <TableCell className="px-2 py-2 text-center text-xs text-muted-foreground lg:px-4 lg:py-3 lg:text-sm">
                                     {record.period2Checks.toLocaleString()}
                                 </TableCell>
-                                <TableCell className="px-6 py-3 text-right font-medium text-primary">
+                                <TableCell className="px-2 py-2 text-right text-xs font-medium text-primary lg:px-4 lg:py-3 lg:text-sm">
                                     {record.totalChecks.toLocaleString()}
                                 </TableCell>
                             </TableRow>

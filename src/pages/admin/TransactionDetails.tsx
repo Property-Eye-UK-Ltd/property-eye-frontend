@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -16,9 +17,9 @@ const TransactionDetails = () => {
     if (!transaction) {
         return (
             <DashboardLayout variant="super-admin">
-                <div className="mx-auto w-full max-w-7xl px-6 py-6">
+                <DashboardPageContent>
                     <p>Transaction not found</p>
-                </div>
+                </DashboardPageContent>
             </DashboardLayout>
         )
     }
@@ -34,15 +35,18 @@ const TransactionDetails = () => {
                 title="Transaction Details"
                 breadcrumbs={[{ label: "Billing & Finance", href: "/admin/billing" }, { label: transaction.transactionId }]}
                 actions={
-                    <Button onClick={handlePrint} className="rounded-full bg-primary text-white">
+                    <Button
+                        onClick={handlePrint}
+                        className="h-9 rounded-full bg-primary px-4 text-sm text-white lg:h-10 lg:px-6"
+                    >
                         Print Transaction
                     </Button>
                 }
             />
 
             {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl px-6 py-6">
-                <div className="rounded-2xl border border-border bg-white p-8 shadow-sm">
+            <DashboardPageContent>
+                <div className="rounded-2xl border border-border bg-white p-4 shadow-sm sm:p-6 lg:p-8">
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                         {/* Left Column */}
                         <div className="space-y-6">
@@ -115,7 +119,7 @@ const TransactionDetails = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }

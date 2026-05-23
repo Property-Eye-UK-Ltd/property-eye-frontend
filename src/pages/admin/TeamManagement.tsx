@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
@@ -31,15 +32,19 @@ const TeamManagement = () => {
             <DynamicPageHeader
                 title="Team Management"
                 actions={
-                    <Button onClick={() => setIsAddStaffModalOpen(true)} className="rounded-full bg-primary font-normal text-white">
-                        <ProfileAdd size={18} variant="Outline" />
-                        Add a Staff
+                    <Button
+                        onClick={() => setIsAddStaffModalOpen(true)}
+                        className="h-9 shrink-0 rounded-full bg-primary px-3 text-sm font-normal text-white lg:h-10 lg:px-4"
+                    >
+                        <ProfileAdd size={16} variant="Outline" className="mr-1.5 lg:mr-2" />
+                        <span className="hidden sm:inline">Add a Staff</span>
+                        <span className="sm:hidden">Add</span>
                     </Button>
                 }
             />
 
             {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl space-y-4 px-6 py-6">
+            <DashboardPageContent className="space-y-3 lg:space-y-4">
                 {/* Metric Cards */}
                 <MetricCards metrics={teamMetrics} columns={3} />
 
@@ -96,7 +101,7 @@ const TeamManagement = () => {
                 >
                     <StaffListTable data={filteredStaff} />
                 </DashboardPanel>
-            </div>
+            </DashboardPageContent>
 
             {/* Add Staff Modal */}
             <AddStaffModal open={isAddStaffModalOpen} onClose={() => setIsAddStaffModalOpen(false)} onSubmit={handleAddStaff} />

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
@@ -44,11 +45,16 @@ const ReportsExports = () => {
                         </DropdownMenu>
                     </div>
                 }
-                tabs={<PeriodTabs periods={reportPeriods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
+                filters={
+                    <PeriodTabs
+                        periods={reportPeriods}
+                        selected={selectedPeriod}
+                        onSelect={setSelectedPeriod}
+                    />
+                }
             />
 
-            {/* Page Content */}
-            <div className="mx-auto w-full max-w-7xl space-y-6 px-6 py-6">
+            <DashboardPageContent className="space-y-3 lg:space-y-6">
                 {/* Metric Cards */}
                 <MetricCards metrics={reportsMetricsData[selectedPeriod]} />
 
@@ -96,7 +102,7 @@ const ReportsExports = () => {
                 >
                     <EventLogTable data={eventLogData} />
                 </DashboardPanel>
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }

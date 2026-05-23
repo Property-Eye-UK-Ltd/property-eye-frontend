@@ -1,12 +1,14 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { ChevronsUpDown } from "lucide-react"
-import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { cn } from "@/lib/utils"
 import { BillingTransaction, billingStatusStyles } from "@/data/adminBillingData"
+
+const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
+const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
 interface BillingHistoryTableProps {
     data: BillingTransaction[]
@@ -17,6 +19,7 @@ export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
     const [sortColumn, setSortColumn] = useState<keyof BillingTransaction | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
 
     const handleSort = (column: keyof BillingTransaction) => {
         if (sortColumn === column) {
@@ -42,55 +45,79 @@ export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
         })
     }, [data, sortColumn, sortDirection])
 
+    const paginatedData = useMemo(() => {
+        const start = (currentPage - 1) * itemsPerPage
+        return sortedData.slice(start, start + itemsPerPage)
+    }, [sortedData, currentPage, itemsPerPage])
+
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage) || 1
+
+    useEffect(() => {
+        if (currentPage > totalPages) setCurrentPage(1)
+    }, [totalPages, currentPage])
+
+    const sortBtnClass =
+        "flex items-center gap-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground lg:text-sm"
+
     return (
         <>
-            <div className="overflow-x-auto">
-                <Table>
+            <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                <Table className="min-w-[760px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className="px-4 font-medium">Transaction ID</TableHead>
-                            <TableHead className="px-4 font-medium">Agency Name</TableHead>
-                            <TableHead className="px-4 font-medium">Plan Tier</TableHead>
-                            <TableHead className="px-4 font-medium">Amount</TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("transactionDate")}
-                                >
-                                    Transaction Date
-                                    <ChevronsUpDown className="h-4 w-4" />
+                            <TableHead className={th}>Transaction</TableHead>
+                            <TableHead className={th}>Agency</TableHead>
+                            <TableHead className={th}>Plan</TableHead>
+                            <TableHead className={th}>Amount</TableHead>
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("transactionDate")}>
+                                    Date
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("status")}
-                                >
+                            <TableHead className={th}>
+                                <button className={sortBtnClass} onClick={() => handleSort("status")}>
                                     Status
-                                    <ChevronsUpDown className="h-4 w-4" />
+                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-4 font-medium">Action</TableHead>
+                            <TableHead className={th}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {sortedData.map((transaction) => (
+                        {paginatedData.map((transaction) => (
                             <TableRow key={transaction.id} className="border-b border-border">
-                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.transactionId}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.agencyName}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.planTier}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.amount}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{transaction.transactionDate}</TableCell>
-                                <TableCell className="px-4 py-4">
-                                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal", billingStatusStyles[transaction.status])}>
+                                <TableCell className={cn(td, "text-muted-foreground")}>
+                                    {transaction.transactionId}
+                                </TableCell>
+                                <TableCell className={cn(td, "text-muted-foreground")}>
+                                    {transaction.agencyName}
+                                </TableCell>
+                                <TableCell className={cn(td, "text-muted-foreground")}>
+                                    {transaction.planTier}
+                                </TableCell>
+                                <TableCell className={cn(td, "text-muted-foreground")}>
+                                    {transaction.amount}
+                                </TableCell>
+                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
+                                    {transaction.transactionDate}
+                                </TableCell>
+                                <TableCell className={td}>
+                                    <Badge
+                                        className={cn(
+                                            "rounded-full px-2 py-0.5 text-[10px] font-normal lg:px-3 lg:py-1 lg:text-xs",
+                                            billingStatusStyles[transaction.status]
+                                        )}
+                                    >
                                         {transaction.status}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-4 py-3">
+                                <TableCell className={td}>
                                     <button
-                                        onClick={() => navigate(`/admin/billing/transaction/${transaction.id}`)}
-                                        className="text-sm font-medium transition-colors hover:underline"
-                                        style={{ color: "var(--progress)" }}
+                                        onClick={() =>
+                                            navigate(`/admin/billing/transaction/${transaction.id}`)
+                                        }
+                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
                                     >
                                         View
                                     </button>
@@ -101,38 +128,11 @@ export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
                 </Table>
             </div>
 
-            {/* Pagination */}
-            <div className="flex items-center justify-between border-t border-border px-6 py-4">
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setCurrentPage(1)}
-                        className={cn(
-                            "h-9 w-9 rounded-full border border-primary text-sm font-medium transition-colors",
-                            currentPage === 1 ? "bg-primary text-secondary" : "text-primary"
-                        )}
-                    >
-                        1
-                    </button>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ArrowLeft size={16} variant="Outline" className="text-primary" />
-                        Previous
-                    </button>
-                    <button
-                        onClick={() => setCurrentPage((prev) => prev + 1)}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Next
-                        <ArrowRight size={16} variant="Outline" className="text-primary" />
-                    </button>
-                </div>
-            </div>
+            <TablePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </>
     )
 }

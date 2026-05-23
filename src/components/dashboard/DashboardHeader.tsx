@@ -35,50 +35,64 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
         console.log("Logout clicked")
     }
 
+    const isAdmin = variant === "super-admin"
+
     return (
         <header className="sticky top-0 z-20 border-b border-border bg-background">
-            <div className="flex items-center justify-between gap-2 px-3 py-2.5 lg:gap-4 lg:px-6 lg:py-4">
-                <div className="flex flex-shrink-0 items-center">
-                    <button
-                        onClick={toggleSidebar}
-                        className={cn(iconTriggerClass, "lg:h-auto lg:w-auto lg:bg-transparent lg:p-2 lg:hover:bg-muted")}
-                        aria-label={
-                            isDesktop
-                                ? isCollapsed
-                                    ? "Expand sidebar"
-                                    : "Collapse sidebar"
-                                : "Open navigation menu"
-                        }
-                    >
-                        {isDesktop ? (
-                            isCollapsed ? (
-                                <SidebarRight size={20} variant="Outline" className="text-primary" />
-                            ) : (
-                                <SidebarLeft size={20} variant="Outline" className="text-primary" />
-                            )
+            <div
+                className={cn(
+                    "flex items-center gap-2 px-3 py-2.5 lg:gap-4 lg:px-6 lg:py-4",
+                    !isAdmin && "justify-between"
+                )}
+            >
+                <button
+                    onClick={toggleSidebar}
+                    className={cn(
+                        iconTriggerClass,
+                        "flex-shrink-0 lg:h-auto lg:w-auto lg:bg-transparent lg:p-2 lg:hover:bg-muted"
+                    )}
+                    aria-label={
+                        isDesktop
+                            ? isCollapsed
+                                ? "Expand sidebar"
+                                : "Collapse sidebar"
+                            : "Open navigation menu"
+                    }
+                >
+                    {isDesktop ? (
+                        isCollapsed ? (
+                            <SidebarRight size={20} variant="Outline" className="text-primary" />
                         ) : (
-                            <HambergerMenu size={22} variant="Outline" className="text-primary" />
-                        )}
-                    </button>
-                </div>
-
-                <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2 lg:gap-4">
-                    {variant === "super-admin" ? (
-                        <div className="relative hidden min-w-0 max-w-md flex-1 sm:block">
-                            <SearchNormal
-                                size={20}
-                                variant="TwoTone"
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                            />
-                            <Input
-                                type="search"
-                                placeholder="Search"
-                                className="rounded-full border-border bg-background pl-10"
-                            />
-                        </div>
+                            <SidebarLeft size={20} variant="Outline" className="text-primary" />
+                        )
                     ) : (
+                        <HambergerMenu size={22} variant="Outline" className="text-primary" />
+                    )}
+                </button>
+
+                {isAdmin && (
+                    <div className="relative min-w-0 flex-1">
+                        <SearchNormal
+                            size={18}
+                            variant="TwoTone"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground lg:left-3.5"
+                        />
+                        <Input
+                            type="search"
+                            placeholder="Search"
+                            className="h-9 rounded-full border-border bg-background pl-9 text-sm lg:h-10 lg:pl-10"
+                        />
+                    </div>
+                )}
+
+                <div
+                    className={cn(
+                        "flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-4",
+                        !isAdmin && "min-w-0 flex-1 justify-end"
+                    )}
+                >
+                    {!isAdmin && (
                         <>
-                            {/* Desktop: inline last data pull */}
                             <div className="hidden items-center gap-2 lg:flex">
                                 <button
                                     className="rounded-full p-1.5 transition-colors hover:bg-muted"
@@ -94,7 +108,6 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                                 </div>
                             </div>
 
-                            {/* Mobile: last data pull menu */}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <button
@@ -120,14 +133,17 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                                             variant="outline"
                                             className="h-9 w-full rounded-full"
                                         >
-                                            <Refresh2 size={16} variant="Bulk" className="mr-2 text-primary" />
+                                            <Refresh2
+                                                size={16}
+                                                variant="Bulk"
+                                                className="mr-2 text-primary"
+                                            />
                                             Refresh now
                                         </Button>
                                     </div>
                                 </DropdownMenuContent>
                             </DropdownMenu>
 
-                            {/* Desktop: points badge */}
                             <div className="hidden items-center gap-2 rounded-full bg-muted px-3 py-1.5 lg:flex">
                                 <div className="rounded-full bg-primary p-1">
                                     <Sort size={16} variant="Outline" className="text-secondary" />
@@ -138,7 +154,6 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                                 </span>
                             </div>
 
-                            {/* Mobile: points menu */}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <button
@@ -173,7 +188,6 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                         </>
                     )}
 
-                    {/* Run checks — compact on mobile, full on desktop */}
                     <div className="lg:hidden">
                         <GlobalCheckRunner compact />
                     </div>
@@ -229,23 +243,6 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                     </div>
                 </div>
             </div>
-
-            {variant === "super-admin" && (
-                <div className="border-t border-border px-3 pb-2.5 sm:hidden">
-                    <div className="relative">
-                        <SearchNormal
-                            size={20}
-                            variant="TwoTone"
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                        />
-                        <Input
-                            type="search"
-                            placeholder="Search"
-                            className="h-9 rounded-full border-border bg-background pl-10 text-sm"
-                        />
-                    </div>
-                </div>
-            )}
         </header>
     )
 }
