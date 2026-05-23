@@ -15,9 +15,9 @@ export const CancelSubscriptionConfirmModal = ({
         <ModalShell
             open={open}
             onClose={onClose}
-            contentClassName="max-w-lg rounded-2xl px-2 py-12 text-center"
+            contentClassName="max-w-lg rounded-2xl px-4 py-8 text-center sm:px-6 sm:py-12"
         >
-            <h2 className="text-2xl font-medium text-primary">Cancel Subscription</h2>
+            <h2 className="pr-8 text-xl font-medium text-primary sm:pr-0 sm:text-2xl">Cancel Subscription</h2>
             <p className="mt-2 text-sm text-muted-foreground">
                 You have initiated the cancellation of your current{" "}
                 <br className="hidden sm:block" />

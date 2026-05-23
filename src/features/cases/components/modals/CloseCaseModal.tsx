@@ -11,9 +11,9 @@ export const CloseCaseModal = ({ open, onCancel, onConfirm }: CloseCaseModalProp
     <ModalShell
       open={open}
       onClose={onCancel}
-      contentClassName="max-w-lg rounded-2xl px-2 py-12 text-center"
+      contentClassName="max-w-lg rounded-2xl px-4 py-8 text-center sm:px-6 sm:py-12"
     >
-      <h2 className="text-2xl font-medium text-primary">Close Case</h2>
+      <h2 className="pr-8 text-xl font-medium text-primary sm:pr-0 sm:text-2xl">Close Case</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         You have initiated to close the case. Are you sure you{" "}
         <br className="hidden sm:block" /> want to close the case?

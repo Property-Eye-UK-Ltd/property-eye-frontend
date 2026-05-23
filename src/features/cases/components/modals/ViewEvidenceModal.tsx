@@ -24,23 +24,23 @@ export const ViewEvidenceModal = ({
     <ModalShell
       open={open}
       onClose={onClose}
-      contentClassName="max-w-md rounded-xl bg-white pb-0 pt-0"
+      contentClassName="max-w-md rounded-2xl bg-white pb-0 pt-0"
     >
-      <div className="flex flex-col overflow-hidden rounded-3xl bg-white">
-        <div className="bg-white px-4 py-4 text-left">
-          <h2 className="text-lg font-semibold text-foreground">View Evidence</h2>
+      <div className="flex flex-col overflow-hidden rounded-2xl bg-white sm:rounded-3xl">
+        <div className="bg-white px-4 py-4 pr-12 text-left sm:pr-6">
+          <h2 className="text-lg font-semibold text-foreground sm:text-xl">View Evidence</h2>
           <p className="text-xs text-muted-foreground">
             See the details of the evidence that was uploaded.
           </p>
         </div>
 
-        <div className="bg-muted px-8 py-6">
-          <div className="rounded-md border border-border/60 bg-white p-4">
+        <div className="bg-muted px-4 py-4 sm:px-8 sm:py-6">
+          <div className="rounded-md border border-border/60 bg-white p-3 sm:p-4">
             <div className="aspect-[3/4] rounded-sm bg-muted" />
           </div>
         </div>
 
-        <div className="bg-white px-8 py-6">
+        <div className="bg-white px-4 py-4 sm:px-8 sm:py-6">
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
               onClick={onClose}
