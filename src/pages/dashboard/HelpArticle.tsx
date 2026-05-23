@@ -1,27 +1,30 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { Button } from "@/components/ui/button"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { helpCenterCards } from "@/data/help-center-data"
+
+const helpCtaClass =
+    "h-9 rounded-full bg-primary px-4 text-sm hover:bg-primary/90 lg:h-10 lg:px-6"
 
 const HelpArticle = () => {
     const { articleId } = useParams()
-    const navigate = useNavigate()
 
     const handleContactUs = () => {
         console.log("Contact Us clicked")
     }
 
-    // Find the card data based on the URL
     const matchedCard = helpCenterCards.find((card) => card.link.endsWith(articleId || ""))
     const title = matchedCard?.title || "Getting Started"
-    const description = matchedCard?.description || "Learn how to login, setup your account, and navigate the main features."
+    const description =
+        matchedCard?.description ||
+        "Learn how to login, setup your account, and navigate the main features."
 
-    // Mock content - keep sections static for now as we don't have separate content per article
     const article = {
-        title: title,
+        title,
         lastModified: "Jan 2025",
-        description: description,
+        description,
         sections: [
             {
                 title: "Creating an Account",
@@ -70,39 +73,48 @@ const HelpArticle = () => {
                     { label: article.title },
                 ]}
                 actions={
-                    <Button
-                        onClick={handleContactUs}
-                        className="rounded-full bg-primary hover:bg-primary/90 px-6"
-                    >
+                    <Button onClick={handleContactUs} className={helpCtaClass}>
                         Contact Us
                     </Button>
                 }
             />
-            <div className="mx-auto w-full max-w-7xl px-6 py-6">
-                {/* Hero Section */}
-                <div className="bg-primary rounded-2xl p-12 text-center mb-8">
-                    <p className="text-sm text-white/70 mb-4">Last modified: {article.lastModified}</p>
-                    <h1 className="text-4xl font-medium text-white mb-4">{article.title}</h1>
-                    <p className="text-white/90 max-w-2xl mx-auto">{article.description}</p>
+            <DashboardPageContent className="space-y-4 lg:space-y-6">
+                <div className="rounded-xl bg-primary px-4 py-6 text-center sm:rounded-2xl sm:px-6 sm:py-8 lg:p-10">
+                    <p className="mb-2 text-[10px] text-white/70 sm:mb-3 sm:text-xs lg:text-sm">
+                        Last modified: {article.lastModified}
+                    </p>
+                    <h1 className="mb-2 text-xl font-medium leading-tight text-white sm:mb-3 sm:text-2xl lg:mb-4 lg:text-4xl">
+                        {article.title}
+                    </h1>
+                    <p className="mx-auto max-w-2xl text-xs leading-relaxed text-white/90 sm:text-sm lg:text-base">
+                        {article.description}
+                    </p>
                 </div>
 
-                {/* Content Sections */}
-                <div className="space-y-8">
+                <div className="space-y-5 sm:space-y-6 lg:space-y-8">
                     {article.sections.map((section, index) => (
-                        <div key={index} className="space-y-4">
-                            <h2 className="text-xl font-medium text-foreground">{section.title}</h2>
+                        <div key={index} className="space-y-2 sm:space-y-3 lg:space-y-4">
+                            <h2 className="text-base font-medium text-foreground sm:text-lg lg:text-xl">
+                                {section.title}
+                            </h2>
 
                             {section.content.map((paragraph, pIndex) => (
-                                <p key={pIndex} className="text-sm text-muted-foreground leading-relaxed">
+                                <p
+                                    key={pIndex}
+                                    className="text-xs leading-relaxed text-muted-foreground sm:text-sm"
+                                >
                                     {paragraph}
                                 </p>
                             ))}
 
                             {section.steps && (
-                                <ol className="space-y-2 ml-4">
+                                <ol className="ml-3 list-decimal space-y-1 sm:ml-4 sm:space-y-1.5">
                                     {section.steps.map((step, sIndex) => (
-                                        <li key={sIndex} className="text-sm text-muted-foreground">
-                                            {sIndex + 1}. {step}
+                                        <li
+                                            key={sIndex}
+                                            className="text-xs text-muted-foreground sm:text-sm"
+                                        >
+                                            {step}
                                         </li>
                                     ))}
                                 </ol>
@@ -110,7 +122,7 @@ const HelpArticle = () => {
                         </div>
                     ))}
                 </div>
-            </div>
+            </DashboardPageContent>
         </DashboardLayout>
     )
 }
