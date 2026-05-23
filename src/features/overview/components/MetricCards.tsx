@@ -16,16 +16,26 @@ interface MetricCardsProps {
 }
 
 export const MetricCards = ({ metrics, columns = 4 }: MetricCardsProps) => {
+  const isThreeUpLayout = columns === 3 && metrics.length === 3
+
   const gridClass = cn("grid gap-3 lg:gap-4", {
     "grid-cols-2 lg:grid-cols-2": columns === 2,
-    "grid-cols-3 lg:grid-cols-3": columns === 3,
+    "grid-cols-2 lg:grid-cols-3": columns === 3,
     "grid-cols-2 lg:grid-cols-4": columns === 4,
   })
 
   return (
     <div className={gridClass}>
-      {metrics.map((metric) => (
-        <Card key={metric.title} className="relative overflow-hidden">
+      {metrics.map((metric, index) => (
+        <Card
+          key={metric.title}
+          className={cn(
+            "relative overflow-hidden",
+            isThreeUpLayout &&
+              index === 2 &&
+              "col-span-2 lg:col-span-1"
+          )}
+        >
           <div className={cn("absolute top-0 left-0 right-0 h-2", metric.topBarClass)} />
           <CardHeader className="p-3 pb-1 lg:p-6 lg:pb-3">
             <CardTitle className="text-xs font-normal text-muted-foreground lg:text-sm">
