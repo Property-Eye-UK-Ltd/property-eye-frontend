@@ -324,3 +324,47 @@ export const marketerLeaderboardStatusStyles: Record<MarketerLeaderboardRow["sta
     Active: "bg-green-50 text-green-600 border border-green-100",
     Suspended: "bg-red-50 text-red-600 border border-red-100",
 }
+
+// ---------------------------------------------------------------------------
+// Disputes / Support
+// ---------------------------------------------------------------------------
+
+export type DisputeStatus = "Open" | "Under Review" | "Resolved"
+export type DisputeType = "Agency Ownership" | "Commission"
+
+export interface MarketerDispute {
+    id: string
+    reference: string
+    type: DisputeType
+    linkedRecord: string
+    description: string
+    status: DisputeStatus
+    dateRaised: string
+}
+
+export const disputeStatusStyles: Record<DisputeStatus, string> = {
+    Open: "bg-amber-50 text-amber-600 border border-amber-100",
+    "Under Review": "bg-blue-50 text-blue-600 border border-blue-100",
+    Resolved: "bg-green-50 text-green-600 border border-green-100",
+}
+
+export const disputeTypeStyles: Record<DisputeType, string> = {
+    "Agency Ownership": "bg-purple-50 text-purple-600 border border-purple-100",
+    Commission: "bg-indigo-50 text-indigo-600 border border-indigo-100",
+}
+
+// Dispute KPIs shown on the Disputes page
+export const marketerDisputeMetrics: MetricCard[] = [
+    { title: "Open Disputes", value: "2", period: "Awaiting response", change: "", topBarClass: "bg-amber-500" },
+    { title: "Under Review", value: "1", period: "Being assessed by admin", change: "", topBarClass: "bg-progress" },
+    { title: "Resolved", value: "6", period: "All time", change: "+2", topBarClass: "bg-green-500" },
+]
+
+export const marketerDisputes: MarketerDispute[] = [
+    { id: "dsp-1", reference: "#DSP-1042", type: "Agency Ownership", linkedRecord: "Maple & Co Lettings", description: "Agency was introduced by me via an offline meeting before the link signup.", status: "Under Review", dateRaised: "3 Nov, 2025" },
+    { id: "dsp-2", reference: "#DSP-1038", type: "Commission", linkedRecord: "#PE-256612", description: "Commission rate applied looks lower than the agreed 7.5%.", status: "Open", dateRaised: "28 Oct, 2025" },
+    { id: "dsp-3", reference: "#DSP-1031", type: "Commission", linkedRecord: "#PE-256590", description: "Recovered case not reflected in my eligible commission.", status: "Open", dateRaised: "21 Oct, 2025" },
+    { id: "dsp-4", reference: "#DSP-1024", type: "Agency Ownership", linkedRecord: "Bridgewater Realty", description: "Duplicate attribution claim raised by another marketer.", status: "Resolved", dateRaised: "9 Oct, 2025" },
+    { id: "dsp-5", reference: "#DSP-1019", type: "Commission", linkedRecord: "#PE-256545", description: "Payout period mismatch on Harborview Estates commission.", status: "Resolved", dateRaised: "2 Oct, 2025" },
+    { id: "dsp-6", reference: "#DSP-1011", type: "Agency Ownership", linkedRecord: "Sterling Property Group", description: "Manual attribution confirmation requested.", status: "Resolved", dateRaised: "24 Sep, 2025" },
+]

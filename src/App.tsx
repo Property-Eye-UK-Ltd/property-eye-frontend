@@ -53,7 +53,7 @@ import MarketingCommissions from "./pages/marketing/MarketingCommissions";
 import MarketingCommissionDetail from "./pages/marketing/MarketingCommissionDetail";
 import MarketingPayments from "./pages/marketing/MarketingPayments";
 import MarketingPaymentDetail from "./pages/marketing/MarketingPaymentDetail";
-import MarketingComingSoon from "./pages/marketing/MarketingComingSoon";
+import MarketingDisputes from "./pages/marketing/MarketingDisputes";
 import MarketingAdminOverview from "./pages/marketing-admin/MarketingAdminOverview";
 import MarketingAdminComingSoon from "./pages/marketing-admin/MarketingAdminComingSoon";
 
@@ -125,7 +125,7 @@ const App = () => (
           <Route path="/marketing/commissions/:lineId" element={<MarketingCommissionDetail />} />
           <Route path="/marketing/payments" element={<MarketingPayments />} />
           <Route path="/marketing/payments/:paymentId" element={<MarketingPaymentDetail />} />
-          <Route path="/marketing/disputes" element={<MarketingComingSoon />} />
+          <Route path="/marketing/disputes" element={<MarketingDisputes />} />
 
           {/* Marketing Admin (Control Tower) Routes */}
           <Route path="/marketing-admin/dashboard" element={<MarketingAdminOverview />} />
