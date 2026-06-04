@@ -2,7 +2,7 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { MetricCards } from "@/features/overview/components/MetricCards"
-import { MarketingBarChartPanel } from "@/features/marketing/components/MarketingBarChartPanel"
+import { MarketingLineChartPanel } from "@/features/marketing/components/MarketingLineChartPanel"
 import { DonutBreakdownPanel } from "@/features/marketing/components/DonutBreakdownPanel"
 import { CommissionLinesTable } from "@/features/marketing/commissions/components/CommissionLinesTable"
 import {
@@ -24,7 +24,7 @@ const MarketingCommissions = () => {
                 <MetricCards metrics={marketerCommissionMetrics} columns={3} />
 
                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-6 lg:gap-4">
-                    <MarketingBarChartPanel
+                    <MarketingLineChartPanel
                         title="Commission Earned Over Time"
                         description="Monthly commission earned (£)"
                         data={commissionEarningsTrend}

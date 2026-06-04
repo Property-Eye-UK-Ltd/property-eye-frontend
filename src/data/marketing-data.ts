@@ -270,3 +270,57 @@ export const payments: PaymentRecord[] = [
     { id: "pay-8", date: "1 Apr, 2025", amount: "£1,980", period: "Mar 2025", status: "Rejected", statementId: "STM-2025-03" },
     { id: "pay-9", date: "1 Mar, 2025", amount: "£2,540", period: "Feb 2025", status: "Paid", statementId: "STM-2025-02" },
 ]
+
+// ---------------------------------------------------------------------------
+// Marketing Admin (Control Tower)
+// ---------------------------------------------------------------------------
+
+// Executive KPIs shown on the admin Control Tower overview
+export const marketingAdminMetrics: MetricCard[] = [
+    { title: "Active Marketers", value: "32", period: "All time", change: "+4", topBarClass: "bg-progress" },
+    { title: "Attributed Agencies", value: "146", period: "All time", change: "+12", topBarClass: "bg-secondary" },
+    { title: "Fraud Value Detected", value: "£2.4M", period: "All time", change: "+£180K", topBarClass: "bg-red-500" },
+    { title: "Commission Liability", value: "£318,200", period: "Earned to date", change: "+£24,500", topBarClass: "bg-amber-500" },
+    { title: "Outstanding Commission", value: "£74,600", period: "Awaiting payout", change: "", topBarClass: "bg-purple-500" },
+    { title: "Active Disputes", value: "5", period: "Needs review", change: "-2", topBarClass: "bg-green-500" },
+]
+
+// Commission liability split (donut, £)
+export const commissionLiabilityBreakdown: DonutBreakdownDatum[] = [
+    { name: "Paid", value: 243600, valueLabel: "£243,600", color: "#22C55E" },
+    { name: "Approved (Awaiting Payout)", value: 51400, valueLabel: "£51,400", color: "#4D66EA" },
+    { name: "Pending Approval", value: 23200, valueLabel: "£23,200", color: "#F59E0B" },
+]
+
+// Commission liability accrued per month (bar chart, £)
+export const commissionLiabilityTrend: BarChartDatum[] = [
+    { label: "Jan", value: 38200 },
+    { label: "Feb", value: 41800 },
+    { label: "Mar", value: 46500 },
+    { label: "Apr", value: 52100 },
+    { label: "May", value: 58900 },
+    { label: "Jun", value: 61400 },
+]
+
+export interface MarketerLeaderboardRow {
+    id: string
+    name: string
+    agencies: number
+    fraudValue: string
+    commission: string
+    status: "Active" | "Suspended"
+}
+
+export const marketerLeaderboard: MarketerLeaderboardRow[] = [
+    { id: "mk-1", name: "Daniel Okafor", agencies: 18, fraudValue: "£402,900", commission: "£42,180", status: "Active" },
+    { id: "mk-2", name: "Priya Sharma", agencies: 15, fraudValue: "£356,400", commission: "£38,900", status: "Active" },
+    { id: "mk-3", name: "Marcus Bennett", agencies: 12, fraudValue: "£298,100", commission: "£31,250", status: "Active" },
+    { id: "mk-4", name: "Aisha Bello", agencies: 11, fraudValue: "£241,700", commission: "£26,400", status: "Active" },
+    { id: "mk-5", name: "Tom Whitfield", agencies: 9, fraudValue: "£198,300", commission: "£21,150", status: "Suspended" },
+    { id: "mk-6", name: "Lena Novak", agencies: 8, fraudValue: "£164,800", commission: "£17,600", status: "Active" },
+]
+
+export const marketerLeaderboardStatusStyles: Record<MarketerLeaderboardRow["status"], string> = {
+    Active: "bg-green-50 text-green-600 border border-green-100",
+    Suspended: "bg-red-50 text-red-600 border border-red-100",
+}

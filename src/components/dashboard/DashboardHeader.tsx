@@ -33,6 +33,7 @@ const headerIdentity: Record<DashboardVariant, { name: string; email: string; av
     agency: { name: "Admin", email: "amanda@solicthomes.com", avatar: "https://i.pravatar.cc/150?img=1", initials: "AM" },
     "super-admin": { name: "Admin", email: "amanda@solicthomes.com", avatar: "https://i.pravatar.cc/150?img=1", initials: "AM" },
     marketer: { name: "Daniel Okafor", email: "daniel@growthpartners.co", avatar: "https://i.pravatar.cc/150?img=12", initials: "DO" },
+    "marketing-admin": { name: "Marketing Admin", email: "ops@propertyeye.com", avatar: "https://i.pravatar.cc/150?img=5", initials: "MA" },
 }
 
 export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) => {
@@ -42,9 +43,13 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
         console.log("Logout clicked")
     }
 
-    const isAdmin = variant === "super-admin"
+    const isSuperAdmin = variant === "super-admin"
+    const isMarketingAdmin = variant === "marketing-admin"
     const isAgency = variant === "agency"
-    const isMarketer = variant === "marketer"
+    // Admin-style header layout (search bar, left-aligned) for both admin surfaces.
+    const isAdmin = isSuperAdmin || isMarketingAdmin
+    // Live check runner is an agency / platform-admin tool, not a marketing surface.
+    const showCheckRunner = isAgency || isSuperAdmin
     const identity = headerIdentity[variant]
 
     return (
@@ -215,7 +220,7 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                         </>
                     )}
 
-                    {!isMarketer && (
+                    {showCheckRunner && (
                         <>
                             <div className="lg:hidden">
                                 <GlobalCheckRunner compact />

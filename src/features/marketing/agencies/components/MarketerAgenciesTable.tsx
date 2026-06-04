@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
@@ -11,6 +12,7 @@ import {
     marketerAgencyStatusStyles,
     attributionMethodStyles,
 } from "@/data/marketing-data"
+import { SubmitClaimModal, SubmitClaimFormValues } from "./SubmitClaimModal"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -24,8 +26,18 @@ interface MarketerAgenciesTableProps {
 }
 
 export const MarketerAgenciesTable = ({ data }: MarketerAgenciesTableProps) => {
+    const navigate = useNavigate()
     const [statusFilter, setStatusFilter] = useState<MarketerAgencyStatus | "All">("All")
     const [currentPage, setCurrentPage] = useState(1)
+    const [claimAgency, setClaimAgency] = useState<MarketerAgency | null>(null)
+    const [isSubmittingClaim, setIsSubmittingClaim] = useState(false)
+
+    const handleSubmitClaim = (values: SubmitClaimFormValues) => {
+        setIsSubmittingClaim(true)
+        setIsSubmittingClaim(false)
+        setClaimAgency(null)
+        toast.success(`Claim submitted for ${values.agencyName} — pending admin review`)
+    }
 
     const filtered = useMemo(
         () => (statusFilter === "All" ? data : data.filter((a) => a.status === statusFilter)),
@@ -115,15 +127,15 @@ export const MarketerAgenciesTable = ({ data }: MarketerAgenciesTableProps) => {
                                 <TableCell className={cn(td, "text-right")}>
                                     {agency.attributed ? (
                                         <button
-                                            onClick={() => toast.info(`Agency detail for ${agency.name} is coming soon`)}
+                                            onClick={() => navigate(`/marketing/agencies/${agency.id}`)}
                                             className="text-xs font-medium text-progress hover:underline lg:text-sm"
                                         >
                                             View details
                                         </button>
                                     ) : (
                                         <button
-                                            onClick={() => toast.info(`Submit a claim for ${agency.name} — coming soon`)}
-                                            className="text-xs font-medium text-secondary-foreground/80 hover:underline lg:text-sm"
+                                            onClick={() => setClaimAgency(agency)}
+                                            className="text-xs font-medium text-progress hover:underline lg:text-sm"
                                         >
                                             Submit claim
                                         </button>
@@ -149,6 +161,14 @@ export const MarketerAgenciesTable = ({ data }: MarketerAgenciesTableProps) => {
                     onPageChange={setCurrentPage}
                 />
             )}
+
+            <SubmitClaimModal
+                open={claimAgency !== null}
+                onClose={() => setClaimAgency(null)}
+                onSubmit={handleSubmitClaim}
+                agencyName={claimAgency?.name}
+                isSubmitting={isSubmittingClaim}
+            />
         </DashboardPanel>
     )
 }

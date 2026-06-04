@@ -21,13 +21,16 @@ export const DashboardSidebarContent = ({
             ? "/admin/dashboard"
             : variant === "marketer"
               ? "/marketing/dashboard"
-              : "/dashboard"
+              : variant === "marketing-admin"
+                ? "/marketing-admin/dashboard"
+                : "/dashboard"
 
     const isActive = (path: string) => {
         if (
             path === "/dashboard" ||
             path === "/admin/dashboard" ||
-            path === "/marketing/dashboard"
+            path === "/marketing/dashboard" ||
+            path === "/marketing-admin/dashboard"
         ) {
             return location.pathname === path
         }
@@ -92,7 +95,9 @@ export const DashboardSidebarContent = ({
                 </ul>
             </nav>
 
-            {variant === "super-admin" && <div className="border-t border-sidebar-border" />}
+            {(variant === "super-admin" || variant === "marketing-admin") && (
+                <div className="border-t border-sidebar-border" />
+            )}
 
             <div className="px-3 py-4">
                 <ul className="space-y-1">

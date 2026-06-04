@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { TablePagination } from "@/components/dashboard/TablePagination"
@@ -18,6 +19,7 @@ interface CommissionLinesTableProps {
 }
 
 export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
+    const navigate = useNavigate()
     const [statusFilter, setStatusFilter] = useState<CommissionLineStatus | "All">("All")
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -66,7 +68,8 @@ export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
                             <TableHead className={th}>Fraud Case</TableHead>
                             <TableHead className={cn(th, "text-right")}>Commission %</TableHead>
                             <TableHead className={cn(th, "text-right")}>Amount</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Status</TableHead>
+                            <TableHead className={th}>Status</TableHead>
+                            <TableHead className={cn(th, "text-right")}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -84,7 +87,7 @@ export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
                                 <TableCell className={cn(td, "text-right font-medium text-foreground")}>
                                     {line.amount}
                                 </TableCell>
-                                <TableCell className={cn(td, "text-right")}>
+                                <TableCell className={td}>
                                     <span
                                         className={cn(
                                             "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs",
@@ -94,11 +97,19 @@ export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
                                         {line.status}
                                     </span>
                                 </TableCell>
+                                <TableCell className={cn(td, "text-right")}>
+                                    <button
+                                        onClick={() => navigate(`/marketing/commissions/${line.id}`)}
+                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
+                                    >
+                                        View
+                                    </button>
+                                </TableCell>
                             </TableRow>
                         ))}
                         {paginated.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={6} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     No commission lines match this filter.
                                 </TableCell>
                             </TableRow>

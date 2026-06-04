@@ -47,10 +47,15 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import MarketingOverview from "./pages/marketing/MarketingOverview";
 import MarketingReferrals from "./pages/marketing/MarketingReferrals";
 import MarketingAgencies from "./pages/marketing/MarketingAgencies";
+import MarketingAgencyDetail from "./pages/marketing/MarketingAgencyDetail";
 import MarketingFraudCases from "./pages/marketing/MarketingFraudCases";
 import MarketingCommissions from "./pages/marketing/MarketingCommissions";
+import MarketingCommissionDetail from "./pages/marketing/MarketingCommissionDetail";
 import MarketingPayments from "./pages/marketing/MarketingPayments";
+import MarketingPaymentDetail from "./pages/marketing/MarketingPaymentDetail";
 import MarketingComingSoon from "./pages/marketing/MarketingComingSoon";
+import MarketingAdminOverview from "./pages/marketing-admin/MarketingAdminOverview";
+import MarketingAdminComingSoon from "./pages/marketing-admin/MarketingAdminComingSoon";
 
 const queryClient = new QueryClient();
 
@@ -114,10 +119,24 @@ const App = () => (
           <Route path="/marketing/dashboard" element={<MarketingOverview />} />
           <Route path="/marketing/referrals" element={<MarketingReferrals />} />
           <Route path="/marketing/agencies" element={<MarketingAgencies />} />
+          <Route path="/marketing/agencies/:agencyId" element={<MarketingAgencyDetail />} />
           <Route path="/marketing/fraud-cases" element={<MarketingFraudCases />} />
           <Route path="/marketing/commissions" element={<MarketingCommissions />} />
+          <Route path="/marketing/commissions/:lineId" element={<MarketingCommissionDetail />} />
           <Route path="/marketing/payments" element={<MarketingPayments />} />
+          <Route path="/marketing/payments/:paymentId" element={<MarketingPaymentDetail />} />
           <Route path="/marketing/disputes" element={<MarketingComingSoon />} />
+
+          {/* Marketing Admin (Control Tower) Routes */}
+          <Route path="/marketing-admin/dashboard" element={<MarketingAdminOverview />} />
+          <Route path="/marketing-admin/marketers" element={<MarketingAdminComingSoon />} />
+          <Route path="/marketing-admin/agencies" element={<MarketingAdminComingSoon />} />
+          <Route path="/marketing-admin/attribution" element={<MarketingAdminComingSoon />} />
+          <Route path="/marketing-admin/commissions" element={<MarketingAdminComingSoon />} />
+          <Route path="/marketing-admin/payments" element={<MarketingAdminComingSoon />} />
+          <Route path="/marketing-admin/disputes" element={<MarketingAdminComingSoon />} />
+          <Route path="/marketing-admin/audit" element={<MarketingAdminComingSoon />} />
+          <Route path="/marketing-admin/reports" element={<MarketingAdminComingSoon />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
