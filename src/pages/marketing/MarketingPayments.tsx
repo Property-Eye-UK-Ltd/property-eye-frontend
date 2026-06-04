@@ -4,46 +4,45 @@ import { DashboardPageContent } from "@/components/dashboard/DashboardPageConten
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { MarketingBarChartPanel } from "@/features/marketing/components/MarketingBarChartPanel"
 import { DonutBreakdownPanel } from "@/features/marketing/components/DonutBreakdownPanel"
-import { CommissionLinesTable } from "@/features/marketing/commissions/components/CommissionLinesTable"
+import { PaymentsHistoryTable } from "@/features/marketing/payments/components/PaymentsHistoryTable"
 import {
-    marketerCommissionMetrics,
-    commissionEarningsTrend,
-    commissionTracker,
-    commissionTrackerTotalLabel,
-    commissionLines,
+    marketerPaymentMetrics,
+    paymentsTrend,
+    paymentStatusBreakdown,
+    payments,
 } from "@/data/marketing-data"
 
 const formatGbp = (value: number) => `£${value.toLocaleString()}`
 
-const MarketingCommissions = () => {
+const MarketingPayments = () => {
     return (
         <DashboardLayout variant="marketer">
-            <DynamicPageHeader title="Commissions" />
+            <DynamicPageHeader title="Payments" />
 
             <DashboardPageContent>
-                <MetricCards metrics={marketerCommissionMetrics} columns={3} />
+                <MetricCards metrics={marketerPaymentMetrics} columns={3} />
 
                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-6 lg:gap-4">
                     <MarketingBarChartPanel
-                        title="Commission Earned Over Time"
-                        description="Monthly commission earned (£)"
-                        data={commissionEarningsTrend}
-                        color="#4D66EA"
+                        title="Payouts Over Time"
+                        description="Monthly payout amount (£)"
+                        data={paymentsTrend}
+                        color="#22C55E"
                         valueFormatter={formatGbp}
                         className="lg:col-span-4"
                     />
                     <DonutBreakdownPanel
-                        title="Commission Tracker"
-                        data={commissionTracker}
-                        description={commissionTrackerTotalLabel}
+                        title="Payout Status"
+                        data={paymentStatusBreakdown}
+                        description="Across all payout periods"
                         className="lg:col-span-2"
                     />
                 </div>
 
-                <CommissionLinesTable data={commissionLines} />
+                <PaymentsHistoryTable data={payments} />
             </DashboardPageContent>
         </DashboardLayout>
     )
 }
 
-export default MarketingCommissions
+export default MarketingPayments

@@ -3,7 +3,7 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { MetricCards } from "@/features/overview/components/MetricCards"
-import { CommissionTrackerPanel } from "@/features/marketing/overview/components/CommissionTrackerPanel"
+import { DonutBreakdownPanel } from "@/features/marketing/components/DonutBreakdownPanel"
 import { ReferralLinkField } from "@/features/marketing/referrals/components/ReferralLinkField"
 import { InviteStatusTable } from "@/features/marketing/referrals/components/InviteStatusTable"
 import {
@@ -27,9 +27,10 @@ const MarketingOverview = () => {
                 <MetricCards metrics={marketerOverviewMetrics} columns={3} />
 
                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-8 lg:gap-4">
-                    <CommissionTrackerPanel
+                    <DonutBreakdownPanel
+                        title="Commission Tracker"
                         data={commissionTracker}
-                        totalLabel={commissionTrackerTotalLabel}
+                        description={commissionTrackerTotalLabel}
                         className="lg:col-span-3"
                     />
                     <InviteStatusTable

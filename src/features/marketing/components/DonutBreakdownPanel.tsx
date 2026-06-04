@@ -3,31 +3,31 @@ import { ChartCircle } from "iconsax-react"
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
 import { cn } from "@/lib/utils"
 
-export interface CommissionTrackerDatum {
+export interface DonutBreakdownDatum {
     name: string
     value: number
     valueLabel: string
     color: string
 }
 
-interface CommissionTrackerPanelProps {
-    data: CommissionTrackerDatum[]
+interface DonutBreakdownPanelProps {
+    data: DonutBreakdownDatum[]
     title?: string
-    totalLabel?: string
+    description?: string
     className?: string
     chartSize?: number
 }
 
-export const CommissionTrackerPanel = ({
+export const DonutBreakdownPanel = ({
     data,
-    title = "Commission Tracker",
-    totalLabel,
+    title = "Breakdown",
+    description,
     className,
     chartSize = 180,
-}: CommissionTrackerPanelProps) => (
+}: DonutBreakdownPanelProps) => (
     <DashboardPanel
         title={title}
-        description={totalLabel}
+        description={description}
         icon={<ChartCircle size={18} variant="Bulk" className="text-muted-foreground" />}
         className={cn("border border-border", className)}
         hasBorder

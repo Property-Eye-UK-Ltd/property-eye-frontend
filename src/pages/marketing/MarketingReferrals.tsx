@@ -3,13 +3,14 @@ import { toast } from "sonner"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
-import { ReferralLinkCard } from "@/features/marketing/referrals/components/ReferralLinkCard"
+import { MetricCards } from "@/features/overview/components/MetricCards"
+import { ReferralLinkField } from "@/features/marketing/referrals/components/ReferralLinkField"
 import { InviteStatusTable } from "@/features/marketing/referrals/components/InviteStatusTable"
 import {
     InviteAgencyModal,
     InviteAgencyFormValues,
 } from "@/features/marketing/referrals/components/InviteAgencyModal"
-import { agencyInvites, AgencyInvite } from "@/data/marketing-data"
+import { agencyInvites, AgencyInvite, marketerReferralMetrics } from "@/data/marketing-data"
 
 const formatToday = () =>
     new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
@@ -40,16 +41,11 @@ const MarketingReferrals = () => {
         <DashboardLayout variant="marketer">
             <DynamicPageHeader
                 title="Referrals"
-                actions={[
-                    {
-                        label: "Invite Agency",
-                        onClick: () => setIsInviteOpen(true),
-                    },
-                ]}
+                filters={<ReferralLinkField onInvite={() => setIsInviteOpen(true)} />}
             />
 
             <DashboardPageContent>
-                <ReferralLinkCard onInvite={() => setIsInviteOpen(true)} />
+                <MetricCards metrics={marketerReferralMetrics} columns={3} />
 
                 <InviteStatusTable
                     data={invites}

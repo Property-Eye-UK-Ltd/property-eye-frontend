@@ -1,5 +1,6 @@
 import { MetricCard } from "@/features/overview/components/MetricCards"
-import { CommissionTrackerDatum } from "@/features/marketing/overview/components/CommissionTrackerPanel"
+import { DonutBreakdownDatum } from "@/features/marketing/components/DonutBreakdownPanel"
+import { BarChartDatum } from "@/features/marketing/components/MarketingBarChartPanel"
 
 export interface MarketerProfile {
     name: string
@@ -31,8 +32,8 @@ export const marketerCommissionMetrics: MetricCard[] = [
     { title: "Paid Commission", value: "£33,540", period: "All time", change: "+£4,100", topBarClass: "bg-purple-500" },
 ]
 
-// Pie breakdown of commission lifecycle (slices sum to total earned)
-export const commissionTracker: CommissionTrackerDatum[] = [
+// Donut breakdown of commission lifecycle (slices sum to total earned)
+export const commissionTracker: DonutBreakdownDatum[] = [
     { name: "Pending Approval", value: 3250, valueLabel: "£3,250", color: "#F59E0B" },
     { name: "Approved (Awaiting Payment)", value: 5390, valueLabel: "£5,390", color: "#4D66EA" },
     { name: "Paid", value: 33540, valueLabel: "£33,540", color: "#22C55E" },
@@ -40,17 +41,43 @@ export const commissionTracker: CommissionTrackerDatum[] = [
 
 export const commissionTrackerTotalLabel = "Total earned: £42,180"
 
-export interface CommissionSummaryItem {
-    label: string
-    value: string
-    accentClass: string
+// Commission earned per month (bar chart, £)
+export const commissionEarningsTrend: BarChartDatum[] = [
+    { label: "Jan", value: 3200 },
+    { label: "Feb", value: 4100 },
+    { label: "Mar", value: 3800 },
+    { label: "Apr", value: 5200 },
+    { label: "May", value: 6400 },
+    { label: "Jun", value: 5800 },
+]
+
+export type CommissionLineStatus = "Pending" | "Approved" | "Paid"
+
+export interface CommissionLine {
+    id: string
+    agency: string
+    fraudCase: string
+    commissionPct: string
+    amount: string
+    status: CommissionLineStatus
 }
 
-export const commissionSummary: CommissionSummaryItem[] = [
-    { label: "Total Earned", value: "£42,180", accentClass: "bg-progress" },
-    { label: "Pending Approval", value: "£3,250", accentClass: "bg-amber-500" },
-    { label: "Approved (Awaiting Payment)", value: "£5,390", accentClass: "bg-blue-500" },
-    { label: "Paid", value: "£33,540", accentClass: "bg-green-500" },
+export const commissionLineStatusStyles: Record<CommissionLineStatus, string> = {
+    Pending: "bg-amber-50 text-amber-600 border border-amber-100",
+    Approved: "bg-blue-50 text-blue-600 border border-blue-100",
+    Paid: "bg-green-50 text-green-600 border border-green-100",
+}
+
+export const commissionLines: CommissionLine[] = [
+    { id: "cl-1", agency: "Harborview Estates", fraudCase: "#PE-256545", commissionPct: "7.5%", amount: "£3,172", status: "Paid" },
+    { id: "cl-2", agency: "Northgate Homes", fraudCase: "#PE-256802", commissionPct: "7.5%", amount: "£1,631", status: "Paid" },
+    { id: "cl-3", agency: "Sterling Property Group", fraudCase: "#PE-256633", commissionPct: "7.5%", amount: "£1,440", status: "Paid" },
+    { id: "cl-4", agency: "Harborview Estates", fraudCase: "#PE-256701", commissionPct: "7.5%", amount: "£1,867", status: "Approved" },
+    { id: "cl-5", agency: "Northgate Homes", fraudCase: "#PE-256590", commissionPct: "7.5%", amount: "£2,385", status: "Approved" },
+    { id: "cl-6", agency: "Crestline Properties", fraudCase: "#PE-256888", commissionPct: "7.5%", amount: "£1,980", status: "Approved" },
+    { id: "cl-7", agency: "Crestline Properties", fraudCase: "#PE-256612", commissionPct: "7.5%", amount: "£2,130", status: "Pending" },
+    { id: "cl-8", agency: "Pinnacle Homes", fraudCase: "#PE-256945", commissionPct: "7.5%", amount: "£2,212", status: "Pending" },
+    { id: "cl-9", agency: "Pinnacle Homes", fraudCase: "#PE-256780", commissionPct: "7.5%", amount: "£2,482", status: "Pending" },
 ]
 
 export type InviteStatus = "Sent" | "Opened" | "Signed up"
@@ -68,6 +95,13 @@ export const inviteStatusStyles: Record<InviteStatus, string> = {
     Opened: "bg-blue-50 text-blue-600 border border-blue-100",
     "Signed up": "bg-green-50 text-green-600 border border-green-100",
 }
+
+// Referral KPIs shown on the Referrals page
+export const marketerReferralMetrics: MetricCard[] = [
+    { title: "Invites Sent", value: "24", period: "All time", change: "+5", topBarClass: "bg-progress" },
+    { title: "Agencies Signed Up", value: "11", period: "All time", change: "+2", topBarClass: "bg-green-500" },
+    { title: "Conversion Rate", value: "46%", period: "Signups / invites", change: "+4%", topBarClass: "bg-secondary" },
+]
 
 export const agencyInvites: AgencyInvite[] = [
     { id: "inv-1", agencyName: "Harborview Estates", agencyEmail: "ops@harborview.co.uk", status: "Signed up", dateSent: "2 Nov, 2025" },
@@ -96,6 +130,13 @@ export interface MarketerAgency {
     /** Whether attribution is locked to this marketer. If false, a claim can be submitted. */
     attributed: boolean
 }
+
+// Agency KPIs shown on the My Agencies page
+export const marketerAgencyMetrics: MetricCard[] = [
+    { title: "Total Agencies Referred", value: "18", period: "All time", change: "+3", topBarClass: "bg-progress" },
+    { title: "Active Agencies", value: "12", period: "Currently active", change: "+2", topBarClass: "bg-green-500" },
+    { title: "Pending Attribution", value: "4", period: "Awaiting review", change: "", topBarClass: "bg-amber-500" },
+]
 
 export const marketerAgencyStatusStyles: Record<MarketerAgencyStatus, string> = {
     Active: "bg-green-50 text-green-600 border border-green-100",
@@ -139,6 +180,13 @@ export interface MarketerFraudCase {
     commissionStatus: CommissionEligibility
 }
 
+// Fraud KPIs shown on the Fraud Cases page
+export const marketerFraudMetrics: MetricCard[] = [
+    { title: "Total Fraud Value", value: "£402,900", period: "All time", change: "+£32,400", topBarClass: "bg-red-500" },
+    { title: "Cases Recovered", value: "24", period: "All time", change: "+6", topBarClass: "bg-green-500" },
+    { title: "Commission Eligible", value: "£36,400", period: "Eligible earnings", change: "+£4,200", topBarClass: "bg-secondary" },
+]
+
 export const marketerFraudStatusStyles: Record<MarketerFraudStatus, string> = {
     Detected: "bg-gray-100 text-gray-600 border border-gray-200",
     "Under Review": "bg-amber-50 text-amber-600 border border-amber-100",
@@ -164,4 +212,61 @@ export const marketerFraudCases: MarketerFraudCase[] = [
     { id: "fc-10", agency: "Crestline Properties", caseRef: "#PE-256888", fraudValue: "£26,400", status: "Confirmed", commissionStatus: "Eligible" },
     { id: "fc-11", agency: "Sterling Property Group", caseRef: "#PE-256901", fraudValue: "£12,800", status: "Detected", commissionStatus: "Not Eligible" },
     { id: "fc-12", agency: "Pinnacle Homes", caseRef: "#PE-256945", fraudValue: "£29,500", status: "Recovered", commissionStatus: "Eligible" },
+]
+
+// ---------------------------------------------------------------------------
+// Payments
+// ---------------------------------------------------------------------------
+
+// Payment KPIs shown on the Payments page
+export const marketerPaymentMetrics: MetricCard[] = [
+    { title: "Total Paid Out", value: "£33,540", period: "All time", change: "+£4,100", topBarClass: "bg-green-500" },
+    { title: "Paid This Year", value: "£21,300", period: "2025", change: "+£3,200", topBarClass: "bg-progress" },
+    { title: "Pending Payout", value: "£8,640", period: "Approved & pending", change: "", topBarClass: "bg-amber-500" },
+]
+
+// Payouts per month (bar chart, £)
+export const paymentsTrend: BarChartDatum[] = [
+    { label: "Jan", value: 2800 },
+    { label: "Feb", value: 3500 },
+    { label: "Mar", value: 3100 },
+    { label: "Apr", value: 4200 },
+    { label: "May", value: 3900 },
+    { label: "Jun", value: 3800 },
+]
+
+// Donut breakdown of payout status (£)
+export const paymentStatusBreakdown: DonutBreakdownDatum[] = [
+    { name: "Paid", value: 33540, valueLabel: "£33,540", color: "#22C55E" },
+    { name: "Scheduled", value: 5390, valueLabel: "£5,390", color: "#4D66EA" },
+    { name: "Pending", value: 3250, valueLabel: "£3,250", color: "#F59E0B" },
+]
+
+export type PaymentStatus = "Paid" | "Scheduled" | "Rejected"
+
+export interface PaymentRecord {
+    id: string
+    date: string
+    amount: string
+    period: string
+    status: PaymentStatus
+    statementId: string
+}
+
+export const paymentStatusStyles: Record<PaymentStatus, string> = {
+    Paid: "bg-green-50 text-green-600 border border-green-100",
+    Scheduled: "bg-blue-50 text-blue-600 border border-blue-100",
+    Rejected: "bg-red-50 text-red-600 border border-red-100",
+}
+
+export const payments: PaymentRecord[] = [
+    { id: "pay-1", date: "1 Nov, 2025", amount: "£4,100", period: "Oct 2025", status: "Paid", statementId: "STM-2025-10" },
+    { id: "pay-2", date: "1 Oct, 2025", amount: "£3,920", period: "Sep 2025", status: "Paid", statementId: "STM-2025-09" },
+    { id: "pay-3", date: "1 Sep, 2025", amount: "£3,140", period: "Aug 2025", status: "Paid", statementId: "STM-2025-08" },
+    { id: "pay-4", date: "1 Aug, 2025", amount: "£4,780", period: "Jul 2025", status: "Paid", statementId: "STM-2025-07" },
+    { id: "pay-5", date: "1 Jul, 2025", amount: "£2,865", period: "Jun 2025", status: "Paid", statementId: "STM-2025-06" },
+    { id: "pay-6", date: "1 Jun, 2025", amount: "£5,390", period: "May 2025", status: "Scheduled", statementId: "STM-2025-05" },
+    { id: "pay-7", date: "1 May, 2025", amount: "£3,250", period: "Apr 2025", status: "Scheduled", statementId: "STM-2025-04" },
+    { id: "pay-8", date: "1 Apr, 2025", amount: "£1,980", period: "Mar 2025", status: "Rejected", statementId: "STM-2025-03" },
+    { id: "pay-9", date: "1 Mar, 2025", amount: "£2,540", period: "Feb 2025", status: "Paid", statementId: "STM-2025-02" },
 ]

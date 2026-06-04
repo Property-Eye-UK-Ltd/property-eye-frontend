@@ -49,6 +49,7 @@ import MarketingReferrals from "./pages/marketing/MarketingReferrals";
 import MarketingAgencies from "./pages/marketing/MarketingAgencies";
 import MarketingFraudCases from "./pages/marketing/MarketingFraudCases";
 import MarketingCommissions from "./pages/marketing/MarketingCommissions";
+import MarketingPayments from "./pages/marketing/MarketingPayments";
 import MarketingComingSoon from "./pages/marketing/MarketingComingSoon";
 
 const queryClient = new QueryClient();
@@ -115,7 +116,7 @@ const App = () => (
           <Route path="/marketing/agencies" element={<MarketingAgencies />} />
           <Route path="/marketing/fraud-cases" element={<MarketingFraudCases />} />
           <Route path="/marketing/commissions" element={<MarketingCommissions />} />
-          <Route path="/marketing/payments" element={<MarketingComingSoon />} />
+          <Route path="/marketing/payments" element={<MarketingPayments />} />
           <Route path="/marketing/disputes" element={<MarketingComingSoon />} />
 
 
