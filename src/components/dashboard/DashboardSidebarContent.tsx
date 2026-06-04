@@ -1,10 +1,10 @@
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { DonutChart } from "@/components/ui/donut-chart"
-import { getNavConfig } from "@/config/navigation"
+import { getNavConfig, DashboardVariant } from "@/config/navigation"
 
 interface DashboardSidebarContentProps {
-    variant?: "agency" | "super-admin"
+    variant?: DashboardVariant
     isCollapsed?: boolean
     onNavigate?: () => void
 }
@@ -16,10 +16,19 @@ export const DashboardSidebarContent = ({
 }: DashboardSidebarContentProps) => {
     const location = useLocation()
     const navConfig = getNavConfig(variant)
-    const homePath = variant === "super-admin" ? "/admin/dashboard" : "/dashboard"
+    const homePath =
+        variant === "super-admin"
+            ? "/admin/dashboard"
+            : variant === "marketer"
+              ? "/marketing/dashboard"
+              : "/dashboard"
 
     const isActive = (path: string) => {
-        if (path === "/dashboard" || path === "/admin/dashboard") {
+        if (
+            path === "/dashboard" ||
+            path === "/admin/dashboard" ||
+            path === "/marketing/dashboard"
+        ) {
             return location.pathname === path
         }
         return location.pathname.startsWith(path)

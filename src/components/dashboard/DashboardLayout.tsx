@@ -3,10 +3,11 @@ import { DashboardSidebar } from "./DashboardSidebar"
 import { DashboardHeader } from "./DashboardHeader"
 import { SidebarProvider, useSidebarContext } from "./SidebarContext"
 import { cn } from "@/lib/utils"
+import { DashboardVariant } from "@/config/navigation"
 
 interface DashboardLayoutProps {
     children: ReactNode
-    variant?: "agency" | "super-admin"
+    variant?: DashboardVariant
 }
 
 const DashboardLayoutContent = ({ children, variant = "agency" }: DashboardLayoutProps) => {

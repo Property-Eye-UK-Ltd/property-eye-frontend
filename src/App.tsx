@@ -44,6 +44,12 @@ import ReportsExports from "./pages/admin/ReportsExports";
 import Agencies from "./pages/admin/Agencies";
 import AgencyProfile from "./pages/admin/AgencyProfile";
 import AdminSettings from "./pages/admin/AdminSettings";
+import MarketingOverview from "./pages/marketing/MarketingOverview";
+import MarketingReferrals from "./pages/marketing/MarketingReferrals";
+import MarketingAgencies from "./pages/marketing/MarketingAgencies";
+import MarketingFraudCases from "./pages/marketing/MarketingFraudCases";
+import MarketingCommissions from "./pages/marketing/MarketingCommissions";
+import MarketingComingSoon from "./pages/marketing/MarketingComingSoon";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +108,15 @@ const App = () => (
           <Route path="/admin/team/staff/:staffId" element={<StaffDetails />} />
           <Route path="/admin/reports" element={<ReportsExports />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
+
+          {/* Marketing Agent Portal Routes */}
+          <Route path="/marketing/dashboard" element={<MarketingOverview />} />
+          <Route path="/marketing/referrals" element={<MarketingReferrals />} />
+          <Route path="/marketing/agencies" element={<MarketingAgencies />} />
+          <Route path="/marketing/fraud-cases" element={<MarketingFraudCases />} />
+          <Route path="/marketing/commissions" element={<MarketingCommissions />} />
+          <Route path="/marketing/payments" element={<MarketingComingSoon />} />
+          <Route path="/marketing/disputes" element={<MarketingComingSoon />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

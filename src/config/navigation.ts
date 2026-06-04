@@ -1,4 +1,6 @@
-import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph } from "iconsax-react"
+import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph, Buildings, Danger, MoneyRecive, Card, Share, Note } from "iconsax-react"
+
+export type DashboardVariant = "agency" | "super-admin" | "marketer"
 
 export interface NavItem {
     label: string
@@ -113,6 +115,58 @@ export const superAdminNavConfig: NavConfig = {
     showProCard: false,
 }
 
-export const getNavConfig = (variant: "agency" | "super-admin"): NavConfig => {
-    return variant === "super-admin" ? superAdminNavConfig : agencyNavConfig
+export const marketerNavConfig: NavConfig = {
+    mainItems: [
+        {
+            label: "Overview",
+            icon: Element,
+            path: "/marketing/dashboard",
+            variant: "Bulk",
+        },
+        {
+            label: "My Agencies",
+            icon: Buildings,
+            path: "/marketing/agencies",
+            variant: "Bulk",
+        },
+        {
+            label: "Fraud Cases",
+            icon: Danger,
+            path: "/marketing/fraud-cases",
+            variant: "Bulk",
+        },
+        {
+            label: "Commissions",
+            icon: MoneyRecive,
+            path: "/marketing/commissions",
+            variant: "Bulk",
+        },
+        {
+            label: "Payments",
+            icon: Card,
+            path: "/marketing/payments",
+            variant: "Bulk",
+        },
+        {
+            label: "Referrals",
+            icon: Share,
+            path: "/marketing/referrals",
+            variant: "Bulk",
+        },
+    ],
+    bottomItems: [
+        {
+            label: "Disputes",
+            icon: Note,
+            path: "/marketing/disputes",
+            variant: "Bulk",
+        },
+    ],
+    showProCard: false,
+}
+
+export const getNavConfig = (variant: DashboardVariant): NavConfig => {
+    if (variant === "super-admin") return superAdminNavConfig
+    if (variant === "marketer") return marketerNavConfig
+    return agencyNavConfig
 }

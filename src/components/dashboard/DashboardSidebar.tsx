@@ -2,9 +2,10 @@ import { cn } from "@/lib/utils"
 import { useSidebarContext } from "./SidebarContext"
 import { DashboardSidebarContent } from "./DashboardSidebarContent"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { DashboardVariant } from "@/config/navigation"
 
 interface DashboardSidebarProps {
-    variant?: "agency" | "super-admin"
+    variant?: DashboardVariant
 }
 
 export const DashboardSidebar = ({ variant = "agency" }: DashboardSidebarProps) => {

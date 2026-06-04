@@ -20,13 +20,20 @@ import {
 import { useSidebarContext } from "./SidebarContext"
 import { GlobalCheckRunner } from "./GlobalCheckRunner"
 import { cn } from "@/lib/utils"
+import { DashboardVariant } from "@/config/navigation"
 
 interface DashboardHeaderProps {
-    variant?: "agency" | "super-admin"
+    variant?: DashboardVariant
 }
 
 const iconTriggerClass =
     "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted transition-colors hover:bg-muted/80"
+
+const headerIdentity: Record<DashboardVariant, { name: string; email: string; avatar: string; initials: string }> = {
+    agency: { name: "Admin", email: "amanda@solicthomes.com", avatar: "https://i.pravatar.cc/150?img=1", initials: "AM" },
+    "super-admin": { name: "Admin", email: "amanda@solicthomes.com", avatar: "https://i.pravatar.cc/150?img=1", initials: "AM" },
+    marketer: { name: "Daniel Okafor", email: "daniel@growthpartners.co", avatar: "https://i.pravatar.cc/150?img=12", initials: "DO" },
+}
 
 export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) => {
     const { isCollapsed, toggleSidebar, isDesktop } = useSidebarContext()
@@ -36,6 +43,9 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
     }
 
     const isAdmin = variant === "super-admin"
+    const isAgency = variant === "agency"
+    const isMarketer = variant === "marketer"
+    const identity = headerIdentity[variant]
 
     return (
         <header className="sticky top-0 z-20 border-b border-border bg-background">
@@ -108,7 +118,7 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                         </div>
                     )}
 
-                    {!isAdmin && (
+                    {isAgency && (
                         <>
                             <div className="hidden items-center gap-2 lg:flex">
                                 <button
@@ -205,12 +215,16 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                         </>
                     )}
 
-                    <div className="lg:hidden">
-                        <GlobalCheckRunner compact />
-                    </div>
-                    <div className="hidden lg:block">
-                        <GlobalCheckRunner />
-                    </div>
+                    {!isMarketer && (
+                        <>
+                            <div className="lg:hidden">
+                                <GlobalCheckRunner compact />
+                            </div>
+                            <div className="hidden lg:block">
+                                <GlobalCheckRunner />
+                            </div>
+                        </>
+                    )}
 
                     <NotificationMenu />
 
@@ -218,8 +232,8 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
 
                     <div className="flex items-center gap-1 sm:gap-2">
                         <div className="hidden text-left lg:block">
-                            <p className="text-sm font-medium text-foreground">Admin</p>
-                            <p className="text-xs text-muted-foreground">amanda@solicthomes.com</p>
+                            <p className="text-sm font-medium text-foreground">{identity.name}</p>
+                            <p className="text-xs text-muted-foreground">{identity.email}</p>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -229,19 +243,16 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                                     aria-label="User menu"
                                 >
                                     <Avatar className="h-9 w-9 lg:h-10 lg:w-10">
-                                        <AvatarImage
-                                            src="https://i.pravatar.cc/150?img=1"
-                                            alt="Admin"
-                                        />
-                                        <AvatarFallback>AM</AvatarFallback>
+                                        <AvatarImage src={identity.avatar} alt={identity.name} />
+                                        <AvatarFallback>{identity.initials}</AvatarFallback>
                                     </Avatar>
                                 </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">
                                 <div className="border-b border-border px-3 py-2 lg:hidden">
-                                    <p className="text-sm font-medium text-foreground">Admin</p>
+                                    <p className="text-sm font-medium text-foreground">{identity.name}</p>
                                     <p className="truncate text-xs text-muted-foreground">
-                                        amanda@solicthomes.com
+                                        {identity.email}
                                     </p>
                                 </div>
                                 <DropdownMenuItem
