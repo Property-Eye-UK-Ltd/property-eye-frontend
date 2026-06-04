@@ -6,7 +6,7 @@ import { MarketingBarChartPanel } from "@/features/marketing/components/Marketin
 import { DonutBreakdownPanel } from "@/features/marketing/components/DonutBreakdownPanel"
 import { MarketerLeaderboardTable } from "@/features/marketing-admin/overview/components/MarketerLeaderboardTable"
 import {
-    marketingAdminMetrics,
+    marketingAdminOverviewMetrics,
     commissionLiabilityTrend,
     commissionLiabilityBreakdown,
     marketerLeaderboard,
@@ -20,7 +20,7 @@ const MarketingAdminOverview = () => {
             <DynamicPageHeader title="Control Tower" />
 
             <DashboardPageContent>
-                <MetricCards metrics={marketingAdminMetrics} columns={3} />
+                <MetricCards metrics={marketingAdminOverviewMetrics} columns={3} />
 
                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-6 lg:gap-4">
                     <MarketingBarChartPanel

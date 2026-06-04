@@ -1,4 +1,4 @@
-import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph, Buildings, Danger, MoneyRecive, Card, Share, Note, ShieldTick, ClipboardText, ReceiptText } from "iconsax-react"
+import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph, Buildings, Danger, MoneyRecive, Card, Share, Note, ShieldTick, ReceiptText } from "iconsax-react"
 
 export type DashboardVariant = "agency" | "super-admin" | "marketer" | "marketing-admin"
 
@@ -174,15 +174,9 @@ export const marketingAdminNavConfig: NavConfig = {
             variant: "Bulk",
         },
         {
-            label: "Marketers",
+            label: "Network",
             icon: People,
-            path: "/marketing-admin/marketers",
-            variant: "Bulk",
-        },
-        {
-            label: "Agencies",
-            icon: Buildings,
-            path: "/marketing-admin/agencies",
+            path: "/marketing-admin/network",
             variant: "Bulk",
         },
         {
@@ -192,29 +186,9 @@ export const marketingAdminNavConfig: NavConfig = {
             variant: "Bulk",
         },
         {
-            label: "Commissions",
-            icon: MoneyRecive,
-            path: "/marketing-admin/commissions",
-            variant: "Bulk",
-        },
-        {
-            label: "Payments",
-            icon: Card,
-            path: "/marketing-admin/payments",
-            variant: "Bulk",
-        },
-        {
-            label: "Disputes",
-            icon: Note,
-            path: "/marketing-admin/disputes",
-            variant: "Bulk",
-        },
-    ],
-    bottomItems: [
-        {
-            label: "Audit Log",
-            icon: ClipboardText,
-            path: "/marketing-admin/audit",
+            label: "Finance",
+            icon: Wallet1,
+            path: "/marketing-admin/finance",
             variant: "Bulk",
         },
         {
@@ -224,6 +198,7 @@ export const marketingAdminNavConfig: NavConfig = {
             variant: "Bulk",
         },
     ],
+    bottomItems: [],
     showProCard: false,
 }
 

@@ -55,7 +55,10 @@ import MarketingPayments from "./pages/marketing/MarketingPayments";
 import MarketingPaymentDetail from "./pages/marketing/MarketingPaymentDetail";
 import MarketingDisputes from "./pages/marketing/MarketingDisputes";
 import MarketingAdminOverview from "./pages/marketing-admin/MarketingAdminOverview";
-import MarketingAdminComingSoon from "./pages/marketing-admin/MarketingAdminComingSoon";
+import MarketingAdminNetwork from "./pages/marketing-admin/MarketingAdminNetwork";
+import MarketingAdminAttribution from "./pages/marketing-admin/MarketingAdminAttribution";
+import MarketingAdminFinance from "./pages/marketing-admin/MarketingAdminFinance";
+import MarketingAdminReports from "./pages/marketing-admin/MarketingAdminReports";
 
 const queryClient = new QueryClient();
 
@@ -129,14 +132,10 @@ const App = () => (
 
           {/* Marketing Admin (Control Tower) Routes */}
           <Route path="/marketing-admin/dashboard" element={<MarketingAdminOverview />} />
-          <Route path="/marketing-admin/marketers" element={<MarketingAdminComingSoon />} />
-          <Route path="/marketing-admin/agencies" element={<MarketingAdminComingSoon />} />
-          <Route path="/marketing-admin/attribution" element={<MarketingAdminComingSoon />} />
-          <Route path="/marketing-admin/commissions" element={<MarketingAdminComingSoon />} />
-          <Route path="/marketing-admin/payments" element={<MarketingAdminComingSoon />} />
-          <Route path="/marketing-admin/disputes" element={<MarketingAdminComingSoon />} />
-          <Route path="/marketing-admin/audit" element={<MarketingAdminComingSoon />} />
-          <Route path="/marketing-admin/reports" element={<MarketingAdminComingSoon />} />
+          <Route path="/marketing-admin/network" element={<MarketingAdminNetwork />} />
+          <Route path="/marketing-admin/attribution" element={<MarketingAdminAttribution />} />
+          <Route path="/marketing-admin/finance" element={<MarketingAdminFinance />} />
+          <Route path="/marketing-admin/reports" element={<MarketingAdminReports />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

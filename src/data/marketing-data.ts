@@ -275,14 +275,23 @@ export const payments: PaymentRecord[] = [
 // Marketing Admin (Control Tower)
 // ---------------------------------------------------------------------------
 
-// Executive KPIs shown on the admin Control Tower overview
-export const marketingAdminMetrics: MetricCard[] = [
+// Executive KPIs — Control Tower overview (first 3 only; rest live on Finance / Attribution)
+export const marketingAdminOverviewMetrics: MetricCard[] = [
     { title: "Active Marketers", value: "32", period: "All time", change: "+4", topBarClass: "bg-progress" },
     { title: "Attributed Agencies", value: "146", period: "All time", change: "+12", topBarClass: "bg-secondary" },
     { title: "Fraud Value Detected", value: "£2.4M", period: "All time", change: "+£180K", topBarClass: "bg-red-500" },
+]
+
+export const marketingAdminFinanceMetrics: MetricCard[] = [
     { title: "Commission Liability", value: "£318,200", period: "Earned to date", change: "+£24,500", topBarClass: "bg-amber-500" },
     { title: "Outstanding Commission", value: "£74,600", period: "Awaiting payout", change: "", topBarClass: "bg-purple-500" },
-    { title: "Active Disputes", value: "5", period: "Needs review", change: "-2", topBarClass: "bg-green-500" },
+    { title: "Paid This Quarter", value: "£186,400", period: "Q4 2025", change: "+£22,100", topBarClass: "bg-green-500" },
+]
+
+export const marketingAdminAttributionMetrics: MetricCard[] = [
+    { title: "Active Disputes", value: "5", period: "Needs review", change: "-2", topBarClass: "bg-amber-500" },
+    { title: "Pending Claims", value: "8", period: "Awaiting decision", change: "+3", topBarClass: "bg-progress" },
+    { title: "Locked Attributions", value: "138", period: "Immutable records", change: "+12", topBarClass: "bg-green-500" },
 ]
 
 // Commission liability split (donut, £)
@@ -324,6 +333,113 @@ export const marketerLeaderboardStatusStyles: Record<MarketerLeaderboardRow["sta
     Active: "bg-green-50 text-green-600 border border-green-100",
     Suspended: "bg-red-50 text-red-600 border border-red-100",
 }
+
+// Platform-wide agency view (Network → Agencies tab)
+export interface AdminAgencyRecord {
+    id: string
+    name: string
+    marketer: string
+    status: MarketerAgencyStatus
+    attributionMethod: AttributionMethod
+    dateAdded: string
+    totalFraudValue: string
+    attributed: boolean
+}
+
+export const adminAgencies: AdminAgencyRecord[] = [
+    { id: "ag-1", name: "Harborview Estates", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "2 Nov, 2025", totalFraudValue: "£128,400", attributed: true },
+    { id: "ag-2", name: "Northgate Homes", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "15 Oct, 2025", totalFraudValue: "£96,200", attributed: true },
+    { id: "ag-3", name: "Crestline Properties", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "28 Oct, 2025", totalFraudValue: "£74,800", attributed: true },
+    { id: "ag-4", name: "Bridgewater Realty", marketer: "Priya Sharma", status: "Pending", attributionMethod: "Invite", dateAdded: "9 Oct, 2025", totalFraudValue: "£0", attributed: false },
+    { id: "ag-5", name: "Maple & Co Lettings", marketer: "Daniel Okafor", status: "Pending", attributionMethod: "Manual", dateAdded: "24 Oct, 2025", totalFraudValue: "£18,500", attributed: false },
+    { id: "ag-6", name: "Sterling Property Group", marketer: "Marcus Bennett", status: "Active", attributionMethod: "Manual", dateAdded: "3 Oct, 2025", totalFraudValue: "£52,300", attributed: true },
+    { id: "ag-7", name: "Oakfield Residential", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "18 Sep, 2025", totalFraudValue: "£41,900", attributed: true },
+    { id: "ag-8", name: "Kingsway Lettings", marketer: "Tom Whitfield", status: "Rejected", attributionMethod: "Manual", dateAdded: "11 Sep, 2025", totalFraudValue: "£0", attributed: false },
+    { id: "ag-9", name: "Pinnacle Homes", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "2 Sep, 2025", totalFraudValue: "£63,700", attributed: true },
+    { id: "ag-10", name: "Riverside Estates", marketer: "Aisha Bello", status: "Pending", attributionMethod: "Link", dateAdded: "25 Aug, 2025", totalFraudValue: "£0", attributed: false },
+    { id: "ag-11", name: "Beacon Property Co", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "14 Aug, 2025", totalFraudValue: "£38,200", attributed: true },
+    { id: "ag-12", name: "Summit Lettings", marketer: "Priya Sharma", status: "Active", attributionMethod: "Link", dateAdded: "6 Aug, 2025", totalFraudValue: "£29,400", attributed: true },
+]
+
+export type AttributionClaimStatus = "Pending" | "Conflict" | "Approved" | "Rejected"
+
+export interface AttributionClaim {
+    id: string
+    agency: string
+    claimant: string
+    method: AttributionMethod
+    conflictWith?: string
+    evidence: string
+    status: AttributionClaimStatus
+    dateSubmitted: string
+}
+
+export const attributionClaimStatusStyles: Record<AttributionClaimStatus, string> = {
+    Pending: "bg-amber-50 text-amber-600 border border-amber-100",
+    Conflict: "bg-red-50 text-red-600 border border-red-100",
+    Approved: "bg-green-50 text-green-600 border border-green-100",
+    Rejected: "bg-gray-100 text-gray-600 border border-gray-200",
+}
+
+export const attributionClaims: AttributionClaim[] = [
+    { id: "att-1", agency: "Maple & Co Lettings", claimant: "Daniel Okafor", method: "Manual", evidence: "Introduced agency at PropTech Expo, email thread attached.", status: "Pending", dateSubmitted: "24 Oct, 2025" },
+    { id: "att-2", agency: "Bridgewater Realty", claimant: "Priya Sharma", method: "Invite", conflictWith: "Daniel Okafor", evidence: "Invite sent 9 Oct; competitor claim from Daniel on 11 Oct.", status: "Conflict", dateSubmitted: "11 Oct, 2025" },
+    { id: "att-3", agency: "Riverside Estates", claimant: "Aisha Bello", method: "Link", evidence: "Referral link click logged before agency signup.", status: "Pending", dateSubmitted: "25 Aug, 2025" },
+    { id: "att-4", agency: "Kingsway Lettings", claimant: "Tom Whitfield", method: "Manual", evidence: "Contract signed offline; insufficient proof of introduction date.", status: "Rejected", dateSubmitted: "11 Sep, 2025" },
+    { id: "att-5", agency: "Sterling Property Group", claimant: "Marcus Bennett", method: "Manual", evidence: "Partnership agreement and onboarding call notes.", status: "Approved", dateSubmitted: "3 Oct, 2025" },
+]
+
+export interface AdminCommissionApproval {
+    id: string
+    marketer: string
+    agency: string
+    fraudCase: string
+    amount: string
+    status: CommissionLineStatus
+}
+
+export const adminCommissionApprovals: AdminCommissionApproval[] = [
+    { id: "ca-1", marketer: "Daniel Okafor", agency: "Crestline Properties", fraudCase: "#PE-256612", amount: "£2,130", status: "Pending" },
+    { id: "ca-2", marketer: "Daniel Okafor", agency: "Pinnacle Homes", fraudCase: "#PE-256945", amount: "£2,212", status: "Pending" },
+    { id: "ca-3", marketer: "Priya Sharma", agency: "Summit Lettings", fraudCase: "#PE-256910", amount: "£1,890", status: "Approved" },
+    { id: "ca-4", marketer: "Marcus Bennett", agency: "Sterling Property Group", fraudCase: "#PE-256633", amount: "£1,440", status: "Approved" },
+    { id: "ca-5", marketer: "Daniel Okafor", agency: "Harborview Estates", fraudCase: "#PE-256701", amount: "£1,867", status: "Paid" },
+]
+
+export interface AdminPayoutRecord {
+    id: string
+    marketer: string
+    period: string
+    amount: string
+    status: PaymentStatus
+    date: string
+}
+
+export const adminPayouts: AdminPayoutRecord[] = [
+    { id: "po-1", marketer: "Daniel Okafor", period: "Oct 2025", amount: "£4,100", status: "Paid", date: "1 Nov, 2025" },
+    { id: "po-2", marketer: "Priya Sharma", period: "Oct 2025", amount: "£3,420", status: "Paid", date: "1 Nov, 2025" },
+    { id: "po-3", marketer: "Marcus Bennett", period: "Oct 2025", amount: "£2,890", status: "Scheduled", date: "1 Nov, 2025" },
+    { id: "po-4", marketer: "Daniel Okafor", period: "Sep 2025", amount: "£3,920", status: "Paid", date: "1 Oct, 2025" },
+    { id: "po-5", marketer: "Aisha Bello", period: "Sep 2025", amount: "£2,640", status: "Paid", date: "1 Oct, 2025" },
+    { id: "po-6", marketer: "Tom Whitfield", period: "Aug 2025", amount: "£1,980", status: "Rejected", date: "1 Sep, 2025" },
+]
+
+export interface MarketingAuditRecord {
+    timestamp: string
+    event: string
+    actor: string
+    entity: string
+}
+
+export const marketingAuditLog: MarketingAuditRecord[] = [
+    { timestamp: "3 Nov, 2025 14:22", event: "Attribution claim submitted", actor: "Daniel Okafor", entity: "Maple & Co Lettings" },
+    { timestamp: "3 Nov, 2025 11:05", event: "Dispute raised", actor: "Daniel Okafor", entity: "#DSP-1042" },
+    { timestamp: "2 Nov, 2025 09:18", event: "Commission approved", actor: "Marketing Admin", entity: "#PE-256701" },
+    { timestamp: "1 Nov, 2025 16:40", event: "Payout marked paid", actor: "Marketing Admin", entity: "Daniel Okafor — Oct 2025" },
+    { timestamp: "1 Nov, 2025 10:12", event: "Attribution locked", actor: "Marketing Admin", entity: "Harborview Estates" },
+    { timestamp: "28 Oct, 2025 15:33", event: "Attribution conflict detected", actor: "System", entity: "Bridgewater Realty" },
+    { timestamp: "24 Oct, 2025 08:55", event: "Marketer activated", actor: "Marketing Admin", entity: "Lena Novak" },
+]
 
 // ---------------------------------------------------------------------------
 // Disputes / Support
@@ -367,4 +483,16 @@ export const marketerDisputes: MarketerDispute[] = [
     { id: "dsp-4", reference: "#DSP-1024", type: "Agency Ownership", linkedRecord: "Bridgewater Realty", description: "Duplicate attribution claim raised by another marketer.", status: "Resolved", dateRaised: "9 Oct, 2025" },
     { id: "dsp-5", reference: "#DSP-1019", type: "Commission", linkedRecord: "#PE-256545", description: "Payout period mismatch on Harborview Estates commission.", status: "Resolved", dateRaised: "2 Oct, 2025" },
     { id: "dsp-6", reference: "#DSP-1011", type: "Agency Ownership", linkedRecord: "Sterling Property Group", description: "Manual attribution confirmation requested.", status: "Resolved", dateRaised: "24 Sep, 2025" },
+]
+
+export interface AdminDispute extends MarketerDispute {
+    marketer: string
+}
+
+export const adminDisputes: AdminDispute[] = [
+    { id: "dsp-1", reference: "#DSP-1042", marketer: "Daniel Okafor", type: "Agency Ownership", linkedRecord: "Maple & Co Lettings", description: "Agency was introduced by me via an offline meeting before the link signup.", status: "Under Review", dateRaised: "3 Nov, 2025" },
+    { id: "dsp-2", reference: "#DSP-1038", marketer: "Daniel Okafor", type: "Commission", linkedRecord: "#PE-256612", description: "Commission rate applied looks lower than the agreed 7.5%.", status: "Open", dateRaised: "28 Oct, 2025" },
+    { id: "dsp-3", reference: "#DSP-1031", marketer: "Daniel Okafor", type: "Commission", linkedRecord: "#PE-256590", description: "Recovered case not reflected in my eligible commission.", status: "Open", dateRaised: "21 Oct, 2025" },
+    { id: "dsp-4", reference: "#DSP-1024", marketer: "Priya Sharma", type: "Agency Ownership", linkedRecord: "Bridgewater Realty", description: "Duplicate attribution claim raised by another marketer.", status: "Resolved", dateRaised: "9 Oct, 2025" },
+    { id: "dsp-5", reference: "#DSP-1019", marketer: "Daniel Okafor", type: "Commission", linkedRecord: "#PE-256545", description: "Payout period mismatch on Harborview Estates commission.", status: "Resolved", dateRaised: "2 Oct, 2025" },
 ]
