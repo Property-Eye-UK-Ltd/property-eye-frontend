@@ -29,6 +29,9 @@ interface FraudDetectionPanelProps {
   showCategoryFilter?: boolean
   showArea?: boolean
   title?: string
+  yAxisDomain?: [number | "auto", number | "auto"]
+  valueFormatter?: (value: number) => string
+  yAxisTickFormatter?: (value: number) => string
 }
 
 const timeRangeOptions = [
@@ -73,7 +76,16 @@ const generateExtendedMonthlyData = (baseData: FraudDataPoint[], monthsNeeded: n
   return extended
 }
 
-const FraudTooltip = ({ active, payload, label, config }: TooltipProps<number, string> & { config: Record<string, FraudSeriesConfig> }) => {
+const FraudTooltip = ({
+  active,
+  payload,
+  label,
+  config,
+  valueFormatter = (value) => value.toLocaleString(),
+}: TooltipProps<number, string> & {
+  config: Record<string, FraudSeriesConfig>
+  valueFormatter?: (value: number) => string
+}) => {
   if (!active || !payload?.length) {
     return null
   }
@@ -106,7 +118,7 @@ const FraudTooltip = ({ active, payload, label, config }: TooltipProps<number, s
                 <span>{entry.name}</span>
               </div>
               <span className="font-semibold">
-                {typeof entry.value === "number" ? entry.value.toLocaleString() : entry.value}
+                {typeof entry.value === "number" ? valueFormatter(entry.value) : entry.value}
               </span>
             </div>
           )
@@ -116,7 +128,16 @@ const FraudTooltip = ({ active, payload, label, config }: TooltipProps<number, s
   )
 }
 
-export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, showArea = true, title = "Fraud Detection Over Time" }: FraudDetectionPanelProps) => {
+export const FraudDetectionPanel = ({
+  data,
+  config,
+  showCategoryFilter = true,
+  showArea = true,
+  title = "Fraud Detection Over Time",
+  yAxisDomain = [0, 100],
+  valueFormatter,
+  yAxisTickFormatter,
+}: FraudDetectionPanelProps) => {
   const [timeRange, setTimeRange] = useState("12")
   const [selectedCategories, setSelectedCategories] = useState<string[]>(Object.keys(config))
 
@@ -218,8 +239,14 @@ export const FraudDetectionPanel = ({ data, config, showCategoryFilter = true, s
               textAnchor={filteredData.length > 12 ? "end" : "middle"}
               height={filteredData.length > 12 ? 48 : 24}
             />
-            <YAxis domain={[0, 100]} fontSize={11} stroke="#64748B" width={32} />
-            <ChartTooltip content={<FraudTooltip config={config} />} />
+            <YAxis
+              domain={yAxisDomain}
+              fontSize={11}
+              stroke="#64748B"
+              width={yAxisTickFormatter ? 44 : 32}
+              tickFormatter={yAxisTickFormatter}
+            />
+            <ChartTooltip content={<FraudTooltip config={config} valueFormatter={valueFormatter} />} />
             {(showArea ?? true) && Object.keys(filteredConfig).map((key) => (
               <Area key={`area-${key}`} type="linear" dataKey={key} fill={`url(#gradient${key})`} stroke="none" />
             ))}
