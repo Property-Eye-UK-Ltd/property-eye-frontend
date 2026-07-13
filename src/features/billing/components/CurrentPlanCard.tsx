@@ -1,19 +1,13 @@
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { DonutChart } from "@/components/ui/donut-chart"
-import { currentPlan } from "@/data/billing-data"
+import { currentPlan, COMMISSION_STANDING_DISCLOSURE } from "@/data/billing-data"
 
 interface CurrentPlanCardProps {
     onCancelPlan?: () => void
-    onChangePlan?: () => void
 }
 
-export const CurrentPlanCard = ({ onCancelPlan, onChangePlan }: CurrentPlanCardProps) => {
-    const checksPercentage = Math.round((currentPlan.checksUsed / currentPlan.checksTotal) * 100)
-    const crmPercentage = Math.round((currentPlan.crmUsersUsed / currentPlan.crmUsersTotal) * 100)
-
+export const CurrentPlanCard = ({ onCancelPlan }: CurrentPlanCardProps) => {
     return (
         <DashboardPanel className="overflow-hidden" hasBorder>
             <div className="space-y-4 lg:space-y-6">
@@ -33,38 +27,15 @@ export const CurrentPlanCard = ({ onCancelPlan, onChangePlan }: CurrentPlanCardP
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-2 sm:gap-3">
-                        <p className="text-xs text-muted-foreground lg:text-sm">
-                            Next billing:{" "}
-                            <span className="text-foreground">{currentPlan.nextBillingDate}</span>
-                        </p>
-                        <DonutChart value={75} size={25} strokeWidth={3} />
-                    </div>
+                    <p className="text-xs text-muted-foreground lg:text-sm">
+                        Next billing:{" "}
+                        <span className="text-foreground">{currentPlan.nextBillingDate}</span>
+                    </p>
                 </div>
 
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
-                    <div className="flex-1 space-y-2">
-                        <div className="flex items-center justify-between text-xs lg:text-sm">
-                            <span className="text-muted-foreground">
-                                {currentPlan.checksUsed}/{currentPlan.checksTotal} checks
-                            </span>
-                            <span className="font-medium text-foreground">{checksPercentage}%</span>
-                        </div>
-                        <Progress value={checksPercentage} className="h-1.5 [&>div]:rounded-full [&>div]:bg-primary" />
-                    </div>
-
-                    <div className="hidden h-12 w-px bg-border lg:block" />
-
-                    <div className="flex-1 space-y-2">
-                        <div className="flex items-center justify-between text-xs lg:text-sm">
-                            <span className="text-muted-foreground">
-                                CRM: {currentPlan.crmUsersUsed}/{currentPlan.crmUsersTotal} users
-                            </span>
-                            <span className="font-medium text-foreground">{crmPercentage}%</span>
-                        </div>
-                        <Progress value={crmPercentage} className="h-1.5 [&>div]:rounded-full [&>div]:bg-primary" />
-                    </div>
-                </div>
+                <p className="rounded-2xl border border-border bg-muted/40 px-4 py-3 text-xs text-muted-foreground lg:text-sm">
+                    {COMMISSION_STANDING_DISCLOSURE}
+                </p>
 
                 <div className="flex w-full flex-row gap-2 pt-1 lg:justify-end">
                     <Button
@@ -73,12 +44,6 @@ export const CurrentPlanCard = ({ onCancelPlan, onChangePlan }: CurrentPlanCardP
                         className="h-9 flex-1 rounded-full border-red-200 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 lg:h-10 lg:flex-none lg:px-8"
                     >
                         Cancel Plan
-                    </Button>
-                    <Button
-                        onClick={onChangePlan}
-                        className="h-9 flex-1 rounded-full bg-[#00072C] text-sm hover:bg-[#00072C]/90 lg:h-10 lg:flex-none lg:px-8"
-                    >
-                        Change Plan
                     </Button>
                 </div>
             </div>

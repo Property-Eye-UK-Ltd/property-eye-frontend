@@ -56,7 +56,8 @@ export type CommissionLineStatus = "Pending" | "Approved" | "Paid"
 export interface CommissionLine {
     id: string
     agency: string
-    fraudCase: string
+    /** Only populated when determination is Fraudulent and recovery is Recovered */
+    fraudCase?: string
     commissionPct: string
     amount: string
     status: CommissionLineStatus
@@ -69,15 +70,15 @@ export const commissionLineStatusStyles: Record<CommissionLineStatus, string> = 
 }
 
 export const commissionLines: CommissionLine[] = [
-    { id: "cl-1", agency: "Harborview Estates", fraudCase: "#PE-256545", commissionPct: "7.5%", amount: "£3,172", status: "Paid" },
-    { id: "cl-2", agency: "Northgate Homes", fraudCase: "#PE-256802", commissionPct: "7.5%", amount: "£1,631", status: "Paid" },
-    { id: "cl-3", agency: "Sterling Property Group", fraudCase: "#PE-256633", commissionPct: "7.5%", amount: "£1,440", status: "Paid" },
-    { id: "cl-4", agency: "Harborview Estates", fraudCase: "#PE-256701", commissionPct: "7.5%", amount: "£1,867", status: "Approved" },
-    { id: "cl-5", agency: "Northgate Homes", fraudCase: "#PE-256590", commissionPct: "7.5%", amount: "£2,385", status: "Approved" },
-    { id: "cl-6", agency: "Crestline Properties", fraudCase: "#PE-256888", commissionPct: "7.5%", amount: "£1,980", status: "Approved" },
-    { id: "cl-7", agency: "Crestline Properties", fraudCase: "#PE-256612", commissionPct: "7.5%", amount: "£2,130", status: "Pending" },
-    { id: "cl-8", agency: "Pinnacle Homes", fraudCase: "#PE-256945", commissionPct: "7.5%", amount: "£2,212", status: "Pending" },
-    { id: "cl-9", agency: "Pinnacle Homes", fraudCase: "#PE-256780", commissionPct: "7.5%", amount: "£2,482", status: "Pending" },
+    { id: "cl-1", agency: "Harborview Estates", fraudCase: "#PE-256545", commissionPct: "TBD*", amount: "£3,172", status: "Paid" },
+    { id: "cl-2", agency: "Northgate Homes", fraudCase: "#PE-256802", commissionPct: "TBD*", amount: "£1,631", status: "Paid" },
+    { id: "cl-3", agency: "Sterling Property Group", fraudCase: "#PE-256633", commissionPct: "TBD*", amount: "£1,440", status: "Paid" },
+    { id: "cl-4", agency: "Harborview Estates", fraudCase: "#PE-256701", commissionPct: "TBD*", amount: "£1,867", status: "Approved" },
+    { id: "cl-5", agency: "Northgate Homes", commissionPct: "TBD*", amount: "£2,385", status: "Approved" },
+    { id: "cl-6", agency: "Crestline Properties", commissionPct: "TBD*", amount: "£1,980", status: "Approved" },
+    { id: "cl-7", agency: "Crestline Properties", commissionPct: "TBD*", amount: "£2,130", status: "Pending" },
+    { id: "cl-8", agency: "Pinnacle Homes", commissionPct: "TBD*", amount: "£2,212", status: "Pending" },
+    { id: "cl-9", agency: "Pinnacle Homes", commissionPct: "TBD*", amount: "£2,482", status: "Pending" },
 ]
 
 export type InviteStatus = "Sent" | "Opened" | "Signed up"
@@ -129,6 +130,10 @@ export interface MarketerAgency {
     totalCommission: string
     /** Whether attribution is locked to this marketer. If false, a claim can be submitted. */
     attributed: boolean
+    casesFound: number
+    confirmedFraud: number
+    cleared: number
+    inProgress: number
 }
 
 // Agency KPIs shown on the My Agencies page
@@ -151,67 +156,17 @@ export const attributionMethodStyles: Record<AttributionMethod, string> = {
 }
 
 export const marketerAgencies: MarketerAgency[] = [
-    { id: "ag-1", name: "Harborview Estates", status: "Active", dateAdded: "2 Nov, 2025", attributionMethod: "Invite", totalFraudValue: "£128,400", totalCommission: "£9,630", attributed: true },
-    { id: "ag-2", name: "Northgate Homes", status: "Active", dateAdded: "15 Oct, 2025", attributionMethod: "Link", totalFraudValue: "£96,200", totalCommission: "£7,215", attributed: true },
-    { id: "ag-3", name: "Crestline Properties", status: "Active", dateAdded: "28 Oct, 2025", attributionMethod: "Link", totalFraudValue: "£74,800", totalCommission: "£5,610", attributed: true },
-    { id: "ag-4", name: "Bridgewater Realty", status: "Pending", dateAdded: "9 Oct, 2025", attributionMethod: "Invite", totalFraudValue: "£0", totalCommission: "£0", attributed: false },
-    { id: "ag-5", name: "Maple & Co Lettings", status: "Pending", dateAdded: "24 Oct, 2025", attributionMethod: "Manual", totalFraudValue: "£18,500", totalCommission: "£0", attributed: false },
-    { id: "ag-6", name: "Sterling Property Group", status: "Active", dateAdded: "3 Oct, 2025", attributionMethod: "Manual", totalFraudValue: "£52,300", totalCommission: "£3,920", attributed: true },
-    { id: "ag-7", name: "Oakfield Residential", status: "Active", dateAdded: "18 Sep, 2025", attributionMethod: "Link", totalFraudValue: "£41,900", totalCommission: "£3,140", attributed: true },
-    { id: "ag-8", name: "Kingsway Lettings", status: "Rejected", dateAdded: "11 Sep, 2025", attributionMethod: "Manual", totalFraudValue: "£0", totalCommission: "£0", attributed: false },
-    { id: "ag-9", name: "Pinnacle Homes", status: "Active", dateAdded: "2 Sep, 2025", attributionMethod: "Invite", totalFraudValue: "£63,700", totalCommission: "£4,780", attributed: true },
-    { id: "ag-10", name: "Riverside Estates", status: "Pending", dateAdded: "25 Aug, 2025", attributionMethod: "Link", totalFraudValue: "£0", totalCommission: "£0", attributed: false },
-    { id: "ag-11", name: "Beacon Property Co", status: "Active", dateAdded: "14 Aug, 2025", attributionMethod: "Invite", totalFraudValue: "£38,200", totalCommission: "£2,865", attributed: true },
-]
-
-// ---------------------------------------------------------------------------
-// Fraud cases / transactions
-// ---------------------------------------------------------------------------
-
-export type MarketerFraudStatus = "Detected" | "Under Review" | "Confirmed" | "Recovered"
-export type CommissionEligibility = "Eligible" | "Not Eligible"
-
-export interface MarketerFraudCase {
-    id: string
-    agency: string
-    caseRef: string
-    fraudValue: string
-    status: MarketerFraudStatus
-    commissionStatus: CommissionEligibility
-}
-
-// Fraud KPIs shown on the Fraud Cases page
-export const marketerFraudMetrics: MetricCard[] = [
-    { title: "Total Fraud Value", value: "£402,900", period: "All time", change: "+£32,400", topBarClass: "bg-red-500" },
-    { title: "Cases Recovered", value: "24", period: "All time", change: "+6", topBarClass: "bg-green-500" },
-    { title: "Commission Eligible", value: "£36,400", period: "Eligible earnings", change: "+£4,200", topBarClass: "bg-secondary" },
-]
-
-export const marketerFraudStatusStyles: Record<MarketerFraudStatus, string> = {
-    Detected: "bg-gray-100 text-gray-600 border border-gray-200",
-    "Under Review": "bg-amber-50 text-amber-600 border border-amber-100",
-    Confirmed: "bg-blue-50 text-blue-600 border border-blue-100",
-    Recovered: "bg-green-50 text-green-600 border border-green-100",
-}
-
-export const commissionEligibilityStyles: Record<CommissionEligibility, string> = {
-    Eligible: "bg-green-50 text-green-600 border border-green-100",
-    "Not Eligible": "bg-gray-100 text-gray-500 border border-gray-200",
-}
-
-export const marketerFraudCases: MarketerFraudCase[] = [
-    { id: "fc-1", agency: "Harborview Estates", caseRef: "#PE-256545", fraudValue: "£42,300", status: "Recovered", commissionStatus: "Eligible" },
-    { id: "fc-2", agency: "Northgate Homes", caseRef: "#PE-256590", fraudValue: "£31,800", status: "Confirmed", commissionStatus: "Eligible" },
-    { id: "fc-3", agency: "Crestline Properties", caseRef: "#PE-256612", fraudValue: "£28,400", status: "Under Review", commissionStatus: "Not Eligible" },
-    { id: "fc-4", agency: "Sterling Property Group", caseRef: "#PE-256633", fraudValue: "£19,200", status: "Recovered", commissionStatus: "Eligible" },
-    { id: "fc-5", agency: "Harborview Estates", caseRef: "#PE-256701", fraudValue: "£24,900", status: "Confirmed", commissionStatus: "Eligible" },
-    { id: "fc-6", agency: "Oakfield Residential", caseRef: "#PE-256744", fraudValue: "£15,600", status: "Detected", commissionStatus: "Not Eligible" },
-    { id: "fc-7", agency: "Pinnacle Homes", caseRef: "#PE-256780", fraudValue: "£33,100", status: "Under Review", commissionStatus: "Not Eligible" },
-    { id: "fc-8", agency: "Northgate Homes", caseRef: "#PE-256802", fraudValue: "£21,750", status: "Recovered", commissionStatus: "Eligible" },
-    { id: "fc-9", agency: "Beacon Property Co", caseRef: "#PE-256845", fraudValue: "£17,300", status: "Detected", commissionStatus: "Not Eligible" },
-    { id: "fc-10", agency: "Crestline Properties", caseRef: "#PE-256888", fraudValue: "£26,400", status: "Confirmed", commissionStatus: "Eligible" },
-    { id: "fc-11", agency: "Sterling Property Group", caseRef: "#PE-256901", fraudValue: "£12,800", status: "Detected", commissionStatus: "Not Eligible" },
-    { id: "fc-12", agency: "Pinnacle Homes", caseRef: "#PE-256945", fraudValue: "£29,500", status: "Recovered", commissionStatus: "Eligible" },
+    { id: "ag-1", name: "Harborview Estates", status: "Active", dateAdded: "2 Nov, 2025", attributionMethod: "Invite", totalFraudValue: "£128,400", totalCommission: "£9,630", attributed: true, casesFound: 8, confirmedFraud: 3, cleared: 2, inProgress: 1 },
+    { id: "ag-2", name: "Northgate Homes", status: "Active", dateAdded: "15 Oct, 2025", attributionMethod: "Link", totalFraudValue: "£96,200", totalCommission: "£7,215", attributed: true, casesFound: 6, confirmedFraud: 2, cleared: 1, inProgress: 1 },
+    { id: "ag-3", name: "Crestline Properties", status: "Active", dateAdded: "28 Oct, 2025", attributionMethod: "Link", totalFraudValue: "£74,800", totalCommission: "£5,610", attributed: true, casesFound: 5, confirmedFraud: 2, cleared: 1, inProgress: 2 },
+    { id: "ag-4", name: "Bridgewater Realty", status: "Pending", dateAdded: "9 Oct, 2025", attributionMethod: "Invite", totalFraudValue: "£0", totalCommission: "£0", attributed: false, casesFound: 0, confirmedFraud: 0, cleared: 0, inProgress: 0 },
+    { id: "ag-5", name: "Maple & Co Lettings", status: "Pending", dateAdded: "24 Oct, 2025", attributionMethod: "Manual", totalFraudValue: "£18,500", totalCommission: "£0", attributed: false, casesFound: 2, confirmedFraud: 0, cleared: 0, inProgress: 2 },
+    { id: "ag-6", name: "Sterling Property Group", status: "Active", dateAdded: "3 Oct, 2025", attributionMethod: "Manual", totalFraudValue: "£52,300", totalCommission: "£3,920", attributed: true, casesFound: 4, confirmedFraud: 1, cleared: 2, inProgress: 0 },
+    { id: "ag-7", name: "Oakfield Residential", status: "Active", dateAdded: "18 Sep, 2025", attributionMethod: "Link", totalFraudValue: "£41,900", totalCommission: "£3,140", attributed: true, casesFound: 3, confirmedFraud: 1, cleared: 1, inProgress: 0 },
+    { id: "ag-8", name: "Kingsway Lettings", status: "Rejected", dateAdded: "11 Sep, 2025", attributionMethod: "Manual", totalFraudValue: "£0", totalCommission: "£0", attributed: false, casesFound: 0, confirmedFraud: 0, cleared: 0, inProgress: 0 },
+    { id: "ag-9", name: "Pinnacle Homes", status: "Active", dateAdded: "2 Sep, 2025", attributionMethod: "Invite", totalFraudValue: "£63,700", totalCommission: "£4,780", attributed: true, casesFound: 5, confirmedFraud: 2, cleared: 1, inProgress: 1 },
+    { id: "ag-10", name: "Riverside Estates", status: "Pending", dateAdded: "25 Aug, 2025", attributionMethod: "Link", totalFraudValue: "£0", totalCommission: "£0", attributed: false, casesFound: 0, confirmedFraud: 0, cleared: 0, inProgress: 0 },
+    { id: "ag-11", name: "Beacon Property Co", status: "Active", dateAdded: "14 Aug, 2025", attributionMethod: "Invite", totalFraudValue: "£38,200", totalCommission: "£2,865", attributed: true, casesFound: 3, confirmedFraud: 1, cleared: 1, inProgress: 0 },
 ]
 
 // ---------------------------------------------------------------------------
@@ -432,13 +387,13 @@ export interface MarketingAuditRecord {
 }
 
 export const marketingAuditLog: MarketingAuditRecord[] = [
+    { timestamp: "3 Nov, 2025 16:10", event: "Determination approved — case closed", actor: "Admin", entity: "#367280" },
     { timestamp: "3 Nov, 2025 14:22", event: "Attribution claim submitted", actor: "Daniel Okafor", entity: "Maple & Co Lettings" },
     { timestamp: "3 Nov, 2025 11:05", event: "Dispute raised", actor: "Daniel Okafor", entity: "#DSP-1042" },
-    { timestamp: "2 Nov, 2025 09:18", event: "Commission approved", actor: "Marketing Admin", entity: "#PE-256701" },
-    { timestamp: "1 Nov, 2025 16:40", event: "Payout marked paid", actor: "Marketing Admin", entity: "Daniel Okafor — Oct 2025" },
-    { timestamp: "1 Nov, 2025 10:12", event: "Attribution locked", actor: "Marketing Admin", entity: "Harborview Estates" },
+    { timestamp: "2 Nov, 2025 09:18", event: "Commission approved", actor: "Admin", entity: "#PE-256701" },
+    { timestamp: "1 Nov, 2025 16:40", event: "Payout marked paid", actor: "Admin", entity: "Daniel Okafor — Oct 2025" },
+    { timestamp: "1 Nov, 2025 10:12", event: "Attribution locked", actor: "Admin", entity: "Harborview Estates" },
     { timestamp: "28 Oct, 2025 15:33", event: "Attribution conflict detected", actor: "System", entity: "Bridgewater Realty" },
-    { timestamp: "24 Oct, 2025 08:55", event: "Marketer activated", actor: "Marketing Admin", entity: "Lena Novak" },
 ]
 
 // ---------------------------------------------------------------------------

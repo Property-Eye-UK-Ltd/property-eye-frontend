@@ -16,11 +16,15 @@ const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-6 lg:py-3 lg:t
 const td = "px-2 py-2 text-xs lg:px-6 lg:py-3 lg:text-sm"
 
 const actionTypeStyles: Record<string, string> = {
-    "Triggered Case": "bg-red-50 text-red-600 border border-red-100",
-    "Closed Case": "bg-red-50 text-red-600 border border-red-100",
+    "Determination Submitted": "bg-indigo-50 text-indigo-600 border border-indigo-100",
+    "Case Approved & Closed": "bg-green-50 text-green-600 border border-green-100",
+    "Determination Returned": "bg-amber-50 text-amber-600 border border-amber-100",
+    "Agency Dispute Raised": "bg-orange-50 text-orange-600 border border-orange-100",
+    "Case Reopened": "bg-blue-50 text-blue-600 border border-blue-100",
+    "Attribution Claim Submitted": "bg-purple-50 text-purple-600 border border-purple-100",
+    "Attribution Conflict Detected": "bg-red-50 text-red-600 border border-red-100",
+    "Commission Approved": "bg-green-50 text-green-600 border border-green-100",
     "Suspension": "bg-purple-50 text-purple-600 border border-purple-100",
-    "Role Override": "bg-purple-50 text-purple-600 border border-purple-100",
-    "Printed Invoice": "bg-gray-50 text-gray-600 border border-gray-200",
 }
 
 const targetObjectStyles: Record<string, string> = {

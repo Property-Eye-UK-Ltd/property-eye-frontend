@@ -13,7 +13,7 @@ export const users: User[] = [
         id: "1",
         name: "John Smith",
         email: "johnsmithsmith@gmail.com",
-        role: "Analyst",
+        role: "Agency Owner",
         lastActive: "3 November, 2025",
         status: "Active",
         avatar: "/avatars/john.png"
@@ -22,7 +22,7 @@ export const users: User[] = [
         id: "2",
         name: "Khalid Jaffar",
         email: "K.jaffar@gmail.com",
-        role: "Admin",
+        role: "Agency Staff",
         lastActive: "21 October, 2025",
         status: "Disabled",
     },
@@ -30,7 +30,7 @@ export const users: User[] = [
         id: "3",
         name: "Maria Sheldon",
         email: "Mariashel3245@gmail.com",
-        role: "Viewer",
+        role: "Agency Viewer",
         lastActive: "21 October, 2025",
         status: "Disabled",
         avatar: "/avatars/maria.png"
@@ -39,7 +39,7 @@ export const users: User[] = [
         id: "4",
         name: "Kurt Daniel",
         email: "Dankurt@gmail.com",
-        role: "Analyst",
+        role: "Agency Staff",
         lastActive: "21 October, 2025",
         status: "Active",
         avatar: "/avatars/kurt.png"
@@ -48,11 +48,11 @@ export const users: User[] = [
         id: "5",
         name: "Angela Davies",
         email: "Angeladavies@gmail.com",
-        role: "Analyst",
+        role: "Agency Staff",
         lastActive: "30 September, 2025",
         status: "Active",
         avatar: "/avatars/angela.png"
     },
 ]
 
-export const userRoles = ["Admin", "Analyst", "Viewer"] as const
+export const userRoles = ["Agency Owner", "Agency Staff", "Agency Viewer"] as const

@@ -1,7 +1,7 @@
 export interface PaymentHistory {
     id: string
     invoiceNumber: string
-    paymentType: string
+    paymentType: "Starter" | "Enterprise"
     billingDate: string
     amount: string
     status: "Successful" | "Failed"
@@ -10,80 +10,75 @@ export interface PaymentHistory {
 export const paymentHistory: PaymentHistory[] = [
     {
         id: "1",
-        invoiceNumber: "#7392013",
-        paymentType: "Enterprise Plan",
+        invoiceNumber: "#INV-2025-1103-001",
+        paymentType: "Enterprise",
         billingDate: "3 November, 2025",
-        amount: "£232.00",
+        amount: "£900.00",
         status: "Successful",
     },
     {
         id: "2",
-        invoiceNumber: "#7392013",
-        paymentType: "Pro Plan",
+        invoiceNumber: "#INV-2025-1021-002",
+        paymentType: "Starter",
         billingDate: "21 October, 2025",
-        amount: "£232.00",
+        amount: "£299.00",
         status: "Failed",
     },
     {
         id: "3",
-        invoiceNumber: "#7392013",
-        paymentType: "Property Check",
+        invoiceNumber: "#INV-2025-1021-003",
+        paymentType: "Enterprise",
         billingDate: "21 October, 2025",
-        amount: "£232.00",
-        status: "Failed",
+        amount: "£900.00",
+        status: "Successful",
     },
     {
         id: "4",
-        invoiceNumber: "#7392013",
-        paymentType: "Pro Plan",
-        billingDate: "21 October, 2025",
-        amount: "£232.00",
+        invoiceNumber: "#INV-2025-0930-004",
+        paymentType: "Starter",
+        billingDate: "30 September, 2025",
+        amount: "£299.00",
         status: "Successful",
     },
     {
         id: "5",
-        invoiceNumber: "#7392013",
-        paymentType: "Premium Plan",
-        billingDate: "30 September, 2025",
-        amount: "£232.00",
-        status: "Successful",
-    },
-    {
-        id: "6",
-        invoiceNumber: "#7392013",
-        paymentType: "Property Check",
+        invoiceNumber: "#INV-2025-0924-005",
+        paymentType: "Enterprise",
         billingDate: "24 September, 2025",
-        amount: "£232.00",
+        amount: "£900.00",
         status: "Failed",
     },
     {
-        id: "7",
-        invoiceNumber: "#7392013",
-        paymentType: "Basic Plan",
+        id: "6",
+        invoiceNumber: "#INV-2025-0924-006",
+        paymentType: "Starter",
         billingDate: "24 September, 2025",
-        amount: "£232.00",
+        amount: "£299.00",
+        status: "Successful",
+    },
+    {
+        id: "7",
+        invoiceNumber: "#INV-2025-0815-007",
+        paymentType: "Enterprise",
+        billingDate: "15 August, 2025",
+        amount: "£900.00",
         status: "Successful",
     },
 ]
 
 export interface CurrentPlan {
-    name: string
+    name: "Starter" | "Enterprise"
     price: number
     billingCycle: "Monthly" | "Yearly"
     nextBillingDate: string
-    checksUsed: number
-    checksTotal: number
-    crmUsersUsed: number
-    crmUsersTotal: number
 }
 
 export const currentPlan: CurrentPlan = {
-    name: "Pro Plan",
+    name: "Enterprise",
     price: 900,
     billingCycle: "Monthly",
     nextBillingDate: "Nov 29, 2025",
-    checksUsed: 230,
-    checksTotal: 750,
-    crmUsersUsed: 3,
-    crmUsersTotal: 5,
 }
+
+export const COMMISSION_STANDING_DISCLOSURE =
+    "Property Eye retains 50% of any commission recovered on your behalf."

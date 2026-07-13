@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { AgencyCase } from "@/data/agencyCasesData"
+import { AgencyCase, adminCaseStatusStyles, caseSeverityStyles } from "@/data/agencyCasesData"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -67,25 +67,23 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
     return (
         <>
             <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-                <Table className="min-w-[720px]">
+                <Table className="min-w-[1100px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className={th}>Case ID</TableHead>
                             <TableHead className={th}>Agency</TableHead>
                             <TableHead className={th}>Address</TableHead>
                             <TableHead className={th}>
-                                <button className={sortBtnClass} onClick={() => handleSort("completionDate")}>
-                                    Completed
-                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
-                                </button>
-                            </TableHead>
-                            <TableHead className={th}>
                                 <button className={sortBtnClass} onClick={() => handleSort("buyerName")}>
                                     Buyer
                                     <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
+                            <TableHead className={th}>Withdrawal</TableHead>
+                            <TableHead className={th}>Sale Date</TableHead>
+                            <TableHead className={th}>Severity</TableHead>
                             <TableHead className={th}>Status</TableHead>
+                            <TableHead className={th}>Determination</TableHead>
                             <TableHead className={cn(th, "text-right")}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -106,22 +104,32 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                                 <TableCell className={cn(td, "max-w-[140px] truncate text-muted-foreground lg:max-w-none")}>
                                     {caseItem.propertyAddress}
                                 </TableCell>
-                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
-                                    {caseItem.completionDate}
-                                </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>
                                     {caseItem.buyerName}
                                 </TableCell>
+                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
+                                    {caseItem.withdrawalDate}
+                                </TableCell>
+                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
+                                    {caseItem.saleDate}
+                                </TableCell>
                                 <TableCell className={td}>
-                                    {caseItem.status === "CHECKED" ? (
-                                        <Badge className="rounded-full border border-green-100 bg-green-50 px-2 py-0.5 text-[10px] font-medium text-green-600 lg:px-3 lg:py-1 lg:text-xs">
-                                            CHECKED
-                                        </Badge>
-                                    ) : (
-                                        <Badge className="rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-600 lg:px-3 lg:py-1 lg:text-xs">
-                                            PENDING
-                                        </Badge>
-                                    )}
+                                    <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1 lg:text-xs", caseSeverityStyles[caseItem.severity])}>
+                                        {caseItem.severity}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className={td}>
+                                    <Badge
+                                        className={cn(
+                                            "rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1 lg:text-xs",
+                                            adminCaseStatusStyles[caseItem.adminStatus]
+                                        )}
+                                    >
+                                        {caseItem.adminStatus}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className={cn(td, "text-muted-foreground")}>
+                                    {caseItem.determination ?? "—"}
                                 </TableCell>
                                 <TableCell className={cn(td, "text-right")}>
                                     <button

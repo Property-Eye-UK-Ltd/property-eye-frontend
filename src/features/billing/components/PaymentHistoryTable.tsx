@@ -83,7 +83,7 @@ export const PaymentHistoryTable = () => {
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className="px-4 font-medium">Invoice Number</TableHead>
-                            <TableHead className="px-4 font-medium">Payment Type</TableHead>
+                            <TableHead className="px-4 font-medium">Plan</TableHead>
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"

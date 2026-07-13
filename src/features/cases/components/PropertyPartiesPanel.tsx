@@ -13,12 +13,15 @@ export interface PropertyPartiesData {
 
 interface PropertyPartiesPanelProps {
   data: PropertyPartiesData
+  /** Agency portal hides financial / strength signals */
+  variant?: "agency" | "default"
 }
 
 const fieldLabel = "mb-0.5 text-xs text-muted-foreground"
 const fieldValue = "text-xs text-primary sm:text-sm"
 
-export const PropertyPartiesPanel = ({ data }: PropertyPartiesPanelProps) => {
+export const PropertyPartiesPanel = ({ data, variant = "default" }: PropertyPartiesPanelProps) => {
+  const hideFinancialFields = variant === "agency"
   return (
     <div className="rounded-2xl border border-border bg-white p-3 shadow-sm sm:p-4 lg:p-6">
       <div className="space-y-4 sm:space-y-6">
@@ -41,10 +44,12 @@ export const PropertyPartiesPanel = ({ data }: PropertyPartiesPanelProps) => {
               <p className={fieldLabel}>Date Sold</p>
               <p className={fieldValue}>{data.dateSold}</p>
             </div>
-            <div>
-              <p className={fieldLabel}>Sold Amount</p>
-              <p className={fieldValue}>{data.soldAmount}</p>
-            </div>
+            {!hideFinancialFields && (
+              <div>
+                <p className={fieldLabel}>Sold Amount</p>
+                <p className={fieldValue}>{data.soldAmount}</p>
+              </div>
+            )}
             <div>
               <p className={fieldLabel}>Sold To (Buyer)</p>
               <p className={fieldValue}>{data.soldTo}</p>

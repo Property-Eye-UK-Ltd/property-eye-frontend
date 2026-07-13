@@ -10,7 +10,6 @@ import {
     MarketerAgency,
     MarketerAgencyStatus,
     marketerAgencyStatusStyles,
-    attributionMethodStyles,
 } from "@/data/marketing-data"
 import { SubmitClaimModal, SubmitClaimFormValues } from "./SubmitClaimModal"
 
@@ -77,15 +76,17 @@ export const MarketerAgenciesTable = ({ data }: MarketerAgenciesTableProps) => {
             }
         >
             <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-                <Table className="min-w-[820px]">
+                <Table className="min-w-[960px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className={th}>Agency Name</TableHead>
                             <TableHead className={th}>Status</TableHead>
-                            <TableHead className={th}>Date Added</TableHead>
-                            <TableHead className={th}>Attribution</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Total Fraud Value</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Commission Earned</TableHead>
+                            <TableHead className={cn(th, "text-right")}>Cases Found</TableHead>
+                            <TableHead className={cn(th, "text-right")}>Confirmed</TableHead>
+                            <TableHead className={cn(th, "text-right")}>Cleared</TableHead>
+                            <TableHead className={cn(th, "text-right")}>In Progress</TableHead>
+                            <TableHead className={cn(th, "text-right")}>Fraud Value</TableHead>
+                            <TableHead className={cn(th, "text-right")}>Commission</TableHead>
                             <TableHead className={cn(th, "text-right")}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -105,19 +106,10 @@ export const MarketerAgenciesTable = ({ data }: MarketerAgenciesTableProps) => {
                                         {agency.status}
                                     </span>
                                 </TableCell>
-                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
-                                    {agency.dateAdded}
-                                </TableCell>
-                                <TableCell className={td}>
-                                    <span
-                                        className={cn(
-                                            "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs",
-                                            attributionMethodStyles[agency.attributionMethod]
-                                        )}
-                                    >
-                                        {agency.attributionMethod}
-                                    </span>
-                                </TableCell>
+                                <TableCell className={cn(td, "text-right text-muted-foreground")}>{agency.casesFound}</TableCell>
+                                <TableCell className={cn(td, "text-right text-muted-foreground")}>{agency.confirmedFraud}</TableCell>
+                                <TableCell className={cn(td, "text-right text-muted-foreground")}>{agency.cleared}</TableCell>
+                                <TableCell className={cn(td, "text-right text-muted-foreground")}>{agency.inProgress}</TableCell>
                                 <TableCell className={cn(td, "text-right text-muted-foreground")}>
                                     {agency.totalFraudValue}
                                 </TableCell>
@@ -145,7 +137,7 @@ export const MarketerAgenciesTable = ({ data }: MarketerAgenciesTableProps) => {
                         ))}
                         {paginated.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={7} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={9} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     No agencies match this filter.
                                 </TableCell>
                             </TableRow>

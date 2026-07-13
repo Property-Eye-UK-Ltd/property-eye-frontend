@@ -1,6 +1,4 @@
 import {
-    Refresh2,
-    Sort,
     LogoutCurve,
     SidebarLeft,
     SidebarRight,
@@ -10,7 +8,6 @@ import {
 import { NotificationMenu } from "./NotificationMenu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -33,7 +30,6 @@ const headerIdentity: Record<DashboardVariant, { name: string; email: string; av
     agency: { name: "Admin", email: "amanda@solicthomes.com", avatar: "https://i.pravatar.cc/150?img=1", initials: "AM" },
     "super-admin": { name: "Admin", email: "amanda@solicthomes.com", avatar: "https://i.pravatar.cc/150?img=1", initials: "AM" },
     marketer: { name: "Daniel Okafor", email: "daniel@growthpartners.co", avatar: "https://i.pravatar.cc/150?img=12", initials: "DO" },
-    "marketing-admin": { name: "Marketing Admin", email: "ops@propertyeye.com", avatar: "https://i.pravatar.cc/150?img=5", initials: "MA" },
 }
 
 export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) => {
@@ -44,12 +40,8 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
     }
 
     const isSuperAdmin = variant === "super-admin"
-    const isMarketingAdmin = variant === "marketing-admin"
-    const isAgency = variant === "agency"
-    // Admin-style header layout (search bar, left-aligned) for both admin surfaces.
-    const isAdmin = isSuperAdmin || isMarketingAdmin
-    // Live check runner is an agency / platform-admin tool, not a marketing surface.
-    const showCheckRunner = isAgency || isSuperAdmin
+    const isAdmin = isSuperAdmin
+    const showCheckRunner = isSuperAdmin
     const identity = headerIdentity[variant]
 
     return (
@@ -121,103 +113,6 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                                 className="h-9 w-full rounded-full border-border bg-background pl-9 text-sm lg:h-10 lg:pl-10"
                             />
                         </div>
-                    )}
-
-                    {isAgency && (
-                        <>
-                            <div className="hidden items-center gap-2 lg:flex">
-                                <button
-                                    className="rounded-full p-1.5 transition-colors hover:bg-muted"
-                                    aria-label="Refresh data"
-                                >
-                                    <Refresh2 size={20} variant="Bulk" className="text-primary" />
-                                </button>
-                                <div className="text-left">
-                                    <p className="text-xs font-medium text-foreground">Last data pull:</p>
-                                    <p className="text-xs text-muted-foreground">
-                                        8 Nov 2025, 14:23 GMT
-                                    </p>
-                                </div>
-                            </div>
-
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <button
-                                        type="button"
-                                        className={cn(iconTriggerClass, "lg:hidden")}
-                                        aria-label="Last data pull"
-                                    >
-                                        <Refresh2 size={20} variant="Bulk" className="text-primary" />
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-56 rounded-xl p-0">
-                                    <div className="space-y-3 p-4">
-                                        <div>
-                                            <p className="text-xs font-medium text-foreground">
-                                                Last data pull
-                                            </p>
-                                            <p className="mt-0.5 text-xs text-muted-foreground">
-                                                8 Nov 2025, 14:23 GMT
-                                            </p>
-                                        </div>
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="h-9 w-full rounded-full"
-                                        >
-                                            <Refresh2
-                                                size={16}
-                                                variant="Bulk"
-                                                className="mr-2 text-primary"
-                                            />
-                                            Refresh now
-                                        </Button>
-                                    </div>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-
-                            <div className="hidden items-center gap-2 rounded-full bg-muted px-3 py-1.5 lg:flex">
-                                <div className="rounded-full bg-primary p-1">
-                                    <Sort size={16} variant="Outline" className="text-secondary" />
-                                </div>
-                                <span className="text-sm font-medium">
-                                    <span style={{ color: "#4D66EA" }}>450</span>
-                                    <span className="text-muted-foreground">/500</span>
-                                </span>
-                            </div>
-
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <button
-                                        type="button"
-                                        className={cn(iconTriggerClass, "lg:hidden")}
-                                        aria-label="Check credits"
-                                    >
-                                        <div className="rounded-full bg-primary p-1.5">
-                                            <Sort size={16} variant="Outline" className="text-secondary" />
-                                        </div>
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-52 rounded-xl p-4">
-                                    <p className="text-xs font-medium text-muted-foreground">
-                                        Check credits
-                                    </p>
-                                    <p className="mt-1 text-2xl font-medium text-foreground">
-                                        <span style={{ color: "#4D66EA" }}>450</span>
-                                        <span className="text-base text-muted-foreground">/500</span>
-                                    </p>
-                                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                                        <div
-                                            className="h-full rounded-full bg-primary"
-                                            style={{ width: "90%" }}
-                                        />
-                                    </div>
-                                    <p className="mt-2 text-xs text-muted-foreground">
-                                        50 checks remaining this cycle
-                                    </p>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </>
                     )}
 
                     {showCheckRunner && (

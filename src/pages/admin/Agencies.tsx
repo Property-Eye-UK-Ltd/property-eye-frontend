@@ -55,7 +55,7 @@ const Agencies = () => {
             />
 
             <DashboardPageContent className="space-y-3 lg:space-y-4">
-                <MetricCards metrics={agenciesMetricsData[selectedPeriod]} />
+                <MetricCards metrics={agenciesMetricsData[selectedPeriod]} columns={3} />
 
                 <DashboardPanel
                     title="Agencies List"

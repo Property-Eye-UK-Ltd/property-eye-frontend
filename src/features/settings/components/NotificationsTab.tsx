@@ -10,9 +10,10 @@ import { EditTemplateModal } from "./EditTemplateModal"
 interface NotificationsTabProps {
     settings: NotificationSettings
     onSave: (settings: NotificationSettings) => void
+    showTemplates?: boolean
 }
 
-export const NotificationsTab = ({ settings, onSave }: NotificationsTabProps) => {
+export const NotificationsTab = ({ settings, onSave, showTemplates = true }: NotificationsTabProps) => {
     const [activeTab, setActiveTab] = useState<'notifications' | 'templates'>('notifications')
     const [formData, setFormData] = useState<NotificationSettings>(settings)
     const [hasChanges, setHasChanges] = useState(false)
@@ -50,8 +51,8 @@ export const NotificationsTab = ({ settings, onSave }: NotificationsTabProps) =>
 
     const templates = [
         { title: "Fraud Detected (Agency)", type: "Email", content: "Dear [Agency Name], our system has detected a potential commission fraud for property [Property Address]. Please review the case details in your dashboard." },
-        { title: "Sweep Scheduled", type: "SMS", content: "Property Eye Alert: A commission sweep is scheduled for tomorrow at [Time]. Please ensure your data integration is healthy." },
-        { title: "Check Completed", type: "Email", content: "Good news! The commission check for [Period] has been completed. [X] cases have been identified for recovery." },
+        { title: "Account Review Reminder", type: "SMS", content: "Property Eye Alert: An account review is scheduled for [Date] at [Time]. Please ensure your data integration is healthy." },
+        { title: "Account Review Update", type: "Email", content: "The account review for [Period] has been completed. Sign in to Property Eye for your latest case status updates." },
         { title: "Billing Reminder", type: "SMS", content: "Your Property Eye subscription for [Month] is due. Please review your billing tab to avoid service interruption." }
     ]
 
@@ -67,7 +68,7 @@ export const NotificationsTab = ({ settings, onSave }: NotificationsTabProps) =>
             hasChanges={hasChanges}
         >
             <div className="space-y-8">
-                {/* Custom Sub-Tabs */}
+                {showTemplates && (
                 <div className="flex items-center gap-8 border-b border-border">
                     {[
                         { id: 'notifications', label: 'Notifications' },
@@ -75,7 +76,7 @@ export const NotificationsTab = ({ settings, onSave }: NotificationsTabProps) =>
                     ].map((tab) => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
+                            onClick={() => setActiveTab(tab.id as 'notifications' | 'templates')}
                             className={cn(
                                 "pb-4 text-sm font-medium transition-all relative",
                                 activeTab === tab.id 
@@ -90,9 +91,10 @@ export const NotificationsTab = ({ settings, onSave }: NotificationsTabProps) =>
                         </button>
                     ))}
                 </div>
+                )}
 
                 <div className="min-h-[400px]">
-                    {activeTab === 'notifications' ? (
+                    {(!showTemplates || activeTab === 'notifications') ? (
                         <div className="space-y-6 animate-in fade-in slide-in-from-left-2 duration-300">
                             {/* Email Notification */}
                             <div className="flex items-start justify-between gap-4">

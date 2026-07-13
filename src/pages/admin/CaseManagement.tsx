@@ -9,7 +9,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SearchNormal, ArrowDown2 } from "iconsax-react"
 import { AdminCasesTable } from "@/features/admincases/components/AdminCasesTable"
-import { mockAgencyCases } from "@/data/agencyCasesData"
+import {
+    AdminCaseStatus,
+    CaseDetermination,
+    mockAgencyCases,
+} from "@/data/agencyCasesData"
 import { agenciesData } from "@/data/agenciesData"
 
 const panelBtnClass =
@@ -18,16 +22,67 @@ const panelBtnClass =
 const AdminCaseManagement = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedAgency, setSelectedAgency] = useState<string>("all")
+    const [selectedStatus, setSelectedStatus] = useState<string>("all")
+    const [selectedSeverity, setSelectedSeverity] = useState<string>("all")
+    const [selectedDetermination, setSelectedDetermination] = useState<string>("all")
+    const [dateFrom, setDateFrom] = useState("")
+    const [dateTo, setDateTo] = useState("")
+
+    const statusOptions: AdminCaseStatus[] = [
+        "Open",
+        "Under Legal Review",
+        "Flagged",
+        "Pending Approval",
+        "Closed",
+    ]
+    const severityOptions = ["Critical", "High", "Medium", "Low"] as const
+    const determinationOptions: CaseDetermination[] = [
+        "Fraudulent (Confirmed)",
+        "Not Fraudulent (Cleared)",
+    ]
+
+    const parseLooseDate = (value: string) => {
+        const t = Date.parse(value)
+        return Number.isNaN(t) ? null : t
+    }
 
     const filteredCases = mockAgencyCases.filter((c) => {
+        const q = searchQuery.toLowerCase()
         const matchesSearch =
-            c.caseId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            c.propertyAddress.toLowerCase().includes(searchQuery.toLowerCase())
+            !q ||
+            c.caseId.toLowerCase().includes(q) ||
+            c.propertyAddress.toLowerCase().includes(q) ||
+            c.buyerName.toLowerCase().includes(q) ||
+            (c.agencyName ?? "").toLowerCase().includes(q)
         const matchesAgency = selectedAgency === "all" || c.agencyName === selectedAgency
-        return matchesSearch && matchesAgency
+        const matchesStatus = selectedStatus === "all" || c.adminStatus === selectedStatus
+        const matchesSeverity = selectedSeverity === "all" || c.severity === selectedSeverity
+        const matchesDetermination =
+            selectedDetermination === "all" || c.determination === selectedDetermination
+
+        const saleTs = parseLooseDate(c.saleDate)
+        const fromTs = dateFrom ? Date.parse(dateFrom) : null
+        const toTs = dateTo ? Date.parse(dateTo) : null
+        const matchesDate =
+            (!fromTs || (saleTs !== null && saleTs >= fromTs)) &&
+            (!toTs || (saleTs !== null && saleTs <= toTs))
+
+        return (
+            matchesSearch &&
+            matchesAgency &&
+            matchesStatus &&
+            matchesSeverity &&
+            matchesDetermination &&
+            matchesDate
+        )
     })
 
-    const uniqueAgencies = Array.from(new Set(agenciesData.map((a) => a.name)))
+    const uniqueAgencies = Array.from(
+        new Set([
+            ...agenciesData.map((a) => a.name),
+            ...mockAgencyCases.map((c) => c.agencyName).filter(Boolean) as string[],
+        ])
+    )
 
     return (
         <DashboardLayout variant="super-admin">
@@ -40,15 +95,15 @@ const AdminCaseManagement = () => {
                     noPadding
                     hasBorder
                     actions={
-                        <div className="flex flex-nowrap items-center gap-1.5 lg:gap-2">
-                            <div className="relative min-w-[9rem] flex-1 sm:min-w-0 sm:flex-none sm:w-44 lg:w-56">
+                        <div className="flex max-w-full flex-wrap items-center gap-1.5 lg:gap-2">
+                            <div className="relative min-w-[9rem] flex-1 sm:min-w-0 sm:flex-none sm:w-44 lg:w-52">
                                 <SearchNormal
                                     size={16}
                                     variant="Outline"
                                     className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                                 />
                                 <Input
-                                    placeholder="Search"
+                                    placeholder="Case, agency, address, buyer"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="h-8 rounded-full border-border bg-background pl-8 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-9 lg:pl-10 lg:text-sm"
@@ -56,8 +111,8 @@ const AdminCaseManagement = () => {
                             </div>
 
                             <Select value={selectedAgency} onValueChange={setSelectedAgency}>
-                                <SelectTrigger className="h-8 w-28 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-40 lg:px-4 lg:text-sm">
-                                    <SelectValue placeholder="All Agencies" />
+                                <SelectTrigger className="h-8 w-28 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-36 lg:px-3 lg:text-sm">
+                                    <SelectValue placeholder="Agency" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All Agencies</SelectItem>
@@ -68,6 +123,59 @@ const AdminCaseManagement = () => {
                                     ))}
                                 </SelectContent>
                             </Select>
+
+                            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                                <SelectTrigger className="h-8 w-28 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-40 lg:px-3 lg:text-sm">
+                                    <SelectValue placeholder="Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Statuses</SelectItem>
+                                    {statusOptions.map((status) => (
+                                        <SelectItem key={status} value={status}>
+                                            {status}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Select value={selectedSeverity} onValueChange={setSelectedSeverity}>
+                                <SelectTrigger className="h-8 w-24 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-32 lg:px-3 lg:text-sm">
+                                    <SelectValue placeholder="Severity" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Severity</SelectItem>
+                                    {severityOptions.map((s) => (
+                                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Select value={selectedDetermination} onValueChange={setSelectedDetermination}>
+                                <SelectTrigger className="h-8 w-28 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-44 lg:px-3 lg:text-sm">
+                                    <SelectValue placeholder="Determination" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Determinations</SelectItem>
+                                    {determinationOptions.map((d) => (
+                                        <SelectItem key={d} value={d}>{d}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Input
+                                type="date"
+                                value={dateFrom}
+                                onChange={(e) => setDateFrom(e.target.value)}
+                                className="h-8 w-[8.5rem] shrink-0 rounded-full border-border bg-background px-2 text-xs focus-visible:ring-0 lg:h-9 lg:text-sm"
+                                title="Sale date from"
+                            />
+                            <Input
+                                type="date"
+                                value={dateTo}
+                                onChange={(e) => setDateTo(e.target.value)}
+                                className="h-8 w-[8.5rem] shrink-0 rounded-full border-border bg-background px-2 text-xs focus-visible:ring-0 lg:h-9 lg:text-sm"
+                                title="Sale date to"
+                            />
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>

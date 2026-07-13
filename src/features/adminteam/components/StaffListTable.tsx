@@ -133,7 +133,7 @@ export const StaffListTable = ({ data }: StaffListTableProps) => {
                                         onClick={() => navigate(`/admin/team/staff/${staff.id}`)}
                                         className="text-xs font-medium text-progress hover:underline lg:text-sm"
                                     >
-                                        View
+                                        Edit
                                     </button>
                                 </TableCell>
                             </TableRow>

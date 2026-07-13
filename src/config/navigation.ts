@@ -1,6 +1,6 @@
-import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph, Buildings, Danger, MoneyRecive, Card, Share, Note, ShieldTick, ReceiptText } from "iconsax-react"
+import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph, Buildings, Danger, MoneyRecive, Card, Share, Note } from "iconsax-react"
 
-export type DashboardVariant = "agency" | "super-admin" | "marketer" | "marketing-admin"
+export type DashboardVariant = "agency" | "super-admin" | "marketer"
 
 export interface NavItem {
     label: string
@@ -86,6 +86,12 @@ export const superAdminNavConfig: NavConfig = {
             variant: "Bulk",
         },
         {
+            label: "Affiliates",
+            icon: Share,
+            path: "/admin/affiliates",
+            variant: "Bulk",
+        },
+        {
             label: "Team Management",
             icon: People,
             path: "/admin/team",
@@ -130,12 +136,6 @@ export const marketerNavConfig: NavConfig = {
             variant: "Bulk",
         },
         {
-            label: "Fraud Cases",
-            icon: Danger,
-            path: "/marketing/fraud-cases",
-            variant: "Bulk",
-        },
-        {
             label: "Commissions",
             icon: MoneyRecive,
             path: "/marketing/commissions",
@@ -161,50 +161,18 @@ export const marketerNavConfig: NavConfig = {
             path: "/marketing/disputes",
             variant: "Bulk",
         },
-    ],
-    showProCard: false,
-}
-
-export const marketingAdminNavConfig: NavConfig = {
-    mainItems: [
         {
-            label: "Overview",
-            icon: Element,
-            path: "/marketing-admin/dashboard",
-            variant: "Bulk",
-        },
-        {
-            label: "Network",
-            icon: People,
-            path: "/marketing-admin/network",
-            variant: "Bulk",
-        },
-        {
-            label: "Attribution",
-            icon: ShieldTick,
-            path: "/marketing-admin/attribution",
-            variant: "Bulk",
-        },
-        {
-            label: "Finance",
-            icon: Wallet1,
-            path: "/marketing-admin/finance",
-            variant: "Bulk",
-        },
-        {
-            label: "Reports",
-            icon: ReceiptText,
-            path: "/marketing-admin/reports",
+            label: "Settings",
+            icon: Setting2,
+            path: "/marketing/settings",
             variant: "Bulk",
         },
     ],
-    bottomItems: [],
     showProCard: false,
 }
 
 export const getNavConfig = (variant: DashboardVariant): NavConfig => {
     if (variant === "super-admin") return superAdminNavConfig
     if (variant === "marketer") return marketerNavConfig
-    if (variant === "marketing-admin") return marketingAdminNavConfig
     return agencyNavConfig
 }

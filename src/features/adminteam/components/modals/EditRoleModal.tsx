@@ -14,7 +14,7 @@ interface EditRoleModalProps {
     }
 }
 
-const staffRoles = ["Admin", "Analyst", "Viewer", "Managed"]
+const staffRoles = ["Admin", "Analyst", "Viewer"]
 
 export const EditRoleModal = ({ open, onClose, onConfirm, staffData }: EditRoleModalProps) => {
     const [name, setName] = useState("")

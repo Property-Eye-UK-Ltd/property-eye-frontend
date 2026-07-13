@@ -6,7 +6,7 @@ import { InfoCircle } from "iconsax-react"
 import {
     DisputeType,
     marketerAgencies,
-    marketerFraudCases,
+    commissionLines,
 } from "@/data/marketing-data"
 
 export interface RaiseDisputeFormValues {
@@ -47,7 +47,10 @@ export const RaiseDisputeModal = ({
         if (type === "Agency Ownership") {
             return marketerAgencies.map((a) => ({ value: a.name, label: a.name }))
         }
-        return marketerFraudCases.map((c) => ({ value: c.caseRef, label: `${c.caseRef} — ${c.agency}` }))
+        // Commission disputes link only to lines with an eligible fraud case ref
+        return commissionLines
+            .filter((c) => Boolean(c.fraudCase))
+            .map((c) => ({ value: c.fraudCase!, label: `${c.fraudCase} — ${c.agency}` }))
     }, [type])
 
     const handleTypeChange = (value: string) => {

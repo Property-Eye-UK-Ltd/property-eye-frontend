@@ -9,11 +9,12 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
+import { defaultSweepScheduling } from "@/data/schedulingData"
 
 export const AutomationTab = () => {
     const [isEditing, setIsEditing] = useState(false)
-    const [frequency, setFrequency] = useState("bi-annually")
-    const [dates, setDates] = useState(["2025-06-15", "2025-12-15"])
+    const [frequency, setFrequency] = useState(defaultSweepScheduling.frequency)
+    const [dates, setDates] = useState([...defaultSweepScheduling.sweepDates])
 
     return (
         <SettingsTabShell

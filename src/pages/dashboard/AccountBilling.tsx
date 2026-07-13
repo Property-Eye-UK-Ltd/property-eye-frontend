@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
@@ -13,7 +12,6 @@ import { toast } from "sonner"
 import { currentPlan, paymentHistory } from "@/data/billing-data"
 
 const AccountBilling = () => {
-    const navigate = useNavigate()
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
     const [isFormModalOpen, setIsFormModalOpen] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -23,10 +21,6 @@ const AccountBilling = () => {
 
     const handleCancelPlanClick = () => {
         setIsConfirmModalOpen(true)
-    }
-
-    const handleChangePlanClick = () => {
-        navigate("/dashboard/billing/plans")
     }
 
     const handleConfirmCancel = () => {
@@ -50,12 +44,9 @@ const AccountBilling = () => {
             <DynamicPageHeader title="Account & Billing" />
             <DashboardPageContent>
                 {hasActivePlan ? (
-                    <CurrentPlanCard
-                        onCancelPlan={handleCancelPlanClick}
-                        onChangePlan={handleChangePlanClick}
-                    />
+                    <CurrentPlanCard onCancelPlan={handleCancelPlanClick} />
                 ) : (
-                    <EmptyPlanCard onChoosePlan={handleChangePlanClick} />
+                    <EmptyPlanCard onChoosePlan={() => {}} />
                 )}
 
                 {hasPaymentHistory ? (

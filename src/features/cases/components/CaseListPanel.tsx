@@ -1,14 +1,23 @@
 import { useMemo, useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { SearchNormal } from "iconsax-react"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { CaseRecord } from "@/data/caseManagementData"
+import { AgencyFacingCaseStatus } from "@/data/agencyCasesData"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
+
+const caseStatusStyles: Record<AgencyFacingCaseStatus, string> = {
+    Open: "bg-blue-50 text-blue-600 border border-blue-100",
+    "Closed (Confirmed Fraud)": "bg-red-50 text-red-600 border border-red-100",
+    "Closed (Not Fraud)": "bg-green-50 text-green-600 border border-green-100",
+}
 
 interface CaseListPanelProps {
   data: CaseRecord[]
@@ -17,9 +26,22 @@ interface CaseListPanelProps {
 export const CaseListPanel = ({ data }: CaseListPanelProps) => {
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState("")
   const itemsPerPage = 10
 
-  const sortedCases = useMemo(() => [...data], [data])
+  const filteredCases = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim()
+    if (!q) return data
+    return data.filter(
+      (c) =>
+        c.caseId.toLowerCase().includes(q) ||
+        c.propertyAddress.toLowerCase().includes(q) ||
+        c.buyerName.toLowerCase().includes(q) ||
+        c.caseStatus.toLowerCase().includes(q)
+    )
+  }, [data, searchQuery])
+
+  const sortedCases = useMemo(() => [...filteredCases], [filteredCases])
 
   const paginatedCases = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage
@@ -27,6 +49,10 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
   }, [sortedCases, currentPage, itemsPerPage])
 
   const totalPages = Math.ceil(sortedCases.length / itemsPerPage) || 1
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery])
 
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
@@ -37,10 +63,25 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
   return (
     <DashboardPanel
       title="Case List"
-      description="Monitor property withdrawals and sales verified via Price Paid Dataset."
+      description="Monitor case status and outcomes for your agency."
       className="overflow-hidden"
       noPadding
       hasBorder
+      actions={
+        <div className="relative w-full min-w-[9rem] sm:w-44 lg:w-52">
+          <SearchNormal
+            size={16}
+            variant="Outline"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            placeholder="Case, address, buyer"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-8 rounded-full border-border bg-background pl-8 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-9 lg:pl-10 lg:text-sm"
+          />
+        </div>
+      }
     >
       <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
         <Table className="min-w-[640px]">
@@ -64,23 +105,29 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
                 <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>{caseRecord.completionDate}</TableCell>
                 <TableCell className={cn(td, "font-medium text-foreground")}>{caseRecord.buyerName}</TableCell>
                 <TableCell className={cn(td, "text-center")}>
-                  <Badge
-                    className={cn(
-                      "rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1",
-                      caseRecord.status === "Checked"
-                        ? "border border-green-100 bg-green-50 text-green-600"
-                        : "border border-amber-100 bg-amber-50 text-amber-600"
+                  <div className="flex flex-wrap items-center justify-center gap-1">
+                    <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1", caseStatusStyles[caseRecord.caseStatus])}>
+                      {caseRecord.caseStatus}
+                    </Badge>
+                    {caseRecord.agencyDispute === "Open" && (
+                      <Badge className="rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-600 lg:px-3 lg:py-1">
+                        Dispute Open
+                      </Badge>
                     )}
-                  >
-                    {caseRecord.status}
-                  </Badge>
+                    {caseRecord.agencyDispute === "Resolved" && (
+                      <Badge className="rounded-full border border-purple-100 bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-purple-600 lg:px-3 lg:py-1">
+                        Dispute Resolved
+                      </Badge>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell className={cn(td, "text-right")}>
                   <button
                     type="button"
                     onClick={() =>
                       navigate(
-                        `/dashboard/cases/${encodeURIComponent(caseRecord.caseId.replace("#", ""))}`
+                        `/dashboard/cases/${encodeURIComponent(caseRecord.caseId.replace("#", ""))}`,
+                        { state: { caseRecord } }
                       )
                     }
                     className="text-xs font-medium transition-colors hover:underline lg:text-sm"

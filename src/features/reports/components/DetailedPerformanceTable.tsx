@@ -17,12 +17,12 @@ export const DetailedPerformanceTable = ({ data }: DetailedPerformanceTableProps
                 <TableHeader>
                     <TableRow className="bg-gray-50">
                         <TableHead className={th}>Agency</TableHead>
-                        <TableHead className={th}>Type</TableHead>
+                        <TableHead className={th}>Integration</TableHead>
                         <TableHead className={th}>Checks</TableHead>
                         <TableHead className={th}>Fraud</TableHead>
                         <TableHead className={th}>Recovered</TableHead>
-                        <TableHead className={th}>Rev.</TableHead>
-                        <TableHead className={th}>Health</TableHead>
+                        <TableHead className={th}>Revenue (Plan + PE Share)</TableHead>
+                        <TableHead className={th}>Sync</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

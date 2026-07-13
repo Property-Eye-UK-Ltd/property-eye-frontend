@@ -30,13 +30,15 @@ const MarketingCommissionDetail = () => {
         )
     }
 
+    const breadcrumbLabel = line.fraudCase ?? line.agency
+
     return (
         <DashboardLayout variant="marketer">
             <DynamicPageHeader
                 title="Commission Detail"
                 breadcrumbs={[
                     { label: "Commissions", href: "/marketing/commissions" },
-                    { label: line.fraudCase },
+                    { label: breadcrumbLabel },
                 ]}
             />
 
@@ -45,8 +47,8 @@ const MarketingCommissionDetail = () => {
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                         <div className="space-y-6">
                             <Field label="Agency" value={line.agency} />
-                            <Field label="Fraud Case" value={line.fraudCase} />
-                            <Field label="Commission Rate" value={line.commissionPct} />
+                            <Field label="Fraud Case" value={line.fraudCase ?? "—"} />
+                            <Field label="Commission Rate" value={`${line.commissionPct} (pending policy decision)`} />
                         </div>
                         <div className="space-y-6">
                             <Field label="Commission Amount" value={line.amount} />
@@ -73,6 +75,11 @@ const MarketingCommissionDetail = () => {
                             />
                         </div>
                     </div>
+                    {!line.fraudCase && (
+                        <p className="mt-6 text-sm text-muted-foreground">
+                            Fraud case reference is shown only when the linked case has a confirmed fraudulent determination with recovered funds.
+                        </p>
+                    )}
                 </div>
             </DashboardPageContent>
         </DashboardLayout>

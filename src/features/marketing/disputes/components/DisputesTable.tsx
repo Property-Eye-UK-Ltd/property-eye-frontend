@@ -8,7 +8,6 @@ import {
     MarketerDispute,
     DisputeStatus,
     disputeStatusStyles,
-    disputeTypeStyles,
 } from "@/data/marketing-data"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
@@ -64,11 +63,10 @@ export const DisputesTable = ({ data }: DisputesTableProps) => {
             }
         >
             <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-                <Table className="min-w-[720px]">
+                <Table className="min-w-[560px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className={th}>Reference</TableHead>
-                            <TableHead className={th}>Type</TableHead>
                             <TableHead className={th}>Linked Record</TableHead>
                             <TableHead className={th}>Date Raised</TableHead>
                             <TableHead className={th}>Status</TableHead>
@@ -79,16 +77,6 @@ export const DisputesTable = ({ data }: DisputesTableProps) => {
                             <TableRow key={dispute.id} className="border-b border-border">
                                 <TableCell className={cn(td, "font-medium text-foreground")}>
                                     {dispute.reference}
-                                </TableCell>
-                                <TableCell className={td}>
-                                    <span
-                                        className={cn(
-                                            "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs",
-                                            disputeTypeStyles[dispute.type]
-                                        )}
-                                    >
-                                        {dispute.type}
-                                    </span>
                                 </TableCell>
                                 <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
                                     {dispute.linkedRecord}
@@ -110,7 +98,7 @@ export const DisputesTable = ({ data }: DisputesTableProps) => {
                         ))}
                         {paginated.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={4} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     No disputes match this filter.
                                 </TableCell>
                             </TableRow>

@@ -14,9 +14,7 @@ import {
 const CaseManagement = () => {
   const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
 
-  const filteredMetrics = metricsData[selectedPeriod].filter(
-    (m) => !["False Positive Rate", "Recovery Rate"].includes(m.title)
-  )
+  const filteredMetrics = metricsData[selectedPeriod]
 
   return (
     <DashboardLayout>

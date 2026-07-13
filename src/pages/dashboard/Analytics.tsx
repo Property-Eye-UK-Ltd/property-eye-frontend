@@ -3,17 +3,9 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { ResponsivePanelGroup } from "@/components/dashboard/MobilePanelCarousel"
-import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
 import { FraudDetectionPanel } from "@/features/overview/components/FraudDetectionPanel"
-import { RepeatOffendersPanel } from "@/features/overview/components/RepeatOffendersPanel"
-import { TimingGapsDistributionPanel } from "@/features/analytics/components/TimingGapsDistributionPanel"
-import { HMLRCheckEfficiencyPanel } from "@/features/analytics/components/HMLRCheckEfficiencyPanel"
-import { ClosedCasesTable } from "@/features/analytics/components/ClosedCasesTable"
-import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
-import { EventLogTable } from "@/features/reports/components/EventLogTable"
-import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Button } from "@/components/ui/button"
 import { ArrowDown2 } from "iconsax-react"
 import {
@@ -24,23 +16,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {
     periods,
-    analyticsTabs,
     metricsData,
-    fraudRateData,
-    fraudRateConfig,
-    severityData,
-    detectionData,
-    detectionConfig,
-    repeatOffenders,
-    timingGapsData,
-    eventLogsData,
-    recoveredCommissionData,
-    recoveredCommissionConfig,
+    casesOverTimeData,
+    casesOverTimeConfig,
 } from "@/data/analytics-data"
 
 const Analytics = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
-    const [selectedTab, setSelectedTab] = useState(analyticsTabs[0].value)
     const [isExportOpen, setIsExportOpen] = useState(false)
 
     const handleExport = (format: "pdf" | "csv") => {
@@ -91,67 +73,17 @@ const Analytics = () => {
             />
 
             <DashboardPageContent>
-                <MetricCards metrics={metricsData[selectedPeriod]} />
-                <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-                    <CaseTypeTabs tabs={analyticsTabs} selected={selectedTab} onSelect={setSelectedTab} />
-                </div>
-
-                {selectedTab === "overview" && (
-                    <>
-                        <ResponsivePanelGroup className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                            <FraudDetectionPanel
-                                data={fraudRateData}
-                                config={fraudRateConfig}
-                                showCategoryFilter={false}
-                                title="Fraud Rate Over Time"
-                            />
-                            <FraudDetectionPanel
-                                data={detectionData}
-                                config={detectionConfig}
-                                title="Detection vs False Positive Ratio"
-                            />
-                        </ResponsivePanelGroup>
-                        <DashboardPanel title="Event Log" noPadding hasBorder>
-                            <EventLogTable data={eventLogsData} />
-                        </DashboardPanel>
-                    </>
-                )}
-
-                {selectedTab === "fraud-patterns" && (
-                    <>
-                        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-5 lg:gap-4">
-                            <CommissionBreakdownPanel data={severityData} title="Severity Distribution" />
-                            <RepeatOffendersPanel offenders={repeatOffenders} />
-                        </div>
-                        <TimingGapsDistributionPanel data={timingGapsData} />
-                    </>
-                )}
-
-                {selectedTab === "financial-impact" && (
-                    <>
-                        <ResponsivePanelGroup className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-                            <div className="lg:col-span-5">
-                                <FraudDetectionPanel
-                                    data={recoveredCommissionData}
-                                    config={recoveredCommissionConfig}
-                                    showCategoryFilter={false}
-                                    title="Recovered Commission"
-                                />
-                            </div>
-                            <div className="space-y-4 lg:col-span-2">
-                                <div className="rounded-2xl border border-border bg-white p-4 shadow-sm lg:p-6">
-                                    <h3 className="mb-2 text-sm text-muted-foreground">Cost Reduction Estimate</h3>
-                                    <p className="text-3xl font-medium text-foreground lg:text-4xl">£18,029</p>
-                                </div>
-                                <HMLRCheckEfficiencyPanel percentage={40} />
-                            </div>
-                        </ResponsivePanelGroup>
-
-                        <DashboardPanel title="Cases Closed by Admin" noPadding hasBorder>
-                            <ClosedCasesTable />
-                        </DashboardPanel>
-                    </>
-                )}
+                <MetricCards metrics={metricsData[selectedPeriod]} columns={2} />
+                <ResponsivePanelGroup className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <FraudDetectionPanel
+                        data={casesOverTimeData}
+                        config={casesOverTimeConfig}
+                        showCategoryFilter={false}
+                        title="Cases Over Time"
+                        valueFormatter={(value) => String(value)}
+                        yAxisTickFormatter={(value) => String(value)}
+                    />
+                </ResponsivePanelGroup>
             </DashboardPageContent>
         </DashboardLayout>
     )

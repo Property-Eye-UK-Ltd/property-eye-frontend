@@ -79,7 +79,7 @@ export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
                                     {line.agency}
                                 </TableCell>
                                 <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
-                                    {line.fraudCase}
+                                    {line.fraudCase ?? "—"}
                                 </TableCell>
                                 <TableCell className={cn(td, "text-right text-muted-foreground")}>
                                     {line.commissionPct}

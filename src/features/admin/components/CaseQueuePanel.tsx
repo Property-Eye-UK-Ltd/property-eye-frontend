@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +16,8 @@ export const CaseQueuePanel = ({
     data,
     severityStyles,
 }: CaseQueuePanelProps) => {
+    const navigate = useNavigate()
+
     return (
         <DashboardPanel
             title="Case Queue"
@@ -49,9 +52,10 @@ export const CaseQueuePanel = ({
                         {[...data].sort((a, b) => a.agencyName.localeCompare(b.agencyName)).map((item, index) => (
                             <TableRow
                                 key={`${item.caseId}-${index}`}
-                                className="border-b border-border"
+                                className="cursor-pointer border-b border-border transition-colors hover:bg-muted/40"
+                                onClick={() => navigate(`/admin/cases/${encodeURIComponent(`#${item.caseId}`)}`)}
                             >
-                                <TableCell className="px-2 py-2 text-xs font-normal text-muted-foreground lg:px-4 lg:py-3 lg:text-sm">#{item.caseId}</TableCell>
+                                <TableCell className="px-2 py-2 text-xs font-normal text-progress lg:px-4 lg:py-3 lg:text-sm">#{item.caseId}</TableCell>
                                 <TableCell className="px-2 py-2 text-xs font-medium text-primary lg:px-4 lg:py-3 lg:text-sm">{item.agencyName}</TableCell>
                                 <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3 lg:text-sm">{item.periodFound}</TableCell>
                                 <TableCell className="px-2 py-2 text-center lg:px-4 lg:py-3">

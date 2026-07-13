@@ -24,7 +24,7 @@ export const mockAgencyProfile: AgencyProfileData = {
     address: "22 Ashfield Road, Leicester",
     email: "solicthomes@example.com",
     phone: "+44 207132 4567",
-    subscriptionPlan: "Pro Plan",
+    subscriptionPlan: "Enterprise",
     integrationType: "ALTO",
     integrationStatus: "Active",
     openCases: 43,

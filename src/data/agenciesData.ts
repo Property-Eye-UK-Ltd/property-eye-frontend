@@ -1,9 +1,11 @@
 import { MetricCard } from "@/features/overview/components/MetricCards"
 
+export type PlanTier = "Starter" | "Enterprise"
+
 export interface AgencyRecord {
     id: string
     name: string
-    planTier: string
+    planTier: PlanTier
     users: number
     integrationType: "ALTO" | "CSV" | "PDF" | "API" | "Reapit"
     checksDone: number
@@ -22,13 +24,6 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
             topBarClass: "bg-red-500",
         },
         {
-            title: "Commissions Recovered",
-            value: "£482,300",
-            period: "All time",
-            change: "+£34,200",
-            topBarClass: "bg-green-500",
-        },
-        {
             title: "Total Agency Users",
             value: "280",
             period: "All time",
@@ -38,7 +33,7 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
         {
             title: "Total Open Cases",
             value: "94",
-            period: "All time",
+            period: "Non-closed cases",
             change: "+2%",
             topBarClass: "bg-purple-500",
         },
@@ -52,54 +47,40 @@ export const agenciesMetricsData: Record<string, MetricCard[]> = {
             topBarClass: "bg-red-500",
         },
         {
-            title: "Commissions Recovered",
-            value: "£38,500",
-            period: "This Month",
-            change: "+£5,200",
-            topBarClass: "bg-green-500",
-        },
-        {
             title: "Total Agency Users",
-            value: "295",
+            value: "285",
             period: "This Month",
-            change: "+15",
+            change: "+5",
             topBarClass: "bg-orange-500",
         },
         {
             title: "Total Open Cases",
-            value: "102",
-            period: "This Month",
-            change: "+8",
+            value: "12",
+            period: "Non-closed cases",
+            change: "-3",
             topBarClass: "bg-purple-500",
         },
     ],
     "Last Week": [
         {
             title: "Total Agencies",
-            value: "1,462",
+            value: "1,482",
             period: "Last Week",
-            change: "+3",
+            change: "+2",
             topBarClass: "bg-red-500",
         },
         {
-            title: "Commissions Recovered",
-            value: "£9,800",
-            period: "Last Week",
-            change: "+£1,400",
-            topBarClass: "bg-green-500",
-        },
-        {
             title: "Total Agency Users",
-            value: "282",
+            value: "286",
             period: "Last Week",
-            change: "+2",
+            change: "+1",
             topBarClass: "bg-orange-500",
         },
         {
             title: "Total Open Cases",
-            value: "96",
-            period: "Last Week",
-            change: "+2",
+            value: "4",
+            period: "Non-closed cases",
+            change: "-1",
             topBarClass: "bg-purple-500",
         },
     ],
@@ -109,7 +90,7 @@ export const agenciesData: AgencyRecord[] = [
     {
         id: "1",
         name: "Baltimore Homes",
-        planTier: "Pro Plan",
+        planTier: "Starter",
         users: 5,
         integrationType: "ALTO",
         checksDone: 124,
@@ -120,7 +101,7 @@ export const agenciesData: AgencyRecord[] = [
     {
         id: "2",
         name: "Dresscket",
-        planTier: "Enterprise Plan",
+        planTier: "Enterprise",
         users: 24,
         integrationType: "API",
         checksDone: 312,
@@ -131,7 +112,7 @@ export const agenciesData: AgencyRecord[] = [
     {
         id: "3",
         name: "Mindcraft Homes",
-        planTier: "Pro Plan",
+        planTier: "Starter",
         users: 12,
         integrationType: "CSV",
         checksDone: 89,
@@ -141,8 +122,8 @@ export const agenciesData: AgencyRecord[] = [
     },
     {
         id: "4",
-        name: "Baltimore Homes",
-        planTier: "Basic Plan",
+        name: "Solict Homes",
+        planTier: "Starter",
         users: 2,
         integrationType: "PDF",
         checksDone: 45,
@@ -152,8 +133,8 @@ export const agenciesData: AgencyRecord[] = [
     },
     {
         id: "5",
-        name: "Dresscket",
-        planTier: "Pro Plan",
+        name: "Harborview Estates",
+        planTier: "Starter",
         users: 8,
         integrationType: "Reapit",
         checksDone: 201,
@@ -163,8 +144,8 @@ export const agenciesData: AgencyRecord[] = [
     },
     {
         id: "6",
-        name: "Mindcraft Homes",
-        planTier: "Basic Plan",
+        name: "Northgate Homes",
+        planTier: "Starter",
         users: 2,
         integrationType: "CSV",
         checksDone: 67,
@@ -174,19 +155,19 @@ export const agenciesData: AgencyRecord[] = [
     },
     {
         id: "7",
-        name: "Baltimore Homes",
-        planTier: "Premium Plan",
+        name: "Crestline Properties",
+        planTier: "Enterprise",
         users: 4,
         integrationType: "ALTO",
         checksDone: 156,
         fraudDetected: 45,
         syncHealth: "Healthy",
-        accountStatus: "Suspended",
+        accountStatus: "Active",
     },
     {
         id: "8",
-        name: "Dresscket",
-        planTier: "Premium Plan",
+        name: "Pinnacle Homes",
+        planTier: "Enterprise",
         users: 2,
         integrationType: "API",
         checksDone: 98,
@@ -196,8 +177,8 @@ export const agenciesData: AgencyRecord[] = [
     },
     {
         id: "9",
-        name: "Mindcraft Homes",
-        planTier: "Enterprise Plan",
+        name: "Sterling Property Group",
+        planTier: "Enterprise",
         users: 19,
         integrationType: "Reapit",
         checksDone: 278,
