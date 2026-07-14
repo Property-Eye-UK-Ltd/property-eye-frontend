@@ -71,6 +71,7 @@ export interface CurrentPlan {
     price: number
     billingCycle: "Monthly" | "Yearly"
     nextBillingDate: string
+    maxUsers: number
 }
 
 export const currentPlan: CurrentPlan = {
@@ -78,6 +79,7 @@ export const currentPlan: CurrentPlan = {
     price: 900,
     billingCycle: "Monthly",
     nextBillingDate: "Nov 29, 2025",
+    maxUsers: 10,
 }
 
 export const COMMISSION_STANDING_DISCLOSURE =
