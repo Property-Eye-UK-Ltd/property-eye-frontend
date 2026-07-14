@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { SearchNormal } from "iconsax-react"
+import { SearchNormal, Trash, Edit2 } from "iconsax-react"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -152,21 +152,22 @@ export const PropertyListPanel = ({
                                             </Badge>
                                         </TableCell>
                                         <TableCell className={cn(td, "text-right")}>
-                                            <div className="flex items-center justify-end gap-3">
+                                            <div className="flex items-center justify-end gap-3.5">
                                                 <button
                                                     type="button"
                                                     onClick={() => onEditClick(listing)}
-                                                    className="text-xs font-medium transition-colors hover:underline lg:text-sm"
-                                                    style={{ color: "var(--progress)" }}
+                                                    className="transition-colors"
+                                                    title="Edit"
                                                 >
-                                                    Edit
+                                                    <Edit2 size={18} variant="Outline" style={{ color: "var(--progress)" }} />
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => onDeleteClick(listing)}
-                                                    className="text-xs font-medium text-red-600 transition-colors hover:underline lg:text-sm"
+                                                    className="text-red-500 transition-colors hover:text-red-700"
+                                                    title="Delete"
                                                 >
-                                                    Delete
+                                                    <Trash size={18} variant="Outline" />
                                                 </button>
                                             </div>
                                         </TableCell>
