@@ -108,7 +108,7 @@ export const DynamicPageHeader = ({
 
     return (
         <div className="sticky top-0 z-10 w-full border-b border-border bg-white">
-            <div className="mx-auto w-full max-w-7xl px-3 py-2.5 sm:px-4 sm:py-3 lg:px-6 lg:py-4">
+            <div className="mx-auto w-full max-w-[1600px] px-3 py-2 sm:px-4 sm:py-2.5 lg:px-4 lg:py-3">
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center lg:gap-3">

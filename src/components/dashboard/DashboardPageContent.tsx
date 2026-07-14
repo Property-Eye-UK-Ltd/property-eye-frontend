@@ -9,7 +9,7 @@ interface DashboardPageContentProps {
 export const DashboardPageContent = ({ children, className }: DashboardPageContentProps) => (
     <div
         className={cn(
-            "mx-auto w-full max-w-7xl space-y-3 px-3 py-3 sm:space-y-4 sm:px-4 sm:py-4 lg:space-y-6 lg:px-6 lg:py-6",
+            "mx-auto w-full max-w-[1600px] space-y-3 px-3 py-3 sm:space-y-4 sm:px-4 sm:py-4 lg:space-y-4 lg:px-4 lg:py-4",
             className
         )}
     >
