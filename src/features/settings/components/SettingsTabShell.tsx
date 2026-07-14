@@ -14,19 +14,21 @@ interface SettingsTabShellProps {
     // New props for alternative CTA pattern
     useAlternativeCTA?: boolean
     hasChanges?: boolean
+    showCTA?: boolean
 }
 
 export const SettingsTabShell = ({
     title,
     description,
-    isEditing,
-    onEdit,
-    onSave,
-    onCancel,
+    isEditing = false,
+    onEdit = () => {},
+    onSave = () => {},
+    onCancel = () => {},
     children,
     saveButtonText = "Save",
     useAlternativeCTA = false,
     hasChanges = false,
+    showCTA = true,
 }: SettingsTabShellProps) => {
     return (
         <DashboardPanel className="overflow-hidden" noPadding>
@@ -39,7 +41,7 @@ export const SettingsTabShell = ({
                             <p className="text-sm text-muted-foreground">{description}</p>
                         </div>
                         {/* Alternative CTA: Just Save button, disabled until changes */}
-                        {useAlternativeCTA ? (
+                        {showCTA && (useAlternativeCTA ? (
                             <Button
                                 onClick={onSave}
                                 disabled={!hasChanges}
@@ -73,7 +75,7 @@ export const SettingsTabShell = ({
                                     </Button>
                                 </div>
                             )
-                        )}
+                        ))}
                     </div>
                     {/* Separator line - full width, no padding */}
                     <div className="h-px bg-border" />

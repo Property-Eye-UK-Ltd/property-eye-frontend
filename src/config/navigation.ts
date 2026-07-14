@@ -30,6 +30,12 @@ export const agencyNavConfig: NavConfig = {
             variant: "Bulk",
         },
         {
+            label: "Properties",
+            icon: Buildings,
+            path: "/dashboard/properties",
+            variant: "Bulk",
+        },
+        {
             label: "Analytics",
             icon: Graph,
             path: "/dashboard/analytics",

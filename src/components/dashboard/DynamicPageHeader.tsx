@@ -97,8 +97,8 @@ export const DynamicPageHeader = ({
         if (isSingleCta) {
             return <div className="shrink-0">{actionNodes[0]}</div>
         }
-        if (isMultiCta && primaryCta) {
-            return <div className="shrink-0">{primaryCta}</div>
+        if (isMultiCta) {
+            return <div className="hidden shrink-0 items-center gap-2 lg:flex">{actionNodes}</div>
         }
         if (filtersRightOnDesktop) {
             return <div className="hidden shrink-0 lg:block">{filters}</div>
@@ -176,7 +176,7 @@ export const DynamicPageHeader = ({
                 )}
 
                 {isMultiCta && secondaryCtas.length > 0 && !stackMobileActions && (
-                    <div className="mt-2 flex flex-wrap items-center gap-2">{secondaryCtas}</div>
+                    <div className="mt-2 flex flex-wrap items-center gap-2 lg:hidden">{secondaryCtas}</div>
                 )}
 
                 {filters && (

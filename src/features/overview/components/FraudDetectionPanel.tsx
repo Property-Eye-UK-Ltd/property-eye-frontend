@@ -134,7 +134,7 @@ export const FraudDetectionPanel = ({
   showCategoryFilter = true,
   showArea = true,
   title = "Fraud Detection Over Time",
-  yAxisDomain = [0, 100],
+  yAxisDomain = [0, "auto"],
   valueFormatter,
   yAxisTickFormatter,
 }: FraudDetectionPanelProps) => {
