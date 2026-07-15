@@ -55,7 +55,7 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
     const fallbackIdentity = headerIdentity[variant]
     const identityName = user?.full_name || (user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : user?.first_name || user?.last_name || fallbackIdentity.name)
     const identityEmail = user?.email || fallbackIdentity.email
-    const identityAvatar = user?.profile_image_url || user?.avatar_url || fallbackIdentity.avatar
+    const identityAvatar = user?.profile_image_url || user?.avatar_url || undefined
 
     const identityInitials = "?"
 

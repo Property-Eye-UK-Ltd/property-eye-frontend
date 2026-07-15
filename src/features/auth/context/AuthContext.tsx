@@ -10,6 +10,7 @@ interface AuthContextValue {
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     applyAuthSession: (data: AuthLoginResponse) => void;
+    refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -65,6 +66,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
+    // Re-fetches /auth/me so the header/settings reflect a profile save
+    // (agencyUpdateProfile's response doesn't include the full agency object
+    // in every case, so refetching is the safe source of truth).
+    const refreshUser = useCallback(async () => {
+        const me = await authService.getMe();
+        setUser(me);
+    }, []);
+
     return (
         <AuthContext.Provider
             value={{
@@ -74,6 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 login,
                 logout,
                 applyAuthSession,
+                refreshUser,
             }}
         >
             {children}

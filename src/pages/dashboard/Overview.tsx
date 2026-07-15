@@ -10,6 +10,8 @@ import {
   metricsData,
   lineChartData,
   chartConfig,
+  recoveredEarningsData,
+  recoveredEarningsConfig,
 } from "@/data/overviewData"
 
 const Overview = () => {
@@ -22,17 +24,28 @@ const Overview = () => {
         filters={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
       />
 
-      <DashboardPageContent>
+      <DashboardPageContent className="space-y-4 lg:space-y-6">
         <MetricCards metrics={metricsData[selectedPeriod]} columns={3} />
 
-        <FraudDetectionPanel
-          title="Fraud Detection Growth"
-          data={lineChartData}
-          config={chartConfig}
-          showCategoryFilter={false}
-          valueFormatter={(value) => String(value)}
-          yAxisTickFormatter={(value) => String(value)}
-        />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <FraudDetectionPanel
+            title="Fraud Detection Growth"
+            data={lineChartData}
+            config={chartConfig}
+            showCategoryFilter={false}
+            valueFormatter={(value) => String(value)}
+            yAxisTickFormatter={(value) => String(value)}
+          />
+
+          <FraudDetectionPanel
+            title="Recovered Earnings Growth"
+            data={recoveredEarningsData}
+            config={recoveredEarningsConfig}
+            showCategoryFilter={false}
+            valueFormatter={(value) => `£${value.toLocaleString()}`}
+            yAxisTickFormatter={(value) => `£${value.toLocaleString()}`}
+          />
+        </div>
       </DashboardPageContent>
     </DashboardLayout>
   )

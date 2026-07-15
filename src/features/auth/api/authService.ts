@@ -94,3 +94,38 @@ export const agencyUpdateProfile = async (
     );
     return data;
 };
+
+export interface SasUrlResponse {
+    blob_name: string;
+    clean_url: string;
+    upload_url: string;
+}
+
+export const getUploadSasUrl = async (
+    fileName: string, 
+    fileType: "profile" | "logo",
+    onboardingToken?: string
+): Promise<SasUrlResponse> => {
+    const { data } = await apiClient.get<SasUrlResponse>(
+        `/media/sas-url?file_name=${encodeURIComponent(fileName)}&file_type=${fileType}`,
+        onboardingToken
+            ? { headers: { Authorization: `Bearer ${onboardingToken}` } }
+            : undefined
+    );
+    return data;
+};
+
+export const uploadFileToAzure = async (uploadUrl: string, file: File): Promise<void> => {
+    const response = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: {
+            "x-ms-blob-type": "BlockBlob",
+            "Content-Type": file.type,
+        },
+        body: file,
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to upload file to Azure: ${response.statusText}`);
+    }
+};
+

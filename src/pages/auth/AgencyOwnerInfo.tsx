@@ -31,6 +31,7 @@ const AgencyOwnerInfo = () => {
     const { toast } = useToast();
     const onboardingToken = getOnboardingToken();
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -53,6 +54,7 @@ const AgencyOwnerInfo = () => {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setSelectedFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPreviewImage(reader.result as string);
@@ -65,14 +67,20 @@ const AgencyOwnerInfo = () => {
         if (!onboardingToken) return;
         setIsSubmitting(true);
         try {
-            // Note: profile_image_url expects an uploaded file URL from the backend;
-            // no upload endpoint is wired yet, so the image field is not sent.
+            let profileImageUrl = undefined;
+            if (selectedFile) {
+                const sasData = await authService.getUploadSasUrl(selectedFile.name, "profile", onboardingToken);
+                await authService.uploadFileToAzure(sasData.upload_url, selectedFile);
+                profileImageUrl = sasData.clean_url;
+            }
+
             await authService.agencyUpdateProfile(
                 {
                     first_name: data.firstName,
                     last_name: data.lastName,
                     gender: data.gender,
                     address: data.address,
+                    profile_image_url: profileImageUrl,
                 },
                 onboardingToken
             );

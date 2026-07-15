@@ -1,174 +1,108 @@
 import { useState } from "react"
 import { SettingsTabShell } from "./SettingsTabShell"
 import { Switch } from "@/components/ui/switch"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { SecuritySettings } from "@/data/settings-data"
-import { Eye, EyeSlash } from "iconsax-react"
+import { Button } from "@/components/ui/button"
+import { useAuth } from "@/features/auth/context/AuthContext"
+import { useToast } from "@/hooks/use-toast"
+import * as authService from "@/features/auth/api/authService"
+import { extractErrorMessage } from "@/features/auth/authErrors"
 
-interface SecurityTabProps {
-    settings: SecuritySettings
-    onSave: (settings: SecuritySettings) => void
-}
+export const SecurityTab = () => {
+    const { user } = useAuth()
+    const { toast } = useToast()
+    const [isSending, setIsSending] = useState(false)
+    const [linkSent, setLinkSent] = useState(false)
 
-export const SecurityTab = ({ settings, onSave }: SecurityTabProps) => {
-    const [isEditing, setIsEditing] = useState(false)
-    const [formData, setFormData] = useState<SecuritySettings>(settings)
-    const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-    const [showNewPassword, setShowNewPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
-    const handleEdit = () => setIsEditing(true)
-    const handleCancel = () => {
-        setFormData(settings)
-        setIsEditing(false)
-    }
-    const handleSave = () => {
-        onSave(formData)
-        setIsEditing(false)
-    }
-
-    const handleToggle = () => {
-        setFormData({ ...formData, twoFactorAuth: !formData.twoFactorAuth })
-    }
-
-    const handleChange = (field: keyof SecuritySettings, value: string) => {
-        setFormData({ ...formData, [field]: value })
+    const handleSendResetLink = async () => {
+        if (!user?.email) return
+        setIsSending(true)
+        try {
+            // Reuses the same pre-auth forgot-password flow as the login
+            // page (POST /auth/forgot-password) — there is no separate
+            // authenticated "change password" endpoint in the backend
+            // contract, and forgot-password always returns a generic
+            // message regardless of account state (no enumeration).
+            const response = await authService.forgotPassword({ email: user.email })
+            setLinkSent(true)
+            toast({ title: "Check your email", description: response.message })
+        } catch (error) {
+            toast({
+                title: "Could not send reset email",
+                description: extractErrorMessage(error, "Something went wrong. Please try again."),
+                variant: "destructive",
+            })
+        } finally {
+            setIsSending(false)
+        }
     }
 
     return (
         <SettingsTabShell
             title="Security"
-            description="Update your password, authentication, and security preferences."
-            isEditing={isEditing}
-            onEdit={handleEdit}
-            onSave={handleSave}
-            onCancel={handleCancel}
+            description="Manage your password and account security preferences."
+            isEditing={false}
+            onEdit={() => { }}
+            onSave={() => { }}
+            onCancel={() => { }}
+            showCTA={false}
         >
             <div className="space-y-8">
-                {/* Change Password Section - Full width header, centered fields */}
-                <div className="space-y-4">
-                    <div className="mb-10" >
-                        <h3 className="text-base font-medium text-foreground">Change Password</h3>
-                        <p className="text-sm text-muted-foreground">
-                            Update your password to maintain account security.
-                        </p>
-                    </div>
-
-                    {/* Password Fields - Centered container */}
-                    <div className="flex justify-center">
-                        <div className="w-full max-w-2xl space-y-4">
-
-                            {/* Current Password */}
-                            <div className="space-y-2">
-                                <Label htmlFor="currentPassword" className="text-sm font-normal text-foreground">
-                                    Current Password
-                                </Label>
-                                <div className="relative">
-                                    <Input
-                                        id="currentPassword"
-                                        type={showCurrentPassword ? "text" : "password"}
-                                        placeholder="Enter your current password"
-                                        value={formData.currentPassword}
-                                        onChange={(e) => handleChange("currentPassword", e.target.value)}
-                                        disabled={!isEditing}
-                                        className="py-3"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                        disabled={!isEditing}
-                                    >
-                                        {showCurrentPassword ? (
-                                            <EyeSlash size={20} variant="Outline" />
-                                        ) : (
-                                            <Eye size={20} variant="Outline" />
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* New Password */}
-                            <div className="space-y-2">
-                                <Label htmlFor="newPassword" className="text-sm font-normal text-foreground">
-                                    New Password
-                                </Label>
-                                <div className="relative">
-                                    <Input
-                                        id="newPassword"
-                                        type={showNewPassword ? "text" : "password"}
-                                        placeholder="Enter a new password"
-                                        value={formData.newPassword}
-                                        onChange={(e) => handleChange("newPassword", e.target.value)}
-                                        disabled={!isEditing}
-                                        className="py-3"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowNewPassword(!showNewPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                        disabled={!isEditing}
-                                    >
-                                        {showNewPassword ? (
-                                            <EyeSlash size={20} variant="Outline" />
-                                        ) : (
-                                            <Eye size={20} variant="Outline" />
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Confirm New Password */}
-                            <div className="space-y-2">
-                                <Label htmlFor="confirmPassword" className="text-sm font-normal text-foreground">
-                                    Confirm New Password
-                                </Label>
-                                <div className="relative">
-                                    <Input
-                                        id="confirmPassword"
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        placeholder="Re-enter a new password"
-                                        value={formData.confirmPassword}
-                                        onChange={(e) => handleChange("confirmPassword", e.target.value)}
-                                        disabled={!isEditing}
-                                        className="py-3"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                        disabled={!isEditing}
-                                    >
-                                        {showConfirmPassword ? (
-                                            <EyeSlash size={20} variant="Outline" />
-                                        ) : (
-                                            <Eye size={20} variant="Outline" />
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Separator Line */}
-                <div className="h-px bg-border" />
-
-                {/* Two-Factor Authentication - Full width */}
+                {/* Password */}
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-1">
-                        <Label className="text-base font-medium text-foreground">Two-Factor Authentication</Label>
+                        <h3 className="text-base font-medium text-foreground">Password</h3>
                         <p className="text-sm text-muted-foreground">
-                            Enable 2FA to secure your account with an additional authentication code.
+                            We'll email a reset link to <span className="font-medium text-foreground">{user?.email}</span> so
+                            you can set a new password.
                         </p>
                     </div>
-                    <Switch
-                        checked={formData.twoFactorAuth}
-                        onCheckedChange={handleToggle}
-                        disabled={!isEditing}
-                        className="shrink-0"
-                    />
+                    <Button
+                        onClick={handleSendResetLink}
+                        disabled={isSending || !user?.email}
+                        variant="outline"
+                        className="rounded-full shrink-0"
+                    >
+                        {isSending ? "Sending..." : linkSent ? "Resend link" : "Send reset link"}
+                    </Button>
+                </div>
+
+                <div className="h-px bg-border" />
+
+                {/* Two-Factor Authentication — not yet supported by the backend */}
+                <div className="relative">
+                    <div className="flex items-start justify-between gap-4 opacity-50 pointer-events-none blur-[1px]">
+                        <div className="flex-1 space-y-1">
+                            <Label className="text-base font-medium text-foreground">Two-Factor Authentication</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Enable 2FA to secure your account with an additional authentication code.
+                            </p>
+                        </div>
+                        <Switch checked={false} disabled className="shrink-0" />
+                    </div>
+                    <span className="absolute top-0 right-0 text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border font-medium uppercase">
+                        Coming soon
+                    </span>
+                </div>
+
+                <div className="h-px bg-border" />
+
+                {/* API Keys — not yet supported by the backend */}
+                <div className="relative">
+                    <div className="flex items-start justify-between gap-4 opacity-50 pointer-events-none blur-[1px]">
+                        <div className="flex-1 space-y-1">
+                            <Label className="text-base font-medium text-foreground">API Keys</Label>
+                            <p className="text-sm text-muted-foreground">
+                                Generate API keys to integrate Property Eye with your own tools.
+                            </p>
+                        </div>
+                        <Button variant="outline" className="rounded-full shrink-0" disabled>
+                            Generate Key
+                        </Button>
+                    </div>
+                    <span className="absolute top-0 right-0 text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border font-medium uppercase">
+                        Coming soon
+                    </span>
                 </div>
             </div>
         </SettingsTabShell>

@@ -34,3 +34,13 @@ export const lineChartData: FraudDataPoint[] = [
 export const chartConfig: Record<string, FraudSeriesConfig> = {
     rate: { label: "Cases", color: "#00072C" },
 }
+
+export const recoveredEarningsData: FraudDataPoint[] = [
+    { month: "Year 1", rate: 8500 },
+    { month: "Year 2", rate: 19200 },
+    { month: "Year 3", rate: totalRecoveredEarnings },
+]
+
+export const recoveredEarningsConfig: Record<string, FraudSeriesConfig> = {
+    rate: { label: "Earnings (Your 50%)", color: "#10b981" },
+}
