@@ -5,7 +5,9 @@ import {
     SearchNormal,
     HambergerMenu,
 } from "iconsax-react"
+import { useNavigate } from "react-router-dom"
 import { NotificationMenu } from "./NotificationMenu"
+import { useAuth } from "@/features/auth/context/AuthContext"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import {
@@ -34,9 +36,15 @@ const headerIdentity: Record<DashboardVariant, { name: string; email: string; av
 
 export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) => {
     const { isCollapsed, toggleSidebar, isDesktop } = useSidebarContext()
+    const { logout } = useAuth()
+    const navigate = useNavigate()
 
-    const handleLogout = () => {
-        console.log("Logout clicked")
+    const handleLogout = async () => {
+        try {
+            await logout()
+        } finally {
+            navigate("/login", { replace: true })
+        }
     }
 
     const isSuperAdmin = variant === "super-admin"

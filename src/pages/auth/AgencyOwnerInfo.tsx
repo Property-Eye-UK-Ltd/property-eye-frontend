@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import { Profile, CloudAdd } from "iconsax-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,10 +22,23 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { agencyOwnerSchema, type AgencyOwnerFormData } from "@/lib/validations/auth";
+import * as authService from "@/features/auth/api/authService";
+import { useToast } from "@/hooks/use-toast";
+import type { ApiErrorResponse } from "@/types/auth.types";
+import { getOnboardingToken } from "@/features/auth/onboardingStorage";
 
 const AgencyOwnerInfo = () => {
     const navigate = useNavigate();
+    const { toast } = useToast();
+    const onboardingToken = getOnboardingToken();
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (!onboardingToken) {
+            navigate("/signup", { replace: true });
+        }
+    }, [onboardingToken, navigate]);
 
     const form = useForm<AgencyOwnerFormData>({
         resolver: zodResolver(agencyOwnerSchema),
@@ -48,10 +62,31 @@ const AgencyOwnerInfo = () => {
         }
     };
 
-    const onSubmit = (data: AgencyOwnerFormData) => {
-        console.log("Agency Owner data:", data);
-        // Navigate to Agency Information page
-        navigate("/agency-information");
+    const onSubmit = async (data: AgencyOwnerFormData) => {
+        if (!onboardingToken) return;
+        setIsSubmitting(true);
+        try {
+            // Note: profile_image_url expects an uploaded file URL from the backend;
+            // no upload endpoint is wired yet, so the image field is not sent.
+            await authService.agencyUpdateProfile(
+                {
+                    first_name: data.firstName,
+                    last_name: data.lastName,
+                    gender: data.gender,
+                    address: data.address,
+                },
+                onboardingToken
+            );
+            navigate("/agency-information");
+        } catch (error) {
+            const message =
+                isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
+                    ? error.response.data.detail
+                    : "Something went wrong. Please try again.";
+            toast({ title: "Could not save details", description: message, variant: "destructive" });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -165,9 +200,9 @@ const AgencyOwnerInfo = () => {
                     <Button
                         type="submit"
                         className="w-full h-12 text-base font-medium rounded-full"
-                        disabled={!form.formState.isValid}
+                        disabled={!form.formState.isValid || isSubmitting}
                     >
-                        Continue
+                        {isSubmitting ? "Saving..." : "Continue"}
                     </Button>
                 </form>
             </Form>

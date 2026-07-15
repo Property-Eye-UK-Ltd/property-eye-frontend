@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import { Eye, EyeSlash } from "iconsax-react";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,17 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
+import { useAuth } from "@/features/auth/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import type { ApiErrorResponse } from "@/types/auth.types";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { login } = useAuth();
+    const { toast } = useToast();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -28,9 +37,28 @@ const Login = () => {
         mode: "onChange",
     });
 
-    const onSubmit = (data: LoginFormData) => {
-        console.log("Login data:", data);
-        // Handle login logic here
+    const onSubmit = async (data: LoginFormData) => {
+        setIsSubmitting(true);
+        try {
+            await login(data.email, data.password);
+            const from = (location.state as { from?: Location } | null)?.from;
+            navigate(from?.pathname ?? "/dashboard", { replace: true });
+        } catch (error) {
+            const status = isAxiosError<ApiErrorResponse>(error) ? error.response?.status : undefined;
+            const message =
+                status === 401
+                    ? "Invalid email or password."
+                    : isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
+                    ? error.response.data.detail
+                    : "Something went wrong. Please try again.";
+            toast({
+                title: "Login failed",
+                description: message,
+                variant: "destructive",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -95,9 +123,9 @@ const Login = () => {
                         <Button
                             type="submit"
                             className="w-full h-12 text-base font-medium rounded-full"
-                            disabled={!form.formState.isValid}
+                            disabled={!form.formState.isValid || isSubmitting}
                         >
-                            Login
+                            {isSubmitting ? "Logging in..." : "Login"}
                         </Button>
 
                         <div className="space-y-4 text-center text-sm">

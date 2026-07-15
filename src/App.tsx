@@ -21,6 +21,8 @@ import OTPVerification from "./pages/auth/OTPVerification";
 import AgencyOwnerInfo from "./pages/auth/AgencyOwnerInfo";
 import AgencyInformation from "./pages/auth/AgencyInformation";
 import { AuthFlowLayout } from "./components/auth/AuthFlowLayout";
+import { AuthProvider } from "./features/auth/context/AuthContext";
+import ProtectedRoute from "./features/auth/components/ProtectedRoute";
 import Overview from "./pages/dashboard/Overview";
 import CaseManagement from "./pages/dashboard/CaseManagement";
 import CaseDetails from "./pages/dashboard/CaseDetails";
@@ -61,6 +63,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <AuthProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -90,18 +93,20 @@ const App = () => (
             <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
           </Route>
 
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<Overview />} />
-          <Route path="/dashboard/cases" element={<CaseManagement />} />
-          <Route path="/dashboard/cases/:caseId" element={<CaseDetails />} />
-          <Route path="/dashboard/properties" element={<Properties />} />
-          <Route path="/dashboard/analytics" element={<Analytics />} />
-          <Route path="/dashboard/team" element={<TeamManagement />} />
-          <Route path="/dashboard/billing" element={<AccountBilling />} />
-          <Route path="/dashboard/billing/plans" element={<SubscriptionPlans />} />
-          <Route path="/dashboard/help" element={<HelpCenter />} />
-          <Route path="/dashboard/help/:articleId" element={<HelpArticle />} />
-          <Route path="/dashboard/settings" element={<Settings />} />
+          {/* Dashboard Routes (agency, requires authentication) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Overview />} />
+            <Route path="/dashboard/cases" element={<CaseManagement />} />
+            <Route path="/dashboard/cases/:caseId" element={<CaseDetails />} />
+            <Route path="/dashboard/properties" element={<Properties />} />
+            <Route path="/dashboard/analytics" element={<Analytics />} />
+            <Route path="/dashboard/team" element={<TeamManagement />} />
+            <Route path="/dashboard/billing" element={<AccountBilling />} />
+            <Route path="/dashboard/billing/plans" element={<SubscriptionPlans />} />
+            <Route path="/dashboard/help" element={<HelpCenter />} />
+            <Route path="/dashboard/help/:articleId" element={<HelpArticle />} />
+            <Route path="/dashboard/settings" element={<Settings />} />
+          </Route>
 
           {/* Super Admin Dashboard Routes */}
           <Route path="/admin/dashboard" element={<AdminOverview />} />
@@ -135,6 +140,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

@@ -83,7 +83,6 @@ export const PaymentHistoryTable = () => {
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className="px-4 font-medium">Invoice Number</TableHead>
-                            <TableHead className="px-4 font-medium">Plan</TableHead>
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -119,9 +118,6 @@ export const PaymentHistoryTable = () => {
                             <TableRow key={payment.id} className="border-b border-border">
                                 <TableCell className="px-4 py-3 text-foreground">
                                     {payment.invoiceNumber}
-                                </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">
-                                    {payment.paymentType}
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">
                                     {payment.billingDate}

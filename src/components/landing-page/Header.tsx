@@ -60,7 +60,21 @@ const Header = () => {
                     })}
                 </nav>
 
-                <div className="hidden lg:block">
+                <div className="hidden lg:flex items-center space-x-4">
+                    <Link
+                        to="/login"
+                        className="text-primary/40 hover:text-primary font-normal text-sm transition-colors"
+                    >
+                        Login
+                    </Link>
+                    <Link to="/signup">
+                        <Button
+                            variant="outline"
+                            className="rounded-full px-8 h-10 text-sm font-normal"
+                        >
+                            Sign Up
+                        </Button>
+                    </Link>
                     <Link to="/contact">
                         <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 h-10 text-sm font-normal">
                             Contact Us
@@ -107,6 +121,22 @@ const Header = () => {
                             </Link>
                         );
                     })}
+                    <Link to="/login" className="w-full max-w-xs" onClick={() => setIsMenuOpen(false)}>
+                        <Button
+                            variant="outline"
+                            className="rounded-full w-full h-12 font-normal"
+                        >
+                            Login
+                        </Button>
+                    </Link>
+                    <Link to="/signup" className="w-full max-w-xs" onClick={() => setIsMenuOpen(false)}>
+                        <Button
+                            variant="outline"
+                            className="rounded-full w-full h-12 font-normal"
+                        >
+                            Sign Up
+                        </Button>
+                    </Link>
                     <Link to="/contact" className="w-full max-w-xs" onClick={() => setIsMenuOpen(false)}>
                         <Button className="bg-primary hover:bg-primary/90 text-white rounded-full w-full h-12 font-normal mt-4">
                             Contact Us

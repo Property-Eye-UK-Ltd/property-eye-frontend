@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import { Eye, EyeSlash } from "iconsax-react";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
@@ -16,9 +17,15 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { signupSchema, type SignupFormData } from "@/lib/validations/auth";
+import * as authService from "@/features/auth/api/authService";
+import { useToast } from "@/hooks/use-toast";
+import type { ApiErrorResponse } from "@/types/auth.types";
+import { ONBOARDING_EMAIL_KEY, ONBOARDING_OTP_EXPIRES_AT_KEY } from "@/features/auth/onboardingStorage";
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { toast } = useToast();
 
     const form = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
@@ -33,10 +40,31 @@ const Signup = () => {
 
     const navigate = useNavigate();
 
-    const onSubmit = (data: SignupFormData) => {
-        console.log("Signup data:", data);
-        // Handle signup logic here
-        navigate("/verify-otp");
+    const onSubmit = async (data: SignupFormData) => {
+        setIsSubmitting(true);
+        try {
+            const response = await authService.agencyRegister({
+                phone_number: data.phoneNumber,
+                email: data.email,
+                password: data.password,
+            });
+            sessionStorage.setItem(ONBOARDING_EMAIL_KEY, response.email);
+            if (response.otp_expires_at) {
+                sessionStorage.setItem(ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+            }
+            navigate("/verify-otp");
+        } catch (error) {
+            const status = isAxiosError<ApiErrorResponse>(error) ? error.response?.status : undefined;
+            const message =
+                status === 409
+                    ? "An account with this email already exists."
+                    : isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
+                    ? error.response.data.detail
+                    : "Something went wrong. Please try again.";
+            toast({ title: "Sign up failed", description: message, variant: "destructive" });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
 
@@ -139,9 +167,9 @@ const Signup = () => {
                     <Button
                         type="submit"
                         className="w-full h-12 text-base font-medium rounded-full"
-                        disabled={!form.formState.isValid}
+                        disabled={!form.formState.isValid || isSubmitting}
                     >
-                        Create Account
+                        {isSubmitting ? "Creating account..." : "Create Account"}
                     </Button>
 
                     <div className="text-center text-sm text-muted-foreground">

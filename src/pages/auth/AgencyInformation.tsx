@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import { Profile, CloudAdd } from "iconsax-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,10 +15,25 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { agencyInfoSchema, type AgencyInfoFormData } from "@/lib/validations/auth";
+import * as authService from "@/features/auth/api/authService";
+import { useAuth } from "@/features/auth/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import type { ApiErrorResponse, AuthLoginResponse } from "@/types/auth.types";
+import { clearOnboardingStorage, getOnboardingToken } from "@/features/auth/onboardingStorage";
 
 const AgencyInformation = () => {
     const navigate = useNavigate();
+    const { toast } = useToast();
+    const { applyAuthSession } = useAuth();
+    const onboardingToken = getOnboardingToken();
     const [previewLogo, setPreviewLogo] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (!onboardingToken) {
+            navigate("/signup", { replace: true });
+        }
+    }, [onboardingToken, navigate]);
 
     const form = useForm<AgencyInfoFormData>({
         resolver: zodResolver(agencyInfoSchema),
@@ -39,10 +55,38 @@ const AgencyInformation = () => {
         }
     };
 
-    const onSubmit = (data: AgencyInfoFormData) => {
-        console.log("Agency Info data:", data);
-        // Handle final submission or next step
-        // navigate("/dashboard"); // Example
+    const onSubmit = async (data: AgencyInfoFormData) => {
+        if (!onboardingToken) return;
+        setIsSubmitting(true);
+        try {
+            // Note: agency_logo_url expects an uploaded file URL; no upload endpoint
+            // is wired yet, so the logo field is not sent.
+            const response = await authService.agencyUpdateProfile(
+                {
+                    agency_name: data.agencyName,
+                    agency_address: data.agencyAddress,
+                },
+                onboardingToken
+            );
+            if ("access_token" in response) {
+                applyAuthSession(response as AuthLoginResponse);
+                clearOnboardingStorage();
+                navigate("/dashboard", { replace: true });
+            } else {
+                toast({
+                    title: "Almost there",
+                    description: response.message,
+                });
+            }
+        } catch (error) {
+            const message =
+                isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
+                    ? error.response.data.detail
+                    : "Something went wrong. Please try again.";
+            toast({ title: "Could not save details", description: message, variant: "destructive" });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -117,9 +161,9 @@ const AgencyInformation = () => {
                     <Button
                         type="submit"
                         className="w-full h-12 text-base font-medium rounded-full"
-                        disabled={!form.formState.isValid}
+                        disabled={!form.formState.isValid || isSubmitting}
                     >
-                        Finish
+                        {isSubmitting ? "Finishing..." : "Finish"}
                     </Button>
                 </form>
             </Form>

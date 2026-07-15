@@ -5,6 +5,7 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { CaseRecord } from "@/data/caseManagementData"
@@ -27,7 +28,15 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
+  // Local optimistic dispute state: maps caseId -> dispute status
+  const [localDisputes, setLocalDisputes] = useState<Record<string, "Open" | "Resolved" | undefined>>(() =>
+    Object.fromEntries(data.map((c) => [c.caseId, c.agencyDispute]))
+  )
   const itemsPerPage = 10
+
+  const handleRaiseDispute = (caseId: string) => {
+    setLocalDisputes((prev) => ({ ...prev, [caseId]: "Open" }))
+  }
 
   const filteredCases = useMemo(() => {
     const q = searchQuery.toLowerCase().trim()
@@ -109,12 +118,12 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
                     <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1", caseStatusStyles[caseRecord.caseStatus])}>
                       {caseRecord.caseStatus}
                     </Badge>
-                    {caseRecord.agencyDispute === "Open" && (
+                    {localDisputes[caseRecord.caseId] === "Open" && (
                       <Badge className="rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-600 lg:px-3 lg:py-1">
                         Dispute Open
                       </Badge>
                     )}
-                    {caseRecord.agencyDispute === "Resolved" && (
+                    {localDisputes[caseRecord.caseId] === "Resolved" && (
                       <Badge className="rounded-full border border-purple-100 bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-purple-600 lg:px-3 lg:py-1">
                         Dispute Resolved
                       </Badge>
@@ -122,19 +131,31 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
                   </div>
                 </TableCell>
                 <TableCell className={cn(td, "text-right")}>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      navigate(
-                        `/dashboard/cases/${encodeURIComponent(caseRecord.caseId.replace("#", ""))}`,
-                        { state: { caseRecord } }
-                      )
-                    }
-                    className="text-xs font-medium transition-colors hover:underline lg:text-sm"
-                    style={{ color: "var(--progress)" }}
-                  >
-                    View
-                  </button>
+                  <div className="flex items-center justify-end gap-2">
+                    {caseRecord.caseStatus !== "Open" && !localDisputes[caseRecord.caseId] && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleRaiseDispute(caseRecord.caseId)}
+                        className="h-7 rounded-full border-amber-200 px-2 text-[10px] font-medium text-amber-600 hover:bg-amber-50 hover:text-amber-700 lg:h-8 lg:px-3 lg:text-xs"
+                      >
+                        Raise Dispute
+                      </Button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        navigate(
+                          `/dashboard/cases/${encodeURIComponent(caseRecord.caseId.replace("#", ""))}`,
+                          { state: { caseRecord } }
+                        )
+                      }
+                      className="text-xs font-medium transition-colors hover:underline lg:text-sm"
+                      style={{ color: "var(--progress)" }}
+                    >
+                      View
+                    </button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

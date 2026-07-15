@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,11 +21,17 @@ import {
     type ForgotPasswordFormData,
     type ResetPasswordFormData,
 } from "@/lib/validations/auth";
+import * as authService from "@/features/auth/api/authService";
+import { useToast } from "@/hooks/use-toast";
+import type { ApiErrorResponse } from "@/types/auth.types";
 
 const ForgotPassword = () => {
     const [step, setStep] = useState<"request" | "reset">("request");
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { toast } = useToast();
+    const navigate = useNavigate();
 
     const form = useForm<ForgotPasswordFormData>({
         resolver: zodResolver(forgotPasswordSchema),
@@ -37,31 +44,54 @@ const ForgotPassword = () => {
     const resetForm = useForm<ResetPasswordFormData>({
         resolver: zodResolver(resetPasswordSchema),
         defaultValues: {
+            resetCode: "",
             newPassword: "",
             confirmPassword: "",
         },
         mode: "onChange",
     });
 
-    const { reset: resetRequestForm, formState } = form;
     const { reset: resetNewPasswordForm } = resetForm;
 
-    useEffect(() => {
-        if (formState.isSubmitSuccessful) {
+    const onSubmit = async (data: ForgotPasswordFormData) => {
+        setIsSubmitting(true);
+        try {
+            const response = await authService.forgotPassword({ email: data.email });
+            toast({ title: "Check your email", description: response.message });
             setStep("reset");
             resetNewPasswordForm();
-            resetRequestForm();
+        } catch (error) {
+            const message =
+                isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
+                    ? error.response.data.detail
+                    : "Something went wrong. Please try again.";
+            toast({ title: "Request failed", description: message, variant: "destructive" });
+        } finally {
+            setIsSubmitting(false);
         }
-    }, [formState.isSubmitSuccessful, resetNewPasswordForm, resetRequestForm]);
-
-    const onSubmit = (data: ForgotPasswordFormData) => {
-        console.log("Forgot password data:", data);
-        // TODO: trigger password reset email
     };
 
-    const onResetSubmit = (data: ResetPasswordFormData) => {
-        console.log("Reset password data:", data);
-        // TODO: integrate with API
+    const onResetSubmit = async (data: ResetPasswordFormData) => {
+        setIsSubmitting(true);
+        try {
+            const response = await authService.resetPassword({
+                reset_code: data.resetCode,
+                new_password: data.newPassword,
+            });
+            toast({ title: "Password reset", description: response.message });
+            navigate("/login", { replace: true });
+        } catch (error) {
+            const status = isAxiosError<ApiErrorResponse>(error) ? error.response?.status : undefined;
+            const message =
+                status === 400
+                    ? "That reset code is invalid or has expired."
+                    : isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
+                    ? error.response.data.detail
+                    : "Something went wrong. Please try again.";
+            toast({ title: "Reset failed", description: message, variant: "destructive" });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -98,9 +128,9 @@ const ForgotPassword = () => {
                             <Button
                                 type="submit"
                                 className="w-full h-12 text-base font-medium rounded-full"
-                                disabled={!form.formState.isValid}
+                                disabled={!form.formState.isValid || isSubmitting}
                             >
-                                Reset Password
+                                {isSubmitting ? "Sending..." : "Reset Password"}
                             </Button>
 
                             <div className="text-center text-sm">
@@ -113,6 +143,20 @@ const ForgotPassword = () => {
                 ) : (
                     <Form key="reset" {...resetForm}>
                         <form onSubmit={resetForm.handleSubmit(onResetSubmit)} className="space-y-5 sm:space-y-6">
+                            <FormField
+                                control={resetForm.control}
+                                name="resetCode"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Reset Code</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter the code sent to your email" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
                             <FormField
                                 control={resetForm.control}
                                 name="newPassword"
@@ -178,9 +222,9 @@ const ForgotPassword = () => {
                             <Button
                                 type="submit"
                                 className="w-full h-12 text-base font-medium rounded-full"
-                                disabled={!resetForm.formState.isValid}
+                                disabled={!resetForm.formState.isValid || isSubmitting}
                             >
-                                Set Password
+                                {isSubmitting ? "Saving..." : "Set Password"}
                             </Button>
 
                             <div className="text-center text-sm">
