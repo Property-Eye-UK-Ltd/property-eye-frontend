@@ -23,7 +23,7 @@ const Overview = () => {
       />
 
       <DashboardPageContent>
-        <MetricCards metrics={metricsData[selectedPeriod]} columns={2} />
+        <MetricCards metrics={metricsData[selectedPeriod]} columns={3} />
 
         <FraudDetectionPanel
           title="Fraud Detection Growth"

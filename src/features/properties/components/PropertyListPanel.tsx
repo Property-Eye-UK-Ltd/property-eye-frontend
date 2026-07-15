@@ -78,7 +78,7 @@ export const PropertyListPanel = ({
             noPadding
             hasBorder
             actions={
-                <div className="relative w-full min-w-[9rem] sm:w-44 lg:w-52">
+                <div className="relative w-full min-w-[9rem] sm:w-64 lg:w-80">
                     <SearchNormal
                         size={16}
                         variant="Outline"
@@ -144,7 +144,7 @@ export const PropertyListPanel = ({
                                         <TableCell className={cn(td, "text-center")}>
                                             <Badge
                                                 className={cn(
-                                                    "rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1",
+                                                    "rounded-full px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap lg:px-2.5 lg:py-0.5 lg:text-[10px]",
                                                     propertyStatusStyles[listing.status]
                                                 )}
                                             >

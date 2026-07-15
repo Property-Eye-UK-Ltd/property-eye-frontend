@@ -137,19 +137,19 @@ export const DashboardSidebarContent = ({
                             </div>
                         </div>
                     ) : (
-                        <div className="p-4">
-                            <div className="bg-white rounded-xl p-4">
-                                <h3 className="text-sm font-medium text-primary mb-3">Pro Plan</h3>
-                                <div className="flex items-center justify-between gap-3">
+                        <div className="px-3 py-2">
+                            <div className="bg-white rounded-xl p-3">
+                                <h3 className="text-xs font-semibold text-primary mb-1">Pro Plan</h3>
+                                <div className="flex items-center justify-between gap-2">
                                     <div className="flex-1">
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-[10px] text-muted-foreground leading-tight">
                                             Next billing date:{" "}
                                             <span className="font-medium text-foreground">
                                                 Nov 29, 2025
                                             </span>
                                         </p>
                                     </div>
-                                    <DonutChart value={75} size={25} strokeWidth={3} />
+                                    <DonutChart value={75} size={20} strokeWidth={2.5} />
                                 </div>
                             </div>
                         </div>
