@@ -154,7 +154,7 @@ const Login = () => {
                         <Button
                             type="submit"
                             className="w-full h-12 text-base font-medium rounded-full"
-                            disabled={!form.formState.isValid || isSubmitting}
+                            disabled={isSubmitting}
                         >
                             {isSubmitting ? "Logging in..." : "Login"}
                         </Button>
