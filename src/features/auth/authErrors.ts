@@ -20,6 +20,7 @@ export const AUTH_ERROR_DETAIL = {
     RESET_CODE_INVALID: "Reset code is invalid or expired",
     USER_NOT_FOUND: "User not found",
     ONBOARDING_ALREADY_COMPLETED: "Onboarding is already completed",
+    PASSWORD_RESET_EMAIL_FAILED: "Unable to send password reset email", // 503
     // agency_onboarding_service.py
     EMAIL_ALREADY_REGISTERED: "Email already registered",
     SIGNUP_DRAFT_NOT_FOUND: "Signup draft not found",
