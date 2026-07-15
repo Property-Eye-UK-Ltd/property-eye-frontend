@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import { isAxiosError } from "axios";
 import { Profile, CloudAdd } from "iconsax-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +17,8 @@ import { agencyInfoSchema, type AgencyInfoFormData } from "@/lib/validations/aut
 import * as authService from "@/features/auth/api/authService";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import type { ApiErrorResponse, AuthLoginResponse } from "@/types/auth.types";
+import type { AuthLoginResponse } from "@/types/auth.types";
+import { AUTH_ERROR_DETAIL, extractErrorMessage, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
 import { clearOnboardingStorage, getOnboardingToken } from "@/features/auth/onboardingStorage";
 
 const AgencyInformation = () => {
@@ -79,11 +79,34 @@ const AgencyInformation = () => {
                 });
             }
         } catch (error) {
-            const message =
-                isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
-                    ? error.response.data.detail
-                    : "Something went wrong. Please try again.";
-            toast({ title: "Could not save details", description: message, variant: "destructive" });
+            const status = getErrorStatus(error);
+            const detail = getErrorDetail(error);
+
+            if (
+                status === 401 ||
+                detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ||
+                detail === AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP
+            ) {
+                toast({
+                    title: "Let's start over",
+                    description:
+                        detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED
+                            ? "This signup is already complete. Please sign in."
+                            : "Your session has expired. Please sign up again.",
+                    variant: "destructive",
+                });
+                navigate(
+                    detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ? "/login" : "/signup",
+                    { replace: true }
+                );
+                return;
+            }
+
+            toast({
+                title: "Could not save details",
+                description: extractErrorMessage(error, "Something went wrong. Please try again."),
+                variant: "destructive",
+            });
         } finally {
             setIsSubmitting(false);
         }

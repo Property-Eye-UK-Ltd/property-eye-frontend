@@ -31,18 +31,27 @@ apiClient.interceptors.request.use((config) => {
     return config;
 });
 
-const AUTH_ENDPOINTS_EXEMPT_FROM_REDIRECT = ["/auth/login", "/auth/refresh"];
+// Every endpoint under /auth/* is handled locally by its owning page (Login,
+// Signup, OTPVerification, AgencyOwnerInfo, AgencyInformation, ForgotPassword)
+// with specific messaging + redirects per backend response — see
+// features/auth/authErrors.ts and features/auth/resumeOnboarding.ts. This
+// interceptor's job is to catch 401s from *other* (authenticated app) API
+// calls where nothing local is watching for them, so it must not also fire a
+// competing generic toast/redirect for auth-flow requests.
+const AUTH_FLOW_PATH_PREFIX = "/auth/";
 
 apiClient.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
         const status = error.response?.status;
         const requestUrl = error.config?.url ?? "";
-        const isExemptEndpoint = AUTH_ENDPOINTS_EXEMPT_FROM_REDIRECT.some((path) =>
-            requestUrl.includes(path)
-        );
+        const isAuthFlowEndpoint = requestUrl.includes(AUTH_FLOW_PATH_PREFIX);
 
-        if (status === 401 && !isExemptEndpoint) {
+        if (isAuthFlowEndpoint) {
+            return Promise.reject(error);
+        }
+
+        if (status === 401) {
             clearAuthToken();
             toast({
                 title: "Session expired",

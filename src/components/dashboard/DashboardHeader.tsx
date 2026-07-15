@@ -36,7 +36,7 @@ const headerIdentity: Record<DashboardVariant, { name: string; email: string; av
 
 export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) => {
     const { isCollapsed, toggleSidebar, isDesktop } = useSidebarContext()
-    const { logout } = useAuth()
+    const { logout, user } = useAuth()
     const navigate = useNavigate()
 
     const handleLogout = async () => {
@@ -50,7 +50,21 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
     const isSuperAdmin = variant === "super-admin"
     const isAdmin = isSuperAdmin
     const showCheckRunner = isSuperAdmin
-    const identity = headerIdentity[variant]
+    
+    // Dynamic user identity from auth context metadata
+    const fallbackIdentity = headerIdentity[variant]
+    const identityName = user?.full_name || (user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : user?.first_name || user?.last_name || fallbackIdentity.name)
+    const identityEmail = user?.email || fallbackIdentity.email
+    const identityAvatar = user?.profile_image_url || user?.avatar_url || fallbackIdentity.avatar
+
+    const identityInitials = "?"
+
+    const identity = {
+        name: identityName,
+        email: identityEmail,
+        avatar: identityAvatar,
+        initials: identityInitials,
+    }
 
     return (
         <header className="sticky top-0 z-20 border-b border-border bg-background">

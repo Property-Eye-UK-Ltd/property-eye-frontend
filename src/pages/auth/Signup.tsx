@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { isAxiosError } from "axios";
 import { Eye, EyeSlash } from "iconsax-react";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
@@ -19,8 +18,13 @@ import {
 import { signupSchema, type SignupFormData } from "@/lib/validations/auth";
 import * as authService from "@/features/auth/api/authService";
 import { useToast } from "@/hooks/use-toast";
-import type { ApiErrorResponse } from "@/types/auth.types";
-import { ONBOARDING_EMAIL_KEY, ONBOARDING_OTP_EXPIRES_AT_KEY } from "@/features/auth/onboardingStorage";
+import { extractErrorMessage, getErrorStatus } from "@/features/auth/authErrors";
+import {
+    ONBOARDING_EMAIL_KEY,
+    ONBOARDING_OTP_EXPIRES_AT_KEY,
+    resolveOnboardingRoute,
+    setOnboardingToken,
+} from "@/features/auth/onboardingStorage";
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -52,16 +56,34 @@ const Signup = () => {
             if (response.otp_expires_at) {
                 sessionStorage.setItem(ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
             }
-            navigate("/verify-otp");
+            if (response.token) {
+                setOnboardingToken(response.token);
+            }
+            // next_step reflects where this email's signup actually is
+            // (verify_otp / complete_profile / complete_agency) rather than
+            // assuming every submission starts a brand-new OTP flow.
+            navigate(resolveOnboardingRoute(response.next_step));
         } catch (error) {
-            const status = isAxiosError<ApiErrorResponse>(error) ? error.response?.status : undefined;
-            const message =
-                status === 409
-                    ? "An account with this email already exists."
-                    : isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
-                    ? error.response.data.detail
-                    : "Something went wrong. Please try again.";
-            toast({ title: "Sign up failed", description: message, variant: "destructive" });
+            const status = getErrorStatus(error);
+
+            // 409 "Email already registered" only fires for a fully active
+            // account (backend/src/services/agency_onboarding_service.py
+            // `start_onboarding_session`) — anything still mid-signup resumes
+            // instead of conflicting, so this always means "go sign in".
+            if (status === 409) {
+                toast({
+                    title: "Account already exists",
+                    description: "An account with this email already exists. Please sign in instead.",
+                });
+                navigate("/login");
+                return;
+            }
+
+            toast({
+                title: "Sign up failed",
+                description: extractErrorMessage(error, "Something went wrong. Please try again."),
+                variant: "destructive",
+            });
         } finally {
             setIsSubmitting(false);
         }

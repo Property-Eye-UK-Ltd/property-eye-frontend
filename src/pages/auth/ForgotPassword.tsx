@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { isAxiosError } from "axios";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +22,7 @@ import {
 } from "@/lib/validations/auth";
 import * as authService from "@/features/auth/api/authService";
 import { useToast } from "@/hooks/use-toast";
-import type { ApiErrorResponse } from "@/types/auth.types";
+import { extractErrorMessage } from "@/features/auth/authErrors";
 
 const ForgotPassword = () => {
     const [step, setStep] = useState<"request" | "reset">("request");
@@ -61,11 +60,11 @@ const ForgotPassword = () => {
             setStep("reset");
             resetNewPasswordForm();
         } catch (error) {
-            const message =
-                isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
-                    ? error.response.data.detail
-                    : "Something went wrong. Please try again.";
-            toast({ title: "Request failed", description: message, variant: "destructive" });
+            toast({
+                title: "Request failed",
+                description: extractErrorMessage(error, "Something went wrong. Please try again."),
+                variant: "destructive",
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -81,14 +80,14 @@ const ForgotPassword = () => {
             toast({ title: "Password reset", description: response.message });
             navigate("/login", { replace: true });
         } catch (error) {
-            const status = isAxiosError<ApiErrorResponse>(error) ? error.response?.status : undefined;
-            const message =
-                status === 400
-                    ? "That reset code is invalid or has expired."
-                    : isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
-                    ? error.response.data.detail
-                    : "Something went wrong. Please try again.";
-            toast({ title: "Reset failed", description: message, variant: "destructive" });
+            // reset-password's only documented failure is 400 "Reset code is
+            // invalid or expired" (backend/src/services/auth_service.py) —
+            // extractErrorMessage surfaces that exact detail directly.
+            toast({
+                title: "Reset failed",
+                description: extractErrorMessage(error, "Something went wrong. Please try again."),
+                variant: "destructive",
+            });
         } finally {
             setIsSubmitting(false);
         }

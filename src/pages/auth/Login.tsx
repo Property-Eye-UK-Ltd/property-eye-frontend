@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { isAxiosError } from "axios";
 import { Eye, EyeSlash } from "iconsax-react";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,8 @@ import {
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import type { ApiErrorResponse } from "@/types/auth.types";
+import { AUTH_ERROR_DETAIL, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
+import { PENDING_PROFILE_REDIRECT, resumePendingVerification } from "@/features/auth/resumeOnboarding";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -44,13 +44,44 @@ const Login = () => {
             const from = (location.state as { from?: Location } | null)?.from;
             navigate(from?.pathname ?? "/dashboard", { replace: true });
         } catch (error) {
-            const status = isAxiosError<ApiErrorResponse>(error) ? error.response?.status : undefined;
+            const status = getErrorStatus(error);
+            const detail = getErrorDetail(error);
+
+            // Login intentionally returns 403 (not a token/permission error)
+            // for two known signup states so the frontend can route the user
+            // to finish onboarding instead of just failing the login attempt.
+            if (status === 403 && detail === AUTH_ERROR_DETAIL.EMAIL_VERIFICATION_REQUIRED) {
+                try {
+                    const route = await resumePendingVerification(data.email);
+                    toast({
+                        title: "Verify your email",
+                        description: "Your account isn't verified yet. We've sent a new code.",
+                    });
+                    navigate(route);
+                } catch (resendError) {
+                    toast({
+                        title: "Could not resend verification code",
+                        description: getErrorDetail(resendError) ?? "Please try signing up again.",
+                        variant: "destructive",
+                    });
+                    navigate("/signup");
+                }
+                return;
+            }
+
+            if (status === 403 && detail === AUTH_ERROR_DETAIL.AGENCY_SIGNUP_INCOMPLETE) {
+                toast({
+                    title: "Finish setting up your agency",
+                    description: "Your signup is incomplete. Let's pick up where you left off.",
+                });
+                navigate(PENDING_PROFILE_REDIRECT);
+                return;
+            }
+
             const message =
                 status === 401
                     ? "Invalid email or password."
-                    : isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
-                    ? error.response.data.detail
-                    : "Something went wrong. Please try again.";
+                    : detail ?? "Something went wrong. Please try again.";
             toast({
                 title: "Login failed",
                 description: message,

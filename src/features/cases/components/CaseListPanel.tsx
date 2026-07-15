@@ -114,10 +114,12 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
                 <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>{caseRecord.completionDate}</TableCell>
                 <TableCell className={cn(td, "font-medium text-foreground")}>{caseRecord.buyerName}</TableCell>
                 <TableCell className={cn(td, "text-center")}>
-                  <div className="flex flex-wrap items-center justify-center gap-1">
-                    <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1", caseStatusStyles[caseRecord.caseStatus])}>
-                      {caseRecord.caseStatus}
-                    </Badge>
+                  <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1", caseStatusStyles[caseRecord.caseStatus])}>
+                    {caseRecord.caseStatus}
+                  </Badge>
+                </TableCell>
+                <TableCell className={cn(td, "text-right")}>
+                  <div className="flex items-center justify-end gap-2">
                     {localDisputes[caseRecord.caseId] === "Open" && (
                       <Badge className="rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-600 lg:px-3 lg:py-1">
                         Dispute Open
@@ -128,10 +130,6 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
                         Dispute Resolved
                       </Badge>
                     )}
-                  </div>
-                </TableCell>
-                <TableCell className={cn(td, "text-right")}>
-                  <div className="flex items-center justify-end gap-2">
                     {caseRecord.caseStatus !== "Open" && !localDisputes[caseRecord.caseId] && (
                       <Button
                         variant="outline"

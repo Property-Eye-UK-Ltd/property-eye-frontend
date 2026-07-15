@@ -1,9 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { isAxiosError } from "axios";
-import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
 import {
     InputOTP,
     InputOTPGroup,
@@ -12,7 +9,12 @@ import {
 } from "@/components/ui/input-otp";
 import * as authService from "@/features/auth/api/authService";
 import { useToast } from "@/hooks/use-toast";
-import type { ApiErrorResponse } from "@/types/auth.types";
+import {
+    STALE_ONBOARDING_STATE_DETAILS,
+    extractErrorMessage,
+    getErrorDetail,
+    getErrorStatus,
+} from "@/features/auth/authErrors";
 import {
     ONBOARDING_OTP_EXPIRES_AT_KEY,
     getOnboardingEmail,
@@ -21,55 +23,57 @@ import {
 
 const DEFAULT_OTP_WINDOW_SECONDS = 600; // 10 minutes
 const MAX_VERIFY_ATTEMPTS = 5;
-const RESEND_COOLDOWN_SECONDS = 30;
 
-const secondsUntil = (isoTimestamp: string) =>
-    Math.max(0, Math.floor((new Date(isoTimestamp).getTime() - Date.now()) / 1000));
+const secondsUntil = (isoTimestamp: string) => {
+    if (!isoTimestamp) return 0;
+    const utcTimestamp = isoTimestamp.endsWith("Z") || isoTimestamp.includes("+")
+        ? isoTimestamp
+        : `${isoTimestamp}Z`;
+    return Math.max(0, Math.floor((new Date(utcTimestamp).getTime() - Date.now()) / 1000));
+};
 
 const OTPVerification = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
-    const email = getOnboardingEmail();
+    const [email, setEmail] = useState<string | null>(null);
     const [otp, setOtp] = useState("");
     const [isVerified, setIsVerified] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isResending, setIsResending] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(() => {
-        const storedExpiry = sessionStorage.getItem(ONBOARDING_OTP_EXPIRES_AT_KEY);
-        return storedExpiry ? secondsUntil(storedExpiry) : DEFAULT_OTP_WINDOW_SECONDS;
-    });
+    const [timeLeft, setTimeLeft] = useState(0);
     const [verifyAttempts, setVerifyAttempts] = useState(0);
-    const [resendAttempts, setResendAttempts] = useState(0);
-    const [isExpired, setIsExpired] = useState(false);
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    // A code is sent by /auth/agency/register right before navigating here
+    // (see Signup.tsx), so the expiry timestamp should already be in
+    // sessionStorage. If it's missing/stale, treat the code as expired so the
+    // Resend action is immediately available instead of silently doing nothing.
     useEffect(() => {
-        if (!email) {
-            navigate("/signup", { replace: true });
-        }
-    }, [email, navigate]);
-
-    // Handle OTP expiration
-    useEffect(() => {
-        if (timeLeft <= 0 && !isVerified) {
-            setIsExpired(true);
+        const storedEmail = getOnboardingEmail();
+        if (!storedEmail) {
             toast({
-                title: "Code expired",
-                description: "Your verification code has expired. Please request a new one.",
+                title: "Session expired",
+                description: "Please start the sign up process again.",
                 variant: "destructive",
             });
+            navigate("/signup", { replace: true });
+            return;
         }
-    }, [timeLeft, isVerified, toast]);
+        setEmail(storedEmail);
+
+        const storedExpiry = sessionStorage.getItem(ONBOARDING_OTP_EXPIRES_AT_KEY);
+        setTimeLeft(storedExpiry ? secondsUntil(storedExpiry) : 0);
+    }, [navigate, toast]);
 
     // Timer countdown
     useEffect(() => {
-        if (timeLeft > 0 && !isVerified && !isExpired) {
-            timerRef.current = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+        if (timeLeft > 0 && !isVerified) {
+            timerRef.current = setTimeout(() => setTimeLeft((prev) => Math.max(0, prev - 1)), 1000);
             return () => {
                 if (timerRef.current) clearTimeout(timerRef.current);
             };
         }
-    }, [timeLeft, isVerified, isExpired]);
+    }, [timeLeft, isVerified]);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
@@ -77,9 +81,65 @@ const OTPVerification = () => {
         return `${mins}:${secs.toString().padStart(2, "0")}`;
     };
 
-    const canResend = timeLeft === 0 || isExpired;
+    const isExpired = timeLeft <= 0;
+    const canResend = timeLeft <= 0;
     const attemptsRemaining = MAX_VERIFY_ATTEMPTS - verifyAttempts;
     const isAttemptsExhausted = verifyAttempts >= MAX_VERIFY_ATTEMPTS;
+
+    // "Signup draft not found" / "OTP can only be resent before verification" /
+    // "OTP verification is no longer available" all mean this device's local
+    // onboarding state no longer matches the backend record (e.g. a very old
+    // session, or the draft already moved past OTP). There's nothing this
+    // page can recover from locally, so send the user back to restart.
+    const redirectToSignupOnStaleState = useCallback(
+        (error: unknown) => {
+            const detail = getErrorDetail(error);
+            if (detail && STALE_ONBOARDING_STATE_DETAILS.includes(detail)) {
+                toast({
+                    title: "Let's start over",
+                    description: detail,
+                    variant: "destructive",
+                });
+                navigate("/signup", { replace: true });
+                return true;
+            }
+            return false;
+        },
+        [navigate, toast]
+    );
+
+    const handleResend = useCallback(async () => {
+        if (!email || isResending) return;
+
+        setIsResending(true);
+        try {
+            const response = await authService.agencyResendOtp({ email });
+
+            if (response.otp_expires_at) {
+                sessionStorage.setItem(ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+                setTimeLeft(secondsUntil(response.otp_expires_at));
+            } else {
+                setTimeLeft(DEFAULT_OTP_WINDOW_SECONDS);
+            }
+
+            setVerifyAttempts(0);
+            setOtp("");
+
+            toast({
+                title: "New code sent",
+                description: response.message || "Check your mobile for the verification code.",
+            });
+        } catch (error) {
+            if (redirectToSignupOnStaleState(error)) return;
+            toast({
+                title: "Could not resend code",
+                description: extractErrorMessage(error, "Please try again in a moment."),
+                variant: "destructive",
+            });
+        } finally {
+            setIsResending(false);
+        }
+    }, [email, isResending, redirectToSignupOnStaleState, toast]);
 
     const handleConfirm = async () => {
         if (otp.length !== 6 || !email || isSubmitting || isAttemptsExhausted || isExpired) return;
@@ -96,15 +156,33 @@ const OTPVerification = () => {
                 description: "Your account has been verified.",
             });
         } catch (error) {
-            setVerifyAttempts((prev) => prev + 1);
-            const status = isAxiosError<ApiErrorResponse>(error) ? error.response?.status : undefined;
-            const isInvalidCode = status === 400;
+            if (redirectToSignupOnStaleState(error)) return;
+
+            const nextAttempts = verifyAttempts + 1;
+            setVerifyAttempts(nextAttempts);
+            const status = getErrorStatus(error);
+            const detail = getErrorDetail(error);
+            const isInvalidCode = status === 400 && detail === "OTP code is invalid";
+            const isCodeExpired = status === 400 && detail === "OTP code is expired";
+            const remaining = MAX_VERIFY_ATTEMPTS - nextAttempts;
+
+            if (isCodeExpired) {
+                setTimeLeft(0);
+                toast({
+                    title: "Code expired",
+                    description: "That code has expired. Request a new one to continue.",
+                    variant: "destructive",
+                });
+                setOtp("");
+                setIsSubmitting(false);
+                return;
+            }
 
             const message = isInvalidCode
-                ? `Invalid code. ${attemptsRemaining - 1} attempt${attemptsRemaining - 1 !== 1 ? "s" : ""} remaining.`
-                : isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
-                ? error.response.data.detail
-                : "Verification failed. Please try again.";
+                ? remaining > 0
+                    ? `Invalid code. ${remaining} attempt${remaining !== 1 ? "s" : ""} remaining.`
+                    : "Invalid code. Please request a new one."
+                : extractErrorMessage(error, "Verification failed. Please try again.");
 
             toast({
                 title: isInvalidCode ? "Invalid code" : "Verification failed",
@@ -112,65 +190,15 @@ const OTPVerification = () => {
                 variant: "destructive",
             });
 
-            // Clear OTP for retry
             setOtp("");
-
-            // Suggest resend after max attempts
-            if (verifyAttempts >= MAX_VERIFY_ATTEMPTS - 1) {
-                toast({
-                    title: "Too many attempts",
-                    description: "Please request a new code to continue.",
-                    variant: "destructive",
-                });
-            }
         } finally {
             setIsSubmitting(false);
-        }
-    };
-
-    const handleResend = async () => {
-        if (!email || isResending) return;
-
-        setIsResending(true);
-        try {
-            const response = await authService.agencyResendOtp({ email });
-            setResendAttempts((prev) => prev + 1);
-
-            if (response.otp_expires_at) {
-                sessionStorage.setItem(ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
-                setTimeLeft(secondsUntil(response.otp_expires_at));
-            } else {
-                setTimeLeft(DEFAULT_OTP_WINDOW_SECONDS);
-            }
-
-            // Reset verification attempts on resend
-            setVerifyAttempts(0);
-            setIsExpired(false);
-            setOtp("");
-
-            toast({
-                title: "New code sent",
-                description: response.message || "A new verification code has been sent to your mobile.",
-            });
-        } catch (error) {
-            const message =
-                isAxiosError<ApiErrorResponse>(error) && typeof error.response?.data?.detail === "string"
-                    ? error.response.data.detail
-                    : "Could not resend the code. Please try again in a moment.";
-            toast({
-                title: "Resend failed",
-                description: message,
-                variant: "destructive",
-            });
-        } finally {
-            setIsResending(false);
         }
     };
 
     const handleProceed = () => {
         navigate("/agency-owner-info");
     };
-
 
     return (
         <div className="space-y-6 sm:space-y-8">
@@ -190,7 +218,13 @@ const OTPVerification = () => {
                         <InputOTP
                             maxLength={6}
                             value={otp}
-                            onChange={(value) => setOtp(value)}
+                            pattern="[0-9]*"
+                            inputMode="numeric"
+                            onChange={(value) => {
+                                if (!isAttemptsExhausted) {
+                                    setOtp(value);
+                                }
+                            }}
                         >
                             <InputOTPGroup>
                                 <InputOTPSlot index={0} className="w-10 h-12 sm:w-12 sm:h-14 text-lg border-primary" />
@@ -208,19 +242,23 @@ const OTPVerification = () => {
                         <div className="text-sm text-muted-foreground">
                             <button
                                 type="button"
-                                className="px-3 py-1 bg-muted rounded-full text-muted-foreground hover:text-foreground transition-colors"
-                                disabled={timeLeft > 0 || isResending}
+                                className="px-3 py-1 bg-muted rounded-full text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                disabled={!canResend || isResending}
                                 onClick={handleResend}
                             >
                                 {isResending ? "Resending..." : "Resend OTP"}
                             </button>
-                            <span className="ml-2">in {formatTime(timeLeft)}s</span>
+                            {!canResend && <span className="ml-2">in {formatTime(timeLeft)}s</span>}
                         </div>
 
                         <Button
                             className="w-full h-12 text-base font-medium rounded-full"
                             onClick={handleConfirm}
-                            disabled={otp.length !== 6 || isSubmitting}
+                            disabled={
+                                otp.length !== 6 ||
+                                isSubmitting ||
+                                isAttemptsExhausted
+                            }
                         >
                             {isSubmitting ? "Verifying..." : "Confirm"}
                         </Button>
