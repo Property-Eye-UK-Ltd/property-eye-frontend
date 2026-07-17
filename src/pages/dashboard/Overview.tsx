@@ -13,6 +13,10 @@ import {
   recoveredEarningsData,
   recoveredEarningsConfig,
 } from "@/data/overviewData"
+import {
+  casesOverTimeData,
+  casesOverTimeConfig,
+} from "@/data/analytics-data"
 
 const Overview = () => {
   const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
@@ -44,6 +48,17 @@ const Overview = () => {
             showCategoryFilter={false}
             valueFormatter={(value) => `£${value.toLocaleString()}`}
             yAxisTickFormatter={(value) => `£${value.toLocaleString()}`}
+          />
+        </div>
+
+        <div className="w-full">
+          <FraudDetectionPanel
+            title="Cases Over Time"
+            data={casesOverTimeData}
+            config={casesOverTimeConfig}
+            showCategoryFilter={false}
+            valueFormatter={(value) => String(value)}
+            yAxisTickFormatter={(value) => String(value)}
           />
         </div>
       </DashboardPageContent>

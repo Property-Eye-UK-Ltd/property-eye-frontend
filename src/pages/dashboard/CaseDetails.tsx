@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useParams, useLocation } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
@@ -8,12 +8,9 @@ import { TimelineAuditTrailPanel, TimelineRecord } from "@/features/cases/compon
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { CaseRecord } from "@/data/caseManagementData"
-import { allCasesData } from "@/data/caseManagementData"
-import { AgencyFacingCaseStatus } from "@/data/agencyCasesData"
-import { ModalShell } from "@/components/modals/ModalShell"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import { CaseRecord, getAllCasesData } from "@/data/caseManagementData"
+import { AgencyFacingCaseStatus, isClosedCaseStatus, raiseAgencyDispute } from "@/data/agencyCasesData"
+import { RaiseDisputeModal } from "@/features/cases/components/modals/RaiseDisputeModal"
 import { toast } from "sonner"
 
 const mockPropertyParties: PropertyPartiesData = {
@@ -41,9 +38,6 @@ const caseStatusStyles: Record<AgencyFacingCaseStatus, string> = {
   "Closed (Confirmed Fraud)": "bg-red-50 text-red-600 border border-red-100",
   "Closed (Not Fraud)": "bg-green-50 text-green-600 border border-green-100",
 }
-
-const isClosedCaseStatus = (status: AgencyFacingCaseStatus) =>
-  status === "Closed (Confirmed Fraud)" || status === "Closed (Not Fraud)"
 
 const AgencyCaseOverviewCard = ({ caseRecord }: { caseRecord: CaseRecord }) => (
   <div className="rounded-2xl border border-border bg-white p-3 sm:p-4 lg:sticky lg:top-4 lg:p-6">
@@ -73,25 +67,23 @@ const CaseDetails = () => {
   const decodedCaseId = caseId ? decodeURIComponent(caseId) : ""
   const normalizedId = decodedCaseId.startsWith("#") ? decodedCaseId : `#${decodedCaseId}`
 
+  const [refreshTick, setRefreshTick] = useState(0)
+  const allCases = useMemo(() => getAllCasesData(), [refreshTick])
+
   const caseRecord: CaseRecord =
     (location.state as { caseRecord?: CaseRecord })?.caseRecord ??
-    allCasesData.find((c) => c.caseId === normalizedId || c.caseId.replace("#", "") === decodedCaseId.replace("#", "")) ??
-    allCasesData[0]
+    allCases.find((c) => c.caseId === normalizedId || c.caseId.replace("#", "") === decodedCaseId.replace("#", "")) ??
+    allCases[0]
 
   const [isDisputeOpen, setIsDisputeOpen] = useState(false)
-  const [disputeNote, setDisputeNote] = useState("")
-  const [hasRaisedDispute, setHasRaisedDispute] = useState(
-    caseRecord.agencyDispute === "Open" || caseRecord.agencyDispute === "Resolved"
-  )
 
   const isClosed = isClosedCaseStatus(caseRecord.caseStatus)
-  const canRaiseDispute = isClosed && !hasRaisedDispute && caseRecord.agencyDispute !== "Open" && caseRecord.agencyDispute !== "Resolved"
+  const canRaiseDispute = isClosed && caseRecord.agencyDispute !== "Open" && caseRecord.agencyDispute !== "Resolved"
 
-  const handleRaiseDispute = () => {
-    if (!disputeNote.trim()) return
-    setHasRaisedDispute(true)
+  const handleRaiseDispute = (note: string) => {
+    raiseAgencyDispute(caseRecord.caseId, note)
     setIsDisputeOpen(false)
-    setDisputeNote("")
+    setRefreshTick((t) => t + 1)
     toast.success("Dispute raised — admin will review")
   }
 
@@ -121,7 +113,7 @@ const CaseDetails = () => {
 
           <div className="lg:col-span-1 lg:sticky lg:top-28 lg:self-start">
             <AgencyCaseOverviewCard caseRecord={caseRecord} />
-            {(hasRaisedDispute || caseRecord.agencyDispute === "Open" || caseRecord.agencyDispute === "Resolved") && (
+            {(caseRecord.agencyDispute === "Open" || caseRecord.agencyDispute === "Resolved") && (
               <p className="mt-3 text-sm text-muted-foreground">
                 {caseRecord.agencyDispute === "Resolved"
                   ? "A dispute on this case has been resolved by admin."
@@ -132,44 +124,11 @@ const CaseDetails = () => {
         </div>
       </DashboardPageContent>
 
-      <ModalShell
+      <RaiseDisputeModal
         open={isDisputeOpen}
         onClose={() => setIsDisputeOpen(false)}
-        contentClassName="max-w-lg rounded-2xl bg-white p-0 sm:rounded-3xl"
-      >
-        <div className="px-4 py-4 sm:px-6 sm:py-6">
-          <h2 className="text-xl font-semibold text-foreground">Raise Dispute</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Disputes can only be raised on closed cases. Describe why you disagree with the outcome.
-          </p>
-          <div className="mt-4 space-y-2">
-            <Label>Description</Label>
-            <Textarea
-              value={disputeNote}
-              onChange={(e) => setDisputeNote(e.target.value)}
-              placeholder="Explain your dispute..."
-              className="min-h-[120px] rounded-2xl border-border"
-            />
-          </div>
-          <div className="mt-6 flex gap-2">
-            <button
-              type="button"
-              onClick={() => setIsDisputeOpen(false)}
-              className="flex-1 rounded-full bg-muted px-4 py-2.5 text-sm font-medium"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              disabled={!disputeNote.trim()}
-              onClick={handleRaiseDispute}
-              className="flex-1 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
-            >
-              Submit Dispute
-            </button>
-          </div>
-        </div>
-      </ModalShell>
+        onSubmit={handleRaiseDispute}
+      />
     </DashboardLayout>
   )
 }

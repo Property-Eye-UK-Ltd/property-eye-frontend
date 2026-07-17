@@ -30,13 +30,19 @@ export interface CaseRecord {
     buyerName: string
     caseStatus: AgencyFacingCaseStatus
     agencyDispute?: AgencyDisputeStatus
+    disputeNote?: string
 }
 
-export const allCasesData: CaseRecord[] = mockAgencyCases.map((c) => ({
-    caseId: c.caseId,
-    propertyAddress: c.propertyAddress,
-    completionDate: c.completionDate,
-    buyerName: c.buyerName,
-    caseStatus: getAgencyFacingCaseStatus(c),
-    agencyDispute: c.agencyDispute,
-}))
+export function getAllCasesData(): CaseRecord[] {
+    return mockAgencyCases.map((c) => ({
+        caseId: c.caseId,
+        propertyAddress: c.propertyAddress,
+        completionDate: c.completionDate,
+        buyerName: c.buyerName,
+        caseStatus: getAgencyFacingCaseStatus(c),
+        agencyDispute: c.agencyDispute,
+        disputeNote: c.disputeNote,
+    }))
+}
+
+export const allCasesData: CaseRecord[] = getAllCasesData()

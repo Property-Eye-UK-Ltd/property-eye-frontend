@@ -8,7 +8,6 @@ import { CaseListPanel } from "@/features/cases/components/CaseListPanel"
 import {
   periods,
   metricsData,
-  allCasesData,
 } from "@/data/caseManagementData"
 
 const CaseManagement = () => {
@@ -25,7 +24,7 @@ const CaseManagement = () => {
 
       <DashboardPageContent className="space-y-3 lg:space-y-6">
         <MetricCards metrics={filteredMetrics} columns={2} />
-        <CaseListPanel data={allCasesData} />
+        <CaseListPanel />
       </DashboardPageContent>
     </DashboardLayout>
   )

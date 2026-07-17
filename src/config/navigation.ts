@@ -35,12 +35,7 @@ export const agencyNavConfig: NavConfig = {
             path: "/dashboard/properties",
             variant: "Bulk",
         },
-        {
-            label: "Analytics",
-            icon: Graph,
-            path: "/dashboard/analytics",
-            variant: "Bulk",
-        },
+
         {
             label: "Team Management",
             icon: People,

@@ -23,6 +23,8 @@ export interface AgencyCase {
     flagNote?: string
     returnNote?: string
     agencyDispute?: AgencyDisputeStatus
+    disputeNote?: string
+    disputeResolutionNote?: string
 }
 
 export const adminCaseStatusStyles: Record<AdminCaseStatus, string> = {
@@ -279,6 +281,28 @@ export function getAgencyFacingCaseStatus(c: Pick<AgencyCase, "adminStatus" | "d
         return "Closed (Not Fraud)"
     }
     return "Open"
+}
+
+export function isClosedCaseStatus(status: AgencyFacingCaseStatus): boolean {
+    return status === "Closed (Confirmed Fraud)" || status === "Closed (Not Fraud)"
+}
+
+/** Agency raises a dispute on a closed case. Mutates the shared mock array in place. */
+export function raiseAgencyDispute(caseId: string, note: string): AgencyCase | undefined {
+    const record = mockAgencyCases.find((c) => c.caseId === caseId)
+    if (!record) return undefined
+    record.agencyDispute = "Open"
+    record.disputeNote = note
+    return record
+}
+
+/** Admin resolves an agency-raised dispute, with an optional internal note. Mutates the shared mock array in place. */
+export function resolveAgencyDispute(caseId: string, resolutionNote?: string): AgencyCase | undefined {
+    const record = mockAgencyCases.find((c) => c.caseId === caseId)
+    if (!record) return undefined
+    record.agencyDispute = "Resolved"
+    record.disputeResolutionNote = resolutionNote
+    return record
 }
 
 /** Coarse admin-adjacent helper for progress counts */
