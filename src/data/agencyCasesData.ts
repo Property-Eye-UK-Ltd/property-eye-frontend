@@ -273,9 +273,15 @@ export const caseFraudTypeStyles: Record<string, string> = {
     "Dual Agency": "bg-blue-50 text-blue-600 border border-blue-100",
 }
 
-export type AgencyFacingCaseStatus = "Open" | "Closed (Confirmed Fraud)" | "Closed (Not Fraud)"
+export type AgencyFacingCaseStatus = "Open" | "Closed (Confirmed Fraud)" | "Closed (Not Fraud)" | "Disputed"
 
-export function getAgencyFacingCaseStatus(c: Pick<AgencyCase, "adminStatus" | "determination">): AgencyFacingCaseStatus {
+/**
+ * "Disputed" here is a pure display derivation from agencyDispute, layered on top of the real
+ * adminStatus/determination — raising or resolving a dispute never touches adminStatus itself,
+ * so case outcomes (recovered amounts, clearance rate, etc.) stay intact while a dispute is open.
+ */
+export function getAgencyFacingCaseStatus(c: Pick<AgencyCase, "adminStatus" | "determination" | "agencyDispute">): AgencyFacingCaseStatus {
+    if (c.agencyDispute === "Open") return "Disputed"
     if (c.adminStatus === "Closed") {
         if (c.determination === "Fraudulent (Confirmed)") return "Closed (Confirmed Fraud)"
         return "Closed (Not Fraud)"
@@ -287,23 +293,21 @@ export function isClosedCaseStatus(status: AgencyFacingCaseStatus): boolean {
     return status === "Closed (Confirmed Fraud)" || status === "Closed (Not Fraud)"
 }
 
-/** Agency raises a dispute on a closed case. Mutates the shared mock array in place. */
+/** Agency raises a dispute on a closed case. Mutates the shared mock array in place. Never touches adminStatus. */
 export function raiseAgencyDispute(caseId: string, note: string): AgencyCase | undefined {
     const record = mockAgencyCases.find((c) => c.caseId === caseId)
     if (!record) return undefined
     record.agencyDispute = "Open"
     record.disputeNote = note
-    record.adminStatus = "Disputed" as any
     return record
 }
 
-/** Admin resolves an agency-raised dispute, with an optional internal note. Mutates the shared mock array in place. */
-export function resolveAgencyDispute(caseId: string, newStatus: AdminCaseStatus, resolutionNote?: string): AgencyCase | undefined {
+/** Admin resolves an agency-raised dispute, with an optional internal note. Mutates the shared mock array in place. Never touches adminStatus. */
+export function resolveAgencyDispute(caseId: string, resolutionNote?: string): AgencyCase | undefined {
     const record = mockAgencyCases.find((c) => c.caseId === caseId)
     if (!record) return undefined
     record.agencyDispute = "Resolved"
     record.disputeResolutionNote = resolutionNote
-    record.adminStatus = newStatus
     return record
 }
 

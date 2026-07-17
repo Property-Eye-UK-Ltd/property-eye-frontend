@@ -5,13 +5,10 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { CaseRecord, getAllCasesData } from "@/data/caseManagementData"
-import { AgencyFacingCaseStatus, isClosedCaseStatus, raiseAgencyDispute } from "@/data/agencyCasesData"
-import { RaiseDisputeModal } from "@/features/cases/components/modals/RaiseDisputeModal"
-import { toast } from "sonner"
+import { getAllCasesData } from "@/data/caseManagementData"
+import { AgencyFacingCaseStatus } from "@/data/agencyCasesData"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -34,19 +31,9 @@ export const CaseListPanel = () => {
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
-  const [refreshTick, setRefreshTick] = useState(0)
-  const [disputeTargetId, setDisputeTargetId] = useState<string | null>(null)
   const itemsPerPage = 10
 
-  const data = useMemo(() => getAllCasesData(), [refreshTick])
-
-  const handleRaiseDispute = (note: string) => {
-    if (!disputeTargetId) return
-    raiseAgencyDispute(disputeTargetId, note)
-    setDisputeTargetId(null)
-    setRefreshTick((t) => t + 1)
-    toast.success("Dispute raised — admin will review")
-  }
+  const data = useMemo(() => getAllCasesData(), [])
 
   const filteredCases = useMemo(() => {
     const q = searchQuery.toLowerCase().trim()
@@ -80,7 +67,6 @@ export const CaseListPanel = () => {
   }, [totalPages, currentPage])
 
   return (
-    <>
     <DashboardPanel
       title="Case List"
       description="Monitor case status and outcomes for your agency."

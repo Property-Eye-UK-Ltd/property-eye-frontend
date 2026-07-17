@@ -101,9 +101,9 @@ const AdminCaseDetails = () => {
         toast.success("Case moved to legal review")
     }
 
-    const handleResolveDispute = (newStatus: AdminCaseStatus, note?: string) => {
-        resolveAgencyDispute(caseData.caseId, newStatus, note)
-        setCaseData({ ...caseData, adminStatus: newStatus, agencyDispute: "Resolved", disputeResolutionNote: note })
+    const handleResolveDispute = (note?: string) => {
+        resolveAgencyDispute(caseData.caseId, note)
+        setCaseData({ ...caseData, agencyDispute: "Resolved", disputeResolutionNote: note })
         setIsResolveDisputeOpen(false)
         toast.success("Agency dispute resolved")
     }
