@@ -2,11 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/queryKeys"
 import { listNotifications, markAllNotificationsRead, markNotificationRead } from "./notificationsService"
 
-export const useNotifications = () => {
+export const useNotifications = (options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: queryKeys.notifications.list(),
         queryFn: () => listNotifications(),
         staleTime: 30_000,
+        enabled: options?.enabled ?? true,
     })
 }
 

@@ -129,7 +129,7 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                         </>
                     )}
 
-                    <NotificationMenu />
+                    <NotificationMenu isAgencyPortal={variant === "agency"} />
 
                     <div className="hidden h-6 w-px bg-border lg:block" />
 

@@ -8,6 +8,13 @@ import {
 import { Notification as NotificationIcon } from "iconsax-react"
 import { useMarkAllNotificationsRead, useNotifications } from "@/features/notifications/api/useNotifications"
 
+interface NotificationMenuProps {
+    // /dashboard/notifications is agency-scoped on the backend (403s for
+    // admin/marketer JWTs) — only fetch real data for the agency portal.
+    // Admin/marketer notification wiring is out of scope for this pass.
+    isAgencyPortal?: boolean
+}
+
 const formatRelativeTime = (isoTimestamp: string): string => {
     const diffMs = Date.now() - new Date(isoTimestamp).getTime()
     const diffMinutes = Math.floor(diffMs / 60_000)
@@ -19,9 +26,9 @@ const formatRelativeTime = (isoTimestamp: string): string => {
     return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`
 }
 
-export const NotificationMenu = () => {
+export const NotificationMenu = ({ isAgencyPortal = false }: NotificationMenuProps) => {
     const [isOpen, setIsOpen] = useState(false)
-    const { data: notifications = [], isLoading } = useNotifications()
+    const { data: notifications = [], isLoading } = useNotifications({ enabled: isAgencyPortal })
     const markAllAsRead = useMarkAllNotificationsRead()
 
     const unreadCount = notifications.filter((n) => !n.is_read).length
@@ -69,7 +76,7 @@ export const NotificationMenu = () => {
 
                 {/* Content */}
                 <div className="max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-track]:bg-transparent">
-                    {isLoading ? (
+                    {isAgencyPortal && isLoading ? (
                         <div className="flex flex-col items-center justify-center py-10 text-center">
                             <p className="text-sm text-muted-foreground">Loading notifications…</p>
                         </div>

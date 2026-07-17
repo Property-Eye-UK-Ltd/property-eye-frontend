@@ -62,13 +62,6 @@ export const helpCenterCards: HelpCenterCard[] = [
         description: "Work cases from the queue, submit determinations, and handle disputes.",
         link: "/dashboard/help/case-management",
     },
-    {
-        id: "9",
-        icon: "Data",
-        title: "Integration",
-        description: "Connect your property data feed so checks run against your withdrawn listings.",
-        link: "/dashboard/help/integration",
-    },
 ]
 
 export const helpArticles: Record<string, HelpArticleContent> = {
@@ -326,38 +319,4 @@ export const helpArticles: Record<string, HelpArticleContent> = {
         ],
     },
 
-    "integration": {
-        slug: "integration",
-        description: "Connect your property data feed so checks run against your withdrawn listings.",
-        lastModified: "Jul 2025",
-        sections: [
-            {
-                title: "Why Integration Matters",
-                content: [
-                    "Property Eye checks your withdrawn properties against the Land Registry Price Paid Dataset to detect fraud. For this to work, your agency's withdrawn property data must be connected and up to date.",
-                    "If your integration goes unhealthy, properties may be excluded from the next check run. You will receive an Account Review Reminder SMS before each scheduled check — use it as a prompt to verify your connection.",
-                ],
-            },
-            {
-                title: "Setting Up Your Integration",
-                content: [
-                    "Integration is configured by your Agency Owner. Go to Settings > Integration to view your current connection status and configure your data feed.",
-                    "If you need help connecting your CRM or property management system, contact Property Eye support. Only supported data formats can be processed — ask support for the current list.",
-                ],
-                steps: [
-                    "Go to Settings > Integration",
-                    "Review the connection status shown at the top",
-                    "If disconnected, follow the on-screen instructions or contact support",
-                    "Verify at least one week before each scheduled account review",
-                ],
-            },
-            {
-                title: "Check Run Schedule",
-                content: [
-                    "Checks against the Land Registry run twice a year, not monthly. Your monthly subscription fee accumulates to fund each run. This batch approach allows Property Eye to access Land Registry bulk pricing, keeping costs manageable.",
-                    "You will not be told the exact check dates in advance — this is intentional. You will receive an Account Review Reminder SMS the day before and an Account Review Update email once your properties have been processed.",
-                ],
-            },
-        ],
-    },
 }
