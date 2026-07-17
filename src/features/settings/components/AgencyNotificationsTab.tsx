@@ -41,9 +41,7 @@ export const AgencyNotificationsTab = () => {
     }, [])
 
     const hasChanges =
-        formData.email_enabled !== settings.email_enabled ||
-        formData.sms_enabled !== settings.sms_enabled ||
-        formData.push_enabled !== settings.push_enabled
+        formData.email_enabled !== settings.email_enabled
 
     const handleSave = async () => {
         setIsSaving(true)
@@ -95,38 +93,6 @@ export const AgencyNotificationsTab = () => {
                     <Switch
                         checked={formData.email_enabled}
                         onCheckedChange={() => handleToggle("email_enabled")}
-                        disabled={isLoading}
-                        className="shrink-0"
-                    />
-                </div>
-
-                {/* SMS Notification */}
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 space-y-1">
-                        <Label className="text-sm font-medium text-foreground">SMS Notification</Label>
-                        <p className="text-sm text-muted-foreground">
-                            Receive critical notifications and reminders via text message.
-                        </p>
-                    </div>
-                    <Switch
-                        checked={formData.sms_enabled}
-                        onCheckedChange={() => handleToggle("sms_enabled")}
-                        disabled={isLoading}
-                        className="shrink-0"
-                    />
-                </div>
-
-                {/* Push Notification */}
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 space-y-1">
-                        <Label className="text-sm font-medium text-foreground">Push Notification</Label>
-                        <p className="text-sm text-muted-foreground">
-                            Receive instant updates, reminders, and activity notifications
-                        </p>
-                    </div>
-                    <Switch
-                        checked={formData.push_enabled}
-                        onCheckedChange={() => handleToggle("push_enabled")}
                         disabled={isLoading}
                         className="shrink-0"
                     />

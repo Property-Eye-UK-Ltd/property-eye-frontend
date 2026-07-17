@@ -31,6 +31,7 @@ export interface CaseRecord {
     caseStatus: AgencyFacingCaseStatus
     agencyDispute?: AgencyDisputeStatus
     disputeNote?: string
+    recoveryOutcome?: string
 }
 
 export function getAllCasesData(): CaseRecord[] {
@@ -42,6 +43,7 @@ export function getAllCasesData(): CaseRecord[] {
         caseStatus: getAgencyFacingCaseStatus(c),
         agencyDispute: c.agencyDispute,
         disputeNote: c.disputeNote,
+        recoveryOutcome: c.recoveryOutcome,
     }))
 }
 

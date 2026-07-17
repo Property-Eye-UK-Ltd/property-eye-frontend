@@ -293,15 +293,17 @@ export function raiseAgencyDispute(caseId: string, note: string): AgencyCase | u
     if (!record) return undefined
     record.agencyDispute = "Open"
     record.disputeNote = note
+    record.adminStatus = "Disputed" as any
     return record
 }
 
 /** Admin resolves an agency-raised dispute, with an optional internal note. Mutates the shared mock array in place. */
-export function resolveAgencyDispute(caseId: string, resolutionNote?: string): AgencyCase | undefined {
+export function resolveAgencyDispute(caseId: string, newStatus: AdminCaseStatus, resolutionNote?: string): AgencyCase | undefined {
     const record = mockAgencyCases.find((c) => c.caseId === caseId)
     if (!record) return undefined
     record.agencyDispute = "Resolved"
     record.disputeResolutionNote = resolutionNote
+    record.adminStatus = newStatus
     return record
 }
 

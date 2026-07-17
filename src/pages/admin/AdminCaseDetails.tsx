@@ -10,7 +10,8 @@ import { AdminCaseWorkflowPanel } from "@/features/admincases/components/AdminCa
 import { SubmitDeterminationModal, SubmitDeterminationValues } from "@/features/admincases/components/modals/SubmitDeterminationModal"
 import { ReturnCaseModal } from "@/features/admincases/components/modals/ReturnCaseModal"
 import { FlagCaseModal } from "@/features/admincases/components/modals/FlagCaseModal"
-import { AgencyCase, mockAgencyCases } from "@/data/agencyCasesData"
+import { ResolveDisputeModal } from "@/features/admincases/components/modals/ResolveDisputeModal"
+import { AgencyCase, mockAgencyCases, resolveAgencyDispute } from "@/data/agencyCasesData"
 import { agenciesData } from "@/data/agenciesData"
 import { mockAdminCasePropertyParties, mockAdminCaseTimeline } from "@/data/adminCaseDetailsData"
 import { toast } from "sonner"
@@ -25,6 +26,7 @@ const AdminCaseDetails = () => {
     const [isDeterminationOpen, setIsDeterminationOpen] = useState(false)
     const [isReturnOpen, setIsReturnOpen] = useState(false)
     const [isFlagOpen, setIsFlagOpen] = useState(false)
+    const [isResolveDisputeOpen, setIsResolveDisputeOpen] = useState(false)
 
     const randomAgency = agenciesData[0]
 
@@ -99,8 +101,10 @@ const AdminCaseDetails = () => {
         toast.success("Case moved to legal review")
     }
 
-    const handleResolveDispute = () => {
-        setCaseData({ ...caseData, agencyDispute: "Resolved" })
+    const handleResolveDispute = (newStatus: AdminCaseStatus, note?: string) => {
+        resolveAgencyDispute(caseData.caseId, newStatus, note)
+        setCaseData({ ...caseData, adminStatus: newStatus, agencyDispute: "Resolved", disputeResolutionNote: note })
+        setIsResolveDisputeOpen(false)
         toast.success("Agency dispute resolved")
     }
 
@@ -129,7 +133,7 @@ const AdminCaseDetails = () => {
                             onFlagCase={() => setIsFlagOpen(true)}
                             onReopen={handleReopen}
                             onMoveToLegalReview={handleMoveToLegalReview}
-                            onResolveDispute={handleResolveDispute}
+                            onResolveDispute={() => setIsResolveDisputeOpen(true)}
                         />
                     </div>
                 </div>
@@ -149,6 +153,11 @@ const AdminCaseDetails = () => {
                 open={isFlagOpen}
                 onClose={() => setIsFlagOpen(false)}
                 onSubmit={handleFlag}
+            />
+            <ResolveDisputeModal
+                open={isResolveDisputeOpen}
+                onClose={() => setIsResolveDisputeOpen(false)}
+                onSubmit={handleResolveDispute}
             />
         </DashboardLayout>
     )

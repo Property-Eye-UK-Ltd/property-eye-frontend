@@ -96,6 +96,14 @@ export const AdminCaseOverviewCard = ({ caseData }: AdminCaseOverviewCardProps) 
                         <Badge className="rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-600">
                             {caseData.agencyDispute}
                         </Badge>
+                        {caseData.disputeNote && (
+                            <p className="mt-2 text-sm text-primary">{caseData.disputeNote}</p>
+                        )}
+                        {caseData.agencyDispute === "Resolved" && caseData.disputeResolutionNote && (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Resolution note: {caseData.disputeResolutionNote}
+                            </p>
+                        )}
                     </div>
                 )}
                 {caseData.flagNote && (

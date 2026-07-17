@@ -82,5 +82,3 @@ export const currentPlan: CurrentPlan = {
     maxUsers: 10,
 }
 
-export const COMMISSION_STANDING_DISCLOSURE =
-    "Property Eye retains 50% of any commission recovered on your behalf."

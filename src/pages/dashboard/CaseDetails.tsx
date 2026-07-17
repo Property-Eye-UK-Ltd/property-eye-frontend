@@ -37,6 +37,14 @@ const caseStatusStyles: Record<AgencyFacingCaseStatus, string> = {
   Open: "bg-blue-50 text-blue-600 border border-blue-100",
   "Closed (Confirmed Fraud)": "bg-red-50 text-red-600 border border-red-100",
   "Closed (Not Fraud)": "bg-green-50 text-green-600 border border-green-100",
+  Disputed: "bg-amber-50 text-amber-600 border border-amber-100",
+}
+
+const recoveryOutcomeStyles: Record<string, string> = {
+  Recovered: "bg-green-50 text-green-600 border border-green-100",
+  Unrecovered: "bg-gray-50 text-gray-600 border border-gray-100",
+  Disputed: "bg-orange-50 text-orange-600 border border-orange-100",
+  "N/A": "bg-gray-50 text-gray-400 border border-gray-100",
 }
 
 const AgencyCaseOverviewCard = ({ caseRecord }: { caseRecord: CaseRecord }) => (
@@ -52,9 +60,15 @@ const AgencyCaseOverviewCard = ({ caseRecord }: { caseRecord: CaseRecord }) => (
         <p className="text-sm leading-relaxed text-primary break-words whitespace-normal">{caseRecord.propertyAddress}</p>
       </div>
       <div>
+        <p className="mb-1 text-xs text-muted-foreground">Recovery Outcome</p>
+        <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", recoveryOutcomeStyles[caseRecord.recoveryOutcome || "N/A"])}>
+          {caseRecord.recoveryOutcome || "N/A"}
+        </Badge>
+      </div>
+      <div>
         <p className="mb-1 text-xs text-muted-foreground">Status</p>
         <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", caseStatusStyles[caseRecord.caseStatus])}>
-          {caseRecord.caseStatus}
+          {caseRecord.caseStatus === "Disputed" ? "Processing Dispute" : caseRecord.caseStatus}
         </Badge>
       </div>
     </div>
@@ -70,8 +84,9 @@ const CaseDetails = () => {
   const [refreshTick, setRefreshTick] = useState(0)
   const allCases = useMemo(() => getAllCasesData(), [refreshTick])
 
+  const navCaseId = (location.state as { caseRecord?: CaseRecord })?.caseRecord?.caseId
   const caseRecord: CaseRecord =
-    (location.state as { caseRecord?: CaseRecord })?.caseRecord ??
+    allCases.find((c) => c.caseId === navCaseId) ??
     allCases.find((c) => c.caseId === normalizedId || c.caseId.replace("#", "") === decodedCaseId.replace("#", "")) ??
     allCases[0]
 

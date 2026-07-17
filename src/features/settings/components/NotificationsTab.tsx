@@ -23,9 +23,7 @@ export const NotificationsTab = ({ settings, onSave, showTemplates = true }: Not
     // Check if there are any changes
     useEffect(() => {
         const changed =
-            formData.emailNotifications !== settings.emailNotifications ||
-            formData.smsNotifications !== settings.smsNotifications ||
-            formData.pushNotifications !== settings.pushNotifications
+            formData.emailNotifications !== settings.emailNotifications
         setHasChanges(changed)
     }, [formData, settings])
 
@@ -51,9 +49,7 @@ export const NotificationsTab = ({ settings, onSave, showTemplates = true }: Not
 
     const templates = [
         { title: "Fraud Detected (Agency)", type: "Email", content: "Dear [Agency Name], our system has detected a potential commission fraud for property [Property Address]. Please review the case details in your dashboard." },
-        { title: "Account Review Reminder", type: "SMS", content: "Property Eye Alert: An account review is scheduled for [Date] at [Time]. Please ensure your data integration is healthy." },
-        { title: "Account Review Update", type: "Email", content: "The account review for [Period] has been completed. Sign in to Property Eye for your latest case status updates." },
-        { title: "Billing Reminder", type: "SMS", content: "Your Property Eye subscription for [Month] is due. Please review your billing tab to avoid service interruption." }
+        { title: "Account Review Update", type: "Email", content: "The account review for [Period] has been completed. Sign in to Property Eye for your latest case status updates." }
     ]
 
     return (
@@ -107,36 +103,6 @@ export const NotificationsTab = ({ settings, onSave, showTemplates = true }: Not
                                 <Switch
                                     checked={formData.emailNotifications}
                                     onCheckedChange={() => handleToggle("emailNotifications")}
-                                    className="shrink-0"
-                                />
-                            </div>
-
-                            {/* SMS Notification */}
-                            <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1 space-y-1">
-                                    <Label className="text-sm font-medium text-foreground">SMS Notification</Label>
-                                    <p className="text-sm text-muted-foreground">
-                                        Receive critical notifications and reminders via text message.
-                                    </p>
-                                </div>
-                                <Switch
-                                    checked={formData.smsNotifications}
-                                    onCheckedChange={() => handleToggle("smsNotifications")}
-                                    className="shrink-0"
-                                />
-                            </div>
-
-                            {/* Push Notification */}
-                            <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1 space-y-1">
-                                    <Label className="text-sm font-medium text-foreground">Push Notification</Label>
-                                    <p className="text-sm text-muted-foreground">
-                                        Receive instant updates, reminders, and activity notifications
-                                    </p>
-                                </div>
-                                <Switch
-                                    checked={formData.pushNotifications}
-                                    onCheckedChange={() => handleToggle("pushNotifications")}
                                     className="shrink-0"
                                 />
                             </div>

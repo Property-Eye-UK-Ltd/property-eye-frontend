@@ -135,8 +135,13 @@ export const AgencyProfileTab = () => {
                                 placeholder="Enter agency name"
                                 value={agencyName}
                                 onChange={(e) => setAgencyName(e.target.value)}
-                                disabled={!isEditing}
+                                disabled={!isEditing || user?.role !== "admin"}
                             />
+                            {user?.role !== "admin" && (
+                                <p className="text-xs text-muted-foreground">
+                                    Only agency administrators can change the agency name.
+                                </p>
+                            )}
                         </div>
 
                         <div className="space-y-2">

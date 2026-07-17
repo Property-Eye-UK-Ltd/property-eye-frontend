@@ -8,8 +8,10 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { CaseRecord } from "@/data/caseManagementData"
-import { AgencyFacingCaseStatus } from "@/data/agencyCasesData"
+import { CaseRecord, getAllCasesData } from "@/data/caseManagementData"
+import { AgencyFacingCaseStatus, isClosedCaseStatus, raiseAgencyDispute } from "@/data/agencyCasesData"
+import { RaiseDisputeModal } from "@/features/cases/components/modals/RaiseDisputeModal"
+import { toast } from "sonner"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -18,24 +20,32 @@ const caseStatusStyles: Record<AgencyFacingCaseStatus, string> = {
     Open: "bg-blue-50 text-blue-600 border border-blue-100",
     "Closed (Confirmed Fraud)": "bg-red-50 text-red-600 border border-red-100",
     "Closed (Not Fraud)": "bg-green-50 text-green-600 border border-green-100",
+    Disputed: "bg-amber-50 text-amber-600 border border-amber-100",
 }
 
-interface CaseListPanelProps {
-  data: CaseRecord[]
+const recoveryOutcomeStyles: Record<string, string> = {
+    Recovered: "bg-green-50 text-green-600 border border-green-100",
+    Unrecovered: "bg-gray-50 text-gray-600 border border-gray-100",
+    Disputed: "bg-orange-50 text-orange-600 border border-orange-100",
+    "N/A": "bg-gray-50 text-gray-400 border border-gray-100",
 }
 
-export const CaseListPanel = ({ data }: CaseListPanelProps) => {
+export const CaseListPanel = () => {
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
-  // Local optimistic dispute state: maps caseId -> dispute status
-  const [localDisputes, setLocalDisputes] = useState<Record<string, "Open" | "Resolved" | undefined>>(() =>
-    Object.fromEntries(data.map((c) => [c.caseId, c.agencyDispute]))
-  )
+  const [refreshTick, setRefreshTick] = useState(0)
+  const [disputeTargetId, setDisputeTargetId] = useState<string | null>(null)
   const itemsPerPage = 10
 
-  const handleRaiseDispute = (caseId: string) => {
-    setLocalDisputes((prev) => ({ ...prev, [caseId]: "Open" }))
+  const data = useMemo(() => getAllCasesData(), [refreshTick])
+
+  const handleRaiseDispute = (note: string) => {
+    if (!disputeTargetId) return
+    raiseAgencyDispute(disputeTargetId, note)
+    setDisputeTargetId(null)
+    setRefreshTick((t) => t + 1)
+    toast.success("Dispute raised — admin will review")
   }
 
   const filteredCases = useMemo(() => {
@@ -70,6 +80,7 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
   }, [totalPages, currentPage])
 
   return (
+    <>
     <DashboardPanel
       title="Case List"
       description="Monitor case status and outcomes for your agency."
@@ -100,13 +111,22 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
               <TableHead className={th}>Property Address</TableHead>
               <TableHead className={th}>Completion Date</TableHead>
               <TableHead className={th}>Buyer Name</TableHead>
+              <TableHead className={cn(th, "text-center")}>Recovery Outcome</TableHead>
               <TableHead className={cn(th, "text-center")}>Status</TableHead>
-              <TableHead className={cn(th, "text-right")}>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedCases.map((caseRecord, index) => (
-              <TableRow key={`${caseRecord.caseId}-${index}`} className="border-b border-border">
+              <TableRow 
+                key={`${caseRecord.caseId}-${index}`} 
+                onClick={() =>
+                  navigate(
+                    `/dashboard/cases/${encodeURIComponent(caseRecord.caseId.replace("#", ""))}`,
+                    { state: { caseRecord } }
+                  )
+                }
+                className="border-b border-border cursor-pointer hover:bg-slate-50/60"
+              >
                 <TableCell className={cn(td, "text-muted-foreground")}>{caseRecord.caseId}</TableCell>
                 <TableCell className={cn(td, "max-w-[140px] truncate text-foreground sm:max-w-none sm:whitespace-normal")}>
                   {caseRecord.propertyAddress}
@@ -114,46 +134,14 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
                 <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>{caseRecord.completionDate}</TableCell>
                 <TableCell className={cn(td, "font-medium text-foreground")}>{caseRecord.buyerName}</TableCell>
                 <TableCell className={cn(td, "text-center")}>
-                  <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1", caseStatusStyles[caseRecord.caseStatus])}>
-                    {caseRecord.caseStatus}
+                  <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1", recoveryOutcomeStyles[caseRecord.recoveryOutcome || "N/A"])}>
+                    {caseRecord.recoveryOutcome || "N/A"}
                   </Badge>
                 </TableCell>
-                <TableCell className={cn(td, "text-right")}>
-                  <div className="flex items-center justify-end gap-2">
-                    {localDisputes[caseRecord.caseId] === "Open" && (
-                      <Badge className="rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-600 lg:px-3 lg:py-1">
-                        Dispute Open
-                      </Badge>
-                    )}
-                    {localDisputes[caseRecord.caseId] === "Resolved" && (
-                      <Badge className="rounded-full border border-purple-100 bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-purple-600 lg:px-3 lg:py-1">
-                        Dispute Resolved
-                      </Badge>
-                    )}
-                    {caseRecord.caseStatus !== "Open" && !localDisputes[caseRecord.caseId] && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleRaiseDispute(caseRecord.caseId)}
-                        className="h-7 rounded-full border-amber-200 px-2 text-[10px] font-medium text-amber-600 hover:bg-amber-50 hover:text-amber-700 lg:h-8 lg:px-3 lg:text-xs"
-                      >
-                        Raise Dispute
-                      </Button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        navigate(
-                          `/dashboard/cases/${encodeURIComponent(caseRecord.caseId.replace("#", ""))}`,
-                          { state: { caseRecord } }
-                        )
-                      }
-                      className="text-xs font-medium transition-colors hover:underline lg:text-sm"
-                      style={{ color: "var(--progress)" }}
-                    >
-                      View
-                    </button>
-                  </div>
+                <TableCell className={cn(td, "text-center")}>
+                  <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1", caseStatusStyles[caseRecord.caseStatus])}>
+                    {caseRecord.caseStatus === "Disputed" ? "Processing Dispute" : caseRecord.caseStatus}
+                  </Badge>
                 </TableCell>
               </TableRow>
             ))}
@@ -168,5 +156,11 @@ export const CaseListPanel = ({ data }: CaseListPanelProps) => {
         />
       )}
     </DashboardPanel>
+    <RaiseDisputeModal
+      open={disputeTargetId !== null}
+      onClose={() => setDisputeTargetId(null)}
+      onSubmit={handleRaiseDispute}
+    />
+    </>
   )
 }

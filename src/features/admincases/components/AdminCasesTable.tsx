@@ -119,14 +119,21 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                                     </Badge>
                                 </TableCell>
                                 <TableCell className={td}>
-                                    <Badge
-                                        className={cn(
-                                            "rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1 lg:text-xs",
-                                            adminCaseStatusStyles[caseItem.adminStatus]
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                        <Badge
+                                            className={cn(
+                                                "rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1 lg:text-xs",
+                                                adminCaseStatusStyles[caseItem.adminStatus]
+                                            )}
+                                        >
+                                            {caseItem.adminStatus}
+                                        </Badge>
+                                        {caseItem.agencyDispute === "Open" && (
+                                            <Badge className="rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-600 lg:px-3 lg:py-1 lg:text-xs">
+                                                Dispute
+                                            </Badge>
                                         )}
-                                    >
-                                        {caseItem.adminStatus}
-                                    </Badge>
+                                    </div>
                                 </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>
                                     {caseItem.determination ?? "—"}
