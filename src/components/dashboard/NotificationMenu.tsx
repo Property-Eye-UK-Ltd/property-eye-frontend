@@ -5,21 +5,31 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { Notification, initialNotifications } from "@/data/notifications-data"
 import { Notification as NotificationIcon } from "iconsax-react"
+import { useMarkAllNotificationsRead, useNotifications } from "@/features/notifications/api/useNotifications"
+
+const formatRelativeTime = (isoTimestamp: string): string => {
+    const diffMs = Date.now() - new Date(isoTimestamp).getTime()
+    const diffMinutes = Math.floor(diffMs / 60_000)
+    if (diffMinutes < 1) return "just now"
+    if (diffMinutes < 60) return `${diffMinutes} min${diffMinutes === 1 ? "" : "s"} ago`
+    const diffHours = Math.floor(diffMinutes / 60)
+    if (diffHours < 24) return `${diffHours} hr${diffHours === 1 ? "" : "s"} ago`
+    const diffDays = Math.floor(diffHours / 24)
+    return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`
+}
 
 export const NotificationMenu = () => {
-    const [notifications, setNotifications] = useState<Notification[]>(initialNotifications)
-    // const [notifications, setNotifications] = useState<Notification[]>([]) // Empty state for testing
     const [isOpen, setIsOpen] = useState(false)
+    const { data: notifications = [], isLoading } = useNotifications()
+    const markAllAsRead = useMarkAllNotificationsRead()
 
-    const unreadCount = notifications.filter((n) => n.isUnread).length
+    const unreadCount = notifications.filter((n) => !n.is_read).length
+    const hasNotifications = notifications.length > 0
 
     const handleMarkAllAsRead = () => {
-        setNotifications(notifications.map((n) => ({ ...n, isUnread: false })))
+        markAllAsRead.mutate()
     }
-
-    const hasNotifications = notifications.length > 0
 
     return (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -45,7 +55,8 @@ export const NotificationMenu = () => {
                     {hasNotifications && (
                         <button
                             onClick={handleMarkAllAsRead}
-                            className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700"
+                            disabled={markAllAsRead.isPending}
+                            className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 disabled:opacity-50"
                         >
                             <CheckCheck size={14} />
                             Mark all as read
@@ -58,39 +69,34 @@ export const NotificationMenu = () => {
 
                 {/* Content */}
                 <div className="max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-track]:bg-transparent">
-                    {hasNotifications ? (
+                    {isLoading ? (
+                        <div className="flex flex-col items-center justify-center py-10 text-center">
+                            <p className="text-sm text-muted-foreground">Loading notifications…</p>
+                        </div>
+                    ) : hasNotifications ? (
                         <div className="py-2">
                             {notifications.map((notification, index) => (
                                 <div key={notification.id}>
                                     <div
-                                        className={`relative flex gap-3 px-6 py-4 transition-colors hover:bg-muted/50 ${notification.isUnread ? "bg-blue-50/30" : ""
+                                        className={`relative flex gap-3 px-6 py-4 transition-colors hover:bg-muted/50 ${notification.is_read ? "" : "bg-blue-50/30"
                                             }`}
                                     >
                                         {/* Unread Indicator */}
-                                        {notification.isUnread && (
+                                        {!notification.is_read && (
                                             <span className="absolute left-3 top-6 h-2 w-2 rounded-full bg-blue-600" />
                                         )}
 
-                                        <div className={`flex-1 space-y-1 ${notification.isUnread ? "pl-2" : ""}`}>
+                                        <div className={`flex-1 space-y-1 ${notification.is_read ? "" : "pl-2"}`}>
                                             <div className="flex items-start justify-between gap-2">
                                                 <p className="text-sm font-medium text-foreground">
                                                     {notification.title}
                                                 </p>
                                                 <span className="text-xs text-muted-foreground whitespace-nowrap">
-                                                    {notification.time}
+                                                    {formatRelativeTime(notification.created_at)}
                                                 </span>
                                             </div>
                                             <p className="text-sm text-muted-foreground leading-relaxed">
-                                                {notification.description.split(notification.linkText || "").map((part, i, arr) => (
-                                                    <span key={i}>
-                                                        {part}
-                                                        {i < arr.length - 1 && notification.linkText && (
-                                                            <a href={notification.linkUrl} className="font-normal text-blue-600 hover:underline">
-                                                                {notification.linkText}
-                                                            </a>
-                                                        )}
-                                                    </span>
-                                                ))}
+                                                {notification.message}
                                             </p>
                                         </div>
                                     </div>

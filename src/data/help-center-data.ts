@@ -119,28 +119,68 @@ export const helpArticles: Record<string, HelpArticleContent> = {
         lastModified: "Jul 2025",
         sections: [
             {
-                title: "Roles Overview",
+                title: "The Three Agency Roles",
                 content: [
-                    "There are three agency roles. Agency Owner has full control — manages staff, billing, integration, and security settings. Agency Staff can view cases and raise disputes on closed ones. Agency Viewer is read-only; they can see cases but cannot take any action.",
-                    "Role differences only affect account management and dispute rights. All three roles see the same case information: status and outcome only, no severity, no recovered amounts.",
+                    "Every person on your Property Eye account is assigned one of three roles. Roles are deliberately named differently from Property Eye's own internal staff roles so there is no confusion in a support conversation.",
+                ],
+            },
+            {
+                title: "Agency Owner",
+                content: [
+                    "Full control of the agency account. An Agency Owner can do everything listed below and is the only role that can manage team members and change account-level settings.",
+                    "✓ View all cases (status and outcome only)",
+                    "✓ Raise a dispute on any closed case",
+                    "✓ Invite, edit, or deactivate team members",
+                    "✓ Manage billing and subscription plan",
+                    "✓ Configure integration, notifications, and security settings",
+                    "✗ Cannot see internal case severity, recovered amounts, or Property Eye's internal notes",
+                ],
+            },
+            {
+                title: "Agency Staff",
+                content: [
+                    "Working access to cases with the ability to raise disputes. Suitable for estate agents or coordinators who need to act on case outcomes.",
+                    "✓ View all cases (status and outcome only)",
+                    "✓ Raise a dispute on any closed case",
+                    "✗ Cannot manage other staff members",
+                    "✗ Cannot change billing, integration, or security settings",
+                    "✗ Cannot see internal case severity, recovered amounts, or Property Eye's internal notes",
+                ],
+            },
+            {
+                title: "Agency Viewer",
+                content: [
+                    "Read-only access. Suitable for a trainee, a compliance contact, or anyone who needs visibility without taking action.",
+                    "✓ View all cases (status and outcome only)",
+                    "✗ Cannot raise a dispute",
+                    "✗ Cannot manage team members",
+                    "✗ Cannot change any settings",
+                ],
+            },
+            {
+                title: "What All Roles Have in Common",
+                content: [
+                    "All three roles see exactly the same case information: status (Open, Processing Dispute, Closed) and outcome (Confirmed Fraud / Not Fraudulent). No role at the agency level can see the internal severity score, the recovered amount, or any notes left by Property Eye analysts. This is intentional — Property Eye acts as the intermediary and that information stays internal.",
                 ],
             },
             {
                 title: "Inviting a Team Member",
                 content: [
-                    "Only Agency Owners can invite new staff. Go to Team Management, click Add Member, enter their name, email, and select their role. They will receive an email invitation with a link to set their password.",
+                    "Only Agency Owners can invite new staff. Go to Team Management, click Add Team Member, fill in their name, email, and select their role. They will receive an email with a link to set their password.",
                 ],
                 steps: [
                     "Navigate to Team Management in the left sidebar",
                     "Click Add Team Member",
-                    "Enter their full name, email, and select a role",
-                    "Click Send Invite — they receive an email link",
+                    "Enter their full name and email address",
+                    "Select their role (Owner, Staff, or Viewer)",
+                    "Click Send Invite — they receive a setup email immediately",
                 ],
             },
             {
-                title: "Editing or Removing a Member",
+                title: "Changing a Role or Deactivating Someone",
                 content: [
-                    "Click any team member row to open the edit panel. You can change their role or deactivate their account. Deactivated accounts lose access immediately but their history is retained.",
+                    "Click any team member row to open the edit panel. You can change their role at any time or deactivate their account. Deactivated accounts lose access immediately. Their history and any actions they took are retained.",
+                    "You cannot delete your own account from the Team Management page — contact Property Eye support if you need to transfer ownership.",
                 ],
             },
         ],
