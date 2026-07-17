@@ -95,100 +95,111 @@ const AdminCaseManagement = () => {
                     noPadding
                     hasBorder
                     actions={
-                        <div className="flex max-w-full flex-wrap items-center gap-1.5 lg:gap-2">
-                            <div className="relative min-w-[9rem] flex-1 sm:min-w-0 sm:flex-none sm:w-44 lg:w-52">
+                        <div className="flex w-full flex-col gap-2">
+                            {/* Row 1 — Search */}
+                            <div className="relative w-full">
                                 <SearchNormal
                                     size={16}
                                     variant="Outline"
-                                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                                 />
                                 <Input
-                                    placeholder="Case, agency, address, buyer"
+                                    placeholder="Search by case ID, agency, address or buyer…"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="h-8 rounded-full border-border bg-background pl-8 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-9 lg:pl-10 lg:text-sm"
+                                    className="h-9 w-full rounded-full border-border bg-background pl-9 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
                                 />
                             </div>
 
-                            <Select value={selectedAgency} onValueChange={setSelectedAgency}>
-                                <SelectTrigger className="h-8 w-28 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-36 lg:px-3 lg:text-sm">
-                                    <SelectValue placeholder="Agency" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Agencies</SelectItem>
-                                    {uniqueAgencies.map((agencyName) => (
-                                        <SelectItem key={agencyName} value={agencyName}>
-                                            {agencyName}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            {/* Row 2 — Filters + date range + export */}
+                            <div className="flex flex-wrap items-center gap-1.5">
+                                {/* Case filters */}
+                                <Select value={selectedAgency} onValueChange={setSelectedAgency}>
+                                    <SelectTrigger className="h-8 w-36 shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                        <SelectValue placeholder="Agency" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Agencies</SelectItem>
+                                        {uniqueAgencies.map((agencyName) => (
+                                            <SelectItem key={agencyName} value={agencyName}>
+                                                {agencyName}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
-                            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                                <SelectTrigger className="h-8 w-28 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-40 lg:px-3 lg:text-sm">
-                                    <SelectValue placeholder="Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Statuses</SelectItem>
-                                    {statusOptions.map((status) => (
-                                        <SelectItem key={status} value={status}>
-                                            {status}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                                    <SelectTrigger className="h-8 w-36 shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                        <SelectValue placeholder="Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Statuses</SelectItem>
+                                        {statusOptions.map((status) => (
+                                            <SelectItem key={status} value={status}>{status}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
-                            <Select value={selectedSeverity} onValueChange={setSelectedSeverity}>
-                                <SelectTrigger className="h-8 w-24 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-32 lg:px-3 lg:text-sm">
-                                    <SelectValue placeholder="Severity" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Severity</SelectItem>
-                                    {severityOptions.map((s) => (
-                                        <SelectItem key={s} value={s}>{s}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                <Select value={selectedSeverity} onValueChange={setSelectedSeverity}>
+                                    <SelectTrigger className="h-8 w-32 shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                        <SelectValue placeholder="Severity" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Severities</SelectItem>
+                                        {severityOptions.map((s) => (
+                                            <SelectItem key={s} value={s}>{s}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
-                            <Select value={selectedDetermination} onValueChange={setSelectedDetermination}>
-                                <SelectTrigger className="h-8 w-28 shrink-0 rounded-full border-border bg-background px-2 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:w-44 lg:px-3 lg:text-sm">
-                                    <SelectValue placeholder="Determination" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Determinations</SelectItem>
-                                    {determinationOptions.map((d) => (
-                                        <SelectItem key={d} value={d}>{d}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                                <Select value={selectedDetermination} onValueChange={setSelectedDetermination}>
+                                    <SelectTrigger className="h-8 w-40 shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                        <SelectValue placeholder="Determination" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Determinations</SelectItem>
+                                        {determinationOptions.map((d) => (
+                                            <SelectItem key={d} value={d}>{d}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
-                            <Input
-                                type="date"
-                                value={dateFrom}
-                                onChange={(e) => setDateFrom(e.target.value)}
-                                className="h-8 w-[8.5rem] shrink-0 rounded-full border-border bg-background px-2 text-xs focus-visible:ring-0 lg:h-9 lg:text-sm"
-                                title="Sale date from"
-                            />
-                            <Input
-                                type="date"
-                                value={dateTo}
-                                onChange={(e) => setDateTo(e.target.value)}
-                                className="h-8 w-[8.5rem] shrink-0 rounded-full border-border bg-background px-2 text-xs focus-visible:ring-0 lg:h-9 lg:text-sm"
-                                title="Sale date to"
-                            />
+                                {/* Date range */}
+                                <div className="flex items-center gap-1 rounded-full border border-border bg-background px-3 h-8 lg:h-9">
+                                    <span className="text-xs text-muted-foreground whitespace-nowrap">Sale date</span>
+                                    <Input
+                                        type="date"
+                                        value={dateFrom}
+                                        onChange={(e) => setDateFrom(e.target.value)}
+                                        className="h-auto w-[7.5rem] border-0 bg-transparent p-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-sm"
+                                        title="Sale date from"
+                                    />
+                                    <span className="text-xs text-muted-foreground">–</span>
+                                    <Input
+                                        type="date"
+                                        value={dateTo}
+                                        onChange={(e) => setDateTo(e.target.value)}
+                                        className="h-auto w-[7.5rem] border-0 bg-transparent p-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-sm"
+                                        title="Sale date to"
+                                    />
+                                </div>
 
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className={panelBtnClass}>
-                                        Export
-                                        <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48">
-                                    <DropdownMenuItem className="cursor-pointer">Export as CSV</DropdownMenuItem>
-                                    <DropdownMenuItem className="cursor-pointer">Export as PDF</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                                {/* Export */}
+                                <div className="ml-auto">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline" className={panelBtnClass}>
+                                                Export
+                                                <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-48">
+                                            <DropdownMenuItem className="cursor-pointer">Export as CSV</DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer">Export as PDF</DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                            </div>
                         </div>
                     }
                 >

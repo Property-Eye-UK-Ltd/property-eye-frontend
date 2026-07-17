@@ -3,7 +3,7 @@ import { DashboardPageContent } from "@/components/dashboard/DashboardPageConten
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { Button } from "@/components/ui/button"
 import { useParams } from "react-router-dom"
-import { helpCenterCards } from "@/data/help-center-data"
+import { helpArticles } from "@/data/help-center-data"
 
 const helpCtaClass =
     "h-9 rounded-full bg-primary px-4 text-sm hover:bg-primary/90 lg:h-10 lg:px-6"
@@ -15,62 +15,34 @@ const HelpArticle = () => {
         console.log("Contact Us clicked")
     }
 
-    const matchedCard = helpCenterCards.find((card) => card.link.endsWith(articleId || ""))
-    const title = matchedCard?.title || "Getting Started"
-    const description =
-        matchedCard?.description ||
-        "Learn how to login, setup your account, and navigate the main features."
-
-    const article = {
-        title,
-        lastModified: "Jan 2025",
-        description,
+    const article = helpArticles[articleId || ""] ?? {
+        slug: articleId ?? "",
+        description: "",
+        lastModified: "Jul 2025",
         sections: [
             {
-                title: "Creating an Account",
-                content: [
-                    "Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-                    "Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-                ],
-                steps: [
-                    "Sorem ipsum dolor sit amet",
-                    "Sorem ipsum dolor sit amet",
-                    "Sorem ipsum dolor sit amet",
-                    "Sorem ipsum dolor sit amet",
-                ],
-            },
-            {
-                title: "Logging In",
-                content: [
-                    "Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-                    "Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-                ],
-                steps: [
-                    "Sorem ipsum dolor sit amet",
-                    "Sorem ipsum dolor sit amet",
-                    "Sorem ipsum dolor sit amet",
-                    "Sorem ipsum dolor sit amet",
-                ],
-            },
-            {
-                title: "Dashboard Overview",
-                content: [
-                    "Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-                    "Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-                    "Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-                    "Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-                ],
+                title: "Article not found",
+                content: ["This article does not exist or has been moved. Return to the Help Center to find what you need."],
             },
         ],
     }
 
+    // derive a readable title from the slug
+    const title =
+        articleId
+            ? articleId
+                .split("-")
+                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(" ")
+            : "Help Article"
+
     return (
         <DashboardLayout>
             <DynamicPageHeader
-                title={article.title}
+                title={title}
                 breadcrumbs={[
                     { label: "Help Center", href: "/dashboard/help" },
-                    { label: article.title },
+                    { label: title },
                 ]}
                 actions={
                     <Button onClick={handleContactUs} className={helpCtaClass}>
@@ -84,11 +56,13 @@ const HelpArticle = () => {
                         Last modified: {article.lastModified}
                     </p>
                     <h1 className="mb-2 text-xl font-medium leading-tight text-white sm:mb-3 sm:text-2xl lg:mb-4 lg:text-4xl">
-                        {article.title}
+                        {title}
                     </h1>
-                    <p className="mx-auto max-w-2xl text-xs leading-relaxed text-white/90 sm:text-sm lg:text-base">
-                        {article.description}
-                    </p>
+                    {article.description && (
+                        <p className="mx-auto max-w-2xl text-xs leading-relaxed text-white/90 sm:text-sm lg:text-base">
+                            {article.description}
+                        </p>
+                    )}
                 </div>
 
                 <div className="space-y-5 sm:space-y-6 lg:space-y-8">

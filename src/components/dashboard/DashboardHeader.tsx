@@ -99,22 +99,9 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                     )}
                 </button>
 
-                {isAdmin && (
-                    <div className="relative min-w-0 flex-1 lg:hidden">
-                        <SearchNormal
-                            size={18}
-                            variant="TwoTone"
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                        />
-                        <Input
-                            type="search"
-                            placeholder="Search"
-                            className="h-9 w-full rounded-full border-border bg-background pl-9 text-sm"
-                        />
-                    </div>
-                )}
 
                 {isAdmin && <div className="hidden min-w-0 flex-1 lg:block" aria-hidden />}
+
 
                 <div
                     className={cn(
@@ -122,20 +109,6 @@ export const DashboardHeader = ({ variant = "agency" }: DashboardHeaderProps) =>
                         !isAdmin && "min-w-0 flex-1 justify-end"
                     )}
                 >
-                    {isAdmin && (
-                        <div className="relative hidden h-9 w-40 shrink-0 lg:block xl:w-48">
-                            <SearchNormal
-                                size={18}
-                                variant="TwoTone"
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                            />
-                            <Input
-                                type="search"
-                                placeholder="Search"
-                                className="h-9 w-full rounded-full border-border bg-background pl-9 text-sm lg:h-10 lg:pl-10"
-                            />
-                        </div>
-                    )}
 
                     {showCheckRunner && (
                         <>

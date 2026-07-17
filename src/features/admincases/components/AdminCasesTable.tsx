@@ -84,12 +84,15 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                             <TableHead className={th}>Severity</TableHead>
                             <TableHead className={th}>Status</TableHead>
                             <TableHead className={th}>Determination</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {paginatedCases.map((caseItem) => (
-                            <TableRow key={caseItem.id} className="border-b border-border">
+                            <TableRow
+                                key={caseItem.id}
+                                onClick={() => handleViewCase(caseItem.caseId)}
+                                className="border-b border-border cursor-pointer hover:bg-slate-50/60"
+                            >
                                 <TableCell className={td}>
                                     <div className="flex items-center gap-2">
                                         <Checkbox className="data-[state=checked]:border-progress data-[state=checked]:bg-progress" />
@@ -130,14 +133,6 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                                 </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>
                                     {caseItem.determination ?? "—"}
-                                </TableCell>
-                                <TableCell className={cn(td, "text-right")}>
-                                    <button
-                                        onClick={() => handleViewCase(caseItem.caseId)}
-                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                    >
-                                        View
-                                    </button>
                                 </TableCell>
                             </TableRow>
                         ))}
