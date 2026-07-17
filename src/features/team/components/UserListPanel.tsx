@@ -114,12 +114,15 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                                     <ChevronsUpDown className="h-4 w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className="px-2 py-2 text-right text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {paginatedUsers.map((user) => (
-                            <TableRow key={user.id} className="border-b border-border">
+                            <TableRow 
+                                key={user.id} 
+                                onClick={() => onEditClick(user)}
+                                className="border-b border-border cursor-pointer hover:bg-slate-50/60"
+                            >
                                 <TableCell className="px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm">
                                     <div className="flex items-center gap-2 lg:gap-3">
                                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-progress/30 lg:h-9 lg:w-9">
@@ -142,16 +145,6 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                                     >
                                         {user.status}
                                     </Badge>
-                                </TableCell>
-                                <TableCell className="px-2 py-2 text-right text-xs lg:px-4 lg:py-3 lg:text-sm">
-                                    <button
-                                        type="button"
-                                        onClick={() => onEditClick(user)}
-                                        className="text-xs font-normal transition-colors hover:underline lg:text-sm"
-                                        style={{ color: "var(--progress)" }}
-                                    >
-                                        Edit
-                                    </button>
                                 </TableCell>
                             </TableRow>
                         ))}

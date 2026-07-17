@@ -142,11 +142,5 @@ export const CaseListPanel = () => {
         />
       )}
     </DashboardPanel>
-    <RaiseDisputeModal
-      open={disputeTargetId !== null}
-      onClose={() => setDisputeTargetId(null)}
-      onSubmit={handleRaiseDispute}
-    />
-    </>
   )
 }
