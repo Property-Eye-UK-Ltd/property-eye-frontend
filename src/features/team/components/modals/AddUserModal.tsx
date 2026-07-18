@@ -9,7 +9,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { InfoCircle } from "iconsax-react"
-import { userRoles } from "@/data/team-data"
+import { userRoles } from "@/features/team/api/teamService"
 
 export interface AddUserFormValues {
     name: string

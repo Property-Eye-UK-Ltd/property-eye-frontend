@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { useParams, useLocation } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
@@ -8,67 +8,39 @@ import { TimelineAuditTrailPanel, TimelineRecord } from "@/features/cases/compon
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { CaseRecord, getAllCasesData } from "@/data/caseManagementData"
-import { AgencyFacingCaseStatus, isClosedCaseStatus, raiseAgencyDispute } from "@/data/agencyCasesData"
+import { useCaseDetail, useCaseTimeline, useRaiseDispute } from "@/features/cases/api/useCases"
+import type { AgencyCaseStatus, CaseDetail } from "@/features/cases/api/casesService"
 import { RaiseDisputeModal } from "@/features/cases/components/modals/RaiseDisputeModal"
 import { toast } from "sonner"
 
-const mockPropertyParties: PropertyPartiesData = {
-  owner: "Daniel Lawson",
-  agency: "Solict Homes",
-  dateWithdrawn: "15 Oct, 2025",
-  dateSold: "2 Nov, 2025",
-  soldAmount: "£135,325",
-  soldTo: "Kris Luther",
-  landRegistry: {
-    completionDate: "2 Nov, 2025",
-    buyerName: "Kris Luther",
-  },
+const caseStatusLabels: Record<AgencyCaseStatus, string> = {
+  open: "Open",
+  closed_confirmed_fraud: "Closed (Confirmed Fraud)",
+  closed_not_fraudulent: "Closed (Not Fraud)",
 }
 
-const mockTimeline: TimelineRecord[] = [
-  { timestamp: "2025-11-03 09:15", event: "Case opened", actor: "System" },
-  { timestamp: "2025-11-03 10:30", event: "Land Registry check opened", actor: "System" },
-  { timestamp: "2025-11-03 10:35", event: "Land Registry check completed", actor: "System" },
-  { timestamp: "2025-11-03 10:40", event: "Classification: Under review", actor: "System" },
-]
-
-const caseStatusStyles: Record<AgencyFacingCaseStatus, string> = {
-  Open: "bg-blue-50 text-blue-600 border border-blue-100",
-  "Closed (Confirmed Fraud)": "bg-red-50 text-red-600 border border-red-100",
-  "Closed (Not Fraud)": "bg-green-50 text-green-600 border border-green-100",
-  Disputed: "bg-amber-50 text-amber-600 border border-amber-100",
+const caseStatusStyles: Record<AgencyCaseStatus, string> = {
+  open: "bg-blue-50 text-blue-600 border border-blue-100",
+  closed_confirmed_fraud: "bg-red-50 text-red-600 border border-red-100",
+  closed_not_fraudulent: "bg-green-50 text-green-600 border border-green-100",
 }
 
-const recoveryOutcomeStyles: Record<string, string> = {
-  Recovered: "bg-green-50 text-green-600 border border-green-100",
-  Unrecovered: "bg-gray-50 text-gray-600 border border-gray-100",
-  Disputed: "bg-orange-50 text-orange-600 border border-orange-100",
-  "N/A": "bg-gray-50 text-gray-400 border border-gray-100",
-}
-
-const AgencyCaseOverviewCard = ({ caseRecord }: { caseRecord: CaseRecord }) => (
+const AgencyCaseOverviewCard = ({ caseDetail }: { caseDetail: CaseDetail }) => (
   <div className="rounded-2xl border border-border bg-white p-3 sm:p-4 lg:sticky lg:top-4 lg:p-6">
     <p className="mb-3 text-xs text-muted-foreground sm:mb-4">Case Overview</p>
     <div className="grid grid-cols-1 gap-3 sm:gap-4">
       <div>
         <p className="mb-1 text-xs text-muted-foreground">Case ID</p>
-        <p className="text-sm text-primary">{caseRecord.caseId}</p>
+        <p className="text-sm text-primary">{caseDetail.case_id}</p>
       </div>
       <div>
         <p className="mb-1 text-xs text-muted-foreground">Property Address</p>
-        <p className="text-sm leading-relaxed text-primary break-words whitespace-normal">{caseRecord.propertyAddress}</p>
-      </div>
-      <div>
-        <p className="mb-1 text-xs text-muted-foreground">Recovery Outcome</p>
-        <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", recoveryOutcomeStyles[caseRecord.recoveryOutcome || "N/A"])}>
-          {caseRecord.recoveryOutcome || "N/A"}
-        </Badge>
+        <p className="text-sm leading-relaxed text-primary break-words whitespace-normal">{caseDetail.property_address}</p>
       </div>
       <div>
         <p className="mb-1 text-xs text-muted-foreground">Status</p>
-        <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", caseStatusStyles[caseRecord.caseStatus])}>
-          {caseRecord.caseStatus === "Disputed" ? "Processing Dispute" : caseRecord.caseStatus}
+        <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", caseStatusStyles[caseDetail.status])}>
+          {caseStatusLabels[caseDetail.status]}
         </Badge>
       </div>
     </div>
@@ -79,28 +51,57 @@ const CaseDetails = () => {
   const { caseId } = useParams<{ caseId: string }>()
   const location = useLocation()
   const decodedCaseId = caseId ? decodeURIComponent(caseId) : ""
-  const normalizedId = decodedCaseId.startsWith("#") ? decodedCaseId : `#${decodedCaseId}`
 
-  const [refreshTick, setRefreshTick] = useState(0)
-  const allCases = useMemo(() => getAllCasesData(), [refreshTick])
-
-  const navCaseId = (location.state as { caseRecord?: CaseRecord })?.caseRecord?.caseId
-  const caseRecord: CaseRecord =
-    allCases.find((c) => c.caseId === navCaseId) ??
-    allCases.find((c) => c.caseId === normalizedId || c.caseId.replace("#", "") === decodedCaseId.replace("#", "")) ??
-    allCases[0]
+  const { data: caseDetail, isLoading: isCaseLoading } = useCaseDetail(decodedCaseId)
+  const { data: timeline = [] } = useCaseTimeline(decodedCaseId)
+  const raiseDisputeMutation = useRaiseDispute(decodedCaseId)
 
   const [isDisputeOpen, setIsDisputeOpen] = useState(false)
 
-  const isClosed = isClosedCaseStatus(caseRecord.caseStatus)
-  const canRaiseDispute = isClosed && caseRecord.agencyDispute !== "Open" && caseRecord.agencyDispute !== "Resolved"
+  const isClosed = caseDetail?.status === "closed_confirmed_fraud" || caseDetail?.status === "closed_not_fraudulent"
+  const disputeStatus = caseDetail?.agency_dispute_status ?? "none"
+  const canRaiseDispute = isClosed && disputeStatus === "none"
 
-  const handleRaiseDispute = (note: string) => {
-    raiseAgencyDispute(caseRecord.caseId, note)
-    setIsDisputeOpen(false)
-    setRefreshTick((t) => t + 1)
-    toast.success("Dispute raised — admin will review")
+  const handleRaiseDispute = async (note: string) => {
+    try {
+      await raiseDisputeMutation.mutateAsync(note)
+      setIsDisputeOpen(false)
+      toast.success("Dispute raised — admin will review")
+    } catch (error) {
+      console.error("Failed to raise dispute:", error)
+      toast.error("Failed to raise dispute. Please try again.")
+    }
   }
+
+  if (isCaseLoading || !caseDetail) {
+    return (
+      <DashboardLayout>
+        <DynamicPageHeader title="Case Details" />
+        <DashboardPageContent>
+          <div className="py-12 text-center text-sm text-muted-foreground">Loading case details...</div>
+        </DashboardPageContent>
+      </DashboardLayout>
+    )
+  }
+
+  const propertyParties: PropertyPartiesData = {
+    owner: caseDetail.owner_name ?? "Unknown",
+    agency: caseDetail.agency_name ?? "Unknown",
+    dateWithdrawn: caseDetail.date_withdrawn ? new Date(caseDetail.date_withdrawn).toLocaleDateString("en-GB") : "-",
+    dateSold: caseDetail.date_sold ? new Date(caseDetail.date_sold).toLocaleDateString("en-GB") : "-",
+    soldAmount: "",
+    soldTo: caseDetail.buyer_name ?? "-",
+    landRegistry: {
+      completionDate: caseDetail.lr_completion_date ? new Date(caseDetail.lr_completion_date).toLocaleDateString("en-GB") : "-",
+      buyerName: caseDetail.lr_buyer_name ?? "-",
+    },
+  }
+
+  const timelineRecords: TimelineRecord[] = timeline.map((entry) => ({
+    timestamp: new Date(entry.timestamp).toLocaleString("en-GB"),
+    event: entry.event_description,
+    actor: entry.actor_name,
+  }))
 
   return (
     <DashboardLayout>
@@ -108,7 +109,7 @@ const CaseDetails = () => {
         title="Case Details"
         breadcrumbs={[
           { label: (location.state as { returnLabel?: string })?.returnLabel || "Case Management", href: (location.state as { returnPath?: string })?.returnPath || "/dashboard/cases" },
-          { label: caseRecord.caseId },
+          { label: caseDetail.case_id },
         ]}
         actions={
           canRaiseDispute ? (
@@ -122,15 +123,15 @@ const CaseDetails = () => {
       <DashboardPageContent>
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:items-start lg:gap-4">
           <div className="space-y-3 lg:col-span-2 lg:space-y-4">
-            <PropertyPartiesPanel data={mockPropertyParties} variant="agency" />
-            <TimelineAuditTrailPanel data={mockTimeline} />
+            <PropertyPartiesPanel data={propertyParties} variant="agency" />
+            <TimelineAuditTrailPanel data={timelineRecords} />
           </div>
 
           <div className="lg:col-span-1 lg:sticky lg:top-28 lg:self-start">
-            <AgencyCaseOverviewCard caseRecord={caseRecord} />
-            {(caseRecord.agencyDispute === "Open" || caseRecord.agencyDispute === "Resolved") && (
+            <AgencyCaseOverviewCard caseDetail={caseDetail} />
+            {(disputeStatus === "open" || disputeStatus === "resolved") && (
               <p className="mt-3 text-sm text-muted-foreground">
-                {caseRecord.agencyDispute === "Resolved"
+                {disputeStatus === "resolved"
                   ? "A dispute on this case has been resolved by admin."
                   : "A dispute has been raised on this closed case and is pending admin review."}
               </p>

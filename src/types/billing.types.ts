@@ -42,13 +42,12 @@ export interface CancelPlanResponse {
     expires_at: string
 }
 
-// GET /public/plans — the real, fixed pricing catalog (Basic/Pro/Premium/
-// Enterprise). Source of truth for the Subscription Plans page. Mirrors
-// backend/src/schemas/public_site.py::PublicPlanResponse exactly (spot-checked
-// against source — field names do not match the internal admin Plan/*
-// schemas, e.g. "price_gbp_monthly" not "price_gbp"). `id` is the real
-// Plan.id (added to this response so the authenticated subscribe flow has
-// something to pass to POST /dashboard/billing/subscribe).
+// GET /public/plans — the real, fixed pricing catalog. Source of truth for
+// the Subscription Plans page. Mirrors backend/src/schemas/public_site.py::
+// PublicPlanResponse exactly. `id` is the real Plan.id (added to this
+// response so the authenticated subscribe flow has something to pass to
+// POST /dashboard/billing/subscribe). No usage/quota fields — checks
+// aren't metered and there's no seat cap.
 export interface PublicPlanResponse {
     id: string
     slug: string
@@ -57,9 +56,6 @@ export interface PublicPlanResponse {
     billing_interval: string
     target_customer_description: string
     feature_list: string[]
-    check_quota: number | string
-    overage_price_per_check_gbp: number
-    max_crm_users: number | string
     cta_text: string
     schema_default: boolean
 }

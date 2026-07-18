@@ -8,7 +8,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { User } from "@/data/team-data"
+import { User } from "@/features/team/api/teamService"
 
 export interface DisableUserFormValues {
     reason: string

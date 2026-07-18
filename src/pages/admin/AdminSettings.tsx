@@ -8,7 +8,6 @@ import { NotificationsTab } from "@/features/settings/components/NotificationsTa
 import { AccountTab } from "@/features/settings/components/AccountTab"
 import { AutomationTab } from "@/features/settings/components/AutomationTab"
 import { DataRetentionTab } from "@/features/settings/components/DataRetentionTab"
-import { MessageTemplatesTab } from "@/features/settings/components/MessageTemplatesTab"
 import {
     mockProfileSettings,
     mockNotificationSettings,
@@ -28,7 +27,6 @@ const AdminSettings = () => {
     const tabs = [
         { label: "Profile", value: "profile" },
         { label: "Notifications", value: "notifications" },
-        { label: "Message Templates", value: "templates" },
         { label: "Scheduling", value: "scheduling" },
         { label: "Account", value: "account" },
         { label: "Data Retention", value: "data-retention" },
@@ -61,7 +59,6 @@ const AdminSettings = () => {
                 {selectedTab === "notifications" && (
                     <NotificationsTab settings={notificationSettings} onSave={handleSaveNotifications} showTemplates={false} />
                 )}
-                {selectedTab === "templates" && <MessageTemplatesTab />}
                 {selectedTab === "scheduling" && <AutomationTab />}
                 {selectedTab === "account" && (
                     <AccountTab />

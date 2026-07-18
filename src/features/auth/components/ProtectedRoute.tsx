@@ -17,6 +17,19 @@ const ProtectedRoute = () => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
+    const { user } = useAuth();
+
+    // Smartly redirect unsubscribed/inactive agency users to the subscription plans view.
+    // Allows them to access billing paths (like /dashboard/billing/plans) to complete signup.
+    if (
+        user &&
+        user.portal_context === "agency" &&
+        !user.plan &&
+        !location.pathname.startsWith("/dashboard/billing")
+    ) {
+        return <Navigate to="/dashboard/billing/plans" replace />;
+    }
+
     return <Outlet />;
 };
 

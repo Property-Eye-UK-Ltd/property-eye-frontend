@@ -1,13 +1,22 @@
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { currentPlan } from "@/data/billing-data"
 
 interface CurrentPlanCardProps {
+    planName: string
+    priceGbp: number
+    billingInterval: string
+    nextBillingDate: string
     onCancelPlan?: () => void
 }
 
-export const CurrentPlanCard = ({ onCancelPlan }: CurrentPlanCardProps) => {
+export const CurrentPlanCard = ({
+    planName,
+    priceGbp,
+    billingInterval,
+    nextBillingDate,
+    onCancelPlan,
+}: CurrentPlanCardProps) => {
     return (
         <DashboardPanel className="overflow-hidden" hasBorder>
             <div className="space-y-4 lg:space-y-6">
@@ -15,21 +24,21 @@ export const CurrentPlanCard = ({ onCancelPlan }: CurrentPlanCardProps) => {
                     <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
                             <h3 className="text-base font-medium text-foreground lg:text-lg">
-                                Current Plan ({currentPlan.name})
+                                Current Plan ({planName})
                             </h3>
                             <Badge className="rounded-full bg-purple-100 px-2.5 py-0.5 text-[10px] font-medium text-purple-700 hover:bg-purple-100 lg:px-3 lg:text-xs">
-                                {currentPlan.billingCycle}
+                                {billingInterval}
                             </Badge>
                         </div>
                         <p className="text-2xl font-medium text-foreground lg:text-3xl">
-                            £{currentPlan.price}
+                            £{priceGbp}
                             <span className="text-sm font-normal text-muted-foreground lg:text-base">/month</span>
                         </p>
                     </div>
 
                     <p className="text-xs text-muted-foreground lg:text-sm">
                         Next billing:{" "}
-                        <span className="text-foreground">{currentPlan.nextBillingDate}</span>
+                        <span className="text-foreground">{nextBillingDate}</span>
                     </p>
                 </div>
 

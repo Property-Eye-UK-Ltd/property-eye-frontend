@@ -1,29 +1,36 @@
-import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
-import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
-import { MetricCards } from "@/features/overview/components/MetricCards"
+import { MetricCards, MetricCard } from "@/features/overview/components/MetricCards"
 import { CaseListPanel } from "@/features/cases/components/CaseListPanel"
-import {
-  periods,
-  metricsData,
-} from "@/data/caseManagementData"
+import { useCasesSummary } from "@/features/cases/api/useCases"
 
 const CaseManagement = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
+  const { data: summary, isLoading } = useCasesSummary()
 
-  const filteredMetrics = metricsData[selectedPeriod]
+  const metrics: MetricCard[] = [
+    {
+      title: "Total Fraud Alerts",
+      value: isLoading ? "-" : String(summary?.total_fraud_alerts ?? 0),
+      period: "All time",
+      change: "",
+      topBarClass: "bg-blue-500",
+    },
+    {
+      title: "Avg. Fraud Likelihood",
+      value: isLoading ? "-" : `${(summary?.avg_fraud_likelihood ?? 0).toFixed(1)}%`,
+      period: "All time",
+      change: "",
+      topBarClass: "bg-orange-500",
+    },
+  ]
 
   return (
     <DashboardLayout>
-      <DynamicPageHeader
-        title="Case Management"
-        filters={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
-      />
+      <DynamicPageHeader title="Case Management" />
 
       <DashboardPageContent className="space-y-3 lg:space-y-6">
-        <MetricCards metrics={filteredMetrics} columns={2} />
+        <MetricCards metrics={metrics} columns={2} />
         <CaseListPanel />
       </DashboardPageContent>
     </DashboardLayout>

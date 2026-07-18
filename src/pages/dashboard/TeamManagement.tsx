@@ -9,7 +9,8 @@ import { DashboardPageContent } from "@/components/dashboard/DashboardPageConten
 import { AddUserModal, AddUserFormValues } from "@/features/team/components/modals/AddUserModal"
 import { EditUserModal, EditUserFormValues } from "@/features/team/components/modals/EditUserModal"
 import { DisableUserModal, DisableUserFormValues } from "@/features/team/components/modals/DisableUserModal"
-import { User } from "@/data/team-data"
+import { User, toRoleValue } from "@/features/team/api/teamService"
+import { useInviteTeamUser, useRemoveTeamUser, useUpdateTeamUser } from "@/features/team/api/useTeam"
 import { toast } from "sonner"
 
 const TeamManagement = () => {
@@ -17,17 +18,26 @@ const TeamManagement = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isDisableModalOpen, setIsDisableModalOpen] = useState(false)
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
-    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const inviteMutation = useInviteTeamUser()
+    const updateMutation = useUpdateTeamUser()
+    const removeMutation = useRemoveTeamUser()
 
     const handleAddUser = async (values: AddUserFormValues) => {
-        setIsSubmitting(true)
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-        console.log("Adding user:", values)
-        setIsSubmitting(false)
-        setIsAddUserModalOpen(false)
-        toast.success("User invited successfully", {
-            description: `An invitation has been sent to ${values.email}`,
-        })
+        try {
+            await inviteMutation.mutateAsync({
+                name: values.name,
+                email: values.email,
+                role: toRoleValue(values.role),
+            })
+            setIsAddUserModalOpen(false)
+            toast.success("User invited successfully", {
+                description: `An invitation has been sent to ${values.email}`,
+            })
+        } catch (error) {
+            console.error("Failed to invite user:", error)
+            toast.error("Failed to invite user. Please try again.")
+        }
     }
 
     const handleEditClick = (user: User) => {
@@ -37,14 +47,19 @@ const TeamManagement = () => {
 
     const handleEditUser = async (values: EditUserFormValues) => {
         if (!selectedUser) return
-        setIsSubmitting(true)
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-        console.log("Editing user:", selectedUser.id, values)
-        setIsSubmitting(false)
-        setIsEditModalOpen(false)
-        toast.success("User updated successfully", {
-            description: `Changes to ${values.name} have been saved`,
-        })
+        try {
+            await updateMutation.mutateAsync({
+                userId: selectedUser.id,
+                req: { name: values.name, role: toRoleValue(values.role) },
+            })
+            setIsEditModalOpen(false)
+            toast.success("User updated successfully", {
+                description: `Changes to ${values.name} have been saved`,
+            })
+        } catch (error) {
+            console.error("Failed to update user:", error)
+            toast.error("Failed to update user. Please try again.")
+        }
     }
 
     const handleDisableClick = () => {
@@ -52,16 +67,18 @@ const TeamManagement = () => {
         setIsDisableModalOpen(true)
     }
 
-    const handleDisableUser = async (values: DisableUserFormValues) => {
+    const handleDisableUser = async (_values: DisableUserFormValues) => {
         if (!selectedUser) return
-        setIsSubmitting(true)
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-        console.log("Disabling user:", selectedUser.id, values)
-        setIsSubmitting(false)
-        setIsDisableModalOpen(false)
-        toast.success("User disabled successfully", {
-            description: "The user has been disabled",
-        })
+        try {
+            await removeMutation.mutateAsync(selectedUser.id)
+            setIsDisableModalOpen(false)
+            toast.success("User disabled successfully", {
+                description: "The user has been disabled",
+            })
+        } catch (error) {
+            console.error("Failed to disable user:", error)
+            toast.error("Failed to disable user. Please try again.")
+        }
     }
 
     return (
@@ -87,7 +104,7 @@ const TeamManagement = () => {
                 open={isAddUserModalOpen}
                 onClose={() => setIsAddUserModalOpen(false)}
                 onSubmit={handleAddUser}
-                isSubmitting={isSubmitting}
+                isSubmitting={inviteMutation.isPending}
             />
 
             <EditUserModal
@@ -96,7 +113,7 @@ const TeamManagement = () => {
                 onSubmit={handleEditUser}
                 onDisable={handleDisableClick}
                 user={selectedUser}
-                isSubmitting={isSubmitting}
+                isSubmitting={updateMutation.isPending}
             />
 
             <DisableUserModal
@@ -104,7 +121,7 @@ const TeamManagement = () => {
                 onClose={() => setIsDisableModalOpen(false)}
                 onSubmit={handleDisableUser}
                 user={selectedUser}
-                isSubmitting={isSubmitting}
+                isSubmitting={removeMutation.isPending}
             />
         </DashboardLayout>
     )

@@ -8,7 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { userRoles, User } from "@/data/team-data"
+import { userRoles, User, toRoleLabel } from "@/features/team/api/teamService"
 
 export interface EditUserFormValues {
     name: string
@@ -47,7 +47,7 @@ export const EditUserModal = ({
             setFormValues({
                 name: user.name,
                 email: user.email,
-                role: user.role,
+                role: toRoleLabel(user.role),
             })
             setEmailError("")
         } else if (!open) {

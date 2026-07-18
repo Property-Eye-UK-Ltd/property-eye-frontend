@@ -30,6 +30,8 @@ import Properties from "./pages/dashboard/Properties";
 import TeamManagement from "./pages/dashboard/TeamManagement";
 import AccountBilling from "./pages/dashboard/AccountBilling";
 import SubscriptionPlans from "./pages/dashboard/SubscriptionPlans";
+import SubscriptionSuccess from "./pages/dashboard/SubscriptionSuccess";
+import CheckoutCancelled from "./pages/dashboard/CheckoutCancelled";
 import HelpCenter from "./pages/dashboard/HelpCenter";
 import HelpArticle from "./pages/dashboard/HelpArticle";
 import Settings from "./pages/dashboard/Settings";
@@ -101,6 +103,8 @@ const App = () => (
             <Route path="/dashboard/team" element={<TeamManagement />} />
             <Route path="/dashboard/billing" element={<AccountBilling />} />
             <Route path="/dashboard/billing/plans" element={<SubscriptionPlans />} />
+            <Route path="/dashboard/billing/success" element={<SubscriptionSuccess />} />
+            <Route path="/dashboard/billing/cancelled" element={<CheckoutCancelled />} />
             <Route path="/dashboard/help" element={<HelpCenter />} />
             <Route path="/dashboard/help/:articleId" element={<HelpArticle />} />
             <Route path="/dashboard/settings" element={<Settings />} />

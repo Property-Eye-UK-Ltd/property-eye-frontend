@@ -9,7 +9,7 @@ interface RoleOverrideModalProps {
     onConfirm: (role: string, reason: string, description: string) => void
 }
 
-const roles = ["Admin", "Agent", "Viewer"]
+const roles = ["Agency Owner", "Agency Staff", "Agency Viewer"]
 const reasons = ["Change of Duties", "Promotion", "Demotion", "Correction", "Other"]
 
 export const RoleOverrideModal = ({ open, onClose, onConfirm }: RoleOverrideModalProps) => {

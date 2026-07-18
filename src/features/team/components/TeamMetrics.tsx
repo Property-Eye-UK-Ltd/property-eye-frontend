@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useTeamSummary } from "@/features/team/api/useTeam"
 
 export const TeamMetrics = () => {
+    const { data: summary, isLoading } = useTeamSummary()
+
     return (
         <div className="grid grid-cols-2 gap-3 lg:gap-4">
             <Card className="relative overflow-hidden">
@@ -11,7 +14,9 @@ export const TeamMetrics = () => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-3 pt-0 lg:p-6">
-                    <p className="text-2xl font-medium text-foreground lg:text-4xl">5</p>
+                    <p className="text-2xl font-medium text-foreground lg:text-4xl">
+                        {isLoading ? "-" : summary?.total_users ?? 0}
+                    </p>
                 </CardContent>
             </Card>
 
@@ -23,7 +28,9 @@ export const TeamMetrics = () => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-3 pt-0 lg:p-6">
-                    <p className="text-2xl font-medium text-foreground lg:text-4xl">4</p>
+                    <p className="text-2xl font-medium text-foreground lg:text-4xl">
+                        {isLoading ? "-" : summary?.active_today_count ?? 0}
+                    </p>
                 </CardContent>
             </Card>
         </div>

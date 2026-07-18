@@ -15,10 +15,8 @@ export const GlobalCheckRunner = ({ className, compact = false }: GlobalCheckRun
     const [progress, setProgress] = React.useState(0)
     const [isComplete, setIsComplete] = React.useState(false)
 
-    const [canRun] = React.useState(true)
-
     const handleRunChecks = () => {
-        if (!canRun || isRunning) return
+        if (isRunning) return
 
         setIsRunning(true)
         setIsComplete(false)
@@ -46,7 +44,7 @@ export const GlobalCheckRunner = ({ className, compact = false }: GlobalCheckRun
             <Button
                 size="icon"
                 onClick={handleRunChecks}
-                disabled={!canRun || isRunning || isComplete}
+                disabled={isRunning || isComplete}
                 aria-label={
                     isRunning
                         ? `Checks running ${progress}%`
@@ -78,7 +76,7 @@ export const GlobalCheckRunner = ({ className, compact = false }: GlobalCheckRun
             <Button
                 size="sm"
                 onClick={handleRunChecks}
-                disabled={!canRun || isRunning || isComplete}
+                disabled={isRunning || isComplete}
                 className={cn(
                     "h-10 min-w-[180px] rounded-full px-6 transition-all duration-300",
                     isComplete

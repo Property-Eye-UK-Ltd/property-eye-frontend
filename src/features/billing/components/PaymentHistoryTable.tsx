@@ -14,34 +14,37 @@ import { Filter, ArrowDown2 } from "iconsax-react"
 import { TablePagination } from "@/components/dashboard/TablePagination"
 import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { paymentHistory } from "@/data/billing-data"
+import type { InvoiceResponse } from "@/features/billing/api/billingService"
 
 const ITEMS_PER_PAGE = 7
 
-export const PaymentHistoryTable = () => {
+interface PaymentHistoryTableProps {
+    invoices: InvoiceResponse[]
+    onDownload?: (invoiceNumber: string) => void
+}
+
+export const PaymentHistoryTable = ({ invoices, onDownload }: PaymentHistoryTableProps) => {
     const [currentPage, setCurrentPage] = useState(1)
     const [sortColumn, setSortColumn] = useState<"billingDate" | "amount" | "status" | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
 
     const sortedPayments = useMemo(() => {
-        if (!sortColumn) return paymentHistory
+        if (!sortColumn) return invoices
         const direction = sortDirection === "asc" ? 1 : -1
 
-        return [...paymentHistory].sort((a, b) => {
+        return [...invoices].sort((a, b) => {
             if (sortColumn === "billingDate") {
-                return (new Date(a.billingDate).getTime() - new Date(b.billingDate).getTime()) * direction
+                return (new Date(a.billing_date).getTime() - new Date(b.billing_date).getTime()) * direction
             }
             if (sortColumn === "amount") {
-                const amountA = parseFloat(a.amount.replace(/[£,]/g, ""))
-                const amountB = parseFloat(b.amount.replace(/[£,]/g, ""))
-                return (amountA - amountB) * direction
+                return (a.amount_gbp - b.amount_gbp) * direction
             }
             if (sortColumn === "status") {
                 return a.status.localeCompare(b.status) * direction
             }
             return 0
         })
-    }, [sortColumn, sortDirection])
+    }, [sortColumn, sortDirection, invoices])
 
     const handleSort = (column: "billingDate" | "amount" | "status") => {
         if (sortColumn === column) {
@@ -115,21 +118,25 @@ export const PaymentHistoryTable = () => {
                     </TableHeader>
                     <TableBody>
                         {paginatedPayments.map((payment) => (
-                            <TableRow key={payment.id} className="border-b border-border">
+                            <TableRow key={payment.invoice_number} className="border-b border-border">
                                 <TableCell className="px-4 py-3 text-foreground">
-                                    {payment.invoiceNumber}
+                                    {payment.invoice_number}
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">
-                                    {payment.billingDate}
+                                    {new Date(payment.billing_date).toLocaleDateString("en-GB", {
+                                        day: "numeric",
+                                        month: "long",
+                                        year: "numeric",
+                                    })}
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-muted-foreground">
-                                    {payment.amount}
+                                    £{payment.amount_gbp.toFixed(2)}
                                 </TableCell>
                                 <TableCell className="px-4 py-4">
                                     <Badge
                                         className={cn(
                                             "rounded-full px-3 py-1 text-xs font-normal",
-                                            payment.status === "Successful"
+                                            payment.status === "paid" || payment.status === "Successful"
                                                 ? "bg-green-100 text-green-700 hover:bg-green-100"
                                                 : "bg-red-100 text-red-700 hover:bg-red-100"
                                         )}
@@ -141,6 +148,7 @@ export const PaymentHistoryTable = () => {
                                     <button
                                         className="text-sm font-normal transition-colors hover:underline"
                                         style={{ color: "var(--progress)" }}
+                                        onClick={() => onDownload?.(payment.invoice_number)}
                                     >
                                         Download
                                     </button>

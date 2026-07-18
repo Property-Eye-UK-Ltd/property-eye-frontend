@@ -87,9 +87,10 @@ const Properties = () => {
             setIsSubmitting(false)
             setIsDeleteConfirmOpen(false)
             toast.success("Property deleted", { description: selectedListing.address })
-        } catch {
+        } catch (error) {
             setIsSubmitting(false)
-            toast.error("Couldn't delete property", { description: "Please try again." })
+            const detail = (error as { response?: { data?: { detail?: string } } })?.response?.data?.detail
+            toast.error("Couldn't delete property", { description: detail ?? "Please try again." })
         }
     }
 

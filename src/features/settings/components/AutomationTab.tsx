@@ -63,16 +63,9 @@ export const AutomationTab = () => {
                             ))}
                         </div>
                         <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                            The "Run Checks" button in the dashboard will be enabled specifically on these dates to allow manual triggers of the scheduled sweeps.
+                            These dates are for planning reference only. The "Run Checks" button in the dashboard is always available for Admin to trigger a check run manually.
                         </p>
                     </div>
-                </div>
-
-                <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 space-y-2">
-                    <h4 className="text-sm font-medium text-primary">Automatic Execution</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                        If no manual action is taken within 24 hours of the scheduled date, Property Eye will automatically initiate the check using the configured integration.
-                    </p>
                 </div>
             </div>
         </SettingsTabShell>

@@ -115,7 +115,7 @@ const AdminCaseManagement = () => {
                             <div className="flex flex-wrap items-center gap-1.5">
                                 {/* Case filters */}
                                 <Select value={selectedAgency} onValueChange={setSelectedAgency}>
-                                    <SelectTrigger className="h-8 w-36 shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                    <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
                                         <SelectValue placeholder="Agency" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -129,7 +129,7 @@ const AdminCaseManagement = () => {
                                 </Select>
 
                                 <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                                    <SelectTrigger className="h-8 w-36 shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                    <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
                                         <SelectValue placeholder="Status" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -141,7 +141,7 @@ const AdminCaseManagement = () => {
                                 </Select>
 
                                 <Select value={selectedSeverity} onValueChange={setSelectedSeverity}>
-                                    <SelectTrigger className="h-8 w-32 shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                    <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
                                         <SelectValue placeholder="Severity" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -153,7 +153,7 @@ const AdminCaseManagement = () => {
                                 </Select>
 
                                 <Select value={selectedDetermination} onValueChange={setSelectedDetermination}>
-                                    <SelectTrigger className="h-8 w-40 shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                    <SelectTrigger className="h-8 w-fit min-w-[140px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
                                         <SelectValue placeholder="Determination" />
                                     </SelectTrigger>
                                     <SelectContent>

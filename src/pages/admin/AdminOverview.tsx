@@ -45,7 +45,6 @@ const AdminOverview = () => {
                         onSelect={setSelectedPeriod}
                     />
                 }
-                showSweepCountdown
             />
 
             <DashboardPageContent className="space-y-3 lg:space-y-4">

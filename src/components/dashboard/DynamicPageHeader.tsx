@@ -2,12 +2,6 @@ import { ReactNode, Children, isValidElement, Fragment } from "react"
 import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "iconsax-react"
-import {
-    formatSweepDateLabel,
-    getDaysUntilSweep,
-    getNextSweepDate,
-} from "@/data/schedulingData"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -36,7 +30,6 @@ interface DynamicPageHeaderProps {
     filters?: ReactNode
     actions?: ReactNode | ActionButton[]
     tabs?: ReactNode
-    showSweepCountdown?: boolean
     /** Mobile: CTAs in a row below the title. Desktop: all CTAs top-right together. */
     stackActionsBelowTitle?: boolean
 }
@@ -56,7 +49,6 @@ export const DynamicPageHeader = ({
     filters,
     actions,
     tabs,
-    showSweepCountdown,
     stackActionsBelowTitle = false,
 }: DynamicPageHeaderProps) => {
     const actionNodes: ReactNode[] = (() => {
@@ -115,27 +107,6 @@ export const DynamicPageHeader = ({
                             <h1 className="text-xl font-medium leading-tight text-foreground lg:text-3xl">
                                 {title}
                             </h1>
-                            {showSweepCountdown && (() => {
-                                const nextSweep = getNextSweepDate()
-                                const daysLeft = getDaysUntilSweep(nextSweep)
-                                return (
-                                    <div className="flex w-fit max-w-full flex-wrap items-center gap-1.5 rounded-full border border-amber-100 bg-amber-50 px-2.5 py-1 lg:gap-2 lg:px-3 lg:py-1.5">
-                                        <Calendar
-                                            size={14}
-                                            variant="Bulk"
-                                            className="shrink-0 text-amber-600 lg:h-4 lg:w-4"
-                                        />
-                                        <span className="text-[11px] font-medium text-amber-700 lg:text-xs">
-                                            Next Sweep:{" "}
-                                            <span className="font-medium">{formatSweepDateLabel(nextSweep)}</span>
-                                        </span>
-                                        <div className="mx-0.5 hidden h-3 w-px bg-amber-200 sm:block" />
-                                        <span className="text-[11px] font-medium text-amber-600 lg:text-xs">
-                                            {daysLeft} {daysLeft === 1 ? "Day" : "Days"} Left
-                                        </span>
-                                    </div>
-                                )
-                            })()}
                         </div>
                         {breadcrumbs && breadcrumbs.length > 0 && (
                             <Breadcrumb className="mt-1 lg:mt-2">
