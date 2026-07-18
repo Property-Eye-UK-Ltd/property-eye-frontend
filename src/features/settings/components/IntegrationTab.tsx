@@ -7,6 +7,7 @@ import * as settingsService from "@/features/settings/api/settingsService"
 import { extractErrorMessage } from "@/features/auth/authErrors"
 import type { IntegrationType, SettingsIntegrationResponse } from "@/types/settings.types"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 
 // backend/src/schemas/enums.py IntegrationTypeEnum — these are the only
 // integration types the backend actually recognizes.
@@ -28,11 +29,7 @@ export const IntegrationTab = () => {
             const data = await settingsService.getIntegrationSettings()
             setStatusState(data)
         } catch (error) {
-            toast({
-                title: "Could not load integration status",
-                description: extractErrorMessage(error, "Something went wrong. Please try again."),
-                variant: "destructive",
-            })
+            console.error("Error loading integrations:", error)
         } finally {
             setIsLoading(false)
         }
@@ -40,7 +37,6 @@ export const IntegrationTab = () => {
 
     useEffect(() => {
         load()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const isConnected = status?.connection_status === "healthy" && !!status?.integration_type
@@ -48,13 +44,16 @@ export const IntegrationTab = () => {
     const handleConnect = async (type: IntegrationType) => {
         setIsConnecting(type)
         try {
-            const response = await settingsService.connectIntegration(type)
-            toast({ title: "Integration connected", description: response.message })
+            await settingsService.connectIntegration(type)
+            toast({
+                title: "Integration connected",
+                description: `Successfully connected ${type} integration.`,
+            })
             await load()
         } catch (error) {
             toast({
-                title: "Could not connect integration",
-                description: extractErrorMessage(error, "Something went wrong. Please try again."),
+                title: "Failed to connect",
+                description: extractErrorMessage(error),
                 variant: "destructive",
             })
         } finally {
@@ -65,13 +64,16 @@ export const IntegrationTab = () => {
     const handleDisconnect = async () => {
         setIsDisconnecting(true)
         try {
-            const response = await settingsService.disconnectIntegration()
-            toast({ title: "Integration disconnected", description: response.message })
+            await settingsService.disconnectIntegration()
+            toast({
+                title: "Integration disconnected",
+                description: "Successfully disconnected integration.",
+            })
             await load()
         } catch (error) {
             toast({
-                title: "Could not disconnect integration",
-                description: extractErrorMessage(error, "Something went wrong. Please try again."),
+                title: "Failed to disconnect",
+                description: extractErrorMessage(error),
                 variant: "destructive",
             })
         } finally {
@@ -90,7 +92,31 @@ export const IntegrationTab = () => {
             showCTA={false}
         >
             {isLoading ? (
-                <div className="py-20 text-center text-sm text-muted-foreground">Loading integration status...</div>
+                <div className="space-y-8">
+                    <div className="flex items-start justify-between gap-4 p-5 rounded-2xl border border-border/50 bg-muted animate-pulse">
+                        <div className="flex items-start gap-4">
+                            <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                            <div className="space-y-2 mt-1">
+                                <Skeleton className="h-4 w-48" />
+                                <Skeleton className="h-3 w-64" />
+                            </div>
+                        </div>
+                        <Skeleton className="h-9 w-24 rounded-full shrink-0" />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {Array.from({ length: 3 }).map((_, idx) => (
+                            <div
+                                key={idx}
+                                className="p-5 rounded-2xl border border-border/50 bg-muted flex flex-col items-center gap-3 text-center"
+                            >
+                                <Skeleton className="w-10 h-10 rounded-full" />
+                                <Skeleton className="h-4 w-20" />
+                                <Skeleton className="h-8 w-full rounded-full" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
             ) : isConnected ? (
                 <div className="space-y-6">
                     <div className="flex items-start justify-between gap-4 p-5 rounded-2xl border border-border/50 bg-muted">

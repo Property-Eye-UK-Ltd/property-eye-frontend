@@ -23,6 +23,7 @@ interface EditUserModalProps {
     onDisable: () => void
     user: User | null
     isSubmitting?: boolean
+    isEditingSelf?: boolean
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -34,6 +35,7 @@ export const EditUserModal = ({
     onDisable,
     user,
     isSubmitting = false,
+    isEditingSelf = false,
 }: EditUserModalProps) => {
     const [formValues, setFormValues] = useState<EditUserFormValues>({
         name: "",
@@ -156,8 +158,9 @@ export const EditUserModal = ({
                                     onValueChange={(value) =>
                                         setFormValues((prev) => ({ ...prev, role: value }))
                                     }
+                                    disabled={isEditingSelf}
                                 >
-                                    <SelectTrigger className="h-12 rounded-xl border border-border bg-transparent px-4 text-sm">
+                                    <SelectTrigger className="h-12 rounded-xl border border-border bg-transparent px-4 text-sm disabled:opacity-60">
                                         <SelectValue placeholder="Select a role" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -168,6 +171,11 @@ export const EditUserModal = ({
                                         ))}
                                     </SelectContent>
                                 </Select>
+                                {isEditingSelf && (
+                                    <p className="text-xs text-muted-foreground">
+                                        You cannot change your own role.
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

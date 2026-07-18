@@ -11,9 +11,11 @@ import { EditUserModal, EditUserFormValues } from "@/features/team/components/mo
 import { DisableUserModal, DisableUserFormValues } from "@/features/team/components/modals/DisableUserModal"
 import { User, toRoleValue } from "@/features/team/api/teamService"
 import { useInviteTeamUser, useRemoveTeamUser, useUpdateTeamUser } from "@/features/team/api/useTeam"
+import { useAuth } from "@/features/auth/context/AuthContext"
 import { toast } from "sonner"
 
 const TeamManagement = () => {
+    const { user: currentUser } = useAuth()
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isDisableModalOpen, setIsDisableModalOpen] = useState(false)
@@ -47,10 +49,14 @@ const TeamManagement = () => {
 
     const handleEditUser = async (values: EditUserFormValues) => {
         if (!selectedUser) return
+        const isEditingSelf = selectedUser.id === currentUser?.id
         try {
             await updateMutation.mutateAsync({
                 userId: selectedUser.id,
-                req: { name: values.name, role: toRoleValue(values.role) },
+                req: {
+                    name: values.name,
+                    ...(isEditingSelf ? {} : { role: toRoleValue(values.role) }),
+                },
             })
             setIsEditModalOpen(false)
             toast.success("User updated successfully", {
@@ -114,6 +120,7 @@ const TeamManagement = () => {
                 onDisable={handleDisableClick}
                 user={selectedUser}
                 isSubmitting={updateMutation.isPending}
+                isEditingSelf={selectedUser?.id === currentUser?.id}
             />
 
             <DisableUserModal

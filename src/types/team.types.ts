@@ -1,6 +1,6 @@
 // Mirrors backend/src/schemas/dashboard.py (Team Management section) and
 // backend/src/schemas/enums.py::TeamRoleEnum/TeamUserStatusEnum.
-export type TeamRole = "admin" | "manager" | "agent"
+export type TeamRole = "agency_owner" | "agency_staff" | "agency_viewer"
 export type TeamUserStatus = "active" | "pending" | "inactive"
 
 export interface TeamSummaryResponse {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeSlash } from "iconsax-react";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
@@ -30,19 +30,20 @@ const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state as { email?: string; password?: string } | null;
 
     const form = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
             phoneNumber: "",
-            email: "",
-            password: "",
-            termsAccepted: false,
+            email: state?.email ?? "",
+            password: state?.password ?? "",
+            termsAccepted: !!state,
         },
         mode: "onChange",
     });
-
-    const navigate = useNavigate();
 
     const onSubmit = async (data: SignupFormData) => {
         setIsSubmitting(true);
@@ -191,7 +192,9 @@ const Signup = () => {
                         className="w-full h-12 text-base font-medium rounded-full"
                         disabled={!form.formState.isValid || isSubmitting}
                     >
-                        {isSubmitting ? "Creating account..." : "Create Account"}
+                        {isSubmitting
+                            ? (state?.email ? "Resuming setup..." : "Creating account...")
+                            : (state?.email ? "Resume Setup" : "Create Account")}
                     </Button>
 
                     <div className="text-center text-sm text-muted-foreground">

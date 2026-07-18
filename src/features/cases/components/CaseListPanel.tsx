@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useCases } from "@/features/cases/api/useCases"
 import type { AgencyCaseStatus } from "@/features/cases/api/casesService"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -88,11 +89,25 @@ export const CaseListPanel = () => {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                  Loading cases...
-                </TableCell>
-              </TableRow>
+              Array.from({ length: 4 }).map((_, idx) => (
+                <TableRow key={idx}>
+                  <TableCell className={td}>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell className={td}>
+                    <Skeleton className="h-4 w-48 sm:w-64" />
+                  </TableCell>
+                  <TableCell className={td}>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell className={td}>
+                    <Skeleton className="h-4 w-28" />
+                  </TableCell>
+                  <TableCell className={cn(td, "text-center")}>
+                    <Skeleton className="mx-auto h-5 w-20 rounded-full" />
+                  </TableCell>
+                </TableRow>
+              ))
             ) : filteredCases.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">

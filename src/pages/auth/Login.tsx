@@ -74,7 +74,7 @@ const Login = () => {
                     title: "Finish setting up your agency",
                     description: "Your signup is incomplete. Let's pick up where you left off.",
                 });
-                navigate(PENDING_PROFILE_REDIRECT);
+                navigate("/signup", { state: { email: data.email, password: data.password } });
                 return;
             }
 

@@ -12,6 +12,7 @@ import { useCaseDetail, useCaseTimeline, useRaiseDispute } from "@/features/case
 import type { AgencyCaseStatus, CaseDetail } from "@/features/cases/api/casesService"
 import { RaiseDisputeModal } from "@/features/cases/components/modals/RaiseDisputeModal"
 import { toast } from "sonner"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const caseStatusLabels: Record<AgencyCaseStatus, string> = {
   open: "Open",
@@ -25,27 +26,58 @@ const caseStatusStyles: Record<AgencyCaseStatus, string> = {
   closed_not_fraudulent: "bg-green-50 text-green-600 border border-green-100",
 }
 
-const AgencyCaseOverviewCard = ({ caseDetail }: { caseDetail: CaseDetail }) => (
-  <div className="rounded-2xl border border-border bg-white p-3 sm:p-4 lg:sticky lg:top-4 lg:p-6">
-    <p className="mb-3 text-xs text-muted-foreground sm:mb-4">Case Overview</p>
-    <div className="grid grid-cols-1 gap-3 sm:gap-4">
-      <div>
-        <p className="mb-1 text-xs text-muted-foreground">Case ID</p>
-        <p className="text-sm text-primary">{caseDetail.case_id}</p>
+const severityLabels: Record<string, string> = {
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+  critical: "Critical",
+}
+
+interface AgencyCaseOverviewCardProps {
+  caseDetail: CaseDetail
+}
+
+const AgencyCaseOverviewCard = ({ caseDetail }: AgencyCaseOverviewCardProps) => {
+  const status = caseDetail.status
+  const severity = caseDetail.severity?.toLowerCase() ?? "low"
+
+  return (
+    <div className="rounded-2xl border border-border/50 bg-background p-6 space-y-6">
+      <div className="flex items-center gap-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+        <div>
+          <p className="text-xs text-muted-foreground uppercase font-medium tracking-wider">Status</p>
+          <Badge className={cn("mt-1 rounded-full px-3 py-0.5 text-xs font-medium", caseStatusStyles[status])}>
+            {caseStatusLabels[status]}
+          </Badge>
+        </div>
       </div>
-      <div>
-        <p className="mb-1 text-xs text-muted-foreground">Property Address</p>
-        <p className="text-sm leading-relaxed text-primary break-words whitespace-normal">{caseDetail.property_address}</p>
+
+      <div className="flex flex-col items-center py-4 text-center border-y border-border/50">
+        <div className="relative flex items-center justify-center">
+          <div className="w-28 h-28 rounded-full border-8 border-muted flex items-center justify-center">
+            <span className="text-2xl font-bold text-foreground">{Math.round(caseDetail.fraud_score)}%</span>
+          </div>
+        </div>
+        <p className="mt-3 text-sm font-semibold text-foreground">Fraud Likelihood Score</p>
+        <p className="text-xs text-muted-foreground mt-1">Based on multi-factor pattern matching</p>
       </div>
-      <div>
-        <p className="mb-1 text-xs text-muted-foreground">Status</p>
-        <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", caseStatusStyles[caseDetail.status])}>
-          {caseStatusLabels[caseDetail.status]}
-        </Badge>
+
+      <div className="space-y-3">
+        <div className="flex justify-between items-center text-xs">
+          <span className="text-muted-foreground">Fraud Type</span>
+          <span className="font-medium text-foreground">{caseDetail.fraud_type}</span>
+        </div>
+        <div className="flex justify-between items-center text-xs">
+          <span className="text-muted-foreground">Severity Level</span>
+          <Badge variant="outline" className="rounded-full capitalize">
+            {severityLabels[severity] ?? severity}
+          </Badge>
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 const CaseDetails = () => {
   const { caseId } = useParams<{ caseId: string }>()
@@ -76,9 +108,81 @@ const CaseDetails = () => {
   if (isCaseLoading || !caseDetail) {
     return (
       <DashboardLayout>
-        <DynamicPageHeader title="Case Details" />
+        <DynamicPageHeader
+          title="Case Details"
+          breadcrumbs={[
+            { label: (location.state as { returnLabel?: string })?.returnLabel || "Case Management", href: (location.state as { returnPath?: string })?.returnPath || "/dashboard/cases" },
+            { label: "Loading..." },
+          ]}
+        />
         <DashboardPageContent>
-          <div className="py-12 text-center text-sm text-muted-foreground">Loading case details...</div>
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:items-start lg:gap-4 animate-pulse">
+            {/* Left Column */}
+            <div className="space-y-3 lg:col-span-2 lg:space-y-4">
+              {/* Property Parties Skeleton Card */}
+              <div className="rounded-2xl border border-border/50 bg-background p-6 space-y-4">
+                <div className="flex items-center justify-between pb-4 border-b border-border">
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Array.from({ length: 4 }).map((_, idx) => (
+                    <div key={idx} className="flex justify-between items-center py-2 border-b border-border/30">
+                      <Skeleton className="h-4 w-28" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Timeline Audit Trail Skeleton Card */}
+              <div className="rounded-2xl border border-border/50 bg-background p-6 space-y-6">
+                <div className="pb-4 border-b border-border">
+                  <Skeleton className="h-5 w-44" />
+                </div>
+                <div className="space-y-6 relative pl-6 border-l border-muted">
+                  {Array.from({ length: 3 }).map((_, idx) => (
+                    <div key={idx} className="relative space-y-2">
+                      <div className="absolute -left-[30px] top-1 h-3 w-3 rounded-full bg-muted border-2 border-background" />
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-4 w-36" />
+                        <Skeleton className="h-3.5 w-24" />
+                      </div>
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="lg:col-span-1 space-y-4">
+              {/* Case Overview Card Skeleton */}
+              <div className="rounded-2xl border border-border/50 bg-background p-6 space-y-6">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-20" />
+                  </div>
+                </div>
+                <div className="flex flex-col items-center py-4 space-y-3 border-y border-border/50">
+                  <Skeleton className="h-28 w-28 rounded-full" />
+                  <Skeleton className="h-4 w-40" />
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </DashboardPageContent>
       </DashboardLayout>
     )

@@ -16,6 +16,7 @@ import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTeamUsers } from "@/features/team/api/useTeam"
 import { toRoleLabel, type User } from "@/features/team/api/teamService"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const ITEMS_PER_PAGE = 5
 
@@ -112,11 +113,28 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                                    Loading team members...
-                                </TableCell>
-                            </TableRow>
+                            Array.from({ length: 4 }).map((_, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
+                                        <div className="flex items-center gap-2 lg:gap-3">
+                                            <Skeleton className="h-7 w-7 rounded-full lg:h-9 lg:w-9" />
+                                            <Skeleton className="h-4 w-24" />
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
+                                        <Skeleton className="h-4 w-40" />
+                                    </TableCell>
+                                    <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
+                                        <Skeleton className="h-4 w-16" />
+                                    </TableCell>
+                                    <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
+                                        <Skeleton className="h-4 w-20" />
+                                    </TableCell>
+                                    <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
+                                        <Skeleton className="h-6 w-16 rounded-full" />
+                                    </TableCell>
+                                </TableRow>
+                            ))
                         ) : paginatedUsers.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
