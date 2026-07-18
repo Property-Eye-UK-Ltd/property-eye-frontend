@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
@@ -11,6 +11,7 @@ import { AgencyTimelinePanel } from "@/features/agencies/components/summary/Agen
 import { AgencyInformationCard } from "@/features/agencies/components/summary/AgencyInformationCard"
 import { AgencyUsersTablePanel } from "@/features/agencies/components/users/AgencyUsersTablePanel"
 import { AgencyCasesTablePanel } from "@/features/agencies/components/cases/AgencyCasesTablePanel"
+import { AgencyListingsTablePanel } from "@/features/agencies/components/listings/AgencyListingsTablePanel"
 import { SuspendAccountModal } from "@/features/agencies/components/modals/SuspendAccountModal"
 import { RoleOverrideModal } from "@/features/agencies/components/modals/RoleOverrideModal"
 import { AgencyProfileData, mockTimeline } from "@/data/agencyProfileData"
@@ -20,14 +21,24 @@ import { agenciesData } from "@/data/agenciesData"
 import { ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
+import { getAdminAgencyListings } from "@/features/properties/api/propertiesService"
+import { PropertyListing } from "@/types/properties.types"
+
 
 const AgencyProfile = () => {
     const { agencyId } = useParams<{ agencyId: string }>()
     const navigate = useNavigate()
-    const [activeTab, setActiveTab] = useState<"summary" | "users" | "cases">("summary")
+    const [activeTab, setActiveTab] = useState<"summary" | "users" | "cases" | "listings">("summary")
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false)
     const [isRoleModalOpen, setIsRoleModalOpen] = useState(false)
     const [selectedUsers, setSelectedUsers] = useState<string[]>([])
+
+    // Property listings state
+    const [listings, setListings] = useState<PropertyListing[]>([])
+    const [listingsLoading, setListingsLoading] = useState(false)
+    const [listingsPage, setListingsPage] = useState(1)
+    const [listingsTotalPages, setListingsTotalPages] = useState(1)
+
 
     // Find the agency data
     const agencyData = agenciesData.find((a) => a.id === agencyId)
@@ -61,7 +72,27 @@ const AgencyProfile = () => {
         { label: "Summary", value: "summary" },
         { label: "Users", value: "users" },
         { label: "Cases", value: "cases" },
+        { label: "Listings", value: "listings" },
     ]
+
+    useEffect(() => {
+        if (activeTab === "listings" && agencyId) {
+            setListingsLoading(true)
+            getAdminAgencyListings(agencyId, listingsPage, 10)
+                .then((res) => {
+                    setListings(res.items)
+                    setListingsTotalPages(Math.ceil(res.total / 10) || 1)
+                })
+                .catch((err) => {
+                    console.error("Error loading agency listings:", err)
+                    toast.error("Failed to load property listings")
+                })
+                .finally(() => {
+                    setListingsLoading(false)
+                })
+        }
+    }, [activeTab, agencyId, listingsPage])
+
 
     const handleSuspend = (reason: string, description: string) => {
         console.log("Suspending agency:", { reason, description })
@@ -116,7 +147,7 @@ const AgencyProfile = () => {
                     <CaseTypeTabs
                         tabs={tabs}
                         selected={activeTab}
-                        onSelect={(value) => setActiveTab(value as "summary" | "users" | "cases")}
+                        onSelect={(value) => setActiveTab(value as "summary" | "users" | "cases" | "listings")}
                     />
                 </div>
 
@@ -185,6 +216,23 @@ const AgencyProfile = () => {
                         hasBorder
                     >
                         <AgencyCasesTablePanel data={mockAgencyCases} />
+                    </DashboardPanel>
+                )}
+
+                {activeTab === "listings" && (
+                    <DashboardPanel
+                        title="Property Listings"
+                        description="Track properties registered under this agency."
+                        noPadding
+                        hasBorder
+                    >
+                        <AgencyListingsTablePanel
+                            data={listings}
+                            currentPage={listingsPage}
+                            totalPages={listingsTotalPages}
+                            onPageChange={setListingsPage}
+                            isLoading={listingsLoading}
+                        />
                     </DashboardPanel>
                 )}
                 </div>

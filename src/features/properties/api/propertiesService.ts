@@ -11,16 +11,48 @@
  * wiring is greenlit for the app — no component or modal changes required.
  */
 import { mockListings } from "@/data/properties-data"
+import apiClient from "@/lib/apiClient"
 import {
     DocumentUploadError,
     DocumentUploadResult,
     PropertyListing,
     PropertyListingInput,
+    PaginatedPropertyListingResponse,
 } from "@/types/properties.types"
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 let nextId = mockListings.length + 1
+
+export const getAdminAgencyListings = async (
+    agencyId: string,
+    page: number = 1,
+    limit: number = 10
+): Promise<PaginatedPropertyListingResponse> => {
+    try {
+        const { data } = await apiClient.get<PaginatedPropertyListingResponse>(
+            `/admin/listings`,
+            {
+                params: {
+                    agency_id: agencyId,
+                    page,
+                    limit,
+                },
+            }
+        )
+        return data
+    } catch (e) {
+        console.warn("API call failed, falling back to mock data:", e)
+        await delay(500)
+        const startIndex = (page - 1) * limit
+        const items = mockListings.slice(startIndex, startIndex + limit)
+        return {
+            items,
+            total: mockListings.length,
+        }
+    }
+}
+
 
 export const listListings = async (): Promise<PropertyListing[]> => {
     await delay(600)
