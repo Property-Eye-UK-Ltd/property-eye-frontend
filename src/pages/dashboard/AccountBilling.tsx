@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
+import { DashboardDetailsSkeleton } from "@/components/dashboard"
 import { PlanCard } from "@/features/billing/components/PlanCard"
 import { PaymentHistoryTable } from "@/features/billing/components/PaymentHistoryTable"
 import { EmptyPaymentHistory } from "@/features/billing/components/EmptyPaymentHistory"
@@ -148,7 +149,7 @@ const AccountBilling = () => {
             <DashboardLayout>
                 <DynamicPageHeader title="Account & Billing" />
                 <DashboardPageContent>
-                    <div className="py-12 text-center text-sm text-muted-foreground">Loading billing details...</div>
+                    <DashboardDetailsSkeleton layoutType="billing" />
                 </DashboardPageContent>
             </DashboardLayout>
         )

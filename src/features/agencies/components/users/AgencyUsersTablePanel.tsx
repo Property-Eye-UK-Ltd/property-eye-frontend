@@ -5,20 +5,32 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown } from "lucide-react"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { cn } from "@/lib/utils"
-import { AgencyUser, userAccountStatusStyles, twoFactorStatusStyles } from "@/data/agencyUsersData"
+import { AdminAgencyUser } from "@/features/agencies/api/agencyService"
+
+const roleLabels: Record<AdminAgencyUser["role"], string> = {
+    agency_owner: "Owner",
+    agency_staff: "Staff",
+    agency_viewer: "Viewer",
+}
+
+const userStatusStyles: Record<AdminAgencyUser["status"], string> = {
+    Active: "bg-green-50 text-green-600 border border-green-100",
+    Pending: "bg-orange-50 text-orange-600 border border-orange-100",
+    Inactive: "bg-red-50 text-red-600 border border-red-100",
+}
 
 interface AgencyUsersTablePanelProps {
-    data: AgencyUser[]
+    data: AdminAgencyUser[]
     selectedUsers?: string[]
     onSelectionChange?: (selectedIds: string[]) => void
 }
 
 export const AgencyUsersTablePanel = ({ data, selectedUsers = [], onSelectionChange }: AgencyUsersTablePanelProps) => {
-    const [sortColumn, setSortColumn] = useState<keyof AgencyUser | null>(null)
+    const [sortColumn, setSortColumn] = useState<keyof AdminAgencyUser | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [currentPage, setCurrentPage] = useState(1)
 
-    const handleSort = (column: keyof AgencyUser) => {
+    const handleSort = (column: keyof AdminAgencyUser) => {
         if (sortColumn === column) {
             setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
         } else {
@@ -38,20 +50,9 @@ export const AgencyUsersTablePanel = ({ data, selectedUsers = [], onSelectionCha
             if (typeof aValue === "string" && typeof bValue === "string") {
                 return aValue.localeCompare(bValue) * direction
             }
-            if (typeof aValue === "boolean" && typeof bValue === "boolean") {
-                return (aValue === bValue ? 0 : aValue ? 1 : -1) * direction
-            }
             return 0
         })
     }, [data, sortColumn, sortDirection])
-
-    const handleSelectAll = (checked: boolean) => {
-        if (checked) {
-            onSelectionChange?.(data.map((u) => u.id))
-        } else {
-            onSelectionChange?.([])
-        }
-    }
 
     const handleSelectUser = (userId: string, checked: boolean) => {
         if (!onSelectionChange) return
@@ -82,23 +83,13 @@ export const AgencyUsersTablePanel = ({ data, selectedUsers = [], onSelectionCha
                             <TableHead className="px-4 font-medium">
                                 <button
                                     className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("accountStatus")}
+                                    onClick={() => handleSort("status")}
                                 >
                                     Account Status
                                     <ChevronsUpDown className="h-4 w-4" />
                                 </button>
                             </TableHead>
                             <TableHead className="px-4 font-medium">Last Active</TableHead>
-                            <TableHead className="px-4 font-medium">Last Login</TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("twoFactorEnabled")}
-                                >
-                                    2FA Enabled
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                </button>
-                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -114,24 +105,13 @@ export const AgencyUsersTablePanel = ({ data, selectedUsers = [], onSelectionCha
                                 <TableCell className="px-4 py-3">
                                     <span className="font-normal">{user.name}</span>
                                 </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{user.role}</TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{roleLabels[user.role]}</TableCell>
                                 <TableCell className="px-4 py-4">
-                                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal", userAccountStatusStyles[user.accountStatus])}>
-                                        {user.accountStatus}
+                                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-normal", userStatusStyles[user.status])}>
+                                        {user.status}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{user.lastActive}</TableCell>
-                                <TableCell className="px-4 py-3 text-muted-foreground">{user.lastLogin}</TableCell>
-                                <TableCell className="px-4 py-4">
-                                    <Badge
-                                        className={cn(
-                                            "rounded-full px-3 py-1 text-xs font-normal",
-                                            user.twoFactorEnabled ? twoFactorStatusStyles.enabled : twoFactorStatusStyles.disabled
-                                        )}
-                                    >
-                                        {user.twoFactorEnabled ? "Enabled" : "Disabled"}
-                                    </Badge>
-                                </TableCell>
+                                <TableCell className="px-4 py-3 text-muted-foreground">{user.lastActive ?? "—"}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

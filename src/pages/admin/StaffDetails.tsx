@@ -2,6 +2,7 @@ import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
+import { DashboardDetailsSkeleton } from "@/components/dashboard"
 import { Button } from "@/components/ui/button"
 import { useParams, useNavigate } from "react-router-dom"
 import { ActivityLogPanel } from "@/features/adminteam/components/ActivityLogPanel"
@@ -37,8 +38,15 @@ const StaffDetails = () => {
     if (isLoading) {
         return (
             <DashboardLayout variant="super-admin">
+                <DynamicPageHeader
+                    title="Staff Details"
+                    breadcrumbs={[
+                        { label: "Team Management", href: "/admin/team" },
+                        { label: "Loading..." },
+                    ]}
+                />
                 <DashboardPageContent>
-                    <p>Loading...</p>
+                    <DashboardDetailsSkeleton layoutType="profile" />
                 </DashboardPageContent>
             </DashboardLayout>
         )

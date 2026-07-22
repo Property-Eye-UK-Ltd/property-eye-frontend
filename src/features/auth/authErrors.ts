@@ -56,7 +56,13 @@ export const STALE_ONBOARDING_STATE_DETAILS: readonly string[] = [
 export const getErrorDetail = (error: unknown): string | undefined => {
     if (!isAxiosError<ApiErrorResponse>(error)) return undefined;
     const detail = error.response?.data?.detail;
-    return typeof detail === "string" ? detail : undefined;
+    if (typeof detail === "string") {
+        if (detail.startsWith("User must authenticate through the")) {
+            return "Invalid email or password.";
+        }
+        return detail;
+    }
+    return undefined;
 };
 
 export const getErrorStatus = (error: unknown): number | undefined =>

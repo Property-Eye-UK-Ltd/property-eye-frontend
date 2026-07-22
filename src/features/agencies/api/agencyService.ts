@@ -55,3 +55,50 @@ export const getAdminAgencyDetail = async (agencyId: string): Promise<AdminAgenc
     const { data } = await apiClient.get<AdminAgencyDetail>(`/dashboard/admin/agencies/${agencyId}`)
     return data
 }
+
+export type AgencyTeamRole = "agency_owner" | "agency_staff" | "agency_viewer"
+
+export interface AdminAgencyUser {
+    id: string
+    name: string
+    email: string
+    role: AgencyTeamRole
+    lastActive: string | null
+    status: "Active" | "Pending" | "Inactive"
+}
+
+interface AdminAgencyUserApiResponse {
+    id: string
+    name: string
+    email: string
+    role: AgencyTeamRole
+    last_active_at: string | null
+    status: string
+    avatar_url: string | null
+}
+
+const agencyUserStatusToLabel: Record<string, AdminAgencyUser["status"]> = {
+    active: "Active",
+    pending: "Pending",
+    inactive: "Inactive",
+}
+
+const fromApiAgencyUser = (u: AdminAgencyUserApiResponse): AdminAgencyUser => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    role: u.role,
+    lastActive: u.last_active_at,
+    status: agencyUserStatusToLabel[u.status] ?? "Inactive",
+})
+
+export const getAdminAgencyUsers = async (
+    agencyId: string,
+    params?: { status?: string; sort_by?: string; sort_dir?: string }
+): Promise<AdminAgencyUser[]> => {
+    const { data } = await apiClient.get<AdminAgencyUserApiResponse[]>(
+        `/dashboard/admin/agencies/${agencyId}/users`,
+        { params }
+    )
+    return data.map(fromApiAgencyUser)
+}

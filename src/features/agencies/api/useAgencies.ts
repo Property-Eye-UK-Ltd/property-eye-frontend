@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/queryKeys"
-import { getAdminAgenciesSummary, getAdminAgenciesList, getAdminAgencyDetail } from "./agencyService"
+import { getAdminAgenciesSummary, getAdminAgenciesList, getAdminAgencyDetail, getAdminAgencyUsers } from "./agencyService"
 
 export const useAdminAgenciesSummary = () =>
     useQuery({
@@ -20,6 +20,17 @@ export const useAdminAgencyDetail = (agencyId: string | undefined) =>
     useQuery({
         queryKey: queryKeys.agencies.detail(agencyId ?? ""),
         queryFn: () => getAdminAgencyDetail(agencyId as string),
+        enabled: !!agencyId,
+        staleTime: 15_000,
+    })
+
+export const useAdminAgencyUsers = (
+    agencyId: string | undefined,
+    params?: { status?: string; sort_by?: string; sort_dir?: string }
+) =>
+    useQuery({
+        queryKey: queryKeys.agencies.users(agencyId ?? "", params),
+        queryFn: () => getAdminAgencyUsers(agencyId as string, params),
         enabled: !!agencyId,
         staleTime: 15_000,
     })

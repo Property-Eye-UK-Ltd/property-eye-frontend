@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
+import { DashboardDetailsSkeleton } from "@/components/dashboard"
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { Button } from "@/components/ui/button"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
@@ -13,9 +14,8 @@ import { AgencyCasesTablePanel } from "@/features/agencies/components/cases/Agen
 import { AgencyListingsTablePanel } from "@/features/agencies/components/listings/AgencyListingsTablePanel"
 import { RoleOverrideModal } from "@/features/agencies/components/modals/RoleOverrideModal"
 import { AgencyProfileData } from "@/data/agencyProfileData"
-import { mockAgencyUsers } from "@/data/agencyUsersData"
 import { mockAgencyCases } from "@/data/agencyCasesData"
-import { useAdminAgencyDetail } from "@/features/agencies/api/useAgencies"
+import { useAdminAgencyDetail, useAdminAgencyUsers } from "@/features/agencies/api/useAgencies"
 import { ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
@@ -37,12 +37,38 @@ const AgencyProfile = () => {
     const [listingsTotalPages, setListingsTotalPages] = useState(1)
 
     const { data: agencyDetail, isLoading: isAgencyLoading } = useAdminAgencyDetail(agencyId)
+    const { data: agencyUsers } = useAdminAgencyUsers(agencyId)
+
+    useEffect(() => {
+        if (activeTab === "listings" && agencyId) {
+            setListingsLoading(true)
+            getAdminAgencyListings(agencyId, listingsPage, 10)
+                .then((res) => {
+                    setListings(res.items)
+                    setListingsTotalPages(Math.ceil(res.total / 10) || 1)
+                })
+                .catch((err) => {
+                    console.error("Error loading agency listings:", err)
+                    toast.error("Failed to load property listings")
+                })
+                .finally(() => {
+                    setListingsLoading(false)
+                })
+        }
+    }, [activeTab, agencyId, listingsPage])
 
     if (isAgencyLoading) {
         return (
             <DashboardLayout variant="super-admin">
+                <DynamicPageHeader
+                    title="Agency Profile"
+                    breadcrumbs={[
+                        { label: "Agencies", href: "/admin/agencies" },
+                        { label: "Loading..." },
+                    ]}
+                />
                 <DashboardPageContent>
-                    <p>Loading agency…</p>
+                    <DashboardDetailsSkeleton layoutType="profile" />
                 </DashboardPageContent>
             </DashboardLayout>
         )
@@ -78,26 +104,6 @@ const AgencyProfile = () => {
         { label: "Cases", value: "cases" },
         { label: "Listings", value: "listings" },
     ]
-
-    useEffect(() => {
-        if (activeTab === "listings" && agencyId) {
-            setListingsLoading(true)
-            getAdminAgencyListings(agencyId, listingsPage, 10)
-                .then((res) => {
-                    setListings(res.items)
-                    setListingsTotalPages(Math.ceil(res.total / 10) || 1)
-                })
-                .catch((err) => {
-                    console.error("Error loading agency listings:", err)
-                    toast.error("Failed to load property listings")
-                })
-                .finally(() => {
-                    setListingsLoading(false)
-                })
-        }
-    }, [activeTab, agencyId, listingsPage])
-
-
 
     const handleRoleUpdate = (role: string, reason: string, description: string) => {
         console.log("Updating role:", { role, reason, description, selectedUsers })
@@ -183,7 +189,7 @@ const AgencyProfile = () => {
                         }
                     >
                         <AgencyUsersTablePanel
-                            data={mockAgencyUsers}
+                            data={agencyUsers ?? []}
                             selectedUsers={selectedUsers}
                             onSelectionChange={setSelectedUsers}
                         />
