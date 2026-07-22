@@ -31,19 +31,19 @@ export const AgencyInformationCard = ({ data }: AgencyInformationCardProps) => {
                 {/* Agency Address */}
                 <div>
                     <p className="text-xs text-muted-foreground mb-1">Agency Address</p>
-                    <p className="text-sm text-primary">{data.address}</p>
+                    <p className="text-sm text-primary">{data.address ?? "—"}</p>
                 </div>
 
                 {/* Email */}
                 <div>
                     <p className="text-xs text-muted-foreground mb-1">Email</p>
-                    <p className="text-sm text-primary">{data.email}</p>
+                    <p className="text-sm text-primary">{data.email ?? "—"}</p>
                 </div>
 
                 {/* Phone Number */}
                 <div>
                     <p className="text-xs text-muted-foreground mb-1">Phone Number</p>
-                    <p className="text-sm text-primary">{data.phone}</p>
+                    <p className="text-sm text-primary">{data.phone ?? "—"}</p>
                 </div>
             </div>
         </div>

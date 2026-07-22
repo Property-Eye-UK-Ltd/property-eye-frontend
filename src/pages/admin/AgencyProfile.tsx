@@ -15,7 +15,7 @@ import { RoleOverrideModal } from "@/features/agencies/components/modals/RoleOve
 import { AgencyProfileData } from "@/data/agencyProfileData"
 import { mockAgencyUsers } from "@/data/agencyUsersData"
 import { mockAgencyCases } from "@/data/agencyCasesData"
-import { agenciesData } from "@/data/agenciesData"
+import { useAdminAgencyDetail } from "@/features/agencies/api/useAgencies"
 import { ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
@@ -36,11 +36,19 @@ const AgencyProfile = () => {
     const [listingsPage, setListingsPage] = useState(1)
     const [listingsTotalPages, setListingsTotalPages] = useState(1)
 
+    const { data: agencyDetail, isLoading: isAgencyLoading } = useAdminAgencyDetail(agencyId)
 
-    // Find the agency data
-    const agencyData = agenciesData.find((a) => a.id === agencyId)
+    if (isAgencyLoading) {
+        return (
+            <DashboardLayout variant="super-admin">
+                <DashboardPageContent>
+                    <p>Loading agency…</p>
+                </DashboardPageContent>
+            </DashboardLayout>
+        )
+    }
 
-    if (!agencyData) {
+    if (!agencyDetail) {
         return (
             <DashboardLayout variant="super-admin">
                 <DashboardPageContent>
@@ -50,19 +58,18 @@ const AgencyProfile = () => {
         )
     }
 
-    // Map agency data to profile format
+    // Map agency detail to profile format
     const agencyProfile: AgencyProfileData = {
-        id: agencyData.id,
-        name: agencyData.name,
-        address: "22 Ashfield Road, Leicester",
-        email: `${agencyData.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
-        phone: "+44 207132 4567",
-        subscriptionPlan: agencyData.planTier,
-        integrationType: agencyData.integrationType,
-        integrationStatus: agencyData.syncHealth === "Healthy" ? "Active" : "Inactive",
-        openCases: agencyData.fraudDetected,
+        id: agencyDetail.id,
+        name: agencyDetail.name ?? "—",
+        address: agencyDetail.address,
+        email: agencyDetail.email,
+        phone: agencyDetail.phone_number,
+        subscriptionPlan: agencyDetail.plan_name,
+        integrationType: agencyDetail.integration_type,
+        openCases: agencyDetail.open_cases,
         recoveredCommission: "£45,317",
-        nextBillingDate: "2 Nov, 2025",
+        nextBillingDate: agencyDetail.next_billing_date,
     }
 
     const tabs = [
@@ -119,7 +126,7 @@ const AgencyProfile = () => {
                 title="Agency Profile"
                 breadcrumbs={[
                     { label: "Agencies", href: "/admin/agencies" },
-                    { label: agencyData.name },
+                    { label: agencyProfile.name },
                 ]}
             />
 

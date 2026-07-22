@@ -39,6 +39,12 @@ export const queryKeys = {
         summary: () => ["admin-team", "summary"] as const,
         users: (params?: Record<string, unknown>) => ["admin-team", "users", params] as const,
     },
+    agencies: {
+        all: ["agencies"] as const,
+        summary: () => ["agencies", "summary"] as const,
+        list: (params?: Record<string, unknown>) => ["agencies", "list", params] as const,
+        detail: (agencyId: string) => ["agencies", "detail", agencyId] as const,
+    },
     properties: {
         all: ["properties"] as const,
         list: (params?: Record<string, unknown>) => ["properties", "list", params] as const,

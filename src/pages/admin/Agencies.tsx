@@ -15,8 +15,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { agenciesMetricsData, agenciesData } from "@/data/agenciesData"
 import { AgenciesTablePanel } from "@/features/agencies/components/AgenciesTablePanel"
+import { useAdminAgenciesSummary, useAdminAgenciesList } from "@/features/agencies/api/useAgencies"
 
 const periods = ["All Time", "This Month", "Last Week"]
 
@@ -29,6 +29,33 @@ const Agencies = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [isExportOpen, setIsExportOpen] = useState(false)
 
+    const { data: summary } = useAdminAgenciesSummary()
+    const { data: agenciesList } = useAdminAgenciesList({ page_size: 100, search: searchQuery || undefined })
+
+    const metrics = [
+        {
+            title: "Total Agencies",
+            value: String(summary?.total_agencies ?? "—"),
+            period: selectedPeriod,
+            change: "",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Total Agency Users",
+            value: String(summary?.total_agency_users ?? "—"),
+            period: selectedPeriod,
+            change: "",
+            topBarClass: "bg-orange-500",
+        },
+        {
+            title: "Total Open Cases",
+            value: String(summary?.total_open_cases ?? "—"),
+            period: "Non-closed cases",
+            change: "",
+            topBarClass: "bg-purple-500",
+        },
+    ]
+
     const handleExport = (format: "pdf" | "csv") => {
         console.log(`Exporting as ${format}`)
     }
@@ -36,10 +63,6 @@ const Agencies = () => {
     const handleViewAgency = (agencyId: string) => {
         navigate(`/admin/agencies/${agencyId}`)
     }
-
-    const filteredData = agenciesData.filter((agency) =>
-        agency.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
 
     return (
         <DashboardLayout variant="super-admin">
@@ -55,7 +78,7 @@ const Agencies = () => {
             />
 
             <DashboardPageContent className="space-y-3 lg:space-y-4">
-                <MetricCards metrics={agenciesMetricsData[selectedPeriod]} columns={3} />
+                <MetricCards metrics={metrics} columns={3} />
 
                 <DashboardPanel
                     title="Agencies List"
@@ -133,7 +156,7 @@ const Agencies = () => {
                         </div>
                     }
                 >
-                    <AgenciesTablePanel data={filteredData} onViewAgency={handleViewAgency} />
+                    <AgenciesTablePanel data={agenciesList?.agencies ?? []} onViewAgency={handleViewAgency} />
                 </DashboardPanel>
             </DashboardPageContent>
         </DashboardLayout>

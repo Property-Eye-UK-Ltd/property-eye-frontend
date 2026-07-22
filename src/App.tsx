@@ -116,6 +116,7 @@ const App = () => (
           {/* Super Admin Dashboard Routes (requires authentication) */}
           <Route element={<AdminProtectedRoute />}>
             <Route path="/admin/change-password" element={<ChangePasswordRequired redirectTo="/admin/dashboard" />} />
+            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/admin/dashboard" element={<AdminOverview />} />
             <Route path="/admin/agencies" element={<Agencies />} />
             <Route path="/admin/agencies/:agencyId" element={<AgencyProfile />} />
