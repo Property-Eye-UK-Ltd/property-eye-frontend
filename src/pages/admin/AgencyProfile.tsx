@@ -7,14 +7,12 @@ import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { Button } from "@/components/ui/button"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { AgencyStatsCard } from "@/features/agencies/components/summary/AgencyStatsCard"
-import { AgencyTimelinePanel } from "@/features/agencies/components/summary/AgencyTimelinePanel"
 import { AgencyInformationCard } from "@/features/agencies/components/summary/AgencyInformationCard"
 import { AgencyUsersTablePanel } from "@/features/agencies/components/users/AgencyUsersTablePanel"
 import { AgencyCasesTablePanel } from "@/features/agencies/components/cases/AgencyCasesTablePanel"
 import { AgencyListingsTablePanel } from "@/features/agencies/components/listings/AgencyListingsTablePanel"
-import { SuspendAccountModal } from "@/features/agencies/components/modals/SuspendAccountModal"
 import { RoleOverrideModal } from "@/features/agencies/components/modals/RoleOverrideModal"
-import { AgencyProfileData, mockTimeline } from "@/data/agencyProfileData"
+import { AgencyProfileData } from "@/data/agencyProfileData"
 import { mockAgencyUsers } from "@/data/agencyUsersData"
 import { mockAgencyCases } from "@/data/agencyCasesData"
 import { agenciesData } from "@/data/agenciesData"
@@ -29,7 +27,6 @@ const AgencyProfile = () => {
     const { agencyId } = useParams<{ agencyId: string }>()
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState<"summary" | "users" | "cases" | "listings">("summary")
-    const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false)
     const [isRoleModalOpen, setIsRoleModalOpen] = useState(false)
     const [selectedUsers, setSelectedUsers] = useState<string[]>([])
 
@@ -94,11 +91,6 @@ const AgencyProfile = () => {
     }, [activeTab, agencyId, listingsPage])
 
 
-    const handleSuspend = (reason: string, description: string) => {
-        console.log("Suspending agency:", { reason, description })
-        toast.success("Agency account suspended successfully")
-        setIsSuspendModalOpen(false)
-    }
 
     const handleRoleUpdate = (role: string, reason: string, description: string) => {
         console.log("Updating role:", { role, reason, description, selectedUsers })
@@ -107,16 +99,14 @@ const AgencyProfile = () => {
         setSelectedUsers([]) // Clear selection after action
     }
 
-    const handleActionClick = (action: "edit" | "reactivate" | "suspend") => {
+    const handleActionClick = (action: "edit" | "reactivate") => {
         if (selectedUsers.length === 0) {
-            toast.error(`Please select users before you can ${action === "edit" ? "edit user" : action === "reactivate" ? "reactivate account" : "suspend account"}`)
+            toast.error(`Please select users before you can ${action === "edit" ? "edit user" : "reactivate account"}`)
             return
         }
 
         if (action === "edit") {
             setIsRoleModalOpen(true)
-        } else if (action === "suspend") {
-            setIsSuspendModalOpen(true)
         } else {
              toast.success("Accounts reactivated successfully")
         }
@@ -131,15 +121,6 @@ const AgencyProfile = () => {
                     { label: "Agencies", href: "/admin/agencies" },
                     { label: agencyData.name },
                 ]}
-                actions={
-                    <Button
-                        variant="destructive"
-                        className="rounded-full bg-red-50 text-red-600 hover:bg-red-100 border-0"
-                        onClick={() => setIsSuspendModalOpen(true)}
-                    >
-                        Suspend Account
-                    </Button>
-                }
             />
 
             <DashboardPageContent className="space-y-3 lg:space-y-4">
@@ -154,10 +135,9 @@ const AgencyProfile = () => {
                 <div>
                 {activeTab === "summary" && (
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                        {/* Left Column - Stats and Timeline */}
+                        {/* Left Column - Stats */}
                         <div className="space-y-6 lg:col-span-2">
                             <AgencyStatsCard data={agencyProfile} />
-                            <AgencyTimelinePanel data={mockTimeline} />
                         </div>
 
                         {/* Right Column - Agency Information (Sticky) */}
@@ -190,12 +170,7 @@ const AgencyProfile = () => {
                                     <DropdownMenuItem className="cursor-pointer" onSelect={() => handleActionClick("reactivate")}>
                                         Reactivate Account
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        className="cursor-pointer text-destructive"
-                                        onSelect={() => handleActionClick("suspend")}
-                                    >
-                                        Suspend Account
-                                    </DropdownMenuItem>
+
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         }
@@ -238,11 +213,6 @@ const AgencyProfile = () => {
                 </div>
             </DashboardPageContent>
 
-            <SuspendAccountModal
-                open={isSuspendModalOpen}
-                onClose={() => setIsSuspendModalOpen(false)}
-                onConfirm={handleSuspend}
-            />
             
             <RoleOverrideModal
                 open={isRoleModalOpen}

@@ -157,7 +157,9 @@ export const DashboardSidebarContent = ({
                                 <div className="flex items-center justify-between gap-2">
                                     <div className="flex-1">
                                         <p className="text-[10px] text-muted-foreground leading-tight">
-                                            Next billing date:{" "}
+                                            {user?.plan?.cancel_at_period_end
+                                                ? "Access ends:"
+                                                : "Next billing date:"}{" "}
                                             <span className="font-medium text-foreground">
                                                 {user?.plan?.current_period_end
                                                     ? new Date(user.plan.current_period_end).toLocaleDateString(

@@ -25,7 +25,7 @@ const initialFormValues: AddStaffFormValues = {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const staffRoles = ["Admin", "Analyst", "Viewer"]
+const staffRoles = ["Superadmin", "Analyst", "Viewer"]
 
 export const AddStaffModal = ({ open, onClose, onSubmit, isSubmitting = false }: AddStaffModalProps) => {
     const [formValues, setFormValues] = useState<AddStaffFormValues>(initialFormValues)

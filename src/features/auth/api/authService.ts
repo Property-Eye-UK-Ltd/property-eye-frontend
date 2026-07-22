@@ -21,6 +21,11 @@ export const login = async (payload: AuthLoginRequest): Promise<AuthLoginRespons
     return data;
 };
 
+export const adminLogin = async (payload: AuthLoginRequest): Promise<AuthLoginResponse> => {
+    const { data } = await apiClient.post<AuthLoginResponse>("/auth/admin/login", payload);
+    return data;
+};
+
 export const refresh = async (): Promise<AuthLoginResponse> => {
     const { data } = await apiClient.post<AuthLoginResponse>("/auth/refresh");
     return data;
@@ -47,6 +52,20 @@ export const resetPassword = async (
     payload: AuthResetPasswordRequest
 ): Promise<AuthMessageResponse> => {
     const { data } = await apiClient.post<AuthMessageResponse>("/auth/reset-password", payload);
+    return data;
+};
+
+export const adminForgotPassword = async (
+    payload: AuthForgotPasswordRequest
+): Promise<AuthMessageResponse> => {
+    const { data } = await apiClient.post<AuthMessageResponse>("/auth/admin/forgot-password", payload);
+    return data;
+};
+
+export const adminResetPassword = async (
+    payload: AuthResetPasswordRequest
+): Promise<AuthMessageResponse> => {
+    const { data } = await apiClient.post<AuthMessageResponse>("/auth/admin/reset-password", payload);
     return data;
 };
 

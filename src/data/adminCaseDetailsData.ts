@@ -20,7 +20,8 @@ export const mockAdminCasePropertyParties: PropertyPartiesData = {
 
 export const mockAdminCaseTimeline: TimelineRecord[] = [
     { timestamp: "2025-11-08 14:29", event: "Case opened", actor: "System" },
-    { timestamp: "2025-11-09 10:15", event: "Check opened", actor: "Admin" },
-    { timestamp: "2025-11-09 11:30", event: "Check completed", actor: "System" },
-    { timestamp: "2025-11-09 11:35", event: "Classification (Fraud)", actor: "System" },
+    { timestamp: "2025-11-09 10:15", event: "Moved to Under Legal Review", actor: "Admin" },
+    { timestamp: "2025-11-12 09:05", event: "Determination submitted for approval", actor: "Analyst" },
+    { timestamp: "2025-11-12 15:40", event: "Determination approved — Fraudulent (Confirmed)", actor: "Admin" },
+    { timestamp: "2025-11-12 15:41", event: "Case closed", actor: "System" },
 ]

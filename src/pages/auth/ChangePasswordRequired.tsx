@@ -23,7 +23,11 @@ import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { extractErrorMessage } from "@/features/auth/authErrors";
 
-const ChangePasswordRequired = () => {
+interface ChangePasswordRequiredProps {
+    redirectTo?: string;
+}
+
+const ChangePasswordRequired = ({ redirectTo = "/dashboard" }: ChangePasswordRequiredProps) => {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -51,7 +55,7 @@ const ChangePasswordRequired = () => {
             });
             await refreshUser();
             toast({ title: "Password updated", description: "Your password has been changed." });
-            navigate("/dashboard", { replace: true });
+            navigate(redirectTo, { replace: true });
         } catch (error) {
             toast({
                 title: "Update failed",

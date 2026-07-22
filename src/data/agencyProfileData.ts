@@ -13,11 +13,6 @@ export interface AgencyProfileData {
     nextBillingDate: string
 }
 
-export interface TimelineEvent {
-    timestamp: string
-    event: string
-}
-
 export const mockAgencyProfile: AgencyProfileData = {
     id: "1",
     name: "Solict Homes",
@@ -31,11 +26,3 @@ export const mockAgencyProfile: AgencyProfileData = {
     recoveredCommission: "£45,317",
     nextBillingDate: "2 Nov, 2025",
 }
-
-export const mockTimeline: TimelineEvent[] = [
-    { timestamp: "2025-11-08 14:29", event: "Push" },
-    { timestamp: "2025-11-08 14:29", event: "Case Opens" },
-    { timestamp: "2025-11-08 14:29", event: "Billing" },
-    { timestamp: "2025-11-08 14:29", event: "Pull" },
-    { timestamp: "2025-11-08 14:29", event: "Billing" },
-]

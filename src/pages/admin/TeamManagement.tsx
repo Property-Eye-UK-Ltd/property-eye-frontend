@@ -2,15 +2,18 @@ import { useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
-import { MetricCards } from "@/features/overview/components/MetricCards"
+import { MetricCards, MetricCard } from "@/features/overview/components/MetricCards"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SearchNormal, Filter, ArrowDown2, ProfileAdd } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { StaffListTable } from "@/features/adminteam/components/StaffListTable"
-import { mockStaffMembers, teamMetrics } from "@/data/teamManagementData"
+import type { StaffRole } from "@/data/teamManagementData"
 import { AddStaffModal, AddStaffFormValues } from "@/features/adminteam/components/modals/AddStaffModal"
+import { toAdminRoleLabel, toAdminRoleValue } from "@/features/adminteam/api/adminTeamService"
+import { useAdminTeamSummary, useAdminTeamUsers, useInviteAdminTeamUser } from "@/features/adminteam/api/useAdminTeam"
+import { toast } from "sonner"
 
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
@@ -19,14 +22,62 @@ const TeamManagement = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false)
 
-    const filteredStaff = mockStaffMembers.filter(
-        (s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.email.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    const { data: summary } = useAdminTeamSummary()
+    const { data: staff = [] } = useAdminTeamUsers()
+    const inviteMutation = useInviteAdminTeamUser()
+
+    const metrics: MetricCard[] = [
+        {
+            title: "Total Staffs",
+            value: String(summary?.total_users ?? 0),
+            period: "",
+            change: "",
+            topBarClass: "bg-blue-500",
+        },
+        {
+            title: "Active Today",
+            value: String(summary?.active_today_count ?? 0),
+            period: "",
+            change: "",
+            topBarClass: "bg-gray-500",
+        },
+        {
+            title: "Suspended Staffs",
+            value: String(summary?.suspended_count ?? 0),
+            period: "",
+            change: "",
+            topBarClass: "bg-red-500",
+        },
+    ]
+
+    const filteredStaff = staff
+        .filter(
+            (s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.email.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .map((s) => ({
+            id: s.id,
+            name: s.name,
+            email: s.email,
+            role: toAdminRoleLabel(s.role) as StaffRole,
+            lastActiveDate: s.lastActive ?? "Never",
+            status: s.status,
+        }))
 
     const handleAddStaff = async (values: AddStaffFormValues) => {
-        console.log("Adding staff:", values)
-        // In real app, would call API to add staff
-        setIsAddStaffModalOpen(false)
+        try {
+            await inviteMutation.mutateAsync({
+                name: values.name,
+                email: values.email,
+                role: toAdminRoleValue(values.role),
+            })
+            setIsAddStaffModalOpen(false)
+            toast.success("Staff invited successfully", {
+                description: `An invitation has been sent to ${values.email}`,
+            })
+        } catch (error) {
+            console.error("Failed to invite staff:", error)
+            toast.error("Failed to invite staff. Please try again.")
+        }
     }
 
     return (
@@ -49,7 +100,7 @@ const TeamManagement = () => {
             {/* Page Content */}
             <DashboardPageContent className="space-y-3 lg:space-y-4">
                 {/* Metric Cards */}
-                <MetricCards metrics={teamMetrics} columns={3} />
+                <MetricCards metrics={metrics} columns={3} />
 
                 {/* Staff List Panel */}
                 <DashboardPanel
@@ -98,7 +149,12 @@ const TeamManagement = () => {
             </DashboardPageContent>
 
             {/* Add Staff Modal */}
-            <AddStaffModal open={isAddStaffModalOpen} onClose={() => setIsAddStaffModalOpen(false)} onSubmit={handleAddStaff} />
+            <AddStaffModal
+                open={isAddStaffModalOpen}
+                onClose={() => setIsAddStaffModalOpen(false)}
+                onSubmit={handleAddStaff}
+                isSubmitting={inviteMutation.isPending}
+            />
         </DashboardLayout>
     )
 }

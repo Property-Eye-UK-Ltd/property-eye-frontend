@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { useNavigate } from "react-router-dom"
 import { Eye, EyeSlash } from "iconsax-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,20 +14,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-
-const emailSchema = z.object({
-    email: z.string().email("Please enter a valid email address"),
-})
-
-const passwordSchema = z
-    .object({
-        newPassword: z.string().min(8, "Password must be at least 8 characters"),
-        confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
-    })
-    .refine((data) => data.newPassword === data.confirmPassword, {
-        message: "Passwords don't match",
-        path: ["confirmPassword"],
-    })
+import {
+    forgotPasswordSchema,
+    resetPasswordSchema,
+    type ForgotPasswordFormData,
+    type ResetPasswordFormData,
+} from "@/lib/validations/auth"
+import * as authService from "@/features/auth/api/authService"
+import { extractErrorMessage } from "@/features/auth/authErrors"
 
 const AdminForgotPassword = () => {
     const navigate = useNavigate()
@@ -37,54 +30,51 @@ const AdminForgotPassword = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
-    const emailForm = useForm<z.infer<typeof emailSchema>>({
-        resolver: zodResolver(emailSchema),
+    const form = useForm<ForgotPasswordFormData>({
+        resolver: zodResolver(forgotPasswordSchema),
         defaultValues: {
             email: "",
         },
         mode: "onChange",
     })
 
-    const passwordForm = useForm<z.infer<typeof passwordSchema>>({
-        resolver: zodResolver(passwordSchema),
+    const resetForm = useForm<ResetPasswordFormData>({
+        resolver: zodResolver(resetPasswordSchema),
         defaultValues: {
+            resetCode: "",
             newPassword: "",
             confirmPassword: "",
         },
         mode: "onChange",
     })
 
-    const { reset: resetEmailForm, formState } = emailForm
-    const { reset: resetPasswordForm } = passwordForm
+    const { reset: resetNewPasswordForm } = resetForm
 
-    useEffect(() => {
-        if (formState.isSubmitSuccessful) {
-            setStep("reset")
-            resetPasswordForm()
-            resetEmailForm()
-        }
-    }, [formState.isSubmitSuccessful, resetPasswordForm, resetEmailForm])
-
-    const onEmailSubmit = async (values: z.infer<typeof emailSchema>) => {
+    const onEmailSubmit = async (values: ForgotPasswordFormData) => {
         setIsLoading(true)
         try {
-            console.log("Super Admin Forgot Password:", values)
-            toast.success("Reset link sent to your email!")
+            const response = await authService.adminForgotPassword({ email: values.email })
+            toast.success(response.message)
+            setStep("reset")
+            resetNewPasswordForm()
         } catch (error) {
-            toast.error("Failed to send reset link. Please try again.")
+            toast.error(extractErrorMessage(error, "Failed to send reset link. Please try again."))
         } finally {
             setIsLoading(false)
         }
     }
 
-    const onPasswordSubmit = async (values: z.infer<typeof passwordSchema>) => {
+    const onPasswordSubmit = async (values: ResetPasswordFormData) => {
         setIsLoading(true)
         try {
-            console.log("Super Admin Reset Password:", values)
-            toast.success("Password reset successfully!")
+            const response = await authService.adminResetPassword({
+                reset_code: values.resetCode,
+                new_password: values.newPassword,
+            })
+            toast.success(response.message)
             navigate("/admin/login")
         } catch (error) {
-            toast.error("Failed to reset password. Please try again.")
+            toast.error(extractErrorMessage(error, "Failed to reset password. Please try again."))
         } finally {
             setIsLoading(false)
         }
@@ -98,16 +88,16 @@ const AdminForgotPassword = () => {
                 </h1>
                 <p className="text-sm sm:text-base text-muted-foreground">
                     {step === "request"
-                        ? "Enter your email to reset your password, we'll send a reset link to your registered email."
-                        : "Create a new password for your account. Make sure it's strong and secure."}
+                        ? "Enter your email to reset your password, we'll send a reset code to your registered email."
+                        : "Enter the reset code sent to your email along with a new password."}
                 </p>
             </div>
 
             {step === "request" ? (
-                <Form key="request" {...emailForm}>
-                    <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4 sm:space-y-6">
+                <Form key="request" {...form}>
+                    <form onSubmit={form.handleSubmit(onEmailSubmit)} className="space-y-4 sm:space-y-6">
                         <FormField
-                            control={emailForm.control}
+                            control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
@@ -124,7 +114,7 @@ const AdminForgotPassword = () => {
                             type="submit"
                             className="w-full rounded-full"
                             size="lg"
-                            disabled={!emailForm.formState.isValid || isLoading}
+                            disabled={!form.formState.isValid || isLoading}
                         >
                             {isLoading ? "Sending..." : "Reset Password"}
                         </Button>
@@ -141,10 +131,24 @@ const AdminForgotPassword = () => {
                     </form>
                 </Form>
             ) : (
-                <Form key="reset" {...passwordForm}>
-                    <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4 sm:space-y-6">
+                <Form key="reset" {...resetForm}>
+                    <form onSubmit={resetForm.handleSubmit(onPasswordSubmit)} className="space-y-4 sm:space-y-6">
                         <FormField
-                            control={passwordForm.control}
+                            control={resetForm.control}
+                            name="resetCode"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Reset Code</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Enter the code sent to your email" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={resetForm.control}
                             name="newPassword"
                             render={({ field }) => (
                                 <FormItem>
@@ -175,7 +179,7 @@ const AdminForgotPassword = () => {
                         />
 
                         <FormField
-                            control={passwordForm.control}
+                            control={resetForm.control}
                             name="confirmPassword"
                             render={({ field }) => (
                                 <FormItem>
@@ -209,7 +213,7 @@ const AdminForgotPassword = () => {
                             type="submit"
                             className="w-full rounded-full"
                             size="lg"
-                            disabled={!passwordForm.formState.isValid || isLoading}
+                            disabled={!resetForm.formState.isValid || isLoading}
                         >
                             {isLoading ? "Setting..." : "Set Password"}
                         </Button>

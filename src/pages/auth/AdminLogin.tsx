@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { useAuth } from "@/features/auth/context/AuthContext"
+import { getErrorStatus, extractErrorMessage } from "@/features/auth/authErrors"
 
 const formSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -23,6 +25,7 @@ const formSchema = z.object({
 
 const AdminLogin = () => {
     const navigate = useNavigate()
+    const { adminLogin } = useAuth()
     const [showPassword, setShowPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -38,13 +41,16 @@ const AdminLogin = () => {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setIsLoading(true)
         try {
-            // TODO: Implement super admin login API call
-            console.log("Super Admin Login:", values)
+            await adminLogin(values.email, values.password)
             toast.success("Login successful!")
-            // Navigate to super admin dashboard
             navigate("/admin/dashboard")
         } catch (error) {
-            toast.error("Login failed. Please try again.")
+            const status = getErrorStatus(error)
+            const message =
+                status === 401
+                    ? "Invalid email or password."
+                    : extractErrorMessage(error, "Login failed. Please try again.")
+            toast.error(message)
         } finally {
             setIsLoading(false)
         }

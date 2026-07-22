@@ -8,8 +8,10 @@ import { ActivityLogPanel } from "@/features/adminteam/components/ActivityLogPan
 import { StaffInformationCard } from "@/features/adminteam/components/StaffInformationCard"
 import { SuspendStaffModal } from "@/features/adminteam/components/modals/SuspendStaffModal"
 import { EditRoleModal } from "@/features/adminteam/components/modals/EditRoleModal"
-import { mockActivityLog, mockStaffDetails } from "@/data/staffDetailsData"
-import { mockStaffMembers } from "@/data/teamManagementData"
+import { mockActivityLog } from "@/data/staffDetailsData"
+import { toAdminRoleLabel, toAdminRoleValue } from "@/features/adminteam/api/adminTeamService"
+import { useAdminTeamUsers, useUpdateAdminTeamUser } from "@/features/adminteam/api/useAdminTeam"
+import { toast } from "sonner"
 
 const StaffDetails = () => {
     const { staffId } = useParams<{ staffId: string }>()
@@ -17,8 +19,30 @@ const StaffDetails = () => {
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false)
     const [isEditRoleModalOpen, setIsEditRoleModalOpen] = useState(false)
 
-    // Find the staff data
-    const staff = mockStaffMembers.find((s) => s.id === staffId) || mockStaffDetails[staffId || ""]
+    const { data: staffList = [], isLoading } = useAdminTeamUsers()
+    const updateMutation = useUpdateAdminTeamUser()
+
+    const staffUser = staffList.find((s) => s.id === staffId)
+    const staff = staffUser
+        ? {
+              id: staffUser.id,
+              name: staffUser.name,
+              email: staffUser.email,
+              role: toAdminRoleLabel(staffUser.role),
+              lastActiveDate: staffUser.lastActive ?? "Never",
+              status: staffUser.status,
+          }
+        : undefined
+
+    if (isLoading) {
+        return (
+            <DashboardLayout variant="super-admin">
+                <DashboardPageContent>
+                    <p>Loading...</p>
+                </DashboardPageContent>
+            </DashboardLayout>
+        )
+    }
 
     if (!staff) {
         return (
@@ -30,16 +54,31 @@ const StaffDetails = () => {
         )
     }
 
-    const handleSuspendStaff = (reason: string, description: string) => {
-        console.log("Suspending staff:", staffId, { reason, description })
-        // In real app, would call API to suspend staff
-        setIsSuspendModalOpen(false)
+    const handleSuspendStaff = async (_reason: string, _description: string) => {
+        if (!staffId) return
+        try {
+            await updateMutation.mutateAsync({ userId: staffId, req: { status: "disabled" } })
+            toast.success("Staff suspended successfully")
+            setIsSuspendModalOpen(false)
+        } catch (error) {
+            console.error("Failed to suspend staff:", error)
+            toast.error("Failed to suspend staff. Please try again.")
+        }
     }
 
-    const handleEditRole = (name: string, email: string, role: string) => {
-        console.log("Editing staff:", staffId, { name, email, role })
-        // In real app, would call API to update staff
-        setIsEditRoleModalOpen(false)
+    const handleEditRole = async (name: string, _email: string, role: string) => {
+        if (!staffId) return
+        try {
+            await updateMutation.mutateAsync({
+                userId: staffId,
+                req: { name, role: toAdminRoleValue(role) },
+            })
+            toast.success("Staff updated successfully")
+            setIsEditRoleModalOpen(false)
+        } catch (error) {
+            console.error("Failed to update staff:", error)
+            toast.error("Failed to update staff. Please try again.")
+        }
     }
 
     return (

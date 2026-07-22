@@ -24,6 +24,7 @@ import AgencyInformation from "./pages/auth/AgencyInformation";
 import { AuthFlowLayout } from "./components/auth/AuthFlowLayout";
 import { AuthProvider } from "./features/auth/context/AuthContext";
 import ProtectedRoute from "./features/auth/components/ProtectedRoute";
+import AdminProtectedRoute from "./features/auth/components/AdminProtectedRoute";
 import Overview from "./pages/dashboard/Overview";
 import CaseManagement from "./pages/dashboard/CaseManagement";
 import CaseDetails from "./pages/dashboard/CaseDetails";
@@ -112,19 +113,22 @@ const App = () => (
             <Route path="/dashboard/settings" element={<Settings />} />
           </Route>
 
-          {/* Super Admin Dashboard Routes */}
-          <Route path="/admin/dashboard" element={<AdminOverview />} />
-          <Route path="/admin/agencies" element={<Agencies />} />
-          <Route path="/admin/agencies/:agencyId" element={<AgencyProfile />} />
-          <Route path="/admin/affiliates" element={<Affiliates />} />
-          <Route path="/admin/cases" element={<AdminCaseManagement />} />
-          <Route path="/admin/cases/:caseId" element={<AdminCaseDetails />} />
-          <Route path="/admin/billing" element={<BillingFinance />} />
-          <Route path="/admin/billing/transaction/:transactionId" element={<TransactionDetails />} />
-          <Route path="/admin/team" element={<AdminTeamManagement />} />
-          <Route path="/admin/team/staff/:staffId" element={<StaffDetails />} />
-          <Route path="/admin/reports" element={<ReportsExports />} />
-          <Route path="/admin/settings" element={<AdminSettings />} />
+          {/* Super Admin Dashboard Routes (requires authentication) */}
+          <Route element={<AdminProtectedRoute />}>
+            <Route path="/admin/change-password" element={<ChangePasswordRequired redirectTo="/admin/dashboard" />} />
+            <Route path="/admin/dashboard" element={<AdminOverview />} />
+            <Route path="/admin/agencies" element={<Agencies />} />
+            <Route path="/admin/agencies/:agencyId" element={<AgencyProfile />} />
+            <Route path="/admin/affiliates" element={<Affiliates />} />
+            <Route path="/admin/cases" element={<AdminCaseManagement />} />
+            <Route path="/admin/cases/:caseId" element={<AdminCaseDetails />} />
+            <Route path="/admin/billing" element={<BillingFinance />} />
+            <Route path="/admin/billing/transaction/:transactionId" element={<TransactionDetails />} />
+            <Route path="/admin/team" element={<AdminTeamManagement />} />
+            <Route path="/admin/team/staff/:staffId" element={<StaffDetails />} />
+            <Route path="/admin/reports" element={<ReportsExports />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
+          </Route>
 
           {/* Marketing Agent Portal Routes */}
           <Route path="/marketing/dashboard" element={<MarketingOverview />} />
