@@ -1,4 +1,5 @@
 import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph, Buildings, Danger, MoneyRecive, Card, Share, Note } from "iconsax-react"
+import { AGENCY_TAB_ACCESS } from "@/config/permissions"
 
 export type DashboardVariant = "agency" | "super-admin" | "marketer"
 
@@ -7,6 +8,7 @@ export interface NavItem {
     icon: any
     path: string
     variant?: "Bulk" | "TwoTone" | "Outline"
+    key?: string
 }
 
 export interface NavConfig {
@@ -22,18 +24,21 @@ export const agencyNavConfig: NavConfig = {
             icon: Element,
             path: "/dashboard",
             variant: "Bulk",
+            key: "overview",
         },
         {
             label: "Case Management",
             icon: Book,
             path: "/dashboard/cases",
             variant: "Bulk",
+            key: "cases",
         },
         {
             label: "Properties",
             icon: Buildings,
             path: "/dashboard/properties",
             variant: "Bulk",
+            key: "properties",
         },
 
         {
@@ -41,12 +46,14 @@ export const agencyNavConfig: NavConfig = {
             icon: People,
             path: "/dashboard/team",
             variant: "Bulk",
+            key: "team",
         },
         {
             label: "Account & Billing",
             icon: Wallet1,
             path: "/dashboard/billing",
             variant: "Bulk",
+            key: "billing",
         },
     ],
     bottomItems: [
@@ -55,12 +62,14 @@ export const agencyNavConfig: NavConfig = {
             icon: Setting2,
             path: "/dashboard/settings",
             variant: "Bulk",
+            key: "settings",
         },
         {
             label: "Help Center",
             icon: Headphone,
             path: "/dashboard/help",
             variant: "Bulk",
+            key: "help",
         },
     ],
     showProCard: true,
@@ -176,4 +185,18 @@ export const getNavConfig = (variant: DashboardVariant): NavConfig => {
     if (variant === "super-admin") return superAdminNavConfig
     if (variant === "marketer") return marketerNavConfig
     return agencyNavConfig
+}
+
+export const getVisibleNavConfig = (variant: DashboardVariant, role?: string): NavConfig => {
+    const config = getNavConfig(variant)
+    if (variant !== "agency" || !role) return config
+
+    const allowedKeys = AGENCY_TAB_ACCESS[role]
+    if (!allowedKeys) return config
+
+    return {
+        ...config,
+        mainItems: config.mainItems.filter((item) => !item.key || allowedKeys.includes(item.key)),
+        bottomItems: config.bottomItems.filter((item) => !item.key || allowedKeys.includes(item.key)),
+    }
 }

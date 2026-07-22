@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeSlash } from "iconsax-react";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { AUTH_ERROR_DETAIL, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
 import { PENDING_PROFILE_REDIRECT, resumePendingVerification } from "@/features/auth/resumeOnboarding";
+import { captureRedirectIntent, consumeRedirectIntent, resolveRedirectPath } from "@/features/auth/redirectIntent";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +28,11 @@ const Login = () => {
     const { toast } = useToast();
     const navigate = useNavigate();
     const location = useLocation();
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        captureRedirectIntent(searchParams);
+    }, [searchParams]);
 
     const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -42,7 +48,7 @@ const Login = () => {
         try {
             await login(data.email, data.password);
             const from = (location.state as { from?: Location } | null)?.from;
-            navigate(from?.pathname ?? "/dashboard", { replace: true });
+            navigate(from?.pathname ?? resolveRedirectPath(consumeRedirectIntent()), { replace: true });
         } catch (error) {
             const status = getErrorStatus(error);
             const detail = getErrorDetail(error);
@@ -168,7 +174,10 @@ const Login = () => {
                             </div>
                             <div>
                                 Dont have an account?{" "}
-                                <Link to="/signup" className="text-progress font-medium hover:underline">
+                                <Link
+                                    to={{ pathname: "/signup", search: searchParams.toString() }}
+                                    className="text-progress font-medium hover:underline"
+                                >
                                     Create an account
                                 </Link>
                             </div>

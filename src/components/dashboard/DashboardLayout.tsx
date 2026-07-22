@@ -1,9 +1,12 @@
 import { ReactNode } from "react"
+import { useLocation } from "react-router-dom"
 import { DashboardSidebar } from "./DashboardSidebar"
 import { DashboardHeader } from "./DashboardHeader"
+import { SubscriptionBanner } from "./SubscriptionBanner"
 import { SidebarProvider, useSidebarContext } from "./SidebarContext"
 import { cn } from "@/lib/utils"
 import { DashboardVariant } from "@/config/navigation"
+import { useAuth } from "@/features/auth/context/AuthContext"
 
 interface DashboardLayoutProps {
     children: ReactNode
@@ -12,6 +15,14 @@ interface DashboardLayoutProps {
 
 const DashboardLayoutContent = ({ children, variant = "agency" }: DashboardLayoutProps) => {
     const { isCollapsed, isDesktop } = useSidebarContext()
+    const { user } = useAuth()
+    const location = useLocation()
+
+    const showSubscriptionBanner =
+        variant === "agency" &&
+        user?.portal_context === "agency" &&
+        !user.plan &&
+        !location.pathname.startsWith("/dashboard/billing")
 
     return (
         <div className="min-h-[100dvh] flex">
@@ -24,6 +35,7 @@ const DashboardLayoutContent = ({ children, variant = "agency" }: DashboardLayou
                 )}
             >
                 <DashboardHeader variant={variant} />
+                {showSubscriptionBanner && <SubscriptionBanner />}
 
                 <main className="flex-1 overflow-y-auto overflow-x-hidden bg-page-background">
                     {children}

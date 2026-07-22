@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/queryKeys"
-import { getPlans } from "./billingService"
+import { getPlan } from "./billingService"
 
-export const usePlans = () =>
+export const usePlan = () =>
     useQuery({
         queryKey: queryKeys.plans.public(),
-        queryFn: getPlans,
+        queryFn: getPlan,
         staleTime: 60_000,
     })

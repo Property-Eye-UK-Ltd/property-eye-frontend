@@ -82,6 +82,8 @@ export interface AuthPlanSummary {
     id: string;
     name: string;
     tier?: string;
+    current_period_start?: string;
+    current_period_end?: string;
 }
 
 export interface AuthUserSummary {
@@ -96,6 +98,7 @@ export interface AuthUserSummary {
     role: string;
     portal_context: string;
     status: string;
+    must_change_password: boolean;
     avatar_url?: string;
     last_active_at?: string;
 }
@@ -124,6 +127,11 @@ export interface AuthForgotPasswordRequest {
 
 export interface AuthResetPasswordRequest {
     reset_code: string;
+    new_password: string;
+}
+
+export interface AuthChangePasswordRequest {
+    current_password: string;
     new_password: string;
 }
 

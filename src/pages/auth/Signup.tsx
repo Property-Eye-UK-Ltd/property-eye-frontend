@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { Eye, EyeSlash } from "iconsax-react";
 import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ import {
     resolveOnboardingRoute,
     setOnboardingToken,
 } from "@/features/auth/onboardingStorage";
+import { captureRedirectIntent } from "@/features/auth/redirectIntent";
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +33,12 @@ const Signup = () => {
     const { toast } = useToast();
     const navigate = useNavigate();
     const location = useLocation();
+    const [searchParams] = useSearchParams();
     const state = location.state as { email?: string; password?: string } | null;
+
+    useEffect(() => {
+        captureRedirectIntent(searchParams);
+    }, [searchParams]);
 
     const form = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
@@ -199,7 +205,10 @@ const Signup = () => {
 
                     <div className="text-center text-sm text-muted-foreground">
                         Already have an account?{" "}
-                        <Link to="/login" className="text-progress font-medium hover:underline">
+                        <Link
+                            to={{ pathname: "/login", search: searchParams.toString() }}
+                            className="text-progress font-medium hover:underline"
+                        >
                             Login
                         </Link>
                     </div>

@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { toast } from "@/hooks/use-toast";
+import { subscriptionGateEvents } from "@/lib/subscriptionGateEvents";
 
 const ACCESS_TOKEN_COOKIE = "access_token";
 
@@ -68,6 +69,8 @@ apiClient.interceptors.response.use(
                 description: detail ?? "You do not have permission to perform this action.",
                 variant: "destructive",
             });
+        } else if (status === 402) {
+            subscriptionGateEvents.emit();
         }
 
         return Promise.reject(error);

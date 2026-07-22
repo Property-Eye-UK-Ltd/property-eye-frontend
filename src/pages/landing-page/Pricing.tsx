@@ -2,7 +2,7 @@ import Header from "@/components/landing-page/Header";
 import Footer from "@/components/landing-page/Footer";
 import CTASection from "@/components/landing-page/CTASection";
 import { PlanCard } from "@/features/billing/components/PlanCard";
-import { subscriptionPlans } from "@/data/subscription-plans-data";
+import { usePlan } from "@/features/billing/api/usePlans";
 import { useNavigate } from "react-router-dom";
 import {
     Accordion,
@@ -14,9 +14,10 @@ import { faqData } from "@/data/faq-data";
 
 const Pricing = () => {
     const navigate = useNavigate();
+    const { data: plan, isLoading, isError } = usePlan();
 
-    const handleSelectPlan = (planId: string) => {
-        navigate("/contact");
+    const handleSelectPlan = () => {
+        navigate("/signup?redirect=billing");
     };
 
     return (
@@ -36,20 +37,24 @@ const Pricing = () => {
                     </p>
                 </div>
 
-                {/* Plans Grid */}
-                <div className="mx-auto w-full max-w-7xl px-4 md:px-6 mb-12 md:mb-24">
-                    <div className="rounded-2xl bg-white p-4 shadow-sm md:p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {subscriptionPlans.map((plan) => (
-                                <PlanCard
-                                    key={plan.id}
-                                    plan={{ ...plan, isCurrent: false }}
-                                    onSelectPlan={handleSelectPlan}
-                                    ctaText="Start for Free"
-                                />
-                            ))}
-                        </div>
-                    </div>
+                {/* Plan */}
+                <div className="mx-auto w-full max-w-5xl px-4 md:px-6 mb-12 md:mb-24">
+                    {isLoading ? (
+                        <div className="h-64 animate-pulse rounded-2xl bg-white shadow-sm" />
+                    ) : isError || !plan ? (
+                        <p className="py-8 text-center text-sm text-gray-600">
+                            Could not load pricing. Please try again shortly.
+                        </p>
+                    ) : (
+                        <PlanCard
+                            name={plan.name}
+                            description={plan.target_customer_description}
+                            priceGbp={plan.price_gbp_monthly}
+                            billingInterval={plan.billing_interval}
+                            features={plan.feature_list}
+                            onSubscribe={handleSelectPlan}
+                        />
+                    )}
                 </div>
 
                 {/* Billing FAQ Section */}

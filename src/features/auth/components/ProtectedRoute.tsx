@@ -2,7 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
 const ProtectedRoute = () => {
-    const { isAuthenticated, isLoading } = useAuth();
+    const { isAuthenticated, isLoading, user } = useAuth();
     const location = useLocation();
 
     if (isLoading) {
@@ -17,17 +17,26 @@ const ProtectedRoute = () => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    const { user } = useAuth();
+    // Force a password change for invited team members still on their
+    // temporary password before they can reach any other dashboard page.
+    if (
+        user &&
+        user.must_change_password &&
+        location.pathname !== "/dashboard/change-password"
+    ) {
+        return <Navigate to="/dashboard/change-password" replace />;
+    }
 
-    // Smartly redirect unsubscribed/inactive agency users to the subscription plans view.
-    // Allows them to access billing paths (like /dashboard/billing/plans) to complete signup.
+    // Team Management and Account & Billing are agency_owner-only — keep
+    // non-owners from landing on a page whose API calls will just 403.
     if (
         user &&
         user.portal_context === "agency" &&
-        !user.plan &&
-        !location.pathname.startsWith("/dashboard/billing")
+        user.role !== "agency_owner" &&
+        (location.pathname.startsWith("/dashboard/team") ||
+            location.pathname.startsWith("/dashboard/billing"))
     ) {
-        return <Navigate to="/dashboard/billing/plans" replace />;
+        return <Navigate to="/dashboard" replace />;
     }
 
     return <Outlet />;

@@ -6,6 +6,7 @@ import type {
     AuthMessageResponse,
     AuthForgotPasswordRequest,
     AuthResetPasswordRequest,
+    AuthChangePasswordRequest,
     AgencyOnboardingStartRequest,
     AgencyOnboardingStartResponse,
     AgencyOnboardingResendRequest,
@@ -46,6 +47,16 @@ export const resetPassword = async (
     payload: AuthResetPasswordRequest
 ): Promise<AuthMessageResponse> => {
     const { data } = await apiClient.post<AuthMessageResponse>("/auth/reset-password", payload);
+    return data;
+};
+
+export const changePassword = async (
+    payload: AuthChangePasswordRequest
+): Promise<AuthMessageResponse> => {
+    const { data } = await apiClient.post<AuthMessageResponse>(
+        "/auth/change-password-authenticated",
+        payload
+    );
     return data;
 };
 

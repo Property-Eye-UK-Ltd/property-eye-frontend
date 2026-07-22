@@ -16,6 +16,7 @@ import About from "./pages/landing-page/About";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import ChangePasswordRequired from "./pages/auth/ChangePasswordRequired";
 import Signup from "./pages/auth/Signup";
 import OTPVerification from "./pages/auth/OTPVerification";
 import AgencyOwnerInfo from "./pages/auth/AgencyOwnerInfo";
@@ -30,7 +31,6 @@ import Properties from "./pages/dashboard/Properties";
 import TeamManagement from "./pages/dashboard/TeamManagement";
 import AccountBilling from "./pages/dashboard/AccountBilling";
 import SubscriptionPlans from "./pages/dashboard/SubscriptionPlans";
-import SubscriptionSuccess from "./pages/dashboard/SubscriptionSuccess";
 import CheckoutCancelled from "./pages/dashboard/CheckoutCancelled";
 import HelpCenter from "./pages/dashboard/HelpCenter";
 import HelpArticle from "./pages/dashboard/HelpArticle";
@@ -59,6 +59,7 @@ import MarketingPayments from "./pages/marketing/MarketingPayments";
 import MarketingPaymentDetail from "./pages/marketing/MarketingPaymentDetail";
 import MarketingDisputes from "./pages/marketing/MarketingDisputes";
 import MarketingSettings from "./pages/marketing/MarketingSettings";
+import { SubscribeGateModal } from "./components/modals/SubscribeGateModal";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <SubscribeGateModal />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
@@ -96,6 +98,7 @@ const App = () => (
 
           {/* Dashboard Routes (agency, requires authentication) */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard/change-password" element={<ChangePasswordRequired />} />
             <Route path="/dashboard" element={<Overview />} />
             <Route path="/dashboard/cases" element={<CaseManagement />} />
             <Route path="/dashboard/cases/:caseId" element={<CaseDetails />} />
@@ -103,7 +106,6 @@ const App = () => (
             <Route path="/dashboard/team" element={<TeamManagement />} />
             <Route path="/dashboard/billing" element={<AccountBilling />} />
             <Route path="/dashboard/billing/plans" element={<SubscriptionPlans />} />
-            <Route path="/dashboard/billing/success" element={<SubscriptionSuccess />} />
             <Route path="/dashboard/billing/cancelled" element={<CheckoutCancelled />} />
             <Route path="/dashboard/help" element={<HelpCenter />} />
             <Route path="/dashboard/help/:articleId" element={<HelpArticle />} />

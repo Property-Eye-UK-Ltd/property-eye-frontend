@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { AuthLoginResponse } from "@/types/auth.types";
 import { AUTH_ERROR_DETAIL, extractErrorMessage, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
 import { clearOnboardingStorage, getOnboardingToken } from "@/features/auth/onboardingStorage";
+import { consumeRedirectIntent, resolveRedirectPath } from "@/features/auth/redirectIntent";
 
 const AgencyInformation = () => {
     const navigate = useNavigate();
@@ -79,7 +80,7 @@ const AgencyInformation = () => {
             if ("access_token" in response) {
                 applyAuthSession(response as AuthLoginResponse);
                 clearOnboardingStorage();
-                navigate("/dashboard", { replace: true });
+                navigate(resolveRedirectPath(consumeRedirectIntent()), { replace: true });
             } else {
                 toast({
                     title: "Almost there",

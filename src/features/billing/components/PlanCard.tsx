@@ -1,75 +1,111 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { SubscriptionPlan } from "@/data/subscription-plans-data"
 
 interface PlanCardProps {
-    plan: SubscriptionPlan
-    onSelectPlan: (planId: string) => void
-    ctaText?: string
+    name: string
+    description: string
+    priceGbp: number
+    billingInterval: string
+    features: string[]
+    /** When set, the card renders as "already subscribed": a Current Plan
+     * badge + next billing date instead of the Subscribe CTA. */
+    subscription?: {
+        nextBillingDate: string
+        onCancelPlan: () => void
+        isCancelling?: boolean
+        /** True once cancel-plan has been called — access continues until
+         * nextBillingDate but the subscription will not renew. */
+        cancelAtPeriodEnd?: boolean
+    }
+    onSubscribe?: () => void
+    isSubscribing?: boolean
 }
 
-export const PlanCard = ({ plan, onSelectPlan, ctaText }: PlanCardProps) => {
+export const PlanCard = ({
+    name,
+    description,
+    priceGbp,
+    billingInterval,
+    features,
+    subscription,
+    onSubscribe,
+    isSubscribing,
+}: PlanCardProps) => {
+    const isSubscribed = !!subscription
+    const isCancelled = !!subscription?.cancelAtPeriodEnd
+
     return (
-        <div className="relative flex flex-col rounded-2xl bg-muted p-4 md:p-6">
-            {/* Current Plan Badge */}
-            {plan.isCurrent && (
-                <div className="absolute right-4 top-4">
-                    <Badge className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-normal text-purple-700 hover:bg-purple-100">
-                        Current Plan
+        <div className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm sm:flex-row">
+            {isSubscribed && (
+                <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
+                    <Badge
+                        className={
+                            isCancelled
+                                ? "rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-medium text-amber-700 hover:bg-amber-100"
+                                : "rounded-full bg-purple-100 px-2.5 py-0.5 text-[10px] font-medium text-purple-700 hover:bg-purple-100"
+                        }
+                    >
+                        {isCancelled ? "Cancellation Scheduled" : "Current Plan"}
                     </Badge>
                 </div>
             )}
 
-            {/* Plan Header */}
-            <div className="mb-3 md:mb-4">
-                <h3 className="text-xs font-normal uppercase tracking-wide text-muted-foreground">
-                    {plan.name}
-                </h3>
-            </div>
+            {/* Left column: name, description, price, CTA */}
+            <div className="flex flex-col justify-between gap-8 p-6 sm:w-[38%] sm:p-8">
+                <div className="space-y-2">
+                    <h3 className="text-xl font-medium text-foreground sm:text-2xl">{name}</h3>
+                    <p className="text-sm text-muted-foreground">{description}</p>
+                </div>
 
-            {/* Price */}
-            <div className="mb-2">
-                <p className="text-xl md:text-2xl font-medium text-foreground">{plan.priceRange}</p>
-                <p className="text-xs md:text-sm mb-4 md:mb-6 text-muted-foreground">{plan.priceSubtext}</p>
-            </div>
-
-            {/* Description */}
-            <p className="mb-4 md:mb-6 text-xs text-foreground">{plan.description}</p>
-
-            {/* Features List */}
-            <div className="mb-4 md:mb-6 flex-1 space-y-2 md:space-y-3">
-                {plan.features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2 text-xs">
-                        <span className="text-muted-foreground">{feature.text}</span>
-                        {feature.badge && (
-                            <Badge
-                                className={cn(
-                                    "shrink-0 rounded-full px-1.5 py-0 text-[10px] font-normal",
-                                    feature.badge.color === "blue" &&
-                                    "bg-blue-100 text-blue-700 hover:bg-blue-100",
-                                    feature.badge.color === "purple" &&
-                                    "bg-blue-100 text-blue-700 hover:bg-blue-100",
-                                    feature.badge.color === "optional" &&
-                                    "bg-blue-100 text-blue-700 hover:bg-blue-100"
-                                )}
-                            >
-                                {feature.badge.text}
-                            </Badge>
+                <div className="space-y-4">
+                    <div>
+                        <p className="flex items-baseline gap-1">
+                            <span className="text-3xl font-medium text-foreground sm:text-4xl">
+                                £{priceGbp}
+                            </span>
+                            <span className="text-sm text-muted-foreground">/{billingInterval}</span>
+                        </p>
+                        {isSubscribed && (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                {isCancelled ? "Access ends" : "Next billing"}:{" "}
+                                <span className="text-foreground">{subscription.nextBillingDate}</span>
+                            </p>
                         )}
+                    </div>
+
+                    {isSubscribed && !isCancelled && (
+                        <Button
+                            variant="outline"
+                            onClick={subscription.onCancelPlan}
+                            disabled={subscription.isCancelling}
+                            className="w-full rounded-full border-red-200 py-6 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700"
+                        >
+                            Cancel Plan
+                        </Button>
+                    )}
+                    {!isSubscribed && (
+                        <Button
+                            onClick={onSubscribe}
+                            disabled={isSubscribing}
+                            className="w-full rounded-full bg-primary py-6 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                        >
+                            Subscribe
+                        </Button>
+                    )}
+                </div>
+            </div>
+
+            {/* Right column: feature rows separated by hairline dividers */}
+            <div className="border-t border-border sm:w-[62%] sm:border-l sm:border-t-0">
+                {features.map((feature, index) => (
+                    <div
+                        key={index}
+                        className="border-b border-border px-6 py-4 text-sm text-muted-foreground last:border-b-0 sm:px-8"
+                    >
+                        {feature}
                     </div>
                 ))}
             </div>
-
-            {/* Select Plan Button */}
-            {!plan.isCurrent && (
-                <Button
-                    onClick={() => onSelectPlan(plan.id)}
-                    className="w-full rounded-full bg-primary py-6 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-                >
-                    {ctaText || "Select Plan"}
-                </Button>
-            )}
         </div>
     )
 }

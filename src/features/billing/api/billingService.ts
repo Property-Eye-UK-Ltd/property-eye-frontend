@@ -7,6 +7,7 @@ export interface SubscriptionOverviewResponse {
     billing_interval: string
     next_billing_date: string
     status: string
+    cancel_at_period_end: boolean
 }
 
 export interface InvoiceResponse {
@@ -32,8 +33,15 @@ export const subscribeToPlan = async (planId: string): Promise<CheckoutResponse>
     return data;
 };
 
-export const getPlans = async (): Promise<PublicPlanResponse[]> => {
-    const { data } = await apiClient.get<PublicPlanResponse[]>("/public/plans");
+export const confirmCheckout = async (sessionId: string): Promise<SubscriptionOverviewResponse> => {
+    const { data } = await apiClient.post<SubscriptionOverviewResponse>("/dashboard/billing/confirm-checkout", {
+        session_id: sessionId,
+    });
+    return data;
+};
+
+export const getPlan = async (): Promise<PublicPlanResponse | null> => {
+    const { data } = await apiClient.get<PublicPlanResponse | null>("/public/plans");
     return data;
 };
 
