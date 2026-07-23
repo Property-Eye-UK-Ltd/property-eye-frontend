@@ -1,6 +1,11 @@
 export type AdminCaseStatus = "Open" | "Under Legal Review" | "Flagged" | "Pending Approval" | "Closed"
 export type CaseDetermination = "Fraudulent (Confirmed)" | "Not Fraudulent (Cleared)"
-export type RecoveryOutcome = "Recovered" | "Unrecovered" | "Disputed" | "N/A"
+export type RecoveryOutcome = "Recovered" | "Unrecovered" | "N/A"
+export type ReasonForClearing =
+    | "Data Error"
+    | "Coincidental Match"
+    | "Agency Documentation Provided"
+    | "Other"
 export type AgencyDisputeStatus = "None" | "Open" | "Resolved"
 
 export interface AgencyCase {
@@ -19,6 +24,7 @@ export interface AgencyCase {
     determination?: CaseDetermination
     recoveryOutcome?: RecoveryOutcome
     recoveredAmount?: string
+    reasonForClearing?: ReasonForClearing
     clearingReason?: string
     flagNote?: string
     returnNote?: string

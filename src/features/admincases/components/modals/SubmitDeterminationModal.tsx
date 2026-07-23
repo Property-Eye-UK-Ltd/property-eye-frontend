@@ -10,12 +10,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { CaseDetermination, RecoveryOutcome } from "@/data/agencyCasesData"
+import { CaseDetermination, ReasonForClearing, RecoveryOutcome } from "@/data/agencyCasesData"
 
 export interface SubmitDeterminationValues {
     determination: CaseDetermination
     recoveryOutcome: RecoveryOutcome
     recoveredAmount?: string
+    reasonForClearing?: ReasonForClearing
     clearingReason?: string
 }
 
@@ -33,6 +34,7 @@ export const SubmitDeterminationModal = ({
     const [determination, setDetermination] = useState<CaseDetermination>("Fraudulent (Confirmed)")
     const [recoveryOutcome, setRecoveryOutcome] = useState<RecoveryOutcome>("Recovered")
     const [recoveredAmount, setRecoveredAmount] = useState("")
+    const [reasonForClearing, setReasonForClearing] = useState<ReasonForClearing>("Data Error")
     const [clearingReason, setClearingReason] = useState("")
 
     useEffect(() => {
@@ -40,6 +42,7 @@ export const SubmitDeterminationModal = ({
             setDetermination("Fraudulent (Confirmed)")
             setRecoveryOutcome("Recovered")
             setRecoveredAmount("")
+            setReasonForClearing("Data Error")
             setClearingReason("")
         }
     }, [open])
@@ -55,9 +58,10 @@ export const SubmitDeterminationModal = ({
 
     const showAmount = determination === "Fraudulent (Confirmed)" && recoveryOutcome === "Recovered"
     const showClearing = determination === "Not Fraudulent (Cleared)"
+    const showClearingNote = showClearing && reasonForClearing === "Other"
     const isValid =
         (!showAmount || recoveredAmount.trim().length > 0) &&
-        (!showClearing || clearingReason.trim().length > 0)
+        (!showClearingNote || clearingReason.trim().length > 0)
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault()
@@ -66,7 +70,8 @@ export const SubmitDeterminationModal = ({
             determination,
             recoveryOutcome,
             recoveredAmount: showAmount ? recoveredAmount : undefined,
-            clearingReason: showClearing ? clearingReason.trim() : undefined,
+            reasonForClearing: showClearing ? reasonForClearing : undefined,
+            clearingReason: showClearingNote ? clearingReason.trim() : undefined,
         })
     }
 
@@ -107,7 +112,6 @@ export const SubmitDeterminationModal = ({
                                     <SelectContent>
                                         <SelectItem value="Recovered">Recovered</SelectItem>
                                         <SelectItem value="Unrecovered">Unrecovered</SelectItem>
-                                        <SelectItem value="Disputed">Disputed</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -131,6 +135,28 @@ export const SubmitDeterminationModal = ({
                         {showClearing && (
                             <div className="space-y-2">
                                 <Label>Reason for Clearing</Label>
+                                <Select
+                                    value={reasonForClearing}
+                                    onValueChange={(v) => setReasonForClearing(v as ReasonForClearing)}
+                                >
+                                    <SelectTrigger className="rounded-2xl border-border">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Data Error">Data Error</SelectItem>
+                                        <SelectItem value="Coincidental Match">Coincidental Match</SelectItem>
+                                        <SelectItem value="Agency Documentation Provided">
+                                            Agency Documentation Provided
+                                        </SelectItem>
+                                        <SelectItem value="Other">Other</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+
+                        {showClearingNote && (
+                            <div className="space-y-2">
+                                <Label>Clearing Note</Label>
                                 <Textarea
                                     value={clearingReason}
                                     onChange={(e) => setClearingReason(e.target.value)}

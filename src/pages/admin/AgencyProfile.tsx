@@ -14,8 +14,8 @@ import { AgencyCasesTablePanel } from "@/features/agencies/components/cases/Agen
 import { AgencyListingsTablePanel } from "@/features/agencies/components/listings/AgencyListingsTablePanel"
 import { RoleOverrideModal } from "@/features/agencies/components/modals/RoleOverrideModal"
 import { AgencyProfileData } from "@/data/agencyProfileData"
-import { mockAgencyCases } from "@/data/agencyCasesData"
 import { useAdminAgencyDetail, useAdminAgencyUsers } from "@/features/agencies/api/useAgencies"
+import { useAdminCases } from "@/features/admincases/api/useAdminCases"
 import { ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
@@ -38,6 +38,9 @@ const AgencyProfile = () => {
 
     const { data: agencyDetail, isLoading: isAgencyLoading } = useAdminAgencyDetail(agencyId)
     const { data: agencyUsers } = useAdminAgencyUsers(agencyId)
+    const { data: agencyCasesResponse, isLoading: isAgencyCasesLoading } = useAdminCases(
+        agencyId ? { agency_id: agencyId, page_size: 100 } : undefined
+    )
 
     useEffect(() => {
         if (activeTab === "listings" && agencyId) {
@@ -203,7 +206,11 @@ const AgencyProfile = () => {
                         noPadding
                         hasBorder
                     >
-                        <AgencyCasesTablePanel data={mockAgencyCases} />
+                        {isAgencyCasesLoading ? (
+                            <p className="p-6 text-sm text-muted-foreground">Loading cases…</p>
+                        ) : (
+                            <AgencyCasesTablePanel data={agencyCasesResponse?.items ?? []} />
+                        )}
                     </DashboardPanel>
                 )}
 

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
@@ -9,12 +9,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SearchNormal, ArrowDown2 } from "iconsax-react"
 import { AdminCasesTable } from "@/features/admincases/components/AdminCasesTable"
-import {
-    AdminCaseStatus,
-    CaseDetermination,
-    mockAgencyCases,
-} from "@/data/agencyCasesData"
-import { agenciesData } from "@/data/agenciesData"
+import { AdminCaseStatus, CaseDetermination } from "@/data/agencyCasesData"
+import { useAdminCaseAgencies, useAdminCases } from "@/features/admincases/api/useAdminCases"
+import { adminStatusToCaseStatus } from "@/features/admincases/api/adminCasesService"
 
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
@@ -27,6 +24,7 @@ const AdminCaseManagement = () => {
     const [selectedDetermination, setSelectedDetermination] = useState<string>("all")
     const [dateFrom, setDateFrom] = useState("")
     const [dateTo, setDateTo] = useState("")
+    const [page, setPage] = useState(1)
 
     const statusOptions: AdminCaseStatus[] = [
         "Open",
@@ -41,48 +39,41 @@ const AdminCaseManagement = () => {
         "Not Fraudulent (Cleared)",
     ]
 
+    const { data: agencies } = useAdminCaseAgencies()
+
+    const { data: casesResponse, isLoading } = useAdminCases({
+        page,
+        page_size: 20,
+        search: searchQuery || undefined,
+        status: selectedStatus !== "all" ? adminStatusToCaseStatus[selectedStatus as AdminCaseStatus] : undefined,
+        agency_id: selectedAgency !== "all" ? selectedAgency : undefined,
+    })
+
     const parseLooseDate = (value: string) => {
         const t = Date.parse(value)
         return Number.isNaN(t) ? null : t
     }
 
-    const filteredCases = mockAgencyCases.filter((c) => {
-        const q = searchQuery.toLowerCase()
-        const matchesSearch =
-            !q ||
-            c.caseId.toLowerCase().includes(q) ||
-            c.propertyAddress.toLowerCase().includes(q) ||
-            c.buyerName.toLowerCase().includes(q) ||
-            (c.agencyName ?? "").toLowerCase().includes(q)
-        const matchesAgency = selectedAgency === "all" || c.agencyName === selectedAgency
-        const matchesStatus = selectedStatus === "all" || c.adminStatus === selectedStatus
-        const matchesSeverity = selectedSeverity === "all" || c.severity === selectedSeverity
-        const matchesDetermination =
-            selectedDetermination === "all" || c.determination === selectedDetermination
+    // Severity, determination, and sale-date range aren't yet server-side
+    // filters on GET /admin/fraud-reports; apply them client-side over the
+    // current page until the endpoint grows dedicated query params.
+    const filteredCases = useMemo(() => {
+        const items = casesResponse?.items ?? []
+        return items.filter((c) => {
+            const matchesSeverity = selectedSeverity === "all" || c.severity === selectedSeverity
+            const matchesDetermination =
+                selectedDetermination === "all" || c.determination === selectedDetermination
 
-        const saleTs = parseLooseDate(c.saleDate)
-        const fromTs = dateFrom ? Date.parse(dateFrom) : null
-        const toTs = dateTo ? Date.parse(dateTo) : null
-        const matchesDate =
-            (!fromTs || (saleTs !== null && saleTs >= fromTs)) &&
-            (!toTs || (saleTs !== null && saleTs <= toTs))
+            const saleTs = parseLooseDate(c.saleDate)
+            const fromTs = dateFrom ? Date.parse(dateFrom) : null
+            const toTs = dateTo ? Date.parse(dateTo) : null
+            const matchesDate =
+                (!fromTs || (saleTs !== null && saleTs >= fromTs)) &&
+                (!toTs || (saleTs !== null && saleTs <= toTs))
 
-        return (
-            matchesSearch &&
-            matchesAgency &&
-            matchesStatus &&
-            matchesSeverity &&
-            matchesDetermination &&
-            matchesDate
-        )
-    })
-
-    const uniqueAgencies = Array.from(
-        new Set([
-            ...agenciesData.map((a) => a.name),
-            ...mockAgencyCases.map((c) => c.agencyName).filter(Boolean) as string[],
-        ])
-    )
+            return matchesSeverity && matchesDetermination && matchesDate
+        })
+    }, [casesResponse, selectedSeverity, selectedDetermination, dateFrom, dateTo])
 
     return (
         <DashboardLayout variant="super-admin">
@@ -106,7 +97,10 @@ const AdminCaseManagement = () => {
                                 <Input
                                     placeholder="Search by case ID, agency, address or buyer…"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value)
+                                        setPage(1)
+                                    }}
                                     className="h-9 w-full rounded-full border-border bg-background pl-9 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
                                 />
                             </div>
@@ -114,21 +108,21 @@ const AdminCaseManagement = () => {
                             {/* Row 2 — Filters + date range + export */}
                             <div className="flex flex-wrap items-center gap-1.5">
                                 {/* Case filters */}
-                                <Select value={selectedAgency} onValueChange={setSelectedAgency}>
+                                <Select value={selectedAgency} onValueChange={(v) => { setSelectedAgency(v); setPage(1) }}>
                                     <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
                                         <SelectValue placeholder="Agency" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All Agencies</SelectItem>
-                                        {uniqueAgencies.map((agencyName) => (
-                                            <SelectItem key={agencyName} value={agencyName}>
-                                                {agencyName}
+                                        {(agencies ?? []).map((agency) => (
+                                            <SelectItem key={agency.id} value={agency.id}>
+                                                {agency.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
 
-                                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                                <Select value={selectedStatus} onValueChange={(v) => { setSelectedStatus(v); setPage(1) }}>
                                     <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
                                         <SelectValue placeholder="Status" />
                                     </SelectTrigger>
@@ -203,7 +197,16 @@ const AdminCaseManagement = () => {
                         </div>
                     }
                 >
-                    <AdminCasesTable data={filteredCases} />
+                    {isLoading ? (
+                        <p className="p-6 text-sm text-muted-foreground">Loading cases…</p>
+                    ) : (
+                        <AdminCasesTable
+                            data={filteredCases}
+                            page={casesResponse?.page ?? 1}
+                            totalPages={Math.ceil((casesResponse?.total ?? 0) / (casesResponse?.page_size ?? 20)) || 1}
+                            onPageChange={setPage}
+                        />
+                    )}
                 </DashboardPanel>
             </DashboardPageContent>
         </DashboardLayout>

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { AgencyCase } from "@/data/agencyCasesData"
+import { useAuth } from "@/features/auth/context/AuthContext"
 
 interface AdminCaseWorkflowPanelProps {
     caseData: AgencyCase
@@ -22,14 +23,20 @@ export const AdminCaseWorkflowPanel = ({
     onMoveToLegalReview,
     onResolveDispute,
 }: AdminCaseWorkflowPanelProps) => {
+    const { user } = useAuth()
+    // Approve/Return/Reopen close out a case's outcome and must be gated to
+    // superadmin (maker/checker separation, FR-005.12) — any admin/analyst
+    // can submit a determination, but only superadmin can finalize it.
+    const isSuperadmin = user?.role === "superadmin"
+
     const { adminStatus, determination, agencyDispute } = caseData
     const canSubmitDetermination =
         adminStatus === "Open" ||
         adminStatus === "Under Legal Review" ||
         adminStatus === "Flagged"
-    const canApproveOrReturn = adminStatus === "Pending Approval"
+    const canApproveOrReturn = adminStatus === "Pending Approval" && isSuperadmin
     const canReopen =
-        adminStatus === "Closed" && determination === "Not Fraudulent (Cleared)"
+        adminStatus === "Closed" && determination === "Not Fraudulent (Cleared)" && isSuperadmin
     const canFlag =
         adminStatus !== "Closed" && adminStatus !== "Pending Approval"
     const canResolveDispute = adminStatus === "Closed" && agencyDispute === "Open"
@@ -86,6 +93,12 @@ export const AdminCaseWorkflowPanel = ({
                     <Button className="w-full rounded-full" onClick={onResolveDispute}>
                         Resolve Agency Dispute
                     </Button>
+                )}
+
+                {adminStatus === "Pending Approval" && !isSuperadmin && (
+                    <p className="text-center text-sm text-muted-foreground">
+                        Awaiting a superadmin to approve or return this case.
+                    </p>
                 )}
 
                 {adminStatus === "Closed" && !canReopen && !canResolveDispute && (

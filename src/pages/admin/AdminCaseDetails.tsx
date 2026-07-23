@@ -4,16 +4,26 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PropertyPartiesPanel } from "@/features/cases/components/PropertyPartiesPanel"
-import { TimelineAuditTrailPanel } from "@/features/cases/components/TimelineAuditTrailPanel"
+import { TimelineAuditTrailPanel, TimelineRecord } from "@/features/cases/components/TimelineAuditTrailPanel"
 import { AdminCaseOverviewCard } from "@/features/admincases/components/AdminCaseOverviewCard"
 import { AdminCaseWorkflowPanel } from "@/features/admincases/components/AdminCaseWorkflowPanel"
 import { SubmitDeterminationModal, SubmitDeterminationValues } from "@/features/admincases/components/modals/SubmitDeterminationModal"
 import { ReturnCaseModal } from "@/features/admincases/components/modals/ReturnCaseModal"
 import { FlagCaseModal } from "@/features/admincases/components/modals/FlagCaseModal"
 import { ResolveDisputeModal } from "@/features/admincases/components/modals/ResolveDisputeModal"
-import { AgencyCase, mockAgencyCases, resolveAgencyDispute } from "@/data/agencyCasesData"
-import { agenciesData } from "@/data/agenciesData"
-import { mockAdminCasePropertyParties, mockAdminCaseTimeline } from "@/data/adminCaseDetailsData"
+import {
+    useAdminCaseDetail,
+    useAdminCaseDisputes,
+    useAdminCasePropertyParties,
+    useAdminCaseTimeline,
+    useApproveAndCloseCase,
+    useFlagCase,
+    useReopenCase,
+    useResolveAgencyDispute,
+    useReturnCase,
+    useStartCaseReview,
+    useSubmitCaseDetermination,
+} from "@/features/admincases/api/useAdminCases"
 import { toast } from "sonner"
 
 const AdminCaseDetails = () => {
@@ -21,14 +31,35 @@ const AdminCaseDetails = () => {
     const location = useLocation()
 
     const decodedCaseId = caseId ? decodeURIComponent(caseId) : ""
-    const initialCase = mockAgencyCases.find((c) => c.caseId === decodedCaseId)
-    const [caseData, setCaseData] = useState<AgencyCase | undefined>(initialCase)
+
+    const { data: caseData, isLoading } = useAdminCaseDetail(decodedCaseId)
+    const { data: propertyParties } = useAdminCasePropertyParties(decodedCaseId)
+    const { data: timeline } = useAdminCaseTimeline(decodedCaseId)
+    const { data: disputes } = useAdminCaseDisputes({ fraud_match_id: decodedCaseId })
+    const openDispute = disputes?.find((d) => d.status === "open")
+
+    const startReview = useStartCaseReview(decodedCaseId)
+    const submitDetermination = useSubmitCaseDetermination(decodedCaseId)
+    const approveClose = useApproveAndCloseCase(decodedCaseId)
+    const returnMutation = useReturnCase(decodedCaseId)
+    const flagMutation = useFlagCase(decodedCaseId)
+    const reopenMutation = useReopenCase(decodedCaseId)
+    const resolveDisputeMutation = useResolveAgencyDispute(decodedCaseId)
+
     const [isDeterminationOpen, setIsDeterminationOpen] = useState(false)
     const [isReturnOpen, setIsReturnOpen] = useState(false)
     const [isFlagOpen, setIsFlagOpen] = useState(false)
     const [isResolveDisputeOpen, setIsResolveDisputeOpen] = useState(false)
 
-    const randomAgency = agenciesData[0]
+    if (isLoading) {
+        return (
+            <DashboardLayout variant="super-admin">
+                <DashboardPageContent>
+                    <p className="text-sm text-muted-foreground">Loading case…</p>
+                </DashboardPageContent>
+            </DashboardLayout>
+        )
+    }
 
     if (!caseData) {
         return (
@@ -43,69 +74,75 @@ const AdminCaseDetails = () => {
     const returnPath = location.state?.returnPath || "/admin/cases"
     const returnLabel = location.state?.returnLabel || "Case Management"
 
+    const timelineRecords: TimelineRecord[] = (timeline ?? []).map((t) => ({
+        timestamp: new Date(t.timestamp).toLocaleString("en-GB"),
+        event: t.event_description,
+        actor: t.actor_name,
+    }))
+
     const handleSubmitDetermination = (values: SubmitDeterminationValues) => {
-        setCaseData({
-            ...caseData,
-            adminStatus: "Pending Approval",
-            determination: values.determination,
-            recoveryOutcome: values.recoveryOutcome,
-            recoveredAmount: values.recoveredAmount,
-            clearingReason: values.clearingReason,
-            returnNote: undefined,
+        submitDetermination.mutate(values, {
+            onSuccess: () => {
+                setIsDeterminationOpen(false)
+                toast.success("Determination submitted for admin approval")
+            },
+            onError: () => toast.error("Failed to submit determination"),
         })
-        setIsDeterminationOpen(false)
-        toast.success("Determination submitted for admin approval")
     }
 
     const handleApproveClose = () => {
-        setCaseData({ ...caseData, adminStatus: "Closed" })
-        toast.success("Case approved and closed")
+        approveClose.mutate(undefined, {
+            onSuccess: () => toast.success("Case approved and closed"),
+            onError: () => toast.error("Failed to approve case"),
+        })
     }
 
     const handleReturn = (note: string) => {
-        setCaseData({
-            ...caseData,
-            adminStatus: "Under Legal Review",
-            returnNote: note,
+        returnMutation.mutate(note, {
+            onSuccess: () => {
+                setIsReturnOpen(false)
+                toast.success("Case returned to legal review")
+            },
+            onError: () => toast.error("Failed to return case"),
         })
-        setIsReturnOpen(false)
-        toast.success("Case returned to legal review")
     }
 
     const handleFlag = (note: string) => {
-        setCaseData({
-            ...caseData,
-            adminStatus: "Flagged",
-            flagNote: note,
+        flagMutation.mutate(note, {
+            onSuccess: () => {
+                setIsFlagOpen(false)
+                toast.success("Case flagged")
+            },
+            onError: () => toast.error("Failed to flag case"),
         })
-        setIsFlagOpen(false)
-        toast.success("Case flagged")
     }
 
     const handleReopen = () => {
-        setCaseData({
-            ...caseData,
-            adminStatus: "Open",
-            determination: undefined,
-            recoveryOutcome: undefined,
-            recoveredAmount: undefined,
-            clearingReason: undefined,
-            flagNote: undefined,
-            returnNote: undefined,
+        reopenMutation.mutate(undefined, {
+            onSuccess: () => toast.success("Case reopened"),
+            onError: () => toast.error("Failed to reopen case"),
         })
-        toast.success("Case reopened")
     }
 
     const handleMoveToLegalReview = () => {
-        setCaseData({ ...caseData, adminStatus: "Under Legal Review" })
-        toast.success("Case moved to legal review")
+        startReview.mutate(undefined, {
+            onSuccess: () => toast.success("Case moved to legal review"),
+            onError: () => toast.error("Failed to move case to legal review"),
+        })
     }
 
     const handleResolveDispute = (note?: string) => {
-        resolveAgencyDispute(caseData.caseId, note)
-        setCaseData({ ...caseData, agencyDispute: "Resolved", disputeResolutionNote: note })
-        setIsResolveDisputeOpen(false)
-        toast.success("Agency dispute resolved")
+        if (!openDispute) return
+        resolveDisputeMutation.mutate(
+            { disputeId: openDispute.id, resolutionNotes: note || "Resolved by admin" },
+            {
+                onSuccess: () => {
+                    setIsResolveDisputeOpen(false)
+                    toast.success("Agency dispute resolved")
+                },
+                onError: () => toast.error("Failed to resolve dispute"),
+            }
+        )
     }
 
     return (
@@ -119,8 +156,8 @@ const AdminCaseDetails = () => {
             <DashboardPageContent>
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:gap-4">
                     <div className="space-y-3 lg:col-span-2 lg:space-y-4">
-                        <PropertyPartiesPanel data={{ ...mockAdminCasePropertyParties, agency: randomAgency.name }} />
-                        <TimelineAuditTrailPanel data={mockAdminCaseTimeline} />
+                        {propertyParties && <PropertyPartiesPanel data={propertyParties} />}
+                        <TimelineAuditTrailPanel data={timelineRecords} />
                     </div>
 
                     <div className="space-y-3 lg:col-span-1 lg:sticky lg:top-28 lg:self-start lg:space-y-4">

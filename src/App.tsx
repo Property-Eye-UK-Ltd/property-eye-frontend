@@ -40,6 +40,7 @@ import AdminLogin from "./pages/auth/AdminLogin";
 import AdminForgotPassword from "./pages/auth/AdminForgotPassword";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminCaseManagement from "./pages/admin/CaseManagement";
+import CaseScans from "./pages/admin/CaseScans";
 import AdminCaseDetails from "./pages/admin/AdminCaseDetails";
 import BillingFinance from "./pages/admin/BillingFinance";
 import TransactionDetails from "./pages/admin/TransactionDetails";
@@ -123,6 +124,7 @@ const App = () => (
             <Route path="/admin/affiliates" element={<Affiliates />} />
             <Route path="/admin/cases" element={<AdminCaseManagement />} />
             <Route path="/admin/cases/:caseId" element={<AdminCaseDetails />} />
+            <Route path="/admin/case-scans" element={<CaseScans />} />
             <Route path="/admin/billing" element={<BillingFinance />} />
             <Route path="/admin/billing/transaction/:transactionId" element={<TransactionDetails />} />
             <Route path="/admin/team" element={<AdminTeamManagement />} />

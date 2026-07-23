@@ -60,10 +60,13 @@ export const AdminCaseOverviewCard = ({ caseData }: AdminCaseOverviewCardProps) 
                         <p className="text-sm text-primary">{caseData.determination}</p>
                     </div>
                 )}
-                {caseData.clearingReason && (
+                {caseData.reasonForClearing && (
                     <div>
                         <p className="mb-1 text-xs text-muted-foreground">Reason for Clearing</p>
-                        <p className="text-sm text-primary">{caseData.clearingReason}</p>
+                        <p className="text-sm text-primary">{caseData.reasonForClearing}</p>
+                        {caseData.clearingReason && (
+                            <p className="mt-1 text-xs text-muted-foreground">{caseData.clearingReason}</p>
+                        )}
                     </div>
                 )}
                 {caseData.recoveryOutcome && (

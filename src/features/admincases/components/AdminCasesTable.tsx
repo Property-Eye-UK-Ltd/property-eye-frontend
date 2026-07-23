@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TablePagination } from "@/components/dashboard/TablePagination"
@@ -13,14 +13,17 @@ const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
 interface AdminCasesTableProps {
     data: AgencyCase[]
+    /** Server-side pagination (falls back to client-side single-page display when omitted) */
+    page?: number
+    totalPages?: number
+    onPageChange?: (page: number) => void
 }
 
-export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
+export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminCasesTableProps) => {
     const navigate = useNavigate()
     const [sortColumn, setSortColumn] = useState<keyof AgencyCase | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
-    const [currentPage, setCurrentPage] = useState(1)
-    const itemsPerPage = 10
+    const [localPage, setLocalPage] = useState(1)
 
     const handleSort = (column: keyof AgencyCase) => {
         if (sortColumn === column) {
@@ -50,16 +53,9 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
         })
     }, [data, sortColumn, sortDirection])
 
-    const paginatedCases = useMemo(() => {
-        const start = (currentPage - 1) * itemsPerPage
-        return sortedCases.slice(start, start + itemsPerPage)
-    }, [sortedCases, currentPage, itemsPerPage])
-
-    const totalPages = Math.ceil(sortedCases.length / itemsPerPage) || 1
-
-    useEffect(() => {
-        if (currentPage > totalPages) setCurrentPage(1)
-    }, [totalPages, currentPage])
+    const currentPage = page ?? localPage
+    const resolvedTotalPages = totalPages ?? 1
+    const handlePageChange = onPageChange ?? setLocalPage
 
     const sortBtnClass =
         "flex items-center gap-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground lg:text-sm"
@@ -87,7 +83,7 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginatedCases.map((caseItem) => (
+                        {sortedCases.map((caseItem) => (
                             <TableRow
                                 key={caseItem.id}
                                 onClick={() => handleViewCase(caseItem.caseId)}
@@ -142,8 +138,8 @@ export const AdminCasesTable = ({ data }: AdminCasesTableProps) => {
 
             <TablePagination
                 currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
+                totalPages={resolvedTotalPages}
+                onPageChange={handlePageChange}
             />
         </>
     )
