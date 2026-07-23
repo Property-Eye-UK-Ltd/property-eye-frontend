@@ -11,7 +11,7 @@ import { SuspendStaffModal } from "@/features/adminteam/components/modals/Suspen
 import { EditRoleModal } from "@/features/adminteam/components/modals/EditRoleModal"
 import { mockActivityLog } from "@/data/staffDetailsData"
 import { toAdminRoleLabel, toAdminRoleValue } from "@/features/adminteam/api/adminTeamService"
-import { useAdminTeamUsers, useUpdateAdminTeamUser } from "@/features/adminteam/api/useAdminTeam"
+import { useAdminTeamUser, useUpdateAdminTeamUser } from "@/features/adminteam/api/useAdminTeam"
 import { toast } from "sonner"
 
 const StaffDetails = () => {
@@ -20,10 +20,9 @@ const StaffDetails = () => {
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false)
     const [isEditRoleModalOpen, setIsEditRoleModalOpen] = useState(false)
 
-    const { data: staffList = [], isLoading } = useAdminTeamUsers()
+    const { data: staffUser, isLoading } = useAdminTeamUser(staffId)
     const updateMutation = useUpdateAdminTeamUser()
 
-    const staffUser = staffList.find((s) => s.id === staffId)
     const staff = staffUser
         ? {
               id: staffUser.id,

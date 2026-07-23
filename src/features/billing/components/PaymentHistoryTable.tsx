@@ -1,4 +1,3 @@
-import { useMemo, useState } from "react"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,54 +11,27 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Filter, ArrowDown2 } from "iconsax-react"
 import { TablePagination } from "@/components/dashboard/TablePagination"
-import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { InvoiceResponse } from "@/features/billing/api/billingService"
 
-const ITEMS_PER_PAGE = 7
-
 interface PaymentHistoryTableProps {
     invoices: InvoiceResponse[]
+    total: number
+    page: number
+    pageSize: number
+    onPageChange: (page: number) => void
     onDownload?: (invoiceNumber: string) => void
 }
 
-export const PaymentHistoryTable = ({ invoices, onDownload }: PaymentHistoryTableProps) => {
-    const [currentPage, setCurrentPage] = useState(1)
-    const [sortColumn, setSortColumn] = useState<"billingDate" | "amount" | "status" | null>(null)
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
-
-    const sortedPayments = useMemo(() => {
-        if (!sortColumn) return invoices
-        const direction = sortDirection === "asc" ? 1 : -1
-
-        return [...invoices].sort((a, b) => {
-            if (sortColumn === "billingDate") {
-                return (new Date(a.billing_date).getTime() - new Date(b.billing_date).getTime()) * direction
-            }
-            if (sortColumn === "amount") {
-                return (a.amount_gbp - b.amount_gbp) * direction
-            }
-            if (sortColumn === "status") {
-                return a.status.localeCompare(b.status) * direction
-            }
-            return 0
-        })
-    }, [sortColumn, sortDirection, invoices])
-
-    const handleSort = (column: "billingDate" | "amount" | "status") => {
-        if (sortColumn === column) {
-            setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
-        } else {
-            setSortColumn(column)
-            setSortDirection("asc")
-        }
-    }
-
-    // Pagination logic
-    const totalPages = Math.ceil(sortedPayments.length / ITEMS_PER_PAGE)
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-    const endIndex = startIndex + ITEMS_PER_PAGE
-    const paginatedPayments = sortedPayments.slice(startIndex, endIndex)
+export const PaymentHistoryTable = ({
+    invoices,
+    total,
+    page,
+    pageSize,
+    onPageChange,
+    onDownload,
+}: PaymentHistoryTableProps) => {
+    const totalPages = Math.ceil(total / pageSize) || 1
 
     return (
         <DashboardPanel
@@ -86,38 +58,14 @@ export const PaymentHistoryTable = ({ invoices, onDownload }: PaymentHistoryTabl
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className="px-4 font-medium">Invoice Number</TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("billingDate")}
-                                >
-                                    Billing Date
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                </button>
-                            </TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("amount")}
-                                >
-                                    Amount
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                </button>
-                            </TableHead>
-                            <TableHead className="px-4 font-medium">
-                                <button
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    onClick={() => handleSort("status")}
-                                >
-                                    Status
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                </button>
-                            </TableHead>
+                            <TableHead className="px-4 font-medium">Billing Date</TableHead>
+                            <TableHead className="px-4 font-medium">Amount</TableHead>
+                            <TableHead className="px-4 font-medium">Status</TableHead>
                             <TableHead className="px-4 font-medium text-right">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginatedPayments.map((payment) => (
+                        {invoices.map((payment) => (
                             <TableRow key={payment.invoice_number} className="border-b border-border">
                                 <TableCell className="px-4 py-3 text-foreground">
                                     {payment.invoice_number}
@@ -159,11 +107,7 @@ export const PaymentHistoryTable = ({ invoices, onDownload }: PaymentHistoryTabl
                 </Table>
             </div>
             {totalPages > 1 && (
-                <TablePagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
+                <TablePagination currentPage={page} totalPages={totalPages} onPageChange={onPageChange} />
             )}
         </DashboardPanel>
     )

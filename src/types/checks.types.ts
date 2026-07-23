@@ -49,3 +49,31 @@ export interface ChecksHistoryItemResponse {
     new_cases_found: number
     status: string
 }
+
+// Mirrors backend/src/schemas/sweep.py — admin-triggered platform/agency
+// scan jobs, enqueued via the arq queue rather than run inline.
+export interface TriggerSweepRunRequest {
+    agency_ids?: string[]
+}
+
+export interface TriggerSweepRunResponse {
+    enqueued: string[]
+}
+
+export interface SweepRunResponse {
+    id: string
+    status: string
+    triggered_by: string
+    total_agencies: number
+    agencies_processed: number
+    new_matches_found: number
+    error_summary: string | null
+    started_at: string
+    completed_at: string | null
+}
+
+// Mirrors backend/src/schemas/agency.py::AgencySelectOptionSchema
+export interface AgencySelectOption {
+    id: string
+    name: string | null
+}

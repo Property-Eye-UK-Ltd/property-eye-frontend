@@ -60,13 +60,29 @@ export const getAdminTeamSummary = async (): Promise<AdminTeamSummary> => {
     return data
 }
 
+export interface PaginatedAdminUsersResponse {
+    items: AdminUser[]
+    total: number
+}
+
 export const getAdminTeamUsers = async (params?: {
     status?: string
     sort_by?: string
     sort_dir?: string
-}): Promise<AdminUser[]> => {
-    const { data } = await apiClient.get<AdminTeamUserApiResponse[]>("/dashboard/admin/team/users", { params })
-    return data.map(fromApiUser)
+    search?: string
+    page?: number
+    limit?: number
+}): Promise<PaginatedAdminUsersResponse> => {
+    const { data } = await apiClient.get<{ items: AdminTeamUserApiResponse[]; total: number }>(
+        "/dashboard/admin/team/users",
+        { params }
+    )
+    return { items: data.items.map(fromApiUser), total: data.total }
+}
+
+export const getAdminTeamUser = async (userId: string): Promise<AdminUser> => {
+    const { data } = await apiClient.get<AdminTeamUserApiResponse>(`/dashboard/admin/team/users/${userId}`)
+    return fromApiUser(data)
 }
 
 export const inviteAdminTeamUser = async (req: { name: string; email: string; role: AdminRole }): Promise<AdminUser> => {

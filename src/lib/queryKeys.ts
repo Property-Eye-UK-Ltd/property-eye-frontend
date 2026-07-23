@@ -38,6 +38,7 @@ export const queryKeys = {
         all: ["admin-team"] as const,
         summary: () => ["admin-team", "summary"] as const,
         users: (params?: Record<string, unknown>) => ["admin-team", "users", params] as const,
+        user: (userId: string) => ["admin-team", "user", userId] as const,
     },
     adminCases: {
         all: ["admin-cases"] as const,

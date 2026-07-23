@@ -18,13 +18,40 @@ import { toast } from "sonner"
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
 
+const PAGE_SIZE = 10
+
+const sortByMap: Record<string, string> = {
+    role: "role",
+    lastActiveDate: "last_active_at",
+    status: "status",
+}
+
 const TeamManagement = () => {
     const [searchQuery, setSearchQuery] = useState("")
+    const [page, setPage] = useState(1)
+    const [sortColumn, setSortColumn] = useState<"role" | "lastActiveDate" | "status" | null>(null)
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false)
 
     const { data: summary } = useAdminTeamSummary()
-    const { data: staff = [] } = useAdminTeamUsers()
+    const { data: staffPage } = useAdminTeamUsers({
+        page,
+        limit: PAGE_SIZE,
+        search: searchQuery || undefined,
+        sort_by: sortColumn ? sortByMap[sortColumn] : "name",
+        sort_dir: sortDirection,
+    })
     const inviteMutation = useInviteAdminTeamUser()
+
+    const handleSortChange = (column: "role" | "lastActiveDate" | "status") => {
+        if (sortColumn === column) {
+            setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
+        } else {
+            setSortColumn(column)
+            setSortDirection("asc")
+        }
+        setPage(1)
+    }
 
     const metrics: MetricCard[] = [
         {
@@ -50,18 +77,15 @@ const TeamManagement = () => {
         },
     ]
 
-    const filteredStaff = staff
-        .filter(
-            (s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.email.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        .map((s) => ({
-            id: s.id,
-            name: s.name,
-            email: s.email,
-            role: toAdminRoleLabel(s.role) as StaffRole,
-            lastActiveDate: s.lastActive ?? "Never",
-            status: s.status,
-        }))
+    const staffItems = (staffPage?.items ?? []).map((s) => ({
+        id: s.id,
+        name: s.name,
+        email: s.email,
+        role: toAdminRoleLabel(s.role) as StaffRole,
+        lastActiveDate: s.lastActive ?? "Never",
+        status: s.status,
+    }))
+    const totalStaff = staffPage?.total ?? 0
 
     const handleAddStaff = async (values: AddStaffFormValues) => {
         try {
@@ -119,7 +143,10 @@ const TeamManagement = () => {
                                 <Input
                                     placeholder="Search"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value)
+                                        setPage(1)
+                                    }}
                                     className="h-8 rounded-full border-border bg-background pl-8 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-9 lg:pl-10 lg:text-sm"
                                 />
                             </div>
@@ -144,7 +171,15 @@ const TeamManagement = () => {
                         </div>
                     }
                 >
-                    <StaffListTable data={filteredStaff} />
+                    <StaffListTable
+                        data={staffItems}
+                        total={totalStaff}
+                        page={page}
+                        pageSize={PAGE_SIZE}
+                        onPageChange={setPage}
+                        sortColumn={sortColumn}
+                        onSortChange={handleSortChange}
+                    />
                 </DashboardPanel>
             </DashboardPageContent>
 

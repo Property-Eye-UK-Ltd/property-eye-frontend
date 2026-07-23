@@ -45,8 +45,18 @@ export const getPlan = async (): Promise<PublicPlanResponse | null> => {
     return data;
 };
 
-export const getInvoices = async (): Promise<InvoiceResponse[]> => {
-    const { data } = await apiClient.get<InvoiceResponse[]>("/dashboard/billing/invoices");
+export interface PaginatedInvoicesResponse {
+    items: InvoiceResponse[]
+    total: number
+}
+
+export const getInvoices = async (
+    page: number = 1,
+    limit: number = 10
+): Promise<PaginatedInvoicesResponse> => {
+    const { data } = await apiClient.get<PaginatedInvoicesResponse>("/dashboard/billing/invoices", {
+        params: { page, limit },
+    });
     return data;
 };
 

@@ -43,11 +43,15 @@ export const getAdminAgencyListings = async (
     return data
 }
 
-export const listListings = async (): Promise<PropertyListing[]> => {
+export const listListings = async (
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+): Promise<PaginatedPropertyListingResponse> => {
     const { data } = await apiClient.get<PaginatedPropertyListingResponse>("/dashboard/listings", {
-        params: { page: 1, limit: 100 },
+        params: { page, limit, search: search || undefined },
     })
-    return data.items
+    return data
 }
 
 export const getListing = async (id: string): Promise<PropertyListing> => {

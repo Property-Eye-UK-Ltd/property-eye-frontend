@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from "react"
 import { SearchNormal, Trash, Edit2 } from "iconsax-react"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { TablePagination } from "@/components/dashboard/TablePagination"
@@ -26,6 +25,12 @@ const formatCurrency = (value?: number) => {
 
 interface PropertyListPanelProps {
     data: PropertyListing[]
+    total: number
+    page: number
+    pageSize: number
+    onPageChange: (page: number) => void
+    searchQuery: string
+    onSearchChange: (query: string) => void
     isLoading: boolean
     onEditClick: (listing: PropertyListing) => void
     onDeleteClick: (listing: PropertyListing) => void
@@ -33,42 +38,17 @@ interface PropertyListPanelProps {
 
 export const PropertyListPanel = ({
     data,
+    total,
+    page,
+    pageSize,
+    onPageChange,
+    searchQuery,
+    onSearchChange,
     isLoading,
     onEditClick,
     onDeleteClick,
 }: PropertyListPanelProps) => {
-    const [currentPage, setCurrentPage] = useState(1)
-    const [searchQuery, setSearchQuery] = useState("")
-    const itemsPerPage = 10
-
-    const filteredListings = useMemo(() => {
-        const q = searchQuery.toLowerCase().trim()
-        if (!q) return data
-        return data.filter(
-            (listing) =>
-                listing.address.toLowerCase().includes(q) ||
-                (listing.client_name ?? "").toLowerCase().includes(q) ||
-                (listing.vendor_name ?? "").toLowerCase().includes(q) ||
-                (listing.postcode ?? "").toLowerCase().includes(q)
-        )
-    }, [data, searchQuery])
-
-    const paginatedListings = useMemo(() => {
-        const startIndex = (currentPage - 1) * itemsPerPage
-        return filteredListings.slice(startIndex, startIndex + itemsPerPage)
-    }, [filteredListings, currentPage])
-
-    const totalPages = Math.ceil(filteredListings.length / itemsPerPage) || 1
-
-    useEffect(() => {
-        setCurrentPage(1)
-    }, [searchQuery])
-
-    useEffect(() => {
-        if (currentPage > totalPages && totalPages > 0) {
-            setCurrentPage(1)
-        }
-    }, [totalPages, currentPage])
+    const totalPages = Math.ceil(total / pageSize) || 1
 
     return (
         <DashboardPanel
@@ -87,7 +67,7 @@ export const PropertyListPanel = ({
                     <Input
                         placeholder="Address, buyer, postcode"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => onSearchChange(e.target.value)}
                         className="h-8 rounded-full border-border bg-background pl-8 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-9 lg:pl-10 lg:text-sm"
                     />
                 </div>
@@ -116,7 +96,7 @@ export const PropertyListPanel = ({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {paginatedListings.map((listing) => (
+                                {data.map((listing) => (
                                     <TableRow key={listing.id} className="border-b border-border">
                                         <TableCell
                                             className={cn(
@@ -178,9 +158,9 @@ export const PropertyListPanel = ({
                     </div>
                     {totalPages > 1 && (
                         <TablePagination
-                            currentPage={currentPage}
+                            currentPage={page}
                             totalPages={totalPages}
-                            onPageChange={setCurrentPage}
+                            onPageChange={onPageChange}
                         />
                     )}
                 </>

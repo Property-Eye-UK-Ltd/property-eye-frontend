@@ -20,6 +20,8 @@ import { queryKeys } from "@/lib/queryKeys"
 
 type CheckoutConfirmState = "idle" | "confirming" | "confirmed"
 
+const INVOICES_PAGE_SIZE = 7
+
 const AccountBilling = () => {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
@@ -27,9 +29,12 @@ const AccountBilling = () => {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
     const [isFormModalOpen, setIsFormModalOpen] = useState(false)
     const [checkoutConfirmState, setCheckoutConfirmState] = useState<CheckoutConfirmState>("idle")
+    const [invoicesPage, setInvoicesPage] = useState(1)
 
     const { data: subscription, isLoading: isSubscriptionLoading } = useSubscription()
-    const { data: invoices = [], isLoading: isInvoicesLoading } = useInvoices()
+    const { data: invoicesData, isLoading: isInvoicesLoading } = useInvoices(invoicesPage, INVOICES_PAGE_SIZE)
+    const invoices = invoicesData?.items ?? []
+    const invoicesTotal = invoicesData?.total ?? 0
     const { data: plan, isLoading: isPlanLoading } = usePlan()
     const cancelPlanMutation = useCancelPlan()
 
@@ -65,7 +70,7 @@ const AccountBilling = () => {
     }, [searchParams])
 
     const hasActivePlan = subscription?.status === "active"
-    const hasPaymentHistory = invoices.length > 0
+    const hasPaymentHistory = invoicesTotal > 0
 
     const handleCancelPlanClick = () => {
         setIsConfirmModalOpen(true)
@@ -187,7 +192,14 @@ const AccountBilling = () => {
                 )}
 
                 {hasPaymentHistory ? (
-                    <PaymentHistoryTable invoices={invoices} onDownload={handleDownloadInvoice} />
+                    <PaymentHistoryTable
+                        invoices={invoices}
+                        total={invoicesTotal}
+                        page={invoicesPage}
+                        pageSize={INVOICES_PAGE_SIZE}
+                        onPageChange={setInvoicesPage}
+                        onDownload={handleDownloadInvoice}
+                    />
                 ) : (
                     <EmptyPaymentHistory />
                 )}

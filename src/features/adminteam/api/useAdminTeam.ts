@@ -3,6 +3,7 @@ import { queryKeys } from "@/lib/queryKeys"
 import {
     getAdminTeamSummary,
     getAdminTeamUsers,
+    getAdminTeamUser,
     inviteAdminTeamUser,
     updateAdminTeamUser,
     type AdminRole,
@@ -15,11 +16,26 @@ export const useAdminTeamSummary = () =>
         staleTime: 30_000,
     })
 
-export const useAdminTeamUsers = (params?: { status?: string; sort_by?: string; sort_dir?: string }) =>
+export const useAdminTeamUsers = (params?: {
+    status?: string
+    sort_by?: string
+    sort_dir?: string
+    search?: string
+    page?: number
+    limit?: number
+}) =>
     useQuery({
         queryKey: queryKeys.adminTeam.users(params),
         queryFn: () => getAdminTeamUsers(params),
         staleTime: 15_000,
+        placeholderData: (prev) => prev,
+    })
+
+export const useAdminTeamUser = (userId?: string) =>
+    useQuery({
+        queryKey: queryKeys.adminTeam.user(userId ?? ""),
+        queryFn: () => getAdminTeamUser(userId as string),
+        enabled: !!userId,
     })
 
 export const useInviteAdminTeamUser = () => {

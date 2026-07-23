@@ -14,6 +14,7 @@ export const useAdminAgenciesList = (params?: { page?: number; page_size?: numbe
         queryKey: queryKeys.agencies.list(params),
         queryFn: () => getAdminAgenciesList(params),
         staleTime: 15_000,
+        placeholderData: (prev) => prev,
     })
 
 export const useAdminAgencyDetail = (agencyId: string | undefined) =>

@@ -9,11 +9,12 @@ export const useSubscription = () =>
         staleTime: 10_000,
     })
 
-export const useInvoices = () =>
+export const useInvoices = (page: number = 1, limit: number = 10) =>
     useQuery({
-        queryKey: queryKeys.billing.invoices(),
-        queryFn: getInvoices,
+        queryKey: queryKeys.billing.invoices({ page, limit }),
+        queryFn: () => getInvoices(page, limit),
         staleTime: 30_000,
+        placeholderData: (prev) => prev,
     })
 
 export const useCancelPlan = () => {

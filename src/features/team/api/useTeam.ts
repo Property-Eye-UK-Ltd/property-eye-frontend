@@ -16,11 +16,18 @@ export const useTeamSummary = () =>
         staleTime: 30_000,
     })
 
-export const useTeamUsers = (params?: { status?: string; sort_by?: string; sort_dir?: string }) =>
+export const useTeamUsers = (params?: {
+    status?: string
+    sort_by?: string
+    sort_dir?: string
+    page?: number
+    limit?: number
+}) =>
     useQuery({
         queryKey: queryKeys.team.users(params),
         queryFn: () => getTeamUsers(params),
         staleTime: 15_000,
+        placeholderData: (prev) => prev,
     })
 
 export const useInviteTeamUser = () => {

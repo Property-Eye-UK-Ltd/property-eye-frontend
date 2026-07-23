@@ -14,8 +14,13 @@ import { BulkUploadModal } from "@/features/properties/components/modals/BulkUpl
 import { PropertyListing, PropertyListingInput } from "@/types/properties.types"
 import * as propertiesService from "@/features/properties/api/propertiesService"
 
+const PAGE_SIZE = 10
+
 const Properties = () => {
     const [listings, setListings] = useState<PropertyListing[]>([])
+    const [total, setTotal] = useState(0)
+    const [page, setPage] = useState(1)
+    const [searchQuery, setSearchQuery] = useState("")
     const [isLoading, setIsLoading] = useState(true)
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
@@ -25,17 +30,24 @@ const Properties = () => {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const refreshListings = async () => {
-        const data = await propertiesService.listListings()
-        setListings(data)
+        setIsLoading(true)
+        try {
+            const data = await propertiesService.listListings(page, PAGE_SIZE, searchQuery)
+            setListings(data.items)
+            setTotal(data.total)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     useEffect(() => {
-        setIsLoading(true)
-        propertiesService
-            .listListings()
-            .then(setListings)
-            .finally(() => setIsLoading(false))
-    }, [])
+        refreshListings()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, searchQuery])
+
+    useEffect(() => {
+        setPage(1)
+    }, [searchQuery])
 
     const handleAddProperty = async (values: PropertyListingInput) => {
         setIsSubmitting(true)
@@ -94,7 +106,7 @@ const Properties = () => {
         }
     }
 
-    const hasListings = listings.length > 0
+    const hasListings = total > 0 || searchQuery.trim().length > 0
 
     return (
         <DashboardLayout>
@@ -126,6 +138,12 @@ const Properties = () => {
                 ) : (
                     <PropertyListPanel
                         data={listings}
+                        total={total}
+                        page={page}
+                        pageSize={PAGE_SIZE}
+                        onPageChange={setPage}
+                        searchQuery={searchQuery}
+                        onSearchChange={setSearchQuery}
                         isLoading={isLoading}
                         onEditClick={handleEditClick}
                         onDeleteClick={handleDeleteClick}

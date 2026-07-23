@@ -23,14 +23,21 @@ const periods = ["All Time", "This Month", "Last Week"]
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
 
+const PAGE_SIZE = 10
+
 const Agencies = () => {
     const navigate = useNavigate()
     const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
     const [searchQuery, setSearchQuery] = useState("")
+    const [page, setPage] = useState(1)
     const [isExportOpen, setIsExportOpen] = useState(false)
 
     const { data: summary } = useAdminAgenciesSummary()
-    const { data: agenciesList } = useAdminAgenciesList({ page_size: 100, search: searchQuery || undefined })
+    const { data: agenciesList } = useAdminAgenciesList({
+        page,
+        page_size: PAGE_SIZE,
+        search: searchQuery || undefined,
+    })
 
     const metrics = [
         {
@@ -97,7 +104,10 @@ const Agencies = () => {
                                     type="search"
                                     placeholder="Search"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value)
+                                        setPage(1)
+                                    }}
                                     className="h-8 rounded-full border-border bg-background pl-8 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-9 lg:pl-10 lg:text-sm"
                                 />
                             </div>
@@ -156,7 +166,14 @@ const Agencies = () => {
                         </div>
                     }
                 >
-                    <AgenciesTablePanel data={agenciesList?.agencies ?? []} onViewAgency={handleViewAgency} />
+                    <AgenciesTablePanel
+                        data={agenciesList?.agencies ?? []}
+                        total={agenciesList?.total ?? 0}
+                        page={page}
+                        pageSize={PAGE_SIZE}
+                        onPageChange={setPage}
+                        onViewAgency={handleViewAgency}
+                    />
                 </DashboardPanel>
             </DashboardPageContent>
         </DashboardLayout>

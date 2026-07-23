@@ -35,10 +35,15 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
         status: "status",
     }
 
-    const { data: users = [], isLoading } = useTeamUsers({
+    const { data, isLoading } = useTeamUsers({
         sort_by: sortColumn ? sortByMap[sortColumn] : "name",
         sort_dir: sortDirection,
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
     })
+
+    const paginatedUsers = data?.items ?? []
+    const totalPages = Math.ceil((data?.total ?? 0) / ITEMS_PER_PAGE) || 1
 
     const handleSort = (column: "role" | "lastActive" | "status") => {
         if (sortColumn === column) {
@@ -49,12 +54,6 @@ export const UserListPanel = ({ onEditClick }: UserListPanelProps) => {
         }
         setCurrentPage(1)
     }
-
-    // Pagination logic
-    const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE)
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-    const endIndex = startIndex + ITEMS_PER_PAGE
-    const paginatedUsers = users.slice(startIndex, endIndex)
 
     return (
         <DashboardPanel

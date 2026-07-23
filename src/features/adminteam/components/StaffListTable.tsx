@@ -1,4 +1,3 @@
-import { useState, useMemo, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TablePagination } from "@/components/dashboard/TablePagination"
@@ -13,49 +12,25 @@ const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
 interface StaffListTableProps {
     data: StaffMember[]
+    total: number
+    page: number
+    pageSize: number
+    onPageChange: (page: number) => void
+    sortColumn: "role" | "lastActiveDate" | "status" | null
+    onSortChange: (column: "role" | "lastActiveDate" | "status") => void
 }
 
-export const StaffListTable = ({ data }: StaffListTableProps) => {
+export const StaffListTable = ({
+    data,
+    total,
+    page,
+    pageSize,
+    onPageChange,
+    sortColumn,
+    onSortChange,
+}: StaffListTableProps) => {
     const navigate = useNavigate()
-    const [sortColumn, setSortColumn] = useState<keyof StaffMember | null>(null)
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
-    const [currentPage, setCurrentPage] = useState(1)
-    const itemsPerPage = 10
-
-    const handleSort = (column: keyof StaffMember) => {
-        if (sortColumn === column) {
-            setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
-        } else {
-            setSortColumn(column)
-            setSortDirection("asc")
-        }
-    }
-
-    const sortedData = useMemo(() => {
-        if (!sortColumn) return data
-
-        return [...data].sort((a, b) => {
-            const aValue = a[sortColumn]
-            const bValue = b[sortColumn]
-            const direction = sortDirection === "asc" ? 1 : -1
-
-            if (typeof aValue === "string" && typeof bValue === "string") {
-                return aValue.localeCompare(bValue) * direction
-            }
-            return 0
-        })
-    }, [data, sortColumn, sortDirection])
-
-    const paginatedData = useMemo(() => {
-        const start = (currentPage - 1) * itemsPerPage
-        return sortedData.slice(start, start + itemsPerPage)
-    }, [sortedData, currentPage, itemsPerPage])
-
-    const totalPages = Math.ceil(sortedData.length / itemsPerPage) || 1
-
-    useEffect(() => {
-        if (currentPage > totalPages) setCurrentPage(1)
-    }, [totalPages, currentPage])
+    const totalPages = Math.ceil(total / pageSize) || 1
 
     const sortBtnClass =
         "flex items-center gap-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground lg:text-sm"
@@ -69,28 +44,43 @@ export const StaffListTable = ({ data }: StaffListTableProps) => {
                             <TableHead className={th}>Name</TableHead>
                             <TableHead className={th}>Email</TableHead>
                             <TableHead className={th}>
-                                <button className={sortBtnClass} onClick={() => handleSort("role")}>
+                                <button className={sortBtnClass} onClick={() => onSortChange("role")}>
                                     Role
-                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
+                                    <ChevronsUpDown
+                                        className={cn(
+                                            "h-3 w-3 lg:h-4 lg:w-4",
+                                            sortColumn === "role" && "text-foreground"
+                                        )}
+                                    />
                                 </button>
                             </TableHead>
                             <TableHead className={th}>
-                                <button className={sortBtnClass} onClick={() => handleSort("lastActiveDate")}>
+                                <button className={sortBtnClass} onClick={() => onSortChange("lastActiveDate")}>
                                     Last Active
-                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
+                                    <ChevronsUpDown
+                                        className={cn(
+                                            "h-3 w-3 lg:h-4 lg:w-4",
+                                            sortColumn === "lastActiveDate" && "text-foreground"
+                                        )}
+                                    />
                                 </button>
                             </TableHead>
                             <TableHead className={th}>
-                                <button className={sortBtnClass} onClick={() => handleSort("status")}>
+                                <button className={sortBtnClass} onClick={() => onSortChange("status")}>
                                     Status
-                                    <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
+                                    <ChevronsUpDown
+                                        className={cn(
+                                            "h-3 w-3 lg:h-4 lg:w-4",
+                                            sortColumn === "status" && "text-foreground"
+                                        )}
+                                    />
                                 </button>
                             </TableHead>
                             <TableHead className={th}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginatedData.map((staff) => (
+                        {data.map((staff) => (
                             <TableRow key={staff.id} className="border-b border-border">
                                 <TableCell className={td}>
                                     <div className="flex items-center gap-2">
@@ -142,11 +132,9 @@ export const StaffListTable = ({ data }: StaffListTableProps) => {
                 </Table>
             </div>
 
-            <TablePagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-            />
+            {totalPages > 1 && (
+                <TablePagination currentPage={page} totalPages={totalPages} onPageChange={onPageChange} />
+            )}
         </>
     )
 }

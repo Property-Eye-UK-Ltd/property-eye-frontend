@@ -61,13 +61,23 @@ export const getTeamSummary = async (): Promise<TeamSummary> => {
     return data
 }
 
+export interface PaginatedUsersResponse {
+    items: User[]
+    total: number
+}
+
 export const getTeamUsers = async (params?: {
     status?: string
     sort_by?: string
     sort_dir?: string
-}): Promise<User[]> => {
-    const { data } = await apiClient.get<TeamUserApiResponse[]>("/dashboard/team/users", { params })
-    return data.map(fromApiUser)
+    page?: number
+    limit?: number
+}): Promise<PaginatedUsersResponse> => {
+    const { data } = await apiClient.get<{ items: TeamUserApiResponse[]; total: number }>(
+        "/dashboard/team/users",
+        { params }
+    )
+    return { items: data.items.map(fromApiUser), total: data.total }
 }
 
 export const inviteTeamUser = async (req: { name: string; email: string; role: TeamRole }): Promise<User> => {
