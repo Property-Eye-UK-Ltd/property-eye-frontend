@@ -18,7 +18,7 @@ import {
   ExportSquare,
 } from "iconsax-react";
 import CaseScansTable from "@/features/casescans/components/CaseScansTable";
-import ScanResultsTable from "@/features/casescans/components/ScanResultsTable";
+import { ScanResultsTable } from "@/features/casescans/components/ScanResultsTable";
 import RunScanButton from "@/features/casescans/components/RunScanButton";
 import type {
   FraudMatch,
