@@ -15,7 +15,7 @@ import {
   SearchNormal,
   CloseCircle,
   Calendar,
-  DownloadCloud,
+  ExportSquare,
 } from "iconsax-react";
 import CaseScansTable from "@/features/casescans/components/CaseScansTable";
 import RunScanButton from "@/features/casescans/components/RunScanButton";
@@ -190,7 +190,7 @@ const CaseScans = () => {
               className="h-8 w-8 p-0 shrink-0"
               title="Export results"
             >
-              <DownloadCloud size={16} variant="Linear" />
+              <ExportSquare size={16} variant="Linear" />
             </Button>
           </div>
 
