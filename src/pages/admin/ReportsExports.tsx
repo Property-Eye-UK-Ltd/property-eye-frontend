@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { EventLogTable } from "@/features/reports/components/EventLogTable"
 import { DetailedPerformanceTable } from "@/features/reports/components/DetailedPerformanceTable"
-import { reportsMetricsData, reportPeriods, eventLogData, agencyPerformanceData } from "@/data/reportsData"
+import { reportsMetricsData, reportPeriods, agencyPerformanceData } from "@/data/reportsData"
+import { useAdminEventLog } from "@/features/reports/api/useReports"
 
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-10 lg:px-4 lg:text-sm"
@@ -37,10 +38,15 @@ const affiliateExports = [
     { title: "Clearance / False Positive Rate", description: "Per-agency Not Fraudulent closed cases vs all closed cases — algorithm signal quality." },
 ]
 
+const EVENT_LOG_PAGE_SIZE = 20
+
 const ReportsExports = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(reportPeriods[0])
     const [isExportOpen, setIsExportOpen] = useState(false)
     const [activeTab, setActiveTab] = useState("agency")
+    const [eventLogPage, setEventLogPage] = useState(1)
+
+    const { data: eventLogData } = useAdminEventLog(eventLogPage, EVENT_LOG_PAGE_SIZE)
 
     return (
         <DashboardLayout variant="super-admin">
@@ -131,7 +137,7 @@ const ReportsExports = () => {
                 {activeTab === "audit" && (
                     <DashboardPanel
                         title="System Event Log"
-                        description="Unified audit trail of admin, affiliate, and determination events"
+                        description="Audit trail of user logins and fraud case activity across all agencies"
                         noPadding
                         hasBorder
                         actions={
@@ -149,7 +155,13 @@ const ReportsExports = () => {
                             </DropdownMenu>
                         }
                     >
-                        <EventLogTable data={eventLogData} />
+                        <EventLogTable
+                            data={eventLogData?.items ?? []}
+                            total={eventLogData?.total ?? 0}
+                            page={eventLogPage}
+                            pageSize={EVENT_LOG_PAGE_SIZE}
+                            onPageChange={setEventLogPage}
+                        />
                     </DashboardPanel>
                 )}
             </DashboardPageContent>

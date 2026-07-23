@@ -160,24 +160,3 @@ export const reportsMetricsData: Record<string, MetricCard[]> = {
 }
 
 export const reportPeriods = ["All Time", "This Month", "Last Week"]
-
-// Event Log data
-export interface EventLogEntry {
-    actor: string
-    role: string
-    actionType: string
-    targetObject: string
-    date: string
-}
-
-export const eventLogData: EventLogEntry[] = [
-    { actor: "John Smith", role: "Admin", actionType: "Determination Submitted", targetObject: "Case #367289", date: "3 November, 2025" },
-    { actor: "Khalid Jaffar", role: "Admin", actionType: "Case Approved & Closed", targetObject: "Case #367280", date: "3 November, 2025" },
-    { actor: "Daniel Okafor", role: "Marketer", actionType: "Attribution Claim Submitted", targetObject: "Maple & Co Lettings", date: "3 November, 2025" },
-    { actor: "Maria Sheldon", role: "Admin", actionType: "Determination Returned", targetObject: "Case #367284", date: "3 November, 2025" },
-    { actor: "System", role: "System", actionType: "Attribution Conflict Detected", targetObject: "Bridgewater Realty", date: "2 November, 2025" },
-    { actor: "John Smith", role: "Admin", actionType: "Agency Dispute Raised", targetObject: "Case #367294", date: "2 November, 2025" },
-    { actor: "Admin", role: "Admin", actionType: "Commission Approved", targetObject: "#PE-256701", date: "2 November, 2025" },
-    { actor: "Kurt Daniel", role: "Admin", actionType: "Suspension", targetObject: "Agency", date: "21 October, 2025" },
-    { actor: "Angela Davies", role: "Admin", actionType: "Case Reopened", targetObject: "Case #367285", date: "21 October, 2025" },
-]

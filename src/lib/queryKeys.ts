@@ -40,6 +40,10 @@ export const queryKeys = {
         users: (params?: Record<string, unknown>) => ["admin-team", "users", params] as const,
         user: (userId: string) => ["admin-team", "user", userId] as const,
     },
+    reports: {
+        all: ["reports"] as const,
+        eventLog: (params?: Record<string, unknown>) => ["reports", "event-log", params] as const,
+    },
     adminCases: {
         all: ["admin-cases"] as const,
         list: (params?: Record<string, unknown>) => ["admin-cases", "list", params] as const,
