@@ -26,8 +26,6 @@ export const getVerificationStatus = async (
 };
 
 export const getSuspiciousMatches = async (params: {
-  confidence_min?: number;
-  confidence_max?: number;
   risk_level?: string;
   agency_id?: string;
   search?: string;

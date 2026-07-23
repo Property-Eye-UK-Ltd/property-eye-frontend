@@ -36,8 +36,6 @@ const CaseScans = () => {
   const [searchInput, setSearchInput] = useState("");
   const [selectedAgency, setSelectedAgency] = useState("all");
   const [selectedRiskLevel, setSelectedRiskLevel] = useState("all");
-  const [confidenceMin, setConfidenceMin] = useState(0);
-  const [confidenceMax, setConfidenceMax] = useState(100);
   const [detectedDateFrom, setDetectedDateFrom] = useState("");
   const [detectedDateTo, setDetectedDateTo] = useState("");
   const [page, setPage] = useState(1);
@@ -53,10 +51,6 @@ const CaseScans = () => {
         search: searchInput || undefined,
         agency_id: selectedAgency !== "all" ? selectedAgency : undefined,
         risk_level: selectedRiskLevel !== "all" ? selectedRiskLevel : undefined,
-        confidence_min:
-          confidenceMin > 0 ? confidenceMin : undefined,
-        confidence_max:
-          confidenceMax < 100 ? confidenceMax : undefined,
         page,
         limit: itemsPerPage,
       });
@@ -81,8 +75,6 @@ const CaseScans = () => {
     searchInput,
     selectedAgency,
     selectedRiskLevel,
-    confidenceMin,
-    confidenceMax,
     page,
     toast,
   ]);
@@ -95,8 +87,6 @@ const CaseScans = () => {
     setSearchInput("");
     setSelectedAgency("all");
     setSelectedRiskLevel("all");
-    setConfidenceMin(0);
-    setConfidenceMax(100);
     setDetectedDateFrom("");
     setDetectedDateTo("");
     setPage(1);
@@ -173,39 +163,8 @@ const CaseScans = () => {
             </Select>
           </div>
 
-          {/* Row 2: Confidence Range + Date Range */}
+          {/* Row 2: Date Range */}
           <div className="flex gap-3 flex-wrap items-center">
-            <div className="flex items-center gap-2 min-w-fit">
-              <label className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-                Confidence:
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={confidenceMin}
-                onChange={(e) => {
-                  setConfidenceMin(Number(e.target.value));
-                  setPage(1);
-                }}
-                className="w-24 h-1 bg-border rounded-full"
-              />
-              <span className="text-xs font-medium w-8">{confidenceMin}%</span>
-              <span className="text-xs text-muted-foreground">–</span>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={confidenceMax}
-                onChange={(e) => {
-                  setConfidenceMax(Number(e.target.value));
-                  setPage(1);
-                }}
-                className="w-24 h-1 bg-border rounded-full"
-              />
-              <span className="text-xs font-medium w-8">{confidenceMax}%</span>
-            </div>
-
             <div className="flex items-center gap-2 min-w-fit">
               <label className="text-xs font-medium text-muted-foreground whitespace-nowrap">
                 Detected:
@@ -238,8 +197,6 @@ const CaseScans = () => {
               {(searchInput ||
                 selectedAgency !== "all" ||
                 selectedRiskLevel !== "all" ||
-                confidenceMin > 0 ||
-                confidenceMax < 100 ||
                 detectedDateFrom ||
                 detectedDateTo) && (
                 <Button

@@ -1,4 +1,4 @@
-import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph, Buildings, Danger, MoneyRecive, Card, Share, Note, SearchNormal } from "iconsax-react"
+import { Element, Home3, People, Wallet1, Headphone, Setting2, Book, Graph, Buildings, Danger, MoneyRecive, Card, Share, Note, SearchNormal, DocumentUpload } from "iconsax-react"
 import { AGENCY_TAB_ACCESS } from "@/config/permissions"
 
 export type DashboardVariant = "agency" | "super-admin" | "marketer"
@@ -99,6 +99,12 @@ export const superAdminNavConfig: NavConfig = {
             label: "Case Scans",
             icon: SearchNormal,
             path: "/admin/case-scans",
+            variant: "Bulk",
+        },
+        {
+            label: "Official Records",
+            icon: DocumentUpload,
+            path: "/admin/ppd-records",
             variant: "Bulk",
         },
         {
