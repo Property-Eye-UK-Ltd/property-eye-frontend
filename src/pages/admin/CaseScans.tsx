@@ -11,7 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { SearchNormal, CloseCircle } from "iconsax-react";
+import {
+  SearchNormal,
+  CloseCircle,
+  Calendar,
+  DownloadCloud,
+} from "iconsax-react";
 import CaseScansTable from "@/features/casescans/components/CaseScansTable";
 import RunScanButton from "@/features/casescans/components/RunScanButton";
 import type {
@@ -112,19 +117,19 @@ const CaseScans = () => {
     <DashboardLayout variant="super-admin">
       <DynamicPageHeader title="Case Scans" />
 
-      {/* Filter Panel */}
+      {/* Filter Panel - Compact 2-row layout */}
       <DashboardPanel className="mb-6">
-        <div className="space-y-4">
-          {/* Row 1: Search + Quick Filters */}
-          <div className="flex gap-3 flex-wrap items-center">
-            <div className="relative flex-1 min-w-[200px]">
+        <div className="space-y-3">
+          {/* Row 1: Search + Filters */}
+          <div className="flex gap-2 items-center flex-wrap">
+            <div className="relative flex-1 min-w-[240px]">
               <SearchNormal
-                size={18}
+                size={16}
                 variant="Linear"
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
               />
               <Input
-                placeholder="Search address, vendor, client name..."
+                placeholder="Search address, vendor..."
                 value={searchInput}
                 onChange={(e) => {
                   setSearchInput(e.target.value);
@@ -134,41 +139,65 @@ const CaseScans = () => {
               />
             </div>
 
+            <Select value={selectedRiskLevel} onValueChange={(val) => {
+              setSelectedRiskLevel(val);
+              setPage(1);
+            }}>
+              <SelectTrigger className="h-8 w-fit min-w-[110px] shrink-0 rounded-full border-border bg-background px-3 text-xs">
+                <SelectValue placeholder="Risk" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Risk</SelectItem>
+                <SelectItem value="CRITICAL">🔴 Critical</SelectItem>
+                <SelectItem value="HIGH">🟠 High</SelectItem>
+                <SelectItem value="MEDIUM">🟡 Medium</SelectItem>
+                <SelectItem value="LOW">⚫ Low</SelectItem>
+              </SelectContent>
+            </Select>
+
             <Select value={selectedAgency} onValueChange={(val) => {
               setSelectedAgency(val);
               setPage(1);
             }}>
-              <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs lg:h-9 lg:px-4 lg:text-sm">
-                <SelectValue />
+              <SelectTrigger className="h-8 w-fit min-w-[110px] shrink-0 rounded-full border-border bg-background px-3 text-xs">
+                <SelectValue placeholder="Agency" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Agencies</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select value={selectedRiskLevel} onValueChange={(val) => {
-              setSelectedRiskLevel(val);
-              setPage(1);
-            }}>
-              <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs lg:h-9 lg:px-4 lg:text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Risk Levels</SelectItem>
-                <SelectItem value="CRITICAL">Critical</SelectItem>
-                <SelectItem value="HIGH">High</SelectItem>
-                <SelectItem value="MEDIUM">Medium</SelectItem>
-                <SelectItem value="LOW">Low</SelectItem>
-              </SelectContent>
-            </Select>
+            {/* Icon Buttons */}
+            {(searchInput ||
+              selectedAgency !== "all" ||
+              selectedRiskLevel !== "all" ||
+              detectedDateFrom ||
+              detectedDateTo) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearFilters}
+                className="h-8 w-8 p-0 shrink-0"
+                title="Clear filters"
+              >
+                <CloseCircle size={16} variant="Linear" />
+              </Button>
+            )}
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 shrink-0"
+              title="Export results"
+            >
+              <DownloadCloud size={16} variant="Linear" />
+            </Button>
           </div>
 
-          {/* Row 2: Date Range */}
-          <div className="flex gap-3 flex-wrap items-center">
+          {/* Row 2: Date Range + Count + Action Button */}
+          <div className="flex gap-2 items-center justify-between">
             <div className="flex items-center gap-2 min-w-fit">
-              <label className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-                Detected:
-              </label>
+              <Calendar size={16} variant="Linear" className="text-muted-foreground" />
               <input
                 type="date"
                 value={detectedDateFrom}
@@ -176,7 +205,8 @@ const CaseScans = () => {
                   setDetectedDateFrom(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 px-3 text-xs rounded-full border border-border bg-background"
+                className="h-8 px-2 text-xs rounded border border-border bg-background"
+                title="From date"
               />
               <span className="text-xs text-muted-foreground">–</span>
               <input
@@ -186,43 +216,25 @@ const CaseScans = () => {
                   setDetectedDateTo(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 px-3 text-xs rounded-full border border-border bg-background"
+                className="h-8 px-2 text-xs rounded border border-border bg-background"
+                title="To date"
               />
             </div>
-          </div>
 
-          {/* Row 3: Actions */}
-          <div className="flex gap-3 items-center justify-between">
-            <div className="flex gap-2">
-              {(searchInput ||
-                selectedAgency !== "all" ||
-                selectedRiskLevel !== "all" ||
-                detectedDateFrom ||
-                detectedDateTo) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClearFilters}
-                  className="h-8 text-xs"
-                >
-                  <CloseCircle size={14} variant="Linear" className="mr-1" />
-                  Clear Filters
-                </Button>
-              )}
-
-              <div className="text-xs text-muted-foreground py-2 px-3 bg-slate-50/50 rounded-full">
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-muted-foreground px-3 py-1.5 bg-slate-50/50 rounded-full whitespace-nowrap">
                 {selectedMatchIds.size > 0
-                  ? `${selectedMatchIds.size} selected of ${totalMatches}`
-                  : `${totalMatches} suspicious matches awaiting verification`}
-              </div>
-            </div>
+                  ? `${selectedMatchIds.size}/${totalMatches} selected`
+                  : `${totalMatches} matches`}
+              </span>
 
-            <RunScanButton
-              selectedMatchIds={selectedMatchIds}
-              onScanStart={handleScanStart}
-              onScanComplete={handleScanComplete}
-              onScanError={handleScanError}
-            />
+              <RunScanButton
+                selectedMatchIds={selectedMatchIds}
+                onScanStart={handleScanStart}
+                onScanComplete={handleScanComplete}
+                onScanError={handleScanError}
+              />
+            </div>
           </div>
         </div>
       </DashboardPanel>

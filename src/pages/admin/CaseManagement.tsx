@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { SearchNormal, ArrowDown2 } from "iconsax-react"
+import { SearchNormal, ArrowDown2, Calendar, CloseCircle } from "iconsax-react"
 import { AdminCasesTable } from "@/features/admincases/components/AdminCasesTable"
 import { AdminCaseStatus, CaseDetermination } from "@/data/agencyCasesData"
 import { useAdminCaseAgencies, useAdminCases } from "@/features/admincases/api/useAdminCases"
@@ -38,6 +38,19 @@ const AdminCaseManagement = () => {
         "Fraudulent (Confirmed)",
         "Not Fraudulent (Cleared)",
     ]
+
+    const hasActiveFilters = searchQuery || selectedAgency !== "all" || selectedStatus !== "all" || selectedSeverity !== "all" || selectedDetermination !== "all" || dateFrom || dateTo
+
+    const handleClearFilters = () => {
+        setSearchQuery("")
+        setSelectedAgency("all")
+        setSelectedStatus("all")
+        setSelectedSeverity("all")
+        setSelectedDetermination("all")
+        setDateFrom("")
+        setDateTo("")
+        setPage(1)
+    }
 
     const { data: agencies } = useAdminCaseAgencies()
 
@@ -86,30 +99,84 @@ const AdminCaseManagement = () => {
                     noPadding
                     hasBorder
                     actions={
-                        <div className="flex w-full flex-col gap-2">
-                            {/* Row 1 — Search */}
-                            <div className="relative w-full">
-                                <SearchNormal
-                                    size={16}
-                                    variant="Outline"
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                                />
-                                <Input
-                                    placeholder="Search by case ID, agency, address or buyer…"
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value)
-                                        setPage(1)
-                                    }}
-                                    className="h-9 w-full rounded-full border-border bg-background pl-9 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
-                                />
+                        <div className="flex w-full flex-col gap-2.5">
+                            {/* Row 1 — Search + Primary Filters + Icons */}
+                            <div className="flex gap-2 items-center flex-wrap">
+                                <div className="relative flex-1 min-w-[240px]">
+                                    <SearchNormal
+                                        size={16}
+                                        variant="Linear"
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                                    />
+                                    <Input
+                                        placeholder="Search case ID, agency, address…"
+                                        value={searchQuery}
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value)
+                                            setPage(1)
+                                        }}
+                                        className="h-8 w-full rounded-full border-border bg-background pl-9 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
+                                    />
+                                </div>
+
+                                <Select value={selectedStatus} onValueChange={(v) => { setSelectedStatus(v); setPage(1) }}>
+                                    <SelectTrigger className="h-8 w-fit min-w-[100px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0">
+                                        <SelectValue placeholder="Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Statuses</SelectItem>
+                                        {statusOptions.map((status) => (
+                                            <SelectItem key={status} value={status}>{status}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+
+                                <Select value={selectedSeverity} onValueChange={setSelectedSeverity}>
+                                    <SelectTrigger className="h-8 w-fit min-w-[100px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0">
+                                        <SelectValue placeholder="Severity" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Severity</SelectItem>
+                                        {severityOptions.map((s) => (
+                                            <SelectItem key={s} value={s}>{s}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+
+                                {hasActiveFilters && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={handleClearFilters}
+                                        className="h-8 w-8 p-0 shrink-0"
+                                        title="Clear all filters"
+                                    >
+                                        <CloseCircle size={16} variant="Linear" />
+                                    </Button>
+                                )}
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 w-8 p-0 shrink-0"
+                                            title="Export results"
+                                        >
+                                            <ArrowDown2 size={16} variant="Linear" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-40">
+                                        <DropdownMenuItem className="cursor-pointer text-xs">Export as CSV</DropdownMenuItem>
+                                        <DropdownMenuItem className="cursor-pointer text-xs">Export as PDF</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
 
-                            {/* Row 2 — Filters + date range + export */}
-                            <div className="flex flex-wrap items-center gap-1.5">
-                                {/* Case filters */}
+                            {/* Row 2 — Secondary Filters + Date Range */}
+                            <div className="flex gap-2 items-center flex-wrap">
                                 <Select value={selectedAgency} onValueChange={(v) => { setSelectedAgency(v); setPage(1) }}>
-                                    <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                    <SelectTrigger className="h-8 w-fit min-w-[100px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0">
                                         <SelectValue placeholder="Agency" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -122,32 +189,8 @@ const AdminCaseManagement = () => {
                                     </SelectContent>
                                 </Select>
 
-                                <Select value={selectedStatus} onValueChange={(v) => { setSelectedStatus(v); setPage(1) }}>
-                                    <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
-                                        <SelectValue placeholder="Status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Statuses</SelectItem>
-                                        {statusOptions.map((status) => (
-                                            <SelectItem key={status} value={status}>{status}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-
-                                <Select value={selectedSeverity} onValueChange={setSelectedSeverity}>
-                                    <SelectTrigger className="h-8 w-fit min-w-[120px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
-                                        <SelectValue placeholder="Severity" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Severities</SelectItem>
-                                        {severityOptions.map((s) => (
-                                            <SelectItem key={s} value={s}>{s}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-
                                 <Select value={selectedDetermination} onValueChange={setSelectedDetermination}>
-                                    <SelectTrigger className="h-8 w-fit min-w-[140px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0 lg:h-9 lg:text-sm">
+                                    <SelectTrigger className="h-8 w-fit min-w-[140px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0">
                                         <SelectValue placeholder="Determination" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -158,14 +201,13 @@ const AdminCaseManagement = () => {
                                     </SelectContent>
                                 </Select>
 
-                                {/* Date range */}
-                                <div className="flex items-center gap-1 rounded-full border border-border bg-background px-3 h-8 lg:h-9">
-                                    <span className="text-xs text-muted-foreground whitespace-nowrap">Sale date</span>
+                                <div className="flex items-center gap-1.5 ml-auto">
+                                    <Calendar size={16} variant="Linear" className="text-muted-foreground" />
                                     <Input
                                         type="date"
                                         value={dateFrom}
                                         onChange={(e) => setDateFrom(e.target.value)}
-                                        className="h-auto w-[7.5rem] border-0 bg-transparent p-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-sm"
+                                        className="h-8 px-2 text-xs rounded border border-border bg-background w-28 focus-visible:ring-0 focus-visible:ring-offset-0"
                                         title="Sale date from"
                                     />
                                     <span className="text-xs text-muted-foreground">–</span>
@@ -173,25 +215,9 @@ const AdminCaseManagement = () => {
                                         type="date"
                                         value={dateTo}
                                         onChange={(e) => setDateTo(e.target.value)}
-                                        className="h-auto w-[7.5rem] border-0 bg-transparent p-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-sm"
+                                        className="h-8 px-2 text-xs rounded border border-border bg-background w-28 focus-visible:ring-0 focus-visible:ring-offset-0"
                                         title="Sale date to"
                                     />
-                                </div>
-
-                                {/* Export */}
-                                <div className="ml-auto">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="outline" className={panelBtnClass}>
-                                                Export
-                                                <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end" className="w-48">
-                                            <DropdownMenuItem className="cursor-pointer">Export as CSV</DropdownMenuItem>
-                                            <DropdownMenuItem className="cursor-pointer">Export as PDF</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
                                 </div>
                             </div>
                         </div>
