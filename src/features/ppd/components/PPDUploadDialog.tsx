@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { CloudChange, DocumentText, CloseCircle } from "iconsax-react";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ interface PPDUploadDialogProps {
   mode: DialogMode;
   activeJob: PPDUploadJob | null;
   isSubmitting: boolean;
+  uploadProgress: number | null;
   onClose: () => void;
   onSubmit: (year: number, file: File) => void;
 }
@@ -30,6 +32,7 @@ const PPDUploadDialog = ({
   mode,
   activeJob,
   isSubmitting,
+  uploadProgress,
   onClose,
   onSubmit,
 }: PPDUploadDialogProps) => {
@@ -37,6 +40,14 @@ const PPDUploadDialog = ({
   const [file, setFile] = useState<File | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      setYear(activeJob?.year ?? new Date().getFullYear());
+      setFile(null);
+      setIsDragActive(false);
+    }
+  }, [open, activeJob]);
 
   const resetAndClose = () => {
     setFile(null);
@@ -155,6 +166,17 @@ const PPDUploadDialog = ({
               >
                 <CloseCircle size={18} variant="Linear" />
               </button>
+            </div>
+          )}
+
+          {isSubmitting && (
+            <div className="space-y-1.5">
+              <Progress value={uploadProgress ?? 0} />
+              <p className="text-xs text-muted-foreground text-center">
+                {uploadProgress !== null && uploadProgress < 100
+                  ? `Uploading... ${uploadProgress}%`
+                  : pendingLabel}
+              </p>
             </div>
           )}
 

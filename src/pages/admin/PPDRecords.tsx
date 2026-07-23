@@ -35,6 +35,7 @@ const PPDRecords = () => {
   const [dialogMode, setDialogMode] = useState<DialogMode>("upload");
   const [activeJob, setActiveJob] = useState<PPDUploadJob | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<PPDUploadJob | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -89,8 +90,9 @@ const PPDRecords = () => {
       }
 
       setIsSubmitting(true);
+      setUploadProgress(0);
       try {
-        await uploadPPDCsv(year, file);
+        await uploadPPDCsv(year, file, setUploadProgress);
         toast({
           title: "Upload started",
           description: "Official Records file uploaded and processing started.",
@@ -106,6 +108,7 @@ const PPDRecords = () => {
         });
       } finally {
         setIsSubmitting(false);
+        setUploadProgress(null);
       }
       return;
     }
@@ -113,8 +116,9 @@ const PPDRecords = () => {
     if (!activeJob) return;
 
     setIsSubmitting(true);
+    setUploadProgress(0);
     try {
-      await reuploadPPDCsv(activeJob.upload_id, file);
+      await reuploadPPDCsv(activeJob.upload_id, file, setUploadProgress);
       toast({
         title: "Restore queued",
         description: "Official record restored and processing restarted.",
@@ -130,6 +134,7 @@ const PPDRecords = () => {
       });
     } finally {
       setIsSubmitting(false);
+      setUploadProgress(null);
     }
   };
 
@@ -194,6 +199,7 @@ const PPDRecords = () => {
         mode={dialogMode}
         activeJob={activeJob}
         isSubmitting={isSubmitting}
+        uploadProgress={uploadProgress}
         onClose={closeDialog}
         onSubmit={handleSubmit}
       />
