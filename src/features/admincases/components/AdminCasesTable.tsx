@@ -7,12 +7,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { AgencyCase, adminCaseStatusStyles, caseSeverityStyles } from "@/data/agencyCasesData"
+import { ScanIndicator } from "@/components/case-management/ScanIndicator"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
 interface AdminCasesTableProps {
-    data: AgencyCase[]
+    data: (AgencyCase & { verification_status?: string; register_extract_fetched_at?: string | null })[]
     /** Server-side pagination (falls back to client-side single-page display when omitted) */
     page?: number
     totalPages?: number
@@ -66,6 +67,7 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                 <Table className="min-w-[1100px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
+                            <TableHead className={cn(th, "w-8")}>Scan</TableHead>
                             <TableHead className={th}>Case ID</TableHead>
                             <TableHead className={th}>Agency</TableHead>
                             <TableHead className={th}>Address</TableHead>
@@ -89,9 +91,18 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                                 onClick={() => handleViewCase(caseItem.caseId)}
                                 className="border-b border-border cursor-pointer hover:bg-slate-50/60"
                             >
+                                <TableCell className={cn(td, "w-8 text-center")}>
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                        <ScanIndicator
+                                            verification_status={caseItem.verification_status as "suspicious" | "confirmed_fraud" | "not_fraud" | "error" | null}
+                                            scan_date={caseItem.register_extract_fetched_at}
+                                            onClick={() => handleViewCase(caseItem.caseId)}
+                                        />
+                                    </div>
+                                </TableCell>
                                 <TableCell className={td}>
                                     <div className="flex items-center gap-2">
-                                        <Checkbox className="data-[state=checked]:border-progress data-[state=checked]:bg-progress" />
+                                        <Checkbox className="data-[state=checked]:border-progress data-[state=checked]:bg-progress" onClick={(e) => e.stopPropagation()} />
                                         <span className="whitespace-nowrap text-muted-foreground">
                                             {caseItem.caseId}
                                         </span>

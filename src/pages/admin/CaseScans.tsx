@@ -18,12 +18,14 @@ import {
   ExportSquare,
 } from "iconsax-react";
 import CaseScansTable from "@/features/casescans/components/CaseScansTable";
+import ScanResultsTable from "@/features/casescans/components/ScanResultsTable";
 import RunScanButton from "@/features/casescans/components/RunScanButton";
 import type {
   FraudMatch,
   PaginatedFraudMatchResponse,
   VerificationSummary,
 } from "@/types/casescans.types";
+import type { ScanSession } from "@/types/scan-session.types";
 import { getSuspiciousMatches } from "@/features/casescans/api/scanService";
 import { useToast } from "@/hooks/use-toast";
 
@@ -36,6 +38,7 @@ const CaseScans = () => {
   );
   const [verificationResult, setVerificationResult] =
     useState<VerificationSummary | null>(null);
+  const [scanSession, setScanSession] = useState<ScanSession | null>(null);
 
   // Filter state
   const [searchInput, setSearchInput] = useState("");
@@ -97,8 +100,12 @@ const CaseScans = () => {
     setPage(1);
   };
 
-  const handleScanComplete = (summary: VerificationSummary) => {
-    setVerificationResult(summary);
+  const handleScanComplete = (summary: VerificationSummary | ScanSession) => {
+    setVerificationResult(summary as VerificationSummary);
+    // Store scan session if available (from new backend)
+    if ('results' in summary && Array.isArray(summary.results)) {
+      setScanSession(summary as unknown as ScanSession);
+    }
     // Refresh matches to show updated statuses
     fetchMatches();
   };
@@ -248,7 +255,7 @@ const CaseScans = () => {
               <div className="bg-white rounded-lg p-3 border border-blue-100">
                 <p className="text-xs text-muted-foreground">Total Verified</p>
                 <p className="text-lg font-bold text-blue-600">
-                  {verificationResult.total_verified}
+                  {verificationResult.total_verified || verificationResult.total_count}
                 </p>
               </div>
               <div className="bg-white rounded-lg p-3 border border-red-100">
@@ -270,6 +277,21 @@ const CaseScans = () => {
                 </p>
               </div>
             </div>
+          </div>
+        </DashboardPanel>
+      )}
+
+      {/* Scan Results Table (if new backend returns session with results) */}
+      {scanSession && scanSession.results && (
+        <DashboardPanel className="mb-6">
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm font-semibold">Scan Session Results</p>
+              <p className="text-xs text-muted-foreground">
+                Session ID: {scanSession.id} • Scanned on {new Date(scanSession.started_at).toLocaleDateString()}
+              </p>
+            </div>
+            <ScanResultsTable results={scanSession.results as any} />
           </div>
         </DashboardPanel>
       )}

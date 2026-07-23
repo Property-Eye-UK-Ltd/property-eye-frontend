@@ -106,6 +106,7 @@ export const superAdminNavConfig: NavConfig = {
             icon: DocumentUpload,
             path: "/admin/ppd-records",
             variant: "Bulk",
+            key: "ppd-records",
         },
         {
             label: "Affiliates",
@@ -199,8 +200,21 @@ export const getNavConfig = (variant: DashboardVariant): NavConfig => {
     return agencyNavConfig
 }
 
+// Admin-portal roles below superadmin (analyst, viewer) don't get
+// superadmin-only nav items — currently just Official Records (PPD uploads).
+const SUPER_ADMIN_ONLY_KEYS = ["ppd-records"]
+
 export const getVisibleNavConfig = (variant: DashboardVariant, role?: string): NavConfig => {
     const config = getNavConfig(variant)
+
+    if (variant === "super-admin" && role && role !== "superadmin") {
+        return {
+            ...config,
+            mainItems: config.mainItems.filter((item) => !item.key || !SUPER_ADMIN_ONLY_KEYS.includes(item.key)),
+            bottomItems: config.bottomItems.filter((item) => !item.key || !SUPER_ADMIN_ONLY_KEYS.includes(item.key)),
+        }
+    }
+
     if (variant !== "agency" || !role) return config
 
     const allowedKeys = AGENCY_TAB_ACCESS[role]

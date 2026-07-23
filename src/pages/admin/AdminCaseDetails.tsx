@@ -5,6 +5,7 @@ import { DashboardPageContent } from "@/components/dashboard/DashboardPageConten
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { PropertyPartiesPanel } from "@/features/cases/components/PropertyPartiesPanel"
 import { TimelineAuditTrailPanel, TimelineRecord } from "@/features/cases/components/TimelineAuditTrailPanel"
+import { RegisterInformationPanel } from "@/components/case-detail/RegisterInformationPanel"
 import { AdminCaseOverviewCard } from "@/features/admincases/components/AdminCaseOverviewCard"
 import { AdminCaseWorkflowPanel } from "@/features/admincases/components/AdminCaseWorkflowPanel"
 import { SubmitDeterminationModal, SubmitDeterminationValues } from "@/features/admincases/components/modals/SubmitDeterminationModal"
@@ -158,6 +159,15 @@ const AdminCaseDetails = () => {
                     <div className="space-y-3 lg:col-span-2 lg:space-y-4">
                         {propertyParties && <PropertyPartiesPanel data={propertyParties} />}
                         <TimelineAuditTrailPanel data={timelineRecords} />
+                        {caseData && (
+                            <RegisterInformationPanel
+                                verificationStatus={caseData.verification_status as "confirmed_fraud" | "not_fraud" | "error" | null}
+                                registerExtractFetchedAt={caseData.register_extract_fetched_at}
+                                titleNumber={caseData.title_number}
+                                propertyAddress={caseData.property_address}
+                                caseId={decodedCaseId}
+                            />
+                        )}
                     </div>
 
                     <div className="space-y-3 lg:col-span-1 lg:sticky lg:top-28 lg:self-start lg:space-y-4">
