@@ -28,8 +28,10 @@ import type {
 import type { ScanSession } from "@/types/scan-session.types";
 import { getSuspiciousMatches } from "@/features/casescans/api/scanService";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const CaseScans = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [matches, setMatches] = useState<FraudMatch[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,7 +124,19 @@ const CaseScans = () => {
 
   return (
     <DashboardLayout variant="super-admin">
-      <DynamicPageHeader title="Case Scans" />
+      <DynamicPageHeader
+        title="Case Scans"
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/admin/case-scans/history")}
+            className="text-xs"
+          >
+            View Scan History
+          </Button>
+        }
+      />
 
       {/* Filter Panel - Compact 2-row layout */}
       <DashboardPanel className="mb-6">

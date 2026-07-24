@@ -1,8 +1,9 @@
 import { useState } from "react"
-import { useParams, useLocation } from "react-router-dom"
+import { useParams, useLocation, useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
+import { Button } from "@/components/ui/button"
 import { PropertyPartiesPanel } from "@/features/cases/components/PropertyPartiesPanel"
 import { TimelineAuditTrailPanel, TimelineRecord } from "@/features/cases/components/TimelineAuditTrailPanel"
 import { RegisterInformationPanel } from "@/components/case-detail/RegisterInformationPanel"
@@ -30,6 +31,7 @@ import { toast } from "sonner"
 const AdminCaseDetails = () => {
     const { caseId } = useParams<{ caseId: string }>()
     const location = useLocation()
+    const navigate = useNavigate()
 
     const decodedCaseId = caseId ? decodeURIComponent(caseId) : ""
 
@@ -151,7 +153,16 @@ const AdminCaseDetails = () => {
             <DynamicPageHeader
                 title="Case Details"
                 breadcrumbs={[{ label: returnLabel, href: returnPath }, { label: decodedCaseId }]}
-                actions={null}
+                actions={
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate("/admin/case-scans")}
+                        className="text-xs"
+                    >
+                        View Previous Scans
+                    </Button>
+                }
             />
 
             <DashboardPageContent>
