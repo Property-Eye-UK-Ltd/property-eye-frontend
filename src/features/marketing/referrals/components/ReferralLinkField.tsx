@@ -8,6 +8,8 @@ import { marketerProfile } from "@/data/marketing-data"
 interface ReferralLinkFieldProps {
     onInvite?: () => void
     className?: string
+    /** Referral URL to display/copy. Defaults to the mock profile URL. */
+    url?: string
 }
 
 /**
@@ -15,12 +17,13 @@ interface ReferralLinkFieldProps {
  * Bordered field with a floating label, the URL inside, a copy button at the
  * right end, and the Invite CTA beside it.
  */
-export const ReferralLinkField = ({ onInvite, className }: ReferralLinkFieldProps) => {
+export const ReferralLinkField = ({ onInvite, className, url }: ReferralLinkFieldProps) => {
     const [copied, setCopied] = useState(false)
+    const referralUrl = url ?? marketerProfile.referralUrl
 
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(marketerProfile.referralUrl)
+            await navigator.clipboard.writeText(referralUrl)
             setCopied(true)
             toast.success("Referral link copied to clipboard")
             setTimeout(() => setCopied(false), 2000)
@@ -37,7 +40,7 @@ export const ReferralLinkField = ({ onInvite, className }: ReferralLinkFieldProp
                 </span>
                 <div className="flex h-11 items-center rounded-xl border border-border bg-white pl-3 pr-1">
                     <code className="min-w-0 flex-1 truncate text-xs text-foreground lg:text-sm">
-                        {marketerProfile.referralUrl}
+                        {referralUrl}
                     </code>
                     <button
                         type="button"

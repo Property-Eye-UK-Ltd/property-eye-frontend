@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeSlash } from "iconsax-react";
-import { AuthLayout } from "@/components/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,96 +14,61 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { signupSchema, type SignupFormData } from "@/lib/validations/auth";
+import { marketerSignupSchema, type MarketerSignupFormData } from "@/lib/validations/auth";
 import * as authService from "@/features/auth/api/authService";
 import { useToast } from "@/hooks/use-toast";
-import { AUTH_ERROR_DETAIL, extractErrorMessage, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
+import { extractErrorMessage, getErrorStatus } from "@/features/auth/authErrors";
 import {
-    ONBOARDING_EMAIL_KEY,
-    ONBOARDING_OTP_EXPIRES_AT_KEY,
-    resolveOnboardingRoute,
-    setOnboardingToken,
-} from "@/features/auth/onboardingStorage";
-import { captureRedirectIntent } from "@/features/auth/redirectIntent";
+    MARKETER_ONBOARDING_EMAIL_KEY,
+    MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY,
+    resolveMarketerOnboardingRoute,
+    setMarketerOnboardingToken,
+} from "@/features/auth/marketerOnboardingStorage";
 
-const Signup = () => {
+const MarketerSignup = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
     const location = useLocation();
-    const [searchParams] = useSearchParams();
     const state = location.state as { email?: string; password?: string } | null;
 
-    useEffect(() => {
-        captureRedirectIntent(searchParams);
-    }, [searchParams]);
-
-    // Prefilled from ?ref=<code> when arriving via a marketer's referral
-    // link (see backend/src/api/v1/endpoints/marketer.py referral_link
-    // construction) — still editable so a user can correct/enter one
-    // manually if the link was mistyped or shared outside the URL.
-    const referralCodeFromUrl = searchParams.get("ref") ?? "";
-
-    const form = useForm<SignupFormData>({
-        resolver: zodResolver(signupSchema),
+    const form = useForm<MarketerSignupFormData>({
+        resolver: zodResolver(marketerSignupSchema),
         defaultValues: {
             phoneNumber: "",
             email: state?.email ?? "",
             password: state?.password ?? "",
-            referralCode: referralCodeFromUrl,
             termsAccepted: !!state,
         },
         mode: "onChange",
     });
 
-    const onSubmit = async (data: SignupFormData) => {
+    const onSubmit = async (data: MarketerSignupFormData) => {
         setIsSubmitting(true);
         try {
-            const trimmedReferralCode = data.referralCode?.trim();
-            const response = await authService.agencyRegister(
-                {
-                    phone_number: data.phoneNumber,
-                    email: data.email,
-                    password: data.password,
-                },
-                trimmedReferralCode ? { ref: trimmedReferralCode } : undefined
-            );
-            sessionStorage.setItem(ONBOARDING_EMAIL_KEY, response.email);
+            const response = await authService.marketerRegister({
+                phone_number: data.phoneNumber,
+                email: data.email,
+                password: data.password,
+            });
+            sessionStorage.setItem(MARKETER_ONBOARDING_EMAIL_KEY, response.email);
             if (response.otp_expires_at) {
-                sessionStorage.setItem(ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+                sessionStorage.setItem(MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
             }
             if (response.token) {
-                setOnboardingToken(response.token);
+                setMarketerOnboardingToken(response.token);
             }
-            // next_step reflects where this email's signup actually is
-            // (verify_otp / complete_profile / complete_agency) rather than
-            // assuming every submission starts a brand-new OTP flow.
-            navigate(resolveOnboardingRoute(response.next_step));
+            navigate(resolveMarketerOnboardingRoute(response.next_step));
         } catch (error) {
             const status = getErrorStatus(error);
 
-            // 409 "Email already registered" only fires for a fully active
-            // account (backend/src/services/agency_onboarding_service.py
-            // `start_onboarding_session`) — anything still mid-signup resumes
-            // instead of conflicting, so this always means "go sign in".
             if (status === 409) {
                 toast({
                     title: "Account already exists",
                     description: "An account with this email already exists. Please sign in instead.",
                 });
                 navigate("/login");
-                return;
-            }
-
-            // Invalid referral code is a field-level problem the user can fix
-            // right here, so surface it inline instead of a dismissable toast.
-            if (status === 400 && getErrorDetail(error) === AUTH_ERROR_DETAIL.REFERRAL_CODE_INVALID) {
-                form.setError("referralCode", {
-                    type: "manual",
-                    message: "This referral code isn't valid. Check it or leave it blank.",
-                });
-                setIsSubmitting(false);
                 return;
             }
 
@@ -118,15 +82,14 @@ const Signup = () => {
         }
     };
 
-
     return (
         <div className="space-y-6 sm:space-y-8">
             <div className="space-y-2">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground">
-                    Let's get your agency set up!
+                    Become a Property Eye referral partner!
                 </h1>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                    Start by entering your agency details. This helps us personalize your experience
+                    Start by entering your details. This helps us personalize your experience
                 </p>
             </div>
 
@@ -137,9 +100,9 @@ const Signup = () => {
                         name="phoneNumber"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Agency Phone Number</FormLabel>
+                                <FormLabel>Phone Number</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter agency phone number" {...field} />
+                                    <Input placeholder="Enter your phone number" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -151,9 +114,9 @@ const Signup = () => {
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Agency Email</FormLabel>
+                                <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter agency email address" {...field} />
+                                    <Input placeholder="Enter your email address" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -227,10 +190,7 @@ const Signup = () => {
 
                     <div className="text-center text-sm text-muted-foreground">
                         Already have an account?{" "}
-                        <Link
-                            to={{ pathname: "/login", search: searchParams.toString() }}
-                            className="text-progress font-medium hover:underline"
-                        >
+                        <Link to="/login" className="text-progress font-medium hover:underline">
                             Login
                         </Link>
                     </div>
@@ -240,4 +200,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default MarketerSignup;

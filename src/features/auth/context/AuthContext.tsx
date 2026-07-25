@@ -7,8 +7,8 @@ interface AuthContextValue {
     user: AuthMeResponse | null;
     isLoading: boolean;
     isAuthenticated: boolean;
-    login: (email: string, password: string) => Promise<void>;
-    adminLogin: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string) => Promise<AuthLoginResponse>;
+    adminLogin: (email: string, password: string) => Promise<AuthLoginResponse>;
     logout: () => Promise<void>;
     applyAuthSession: (data: AuthLoginResponse) => void;
     refreshUser: () => Promise<void>;
@@ -54,6 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         async (email: string, password: string) => {
             const data = await authService.login({ email, password });
             applyAuthSession(data);
+            return data;
         },
         [applyAuthSession]
     );
@@ -62,6 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         async (email: string, password: string) => {
             const data = await authService.adminLogin({ email, password });
             applyAuthSession(data);
+            return data;
         },
         [applyAuthSession]
     );

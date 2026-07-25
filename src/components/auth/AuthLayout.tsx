@@ -33,6 +33,16 @@ export const AuthLayout = ({
             ),
             image: "/assets/auth/layout-admin.png",
         },
+        marketer: {
+            text: (
+                <>
+                    Refer Agencies. <span className="text-secondary">Earn Commission</span>
+                    <br />
+                    on Every <span className="text-secondary">Fraud Recovered.</span>
+                </>
+            ),
+            image: "/assets/auth/layout.png",
+        },
     }
 
     const currentConfig = config[variant]

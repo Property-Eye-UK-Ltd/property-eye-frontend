@@ -7,23 +7,24 @@ import { MetricCards } from "@/features/overview/components/MetricCards"
 import { AdminMarketersTable } from "@/features/marketing-admin/network/components/AdminMarketersTable"
 import { AdminAgenciesTable } from "@/features/marketing-admin/network/components/AdminAgenciesTable"
 import { AttributionQueueTable } from "@/features/marketing-admin/attribution/components/AttributionQueueTable"
+import { useAdminMarketers } from "@/features/marketing-admin/network/api/useAdminMarketers"
 import {
     marketingAdminAttributionMetrics,
     adminAgencies,
-    marketerLeaderboard,
     attributionClaims,
 } from "@/data/marketing-data"
 
 const pendingAttributions = attributionClaims.filter((c) => c.status === "Pending" || c.status === "Conflict").length
 
-const tabs = [
-    { label: "Marketers", value: "marketers", count: marketerLeaderboard.length },
-    { label: "Agencies", value: "agencies", count: adminAgencies.length },
-    { label: "Attribution", value: "attribution", count: pendingAttributions },
-]
-
 const Affiliates = () => {
     const [activeTab, setActiveTab] = useState("marketers")
+    const { data: marketers = [], isLoading: isLoadingMarketers } = useAdminMarketers()
+
+    const tabs = [
+        { label: "Marketers", value: "marketers", count: marketers.length },
+        { label: "Agencies", value: "agencies", count: adminAgencies.length },
+        { label: "Attribution", value: "attribution", count: pendingAttributions },
+    ]
 
     return (
         <DashboardLayout variant="super-admin">
@@ -32,7 +33,9 @@ const Affiliates = () => {
             <DashboardPageContent className="space-y-3 lg:space-y-4">
                 <CaseTypeTabs tabs={tabs} selected={activeTab} onSelect={setActiveTab} />
 
-                {activeTab === "marketers" && <AdminMarketersTable data={marketerLeaderboard} />}
+                {activeTab === "marketers" && (
+                    <AdminMarketersTable data={marketers} isLoading={isLoadingMarketers} />
+                )}
 
                 {activeTab === "agencies" && <AdminAgenciesTable data={adminAgencies} />}
 

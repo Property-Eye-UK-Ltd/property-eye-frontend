@@ -41,6 +41,14 @@ apiClient.interceptors.request.use((config) => {
 // competing generic toast/redirect for auth-flow requests.
 const AUTH_FLOW_PATH_PREFIX = "/auth/";
 
+// Exact detail string raised by resolve_user_from_access_token when
+// User.status != "active" (backend/src/services/auth_service.py). This check
+// runs on every authenticated request, not just login, so an already-logged-in
+// user who gets suspended mid-session must be logged out on their very next
+// call — distinct from an ordinary 403 (e.g. wrong role for an endpoint),
+// which should stay on the page and just show a toast.
+const SUSPENDED_ACCOUNT_DETAIL = "User account is not active";
+
 apiClient.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
@@ -52,18 +60,22 @@ apiClient.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        if (status === 401) {
+        const detail = (error.response?.data as { detail?: string } | undefined)?.detail;
+        const isSuspendedAccount = status === 403 && detail === SUSPENDED_ACCOUNT_DETAIL;
+
+        if (status === 401 || isSuspendedAccount) {
             clearAuthToken();
             toast({
-                title: "Session expired",
-                description: "Please log in again to continue.",
+                title: isSuspendedAccount ? "Account suspended" : "Session expired",
+                description: isSuspendedAccount
+                    ? "Your account has been suspended. Contact support if you believe this is a mistake."
+                    : "Please log in again to continue.",
                 variant: "destructive",
             });
             if (window.location.pathname !== "/login") {
                 window.location.assign("/login");
             }
         } else if (status === 403) {
-            const detail = (error.response?.data as { detail?: string } | undefined)?.detail;
             toast({
                 title: "Access denied",
                 description: detail ?? "You do not have permission to perform this action.",

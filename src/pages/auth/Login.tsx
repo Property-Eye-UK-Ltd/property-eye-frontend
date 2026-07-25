@@ -46,9 +46,12 @@ const Login = () => {
     const onSubmit = async (data: LoginFormData) => {
         setIsSubmitting(true);
         try {
-            await login(data.email, data.password);
+            const session = await login(data.email, data.password);
             const from = (location.state as { from?: Location } | null)?.from;
-            navigate(from?.pathname ?? resolveRedirectPath(consumeRedirectIntent()), { replace: true });
+            navigate(
+                from?.pathname ?? resolveRedirectPath(consumeRedirectIntent(), session.portal_context),
+                { replace: true }
+            );
         } catch (error) {
             const status = getErrorStatus(error);
             const detail = getErrorDetail(error);

@@ -46,7 +46,7 @@ export interface AuthLayoutProps {
      * Layout variant for different user types
      * @default "agency"
      */
-    variant?: "agency" | "super-admin";
+    variant?: "agency" | "super-admin" | "marketer";
 }
 
 export interface ProgressBarProps {
@@ -75,6 +75,14 @@ export interface AuthAgencySummary {
     phone_number?: string;
     address?: string;
     logo_url?: string;
+    status: string;
+}
+
+export interface AuthMarketerSummary {
+    id: string;
+    name?: string;
+    referral_code: string;
+    referral_link: string;
     status: string;
 }
 
@@ -107,6 +115,8 @@ export interface AuthUserSummary {
 export interface AuthMeResponse extends AuthUserSummary {
     agency_id?: string;
     agency?: AuthAgencySummary;
+    marketer_id?: string;
+    marketer?: AuthMarketerSummary;
     plan?: AuthPlanSummary;
 }
 
@@ -184,6 +194,46 @@ export interface AgencyProfileUpdateRequest {
 }
 
 export type AgencyProfileUpdateResponse = AuthLoginResponse | AgencyOnboardingStepResponse;
+
+export interface MarketerOnboardingStartRequest {
+    phone_number: string;
+    email: string;
+    password: string;
+}
+
+export interface MarketerOnboardingStartResponse {
+    email: string;
+    status: string;
+    next_step: string;
+    otp_expires_at?: string;
+    message: string;
+    token?: string;
+}
+
+export interface MarketerOnboardingResendRequest {
+    email: string;
+}
+
+export interface MarketerOnboardingOtpRequest {
+    email: string;
+    otp_code: string;
+}
+
+export interface MarketerOnboardingStepResponse {
+    email: string;
+    status: string;
+    next_step: string;
+    message: string;
+    token?: string;
+}
+
+export interface MarketerProfileUpdateRequest {
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+}
+
+export type MarketerProfileUpdateResponse = AuthLoginResponse | MarketerOnboardingStepResponse;
 
 export interface ApiErrorDetail {
     loc: (string | number)[];

@@ -78,9 +78,13 @@ const AgencyInformation = () => {
                 onboardingToken
             );
             if ("access_token" in response) {
-                applyAuthSession(response as AuthLoginResponse);
+                const authResponse = response as AuthLoginResponse;
+                applyAuthSession(authResponse);
                 clearOnboardingStorage();
-                navigate(resolveRedirectPath(consumeRedirectIntent()), { replace: true });
+                navigate(
+                    resolveRedirectPath(consumeRedirectIntent(), authResponse.portal_context),
+                    { replace: true }
+                );
             } else {
                 toast({
                     title: "Almost there",

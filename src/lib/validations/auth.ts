@@ -34,6 +34,7 @@ export const signupSchema = z.object({
         .regex(/[A-Z]/, "Password must contain at least one capital letter")
         .regex(/[0-9]/, "Password must contain at least one number")
         .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+    referralCode: z.string().optional(),
     termsAccepted: z.boolean().refine((val) => val === true, {
         message: "You must accept the terms and conditions",
     }),
@@ -78,3 +79,27 @@ export const agencyInfoSchema = z.object({
 });
 
 export type AgencyInfoFormData = z.infer<typeof agencyInfoSchema>;
+
+export const marketerSignupSchema = z.object({
+    phoneNumber: z.string().min(10, "Please enter a valid phone number"),
+    email: z.string().email("Please enter a valid email address"),
+    password: z
+        .string()
+        .min(8, "Password must be at least 8 characters")
+        .regex(/[A-Z]/, "Password must contain at least one capital letter")
+        .regex(/[0-9]/, "Password must contain at least one number")
+        .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+    termsAccepted: z.boolean().refine((val) => val === true, {
+        message: "You must accept the terms and conditions",
+    }),
+});
+
+export type MarketerSignupFormData = z.infer<typeof marketerSignupSchema>;
+
+export const marketerProfileSchema = z.object({
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    phoneNumber: z.string().min(10, "Please enter a valid phone number"),
+});
+
+export type MarketerProfileFormData = z.infer<typeof marketerProfileSchema>;

@@ -21,10 +21,15 @@ import Signup from "./pages/auth/Signup";
 import OTPVerification from "./pages/auth/OTPVerification";
 import AgencyOwnerInfo from "./pages/auth/AgencyOwnerInfo";
 import AgencyInformation from "./pages/auth/AgencyInformation";
+import MarketerSignup from "./pages/auth/MarketerSignup";
+import MarketerOTPVerification from "./pages/auth/MarketerOTPVerification";
+import MarketerProfile from "./pages/auth/MarketerProfile";
+import MarketerReferralLink from "./pages/auth/MarketerReferralLink";
 import { AuthFlowLayout } from "./components/auth/AuthFlowLayout";
 import { AuthProvider } from "./features/auth/context/AuthContext";
 import ProtectedRoute from "./features/auth/components/ProtectedRoute";
 import AdminProtectedRoute from "./features/auth/components/AdminProtectedRoute";
+import MarketerProtectedRoute from "./features/auth/components/MarketerProtectedRoute";
 import Overview from "./pages/dashboard/Overview";
 import CaseManagement from "./pages/dashboard/CaseManagement";
 import CaseDetails from "./pages/dashboard/CaseDetails";
@@ -97,6 +102,11 @@ const App = () => (
             <Route path="/verify-otp" element={<OTPVerification />} />
             <Route path="/agency-owner-info" element={<AgencyOwnerInfo />} />
             <Route path="/agency-information" element={<AgencyInformation />} />
+            {/* Marketer Auth Routes */}
+            <Route path="/marketer-signup" element={<MarketerSignup />} />
+            <Route path="/marketer-verify-otp" element={<MarketerOTPVerification />} />
+            <Route path="/marketer-profile" element={<MarketerProfile />} />
+            <Route path="/marketer-referral-link" element={<MarketerReferralLink />} />
             {/* Super Admin Auth Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
@@ -141,17 +151,19 @@ const App = () => (
             <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
 
-          {/* Marketing Agent Portal Routes */}
-          <Route path="/marketing/dashboard" element={<MarketingOverview />} />
-          <Route path="/marketing/referrals" element={<MarketingReferrals />} />
-          <Route path="/marketing/agencies" element={<MarketingAgencies />} />
-          <Route path="/marketing/agencies/claim" element={<MarketingClaimAgency />} />
-          <Route path="/marketing/agencies/:agencyId" element={<MarketingAgencyDetail />} />
-          <Route path="/marketing/commissions" element={<MarketingCommissions />} />
-          <Route path="/marketing/commissions/:lineId" element={<MarketingCommissionDetail />} />
-          <Route path="/marketing/payments" element={<MarketingPayments />} />
-          <Route path="/marketing/payments/:paymentId" element={<MarketingPaymentDetail />} />
-          <Route path="/marketing/disputes" element={<MarketingDisputes />} />
+          {/* Marketing Agent Portal Routes (requires authentication) */}
+          <Route element={<MarketerProtectedRoute />}>
+            <Route path="/marketing/dashboard" element={<MarketingOverview />} />
+            <Route path="/marketing/referrals" element={<MarketingReferrals />} />
+            <Route path="/marketing/agencies" element={<MarketingAgencies />} />
+            <Route path="/marketing/agencies/claim" element={<MarketingClaimAgency />} />
+            <Route path="/marketing/agencies/:agencyId" element={<MarketingAgencyDetail />} />
+            <Route path="/marketing/commissions" element={<MarketingCommissions />} />
+            <Route path="/marketing/commissions/:lineId" element={<MarketingCommissionDetail />} />
+            <Route path="/marketing/payments" element={<MarketingPayments />} />
+            <Route path="/marketing/payments/:paymentId" element={<MarketingPaymentDetail />} />
+            <Route path="/marketing/disputes" element={<MarketingDisputes />} />
+          </Route>
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

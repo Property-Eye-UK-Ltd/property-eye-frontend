@@ -14,6 +14,13 @@ import type {
     AgencyOnboardingStepResponse,
     AgencyProfileUpdateRequest,
     AgencyProfileUpdateResponse,
+    MarketerOnboardingStartRequest,
+    MarketerOnboardingStartResponse,
+    MarketerOnboardingResendRequest,
+    MarketerOnboardingOtpRequest,
+    MarketerOnboardingStepResponse,
+    MarketerProfileUpdateRequest,
+    MarketerProfileUpdateResponse,
 } from "@/types/auth.types";
 
 export const login = async (payload: AuthLoginRequest): Promise<AuthLoginResponse> => {
@@ -121,6 +128,48 @@ export const agencyUpdateProfile = async (
         onboardingToken
             ? { headers: { Authorization: `Bearer ${onboardingToken}` } }
             : undefined
+    );
+    return data;
+};
+
+export const marketerRegister = async (
+    payload: MarketerOnboardingStartRequest
+): Promise<MarketerOnboardingStartResponse> => {
+    const { data } = await apiClient.post<MarketerOnboardingStartResponse>(
+        "/auth/marketer/register",
+        payload
+    );
+    return data;
+};
+
+export const marketerResendOtp = async (
+    payload: MarketerOnboardingResendRequest
+): Promise<MarketerOnboardingStartResponse> => {
+    const { data } = await apiClient.post<MarketerOnboardingStartResponse>(
+        "/auth/marketer/register/resend-otp",
+        payload
+    );
+    return data;
+};
+
+export const marketerVerifyOtp = async (
+    payload: MarketerOnboardingOtpRequest
+): Promise<MarketerOnboardingStepResponse> => {
+    const { data } = await apiClient.post<MarketerOnboardingStepResponse>(
+        "/auth/marketer/register/verify-otp",
+        payload
+    );
+    return data;
+};
+
+export const marketerUpdateProfile = async (
+    payload: MarketerProfileUpdateRequest,
+    onboardingToken: string
+): Promise<MarketerProfileUpdateResponse> => {
+    const { data } = await apiClient.post<MarketerProfileUpdateResponse>(
+        "/auth/marketer/profile",
+        payload,
+        { headers: { Authorization: `Bearer ${onboardingToken}` } }
     );
     return data;
 };

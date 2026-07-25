@@ -1,19 +1,29 @@
-import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Cup } from "iconsax-react"
 import { cn } from "@/lib/utils"
-import { MarketerLeaderboardRow, marketerLeaderboardStatusStyles } from "@/data/marketing-data"
+import { AdminMarketerRecord } from "@/features/marketing-admin/network/api/adminMarketersService"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
-interface AdminMarketersTableProps {
-    data: MarketerLeaderboardRow[]
+const statusLabel: Record<AdminMarketerRecord["status"], string> = {
+    active: "Active",
+    disabled: "Suspended",
 }
 
-export const AdminMarketersTable = ({ data }: AdminMarketersTableProps) => {
+const statusStyles: Record<AdminMarketerRecord["status"], string> = {
+    active: "bg-green-50 text-green-600 border border-green-100",
+    disabled: "bg-red-50 text-red-600 border border-red-100",
+}
+
+interface AdminMarketersTableProps {
+    data: AdminMarketerRecord[]
+    isLoading?: boolean
+}
+
+export const AdminMarketersTable = ({ data, isLoading }: AdminMarketersTableProps) => {
     const navigate = useNavigate()
 
     return (
@@ -25,50 +35,48 @@ export const AdminMarketersTable = ({ data }: AdminMarketersTableProps) => {
             hasBorder
         >
             <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-                <Table className="min-w-[720px]">
+                <Table className="min-w-[640px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className={th}>Marketer</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Agencies</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Fraud Value</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Commission</TableHead>
+                            <TableHead className={th}>Email</TableHead>
+                            <TableHead className={th}>Referral Code</TableHead>
                             <TableHead className={th}>Status</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {data.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                className="cursor-pointer border-b border-border hover:bg-gray-50"
-                                onClick={() => navigate(`/admin/affiliates/marketers/${row.id}`)}
-                            >
-                                <TableCell className={cn(td, "font-medium text-foreground")}>{row.name}</TableCell>
-                                <TableCell className={cn(td, "text-right")}>{row.agencies}</TableCell>
-                                <TableCell className={cn(td, "text-right")}>{row.fraudValue}</TableCell>
-                                <TableCell className={cn(td, "text-right")}>{row.commission}</TableCell>
-                                <TableCell className={td}>
-                                    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs", marketerLeaderboardStatusStyles[row.status])}>
-                                        {row.status}
-                                    </span>
-                                </TableCell>
-                                <TableCell className={cn(td, "text-right")}>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            toast.info(
-                                                row.status === "Active"
-                                                    ? `Suspend ${row.name} — coming soon`
-                                                    : `Reactivate ${row.name} — coming soon`
-                                            )
-                                        }}
-                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                    >
-                                        {row.status === "Active" ? "Suspend" : "Activate"}
-                                    </button>
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={4} className={cn(td, "text-center text-muted-foreground")}>
+                                    Loading marketers…
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : data.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={4} className={cn(td, "text-center text-muted-foreground")}>
+                                    No marketers yet.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            data.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    className="cursor-pointer border-b border-border hover:bg-gray-50"
+                                    onClick={() => navigate(`/admin/affiliates/marketers/${row.id}`)}
+                                >
+                                    <TableCell className={cn(td, "font-medium text-foreground")}>
+                                        {row.name ?? "—"}
+                                    </TableCell>
+                                    <TableCell className={td}>{row.email}</TableCell>
+                                    <TableCell className={td}>{row.referral_code}</TableCell>
+                                    <TableCell className={td}>
+                                        <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs", statusStyles[row.status])}>
+                                            {statusLabel[row.status]}
+                                        </span>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </div>

@@ -2,13 +2,13 @@ import { FormEvent, useEffect, useMemo, useState } from "react"
 import { ModalShell } from "@/components/modals/ModalShell"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { InfoCircle } from "iconsax-react"
-import { AdminAgencyRecord } from "@/data/marketing-data"
+import { AdminUnattributedAgency } from "@/features/marketing-admin/network/api/adminMarketersService"
 
 interface LinkAgencyModalProps {
     open: boolean
     onClose: () => void
     /** Agencies eligible to be linked — i.e. not already attributed to another marketer */
-    availableAgencies: AdminAgencyRecord[]
+    availableAgencies: AdminUnattributedAgency[]
     marketerName: string
     onConfirm: (agencyId: string) => void
     isSubmitting?: boolean
