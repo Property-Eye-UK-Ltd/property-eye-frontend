@@ -12,7 +12,9 @@ export const AUTH_ERROR_DETAIL = {
     // auth_service.py
     INCORRECT_CREDENTIALS: "Incorrect email or password",
     EMAIL_VERIFICATION_REQUIRED: "Email verification required",
+    MARKETER_EMAIL_VERIFICATION_REQUIRED: "Marketer email verification required",
     AGENCY_SIGNUP_INCOMPLETE: "Agency signup is incomplete",
+    MARKETER_SIGNUP_INCOMPLETE: "Marketer signup is incomplete",
     WRONG_PORTAL_PREFIX: "User must authenticate through the", // + "<portal> portal"
     ACCOUNT_NOT_ACTIVE: "User account is not active",
     COULD_NOT_VALIDATE_CREDENTIALS: "Could not validate credentials",

@@ -1,5 +1,9 @@
 import * as authService from "@/features/auth/api/authService";
 import { ONBOARDING_EMAIL_KEY, ONBOARDING_OTP_EXPIRES_AT_KEY } from "@/features/auth/onboardingStorage";
+import {
+    MARKETER_ONBOARDING_EMAIL_KEY,
+    MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY,
+} from "@/features/auth/marketerOnboardingStorage";
 
 /**
  * Handles the 403 "Email verification required" response from /auth/login
@@ -35,3 +39,33 @@ export const resumePendingVerification = async (email: string): Promise<string> 
  * resubmitted.
  */
 export const PENDING_PROFILE_REDIRECT = "/signup";
+
+/**
+ * Marketer equivalent of resumePendingVerification, for the 403 "Marketer
+ * email verification required" response from the shared /auth/login
+ * (backend/src/services/auth_service.py, user status "pending_verification"
+ * + portal_context "marketer"). Uses /auth/marketer/register/resend-otp
+ * (marketer_onboarding_service.py `resend_onboarding_otp`, which — like its
+ * agency counterpart — only succeeds while the signup session is still
+ * "otp_pending").
+ */
+export const resumeMarketerPendingVerification = async (email: string): Promise<string> => {
+    const response = await authService.marketerResendOtp({ email });
+    sessionStorage.setItem(MARKETER_ONBOARDING_EMAIL_KEY, response.email);
+    if (response.otp_expires_at) {
+        sessionStorage.setItem(MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+    }
+    return "/marketer-verify-otp";
+};
+
+/**
+ * Marketer equivalent of PENDING_PROFILE_REDIRECT, for the 403 "Marketer
+ * signup is incomplete" response (user status "pending_profile"/
+ * "profile_pending" — already past OTP verification, still missing profile
+ * fields). Same reasoning as the agency case: no email-only resume exists
+ * server-side (POST /auth/marketer/register re-validates and overwrites
+ * phone_number + password), so the safe path is back through
+ * /marketer-signup, which correctly resumes at the right step once
+ * resubmitted (see MarketerSignup.tsx).
+ */
+export const MARKETER_PENDING_PROFILE_REDIRECT = "/marketer-signup";

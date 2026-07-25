@@ -18,7 +18,12 @@ import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { AUTH_ERROR_DETAIL, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
-import { PENDING_PROFILE_REDIRECT, resumePendingVerification } from "@/features/auth/resumeOnboarding";
+import {
+    PENDING_PROFILE_REDIRECT,
+    MARKETER_PENDING_PROFILE_REDIRECT,
+    resumePendingVerification,
+    resumeMarketerPendingVerification,
+} from "@/features/auth/resumeOnboarding";
 import { captureRedirectIntent, consumeRedirectIntent, resolveRedirectPath } from "@/features/auth/redirectIntent";
 
 const Login = () => {
@@ -83,7 +88,35 @@ const Login = () => {
                     title: "Finish setting up your agency",
                     description: "Your signup is incomplete. Let's pick up where you left off.",
                 });
-                navigate("/signup", { state: { email: data.email, password: data.password } });
+                navigate(PENDING_PROFILE_REDIRECT, { state: { email: data.email, password: data.password } });
+                return;
+            }
+
+            if (status === 403 && detail === AUTH_ERROR_DETAIL.MARKETER_EMAIL_VERIFICATION_REQUIRED) {
+                try {
+                    const route = await resumeMarketerPendingVerification(data.email);
+                    toast({
+                        title: "Verify your email",
+                        description: "Your account isn't verified yet. We've sent a new code.",
+                    });
+                    navigate(route);
+                } catch (resendError) {
+                    toast({
+                        title: "Could not resend verification code",
+                        description: getErrorDetail(resendError) ?? "Please try signing up again.",
+                        variant: "destructive",
+                    });
+                    navigate(MARKETER_PENDING_PROFILE_REDIRECT);
+                }
+                return;
+            }
+
+            if (status === 403 && detail === AUTH_ERROR_DETAIL.MARKETER_SIGNUP_INCOMPLETE) {
+                toast({
+                    title: "Finish setting up your partner account",
+                    description: "Your signup is incomplete. Let's pick up where you left off.",
+                });
+                navigate(MARKETER_PENDING_PROFILE_REDIRECT, { state: { email: data.email, password: data.password } });
                 return;
             }
 
