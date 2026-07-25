@@ -23,7 +23,6 @@ import RunScanButton from "@/features/casescans/components/RunScanButton";
 import type {
   FraudMatch,
   PaginatedFraudMatchResponse,
-  VerificationSummary,
 } from "@/types/casescans.types";
 import type { ScanSession } from "@/types/scan-session.types";
 import { getSuspiciousMatches } from "@/features/casescans/api/scanService";
@@ -38,8 +37,6 @@ const CaseScans = () => {
   const [selectedMatchIds, setSelectedMatchIds] = useState<Set<string>>(
     new Set()
   );
-  const [verificationResult, setVerificationResult] =
-    useState<VerificationSummary | null>(null);
   const [scanSession, setScanSession] = useState<ScanSession | null>(null);
 
   // Filter state
@@ -68,7 +65,6 @@ const CaseScans = () => {
       setMatches(response.items);
       setTotalMatches(response.total);
       setSelectedMatchIds(new Set());
-      setVerificationResult(null);
     } catch (error) {
       toast({
         title: "Error loading matches",
@@ -89,7 +85,12 @@ const CaseScans = () => {
     toast,
   ]);
 
+  // Filters/pagination changing means the user is looking at a different
+  // set of matches — clear any previous scan results so they don't linger
+  // next to an unrelated list. A post-scan refresh (handleScanComplete)
+  // does not go through this effect, so results survive that refresh.
   useEffect(() => {
+    setScanSession(null);
     fetchMatches();
   }, [fetchMatches]);
 
@@ -102,18 +103,14 @@ const CaseScans = () => {
     setPage(1);
   };
 
-  const handleScanComplete = (summary: VerificationSummary | ScanSession) => {
-    setVerificationResult(summary as VerificationSummary);
-    // Store scan session if available (from new backend)
-    if ('results' in summary && Array.isArray(summary.results)) {
-      setScanSession(summary as unknown as ScanSession);
-    }
+  const handleScanComplete = (session: ScanSession) => {
+    setScanSession(session);
     // Refresh matches to show updated statuses
     fetchMatches();
   };
 
   const handleScanStart = () => {
-    setVerificationResult(null);
+    setScanSession(null);
   };
 
   const handleScanError = (error: string) => {
@@ -261,33 +258,33 @@ const CaseScans = () => {
       </DashboardPanel>
 
       {/* Results Summary */}
-      {verificationResult && (
+      {scanSession && (
         <DashboardPanel className="mb-6 bg-blue-50/50 border-blue-100">
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm">Verification Summary</h3>
+            <h3 className="font-semibold text-sm">Scan Summary</h3>
             <div className="grid grid-cols-4 gap-3">
               <div className="bg-white rounded-lg p-3 border border-blue-100">
-                <p className="text-xs text-muted-foreground">Total Verified</p>
+                <p className="text-xs text-muted-foreground">Total Scanned</p>
                 <p className="text-lg font-bold text-blue-600">
-                  {verificationResult.total_verified || verificationResult.total_count}
+                  {scanSession.total_count}
                 </p>
               </div>
               <div className="bg-white rounded-lg p-3 border border-red-100">
                 <p className="text-xs text-muted-foreground">Confirmed Fraud</p>
                 <p className="text-lg font-bold text-red-600">
-                  {verificationResult.confirmed_fraud_count}
+                  {scanSession.confirmed_fraud_count}
                 </p>
               </div>
               <div className="bg-white rounded-lg p-3 border border-green-100">
                 <p className="text-xs text-muted-foreground">Ruled Out</p>
                 <p className="text-lg font-bold text-green-600">
-                  {verificationResult.not_fraud_count}
+                  {scanSession.not_fraud_count}
                 </p>
               </div>
               <div className="bg-white rounded-lg p-3 border border-amber-100">
                 <p className="text-xs text-muted-foreground">Errors</p>
                 <p className="text-lg font-bold text-amber-600">
-                  {verificationResult.error_count}
+                  {scanSession.error_count}
                 </p>
               </div>
             </div>
@@ -295,17 +292,17 @@ const CaseScans = () => {
         </DashboardPanel>
       )}
 
-      {/* Scan Results Table (if new backend returns session with results) */}
+      {/* Scan Results Table */}
       {scanSession && scanSession.results && (
         <DashboardPanel className="mb-6">
           <div className="space-y-4">
             <div>
               <p className="text-sm font-semibold">Scan Session Results</p>
               <p className="text-xs text-muted-foreground">
-                Session ID: {scanSession.id} • Scanned on {new Date(scanSession.started_at).toLocaleDateString()}
+                Session ID: {scanSession.id} • Scanned on {new Date(scanSession.started_at).toLocaleString()}
               </p>
             </div>
-            <ScanResultsTable results={scanSession.results as any} />
+            <ScanResultsTable results={scanSession.results} />
           </div>
         </DashboardPanel>
       )}

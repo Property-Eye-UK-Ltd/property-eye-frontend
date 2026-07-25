@@ -7,23 +7,19 @@ import { MetricCards } from "@/features/overview/components/MetricCards"
 import { AdminMarketersTable } from "@/features/marketing-admin/network/components/AdminMarketersTable"
 import { AdminAgenciesTable } from "@/features/marketing-admin/network/components/AdminAgenciesTable"
 import { AttributionQueueTable } from "@/features/marketing-admin/attribution/components/AttributionQueueTable"
-import { AdminDisputesTable } from "@/features/marketing-admin/attribution/components/AdminDisputesTable"
 import {
     marketingAdminAttributionMetrics,
     adminAgencies,
     marketerLeaderboard,
     attributionClaims,
-    adminDisputes,
 } from "@/data/marketing-data"
 
 const pendingAttributions = attributionClaims.filter((c) => c.status === "Pending" || c.status === "Conflict").length
-const openDisputes = adminDisputes.filter((d) => d.status !== "Resolved").length
 
 const tabs = [
     { label: "Marketers", value: "marketers", count: marketerLeaderboard.length },
     { label: "Agencies", value: "agencies", count: adminAgencies.length },
     { label: "Attribution", value: "attribution", count: pendingAttributions },
-    { label: "Disputes", value: "disputes", count: openDisputes },
 ]
 
 const Affiliates = () => {
@@ -46,8 +42,6 @@ const Affiliates = () => {
                         <AttributionQueueTable data={attributionClaims} />
                     </>
                 )}
-
-                {activeTab === "disputes" && <AdminDisputesTable data={adminDisputes} />}
             </DashboardPageContent>
         </DashboardLayout>
     )

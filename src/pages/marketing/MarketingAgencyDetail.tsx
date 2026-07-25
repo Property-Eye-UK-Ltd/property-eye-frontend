@@ -63,7 +63,7 @@ const MarketingAgencyDetail = () => {
                             </div>
                             <OverviewRow
                                 label="Attribution"
-                                value={agency.attributed ? "Locked to you" : "Pending — claim submitted"}
+                                value={agency.attributed ? "Locked to you" : "Pending — contact support"}
                             />
                             <OverviewRow label="Total Fraud Value" value={agency.totalFraudValue} />
                             <OverviewRow label="Commission Earned" value={agency.totalCommission} />

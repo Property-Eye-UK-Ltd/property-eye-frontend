@@ -186,7 +186,7 @@ const CaseScansTable = ({
             <TableRow
               key={match.id}
               className="hover:bg-slate-50/60 cursor-pointer"
-              onClick={() => navigate(`/admin/cases/${match.property_listing_id}`)}
+              onClick={() => navigate(`/admin/cases/${encodeURIComponent(match.id)}`)}
             >
               <TableCell
                 onClick={(e) => e.stopPropagation()}

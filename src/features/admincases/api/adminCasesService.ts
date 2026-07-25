@@ -175,6 +175,7 @@ export const fromApiAdminCase = (c: AdminFraudCaseApi): AgencyCase => ({
     clearingReason: c.reason_for_clearing_note ?? undefined,
     flagNote: c.flag_note ?? undefined,
     returnNote: c.return_reason ?? undefined,
+    submittedAt: c.submitted_at ?? undefined,
 })
 
 export const getAdminCases = async (params?: {

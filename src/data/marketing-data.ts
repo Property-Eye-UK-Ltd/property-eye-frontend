@@ -269,6 +269,7 @@ export const commissionLiabilityTrend: BarChartDatum[] = [
 export interface MarketerLeaderboardRow {
     id: string
     name: string
+    email: string
     agencies: number
     fraudValue: string
     commission: string
@@ -276,12 +277,12 @@ export interface MarketerLeaderboardRow {
 }
 
 export const marketerLeaderboard: MarketerLeaderboardRow[] = [
-    { id: "mk-1", name: "Daniel Okafor", agencies: 18, fraudValue: "£402,900", commission: "£42,180", status: "Active" },
-    { id: "mk-2", name: "Priya Sharma", agencies: 15, fraudValue: "£356,400", commission: "£38,900", status: "Active" },
-    { id: "mk-3", name: "Marcus Bennett", agencies: 12, fraudValue: "£298,100", commission: "£31,250", status: "Active" },
-    { id: "mk-4", name: "Aisha Bello", agencies: 11, fraudValue: "£241,700", commission: "£26,400", status: "Active" },
-    { id: "mk-5", name: "Tom Whitfield", agencies: 9, fraudValue: "£198,300", commission: "£21,150", status: "Suspended" },
-    { id: "mk-6", name: "Lena Novak", agencies: 8, fraudValue: "£164,800", commission: "£17,600", status: "Active" },
+    { id: "mk-1", name: "Daniel Okafor", email: "daniel@growthpartners.co", agencies: 18, fraudValue: "£402,900", commission: "£42,180", status: "Active" },
+    { id: "mk-2", name: "Priya Sharma", email: "priya@brightleadmedia.co", agencies: 15, fraudValue: "£356,400", commission: "£38,900", status: "Active" },
+    { id: "mk-3", name: "Marcus Bennett", email: "marcus@bennettreferrals.co", agencies: 12, fraudValue: "£298,100", commission: "£31,250", status: "Active" },
+    { id: "mk-4", name: "Aisha Bello", email: "aisha@belloassociates.co", agencies: 11, fraudValue: "£241,700", commission: "£26,400", status: "Active" },
+    { id: "mk-5", name: "Tom Whitfield", email: "tom@whitfieldgroup.co", agencies: 9, fraudValue: "£198,300", commission: "£21,150", status: "Suspended" },
+    { id: "mk-6", name: "Lena Novak", email: "lena@novakpartners.co", agencies: 8, fraudValue: "£164,800", commission: "£17,600", status: "Active" },
 ]
 
 export const marketerLeaderboardStatusStyles: Record<MarketerLeaderboardRow["status"], string> = {
@@ -289,10 +290,13 @@ export const marketerLeaderboardStatusStyles: Record<MarketerLeaderboardRow["sta
     Suspended: "bg-red-50 text-red-600 border border-red-100",
 }
 
-// Platform-wide agency view (Network → Agencies tab)
+// Platform-wide agency view (Network → Agencies tab, and Affiliates → Marketers detail)
 export interface AdminAgencyRecord {
     id: string
     name: string
+    /** Referring marketer's id, or null if not attributed to anyone yet */
+    marketerId: string | null
+    /** Denormalized display name — kept for existing table renders; derive from marketerId where possible */
     marketer: string
     status: MarketerAgencyStatus
     attributionMethod: AttributionMethod
@@ -302,18 +306,22 @@ export interface AdminAgencyRecord {
 }
 
 export const adminAgencies: AdminAgencyRecord[] = [
-    { id: "ag-1", name: "Harborview Estates", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "2 Nov, 2025", totalFraudValue: "£128,400", attributed: true },
-    { id: "ag-2", name: "Northgate Homes", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "15 Oct, 2025", totalFraudValue: "£96,200", attributed: true },
-    { id: "ag-3", name: "Crestline Properties", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "28 Oct, 2025", totalFraudValue: "£74,800", attributed: true },
-    { id: "ag-4", name: "Bridgewater Realty", marketer: "Priya Sharma", status: "Pending", attributionMethod: "Invite", dateAdded: "9 Oct, 2025", totalFraudValue: "£0", attributed: false },
-    { id: "ag-5", name: "Maple & Co Lettings", marketer: "Daniel Okafor", status: "Pending", attributionMethod: "Manual", dateAdded: "24 Oct, 2025", totalFraudValue: "£18,500", attributed: false },
-    { id: "ag-6", name: "Sterling Property Group", marketer: "Marcus Bennett", status: "Active", attributionMethod: "Manual", dateAdded: "3 Oct, 2025", totalFraudValue: "£52,300", attributed: true },
-    { id: "ag-7", name: "Oakfield Residential", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "18 Sep, 2025", totalFraudValue: "£41,900", attributed: true },
-    { id: "ag-8", name: "Kingsway Lettings", marketer: "Tom Whitfield", status: "Rejected", attributionMethod: "Manual", dateAdded: "11 Sep, 2025", totalFraudValue: "£0", attributed: false },
-    { id: "ag-9", name: "Pinnacle Homes", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "2 Sep, 2025", totalFraudValue: "£63,700", attributed: true },
-    { id: "ag-10", name: "Riverside Estates", marketer: "Aisha Bello", status: "Pending", attributionMethod: "Link", dateAdded: "25 Aug, 2025", totalFraudValue: "£0", attributed: false },
-    { id: "ag-11", name: "Beacon Property Co", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "14 Aug, 2025", totalFraudValue: "£38,200", attributed: true },
-    { id: "ag-12", name: "Summit Lettings", marketer: "Priya Sharma", status: "Active", attributionMethod: "Link", dateAdded: "6 Aug, 2025", totalFraudValue: "£29,400", attributed: true },
+    { id: "ag-1", name: "Harborview Estates", marketerId: "mk-1", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "2 Nov, 2025", totalFraudValue: "£128,400", attributed: true },
+    { id: "ag-2", name: "Northgate Homes", marketerId: "mk-1", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "15 Oct, 2025", totalFraudValue: "£96,200", attributed: true },
+    { id: "ag-3", name: "Crestline Properties", marketerId: "mk-1", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "28 Oct, 2025", totalFraudValue: "£74,800", attributed: true },
+    { id: "ag-4", name: "Bridgewater Realty", marketerId: "mk-2", marketer: "Priya Sharma", status: "Pending", attributionMethod: "Invite", dateAdded: "9 Oct, 2025", totalFraudValue: "£0", attributed: false },
+    { id: "ag-5", name: "Maple & Co Lettings", marketerId: "mk-1", marketer: "Daniel Okafor", status: "Pending", attributionMethod: "Manual", dateAdded: "24 Oct, 2025", totalFraudValue: "£18,500", attributed: false },
+    { id: "ag-6", name: "Sterling Property Group", marketerId: "mk-3", marketer: "Marcus Bennett", status: "Active", attributionMethod: "Manual", dateAdded: "3 Oct, 2025", totalFraudValue: "£52,300", attributed: true },
+    { id: "ag-7", name: "Oakfield Residential", marketerId: "mk-1", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Link", dateAdded: "18 Sep, 2025", totalFraudValue: "£41,900", attributed: true },
+    { id: "ag-8", name: "Kingsway Lettings", marketerId: "mk-5", marketer: "Tom Whitfield", status: "Rejected", attributionMethod: "Manual", dateAdded: "11 Sep, 2025", totalFraudValue: "£0", attributed: false },
+    { id: "ag-9", name: "Pinnacle Homes", marketerId: "mk-1", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "2 Sep, 2025", totalFraudValue: "£63,700", attributed: true },
+    { id: "ag-10", name: "Riverside Estates", marketerId: "mk-4", marketer: "Aisha Bello", status: "Pending", attributionMethod: "Link", dateAdded: "25 Aug, 2025", totalFraudValue: "£0", attributed: false },
+    { id: "ag-11", name: "Beacon Property Co", marketerId: "mk-1", marketer: "Daniel Okafor", status: "Active", attributionMethod: "Invite", dateAdded: "14 Aug, 2025", totalFraudValue: "£38,200", attributed: true },
+    { id: "ag-12", name: "Summit Lettings", marketerId: "mk-2", marketer: "Priya Sharma", status: "Active", attributionMethod: "Link", dateAdded: "6 Aug, 2025", totalFraudValue: "£29,400", attributed: true },
+    // Not yet attributed to any marketer — available in the Link Agency picker
+    { id: "ag-13", name: "Fairview Residential", marketerId: null, marketer: "—", status: "Pending", attributionMethod: "Manual", dateAdded: "20 Nov, 2025", totalFraudValue: "£0", attributed: false },
+    { id: "ag-14", name: "Copperfield Estates", marketerId: null, marketer: "—", status: "Pending", attributionMethod: "Manual", dateAdded: "18 Nov, 2025", totalFraudValue: "£0", attributed: false },
+    { id: "ag-15", name: "Thornbury Lettings", marketerId: null, marketer: "—", status: "Pending", attributionMethod: "Manual", dateAdded: "12 Nov, 2025", totalFraudValue: "£0", attributed: false },
 ]
 
 export type AttributionClaimStatus = "Pending" | "Conflict" | "Approved" | "Rejected"
@@ -397,7 +405,27 @@ export const marketingAuditLog: MarketingAuditRecord[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// Disputes / Support
+// Support (marketer disputes/claims — handled outside the platform via email)
+// ---------------------------------------------------------------------------
+
+export const marketerSupportEmail = "support@propertyeye.com"
+
+export type SupportSubject = "Agency Ownership Dispute" | "Commission Dispute" | "Other"
+
+export const supportSubjects: SupportSubject[] = [
+    "Agency Ownership Dispute",
+    "Commission Dispute",
+    "Other",
+]
+
+export const supportSubjectDescriptions: Record<SupportSubject, string> = {
+    "Agency Ownership Dispute": "You believe you referred an agency but attribution is missing, wrong, or contested by another marketer.",
+    "Commission Dispute": "A commission amount, rate, or payout on your account looks incorrect.",
+    "Other": "Any other account or referral issue not covered above.",
+}
+
+// ---------------------------------------------------------------------------
+// Disputes (legacy — Admin-side triage view only, see Affiliates)
 // ---------------------------------------------------------------------------
 
 export type DisputeStatus = "Open" | "Under Review" | "Resolved"

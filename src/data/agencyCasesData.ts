@@ -28,6 +28,7 @@ export interface AgencyCase {
     clearingReason?: string
     flagNote?: string
     returnNote?: string
+    submittedAt?: string
     agencyDispute?: AgencyDisputeStatus
     disputeNote?: string
     disputeResolutionNote?: string

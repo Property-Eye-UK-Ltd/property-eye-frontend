@@ -42,6 +42,7 @@ import AdminOverview from "./pages/admin/AdminOverview";
 import AdminCaseManagement from "./pages/admin/CaseManagement";
 import CaseScans from "./pages/admin/CaseScans";
 import ScanHistory from "./pages/admin/ScanHistory";
+import ScanSessionDetails from "./pages/admin/ScanSessionDetails";
 import PPDRecords from "./pages/admin/PPDRecords";
 import AdminCaseDetails from "./pages/admin/AdminCaseDetails";
 import BillingFinance from "./pages/admin/BillingFinance";
@@ -52,17 +53,18 @@ import ReportsExports from "./pages/admin/ReportsExports";
 import Agencies from "./pages/admin/Agencies";
 import AgencyProfile from "./pages/admin/AgencyProfile";
 import Affiliates from "./pages/admin/Affiliates";
+import AdminMarketerDetail from "./pages/admin/AdminMarketerDetail";
 import AdminSettings from "./pages/admin/AdminSettings";
 import MarketingOverview from "./pages/marketing/MarketingOverview";
 import MarketingReferrals from "./pages/marketing/MarketingReferrals";
 import MarketingAgencies from "./pages/marketing/MarketingAgencies";
 import MarketingAgencyDetail from "./pages/marketing/MarketingAgencyDetail";
+import MarketingClaimAgency from "./pages/marketing/MarketingClaimAgency";
 import MarketingCommissions from "./pages/marketing/MarketingCommissions";
 import MarketingCommissionDetail from "./pages/marketing/MarketingCommissionDetail";
 import MarketingPayments from "./pages/marketing/MarketingPayments";
 import MarketingPaymentDetail from "./pages/marketing/MarketingPaymentDetail";
 import MarketingDisputes from "./pages/marketing/MarketingDisputes";
-import MarketingSettings from "./pages/marketing/MarketingSettings";
 import { SubscribeGateModal } from "./components/modals/SubscribeGateModal";
 
 const queryClient = new QueryClient();
@@ -124,10 +126,12 @@ const App = () => (
             <Route path="/admin/agencies" element={<Agencies />} />
             <Route path="/admin/agencies/:agencyId" element={<AgencyProfile />} />
             <Route path="/admin/affiliates" element={<Affiliates />} />
+            <Route path="/admin/affiliates/marketers/:marketerId" element={<AdminMarketerDetail />} />
             <Route path="/admin/cases" element={<AdminCaseManagement />} />
             <Route path="/admin/cases/:caseId" element={<AdminCaseDetails />} />
             <Route path="/admin/case-scans" element={<CaseScans />} />
             <Route path="/admin/case-scans/history" element={<ScanHistory />} />
+            <Route path="/admin/case-scans/sessions/:sessionId" element={<ScanSessionDetails />} />
             <Route path="/admin/ppd-records" element={<PPDRecords />} />
             <Route path="/admin/billing" element={<BillingFinance />} />
             <Route path="/admin/billing/transaction/:transactionId" element={<TransactionDetails />} />
@@ -141,13 +145,13 @@ const App = () => (
           <Route path="/marketing/dashboard" element={<MarketingOverview />} />
           <Route path="/marketing/referrals" element={<MarketingReferrals />} />
           <Route path="/marketing/agencies" element={<MarketingAgencies />} />
+          <Route path="/marketing/agencies/claim" element={<MarketingClaimAgency />} />
           <Route path="/marketing/agencies/:agencyId" element={<MarketingAgencyDetail />} />
           <Route path="/marketing/commissions" element={<MarketingCommissions />} />
           <Route path="/marketing/commissions/:lineId" element={<MarketingCommissionDetail />} />
           <Route path="/marketing/payments" element={<MarketingPayments />} />
           <Route path="/marketing/payments/:paymentId" element={<MarketingPaymentDetail />} />
           <Route path="/marketing/disputes" element={<MarketingDisputes />} />
-          <Route path="/marketing/settings" element={<MarketingSettings />} />
 
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

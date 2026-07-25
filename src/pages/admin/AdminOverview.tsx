@@ -8,6 +8,7 @@ import { MetricCards } from "@/features/overview/components/MetricCards"
 import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
 import { FraudDetectionPanel } from "@/features/overview/components/FraudDetectionPanel"
 import { CaseQueuePanel } from "@/features/admin/components/CaseQueuePanel"
+import { RecentDeterminationsPanel } from "@/features/admin/components/RecentDeterminationsPanel"
 import { FraudDistributionPanel } from "@/features/overview/components/FraudDistributionPanel"
 import { AnnualChecksTable } from "@/features/overview/components/AnnualChecksTable"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -136,6 +137,8 @@ const AdminOverview = () => {
                         />
                     </div>
                 </div>
+
+                <RecentDeterminationsPanel />
 
                 <AnnualChecksTable data={annualChecksData} />
 

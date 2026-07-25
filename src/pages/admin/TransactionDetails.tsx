@@ -3,16 +3,24 @@ import { DashboardPageContent } from "@/components/dashboard/DashboardPageConten
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useParams, useNavigate } from "react-router-dom"
-import { mockBillingTransactions, billingStatusStyles } from "@/data/adminBillingData"
+import { useParams } from "react-router-dom"
+import { billingStatusStyles } from "@/data/adminBillingData"
+import { useAdminInvoiceDetail } from "@/features/adminbilling/api/useAdminBilling"
 import { cn } from "@/lib/utils"
 
 const TransactionDetails = () => {
     const { transactionId } = useParams<{ transactionId: string }>()
-    const navigate = useNavigate()
+    const { data: transaction, isLoading } = useAdminInvoiceDetail(transactionId ?? "")
 
-    // Find the transaction data
-    const transaction = mockBillingTransactions.find((t) => t.id === transactionId)
+    if (isLoading) {
+        return (
+            <DashboardLayout variant="super-admin">
+                <DashboardPageContent>
+                    <p>Loading...</p>
+                </DashboardPageContent>
+            </DashboardLayout>
+        )
+    }
 
     if (!transaction) {
         return (
@@ -77,7 +85,7 @@ const TransactionDetails = () => {
                             {/* Email */}
                             <div>
                                 <p className="text-sm text-muted-foreground">Email</p>
-                                <p className="mt-1 text-base font-medium text-foreground">solicithomes@example.com</p>
+                                <p className="mt-1 text-base font-medium text-foreground">{transaction.agencyEmail}</p>
                             </div>
                         </div>
 
@@ -108,13 +116,13 @@ const TransactionDetails = () => {
                             {/* Agency Address */}
                             <div>
                                 <p className="text-sm text-muted-foreground">Agency Address</p>
-                                <p className="mt-1 text-base font-medium text-foreground">22 Ashfield Road, Leicester</p>
+                                <p className="mt-1 text-base font-medium text-foreground">{transaction.agencyAddress}</p>
                             </div>
 
                             {/* Phone Number */}
                             <div>
                                 <p className="text-sm text-muted-foreground">Phone Number</p>
-                                <p className="mt-1 text-base font-medium text-foreground">+44 207132 4567</p>
+                                <p className="mt-1 text-base font-medium text-foreground">{transaction.agencyPhoneNumber}</p>
                             </div>
                         </div>
                     </div>

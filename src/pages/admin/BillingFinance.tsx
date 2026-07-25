@@ -15,7 +15,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { BillingHistoryTable } from "@/features/adminbilling/components/BillingHistoryTable"
 import { CommissionApprovalTable } from "@/features/marketing-admin/finance/components/CommissionApprovalTable"
 import { AdminPayoutsTable } from "@/features/marketing-admin/finance/components/AdminPayoutsTable"
-import { mockBillingTransactions, billingMetricsData, billingPeriods } from "@/data/adminBillingData"
+import { billingPeriods } from "@/data/adminBillingData"
+import { useAdminBillingMetrics, useAdminInvoices } from "@/features/adminbilling/api/useAdminBilling"
+import { toBillingMetricCards } from "@/features/adminbilling/api/adminBillingService"
 import {
     marketingAdminFinanceMetrics,
     commissionLiabilityTrend,
@@ -50,11 +52,9 @@ const BillingFinance = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("billing")
 
-    const filteredTransactions = mockBillingTransactions.filter(
-        (t) =>
-            t.transactionId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            t.agencyName.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    const { data: billingMetrics } = useAdminBillingMetrics(selectedPeriod)
+    const { data: invoicesData } = useAdminInvoices({ search: searchQuery || undefined, page_size: 100 })
+    const billingHistory = invoicesData?.items ?? []
 
     return (
         <DashboardLayout variant="super-admin">
@@ -81,7 +81,9 @@ const BillingFinance = () => {
 
                 {activeTab === "billing" && (
                     <>
-                        <MetricCards metrics={billingMetricsData[selectedPeriod]} />
+                        <MetricCards
+                            metrics={billingMetrics ? toBillingMetricCards(billingMetrics, selectedPeriod) : []}
+                        />
                         <DashboardPanel
                             title="Billing History"
                             description="View and manage all subscription history"
@@ -121,7 +123,7 @@ const BillingFinance = () => {
                                 </div>
                             }
                         >
-                            <BillingHistoryTable data={filteredTransactions} />
+                            <BillingHistoryTable data={billingHistory} />
                         </DashboardPanel>
                     </>
                 )}

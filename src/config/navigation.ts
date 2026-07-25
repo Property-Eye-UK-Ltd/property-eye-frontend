@@ -184,12 +184,6 @@ export const marketerNavConfig: NavConfig = {
             path: "/marketing/disputes",
             variant: "Bulk",
         },
-        {
-            label: "Settings",
-            icon: Setting2,
-            path: "/marketing/settings",
-            variant: "Bulk",
-        },
     ],
     showProCard: false,
 }
