@@ -3,13 +3,21 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { cn } from "@/lib/utils"
-import {
-    marketerAgencies,
-    marketerAgencyStatusStyles,
-    attributionMethodStyles,
-} from "@/data/marketing-data"
+import { useMarketerAgencyDetail } from "@/features/marketing/api/useMarketer"
 
-const badge = "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs"
+const badge = "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize lg:text-xs"
+
+const statusStyles: Record<string, string> = {
+    active: "bg-green-50 text-green-600 border border-green-100",
+    pending: "bg-amber-50 text-amber-600 border border-amber-100",
+    rejected: "bg-red-50 text-red-600 border border-red-100",
+}
+
+const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(value)
+
+const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
 
 const OverviewRow = ({ label, value }: { label: string; value: string | number }) => (
     <div>
@@ -20,9 +28,20 @@ const OverviewRow = ({ label, value }: { label: string; value: string | number }
 
 const MarketingAgencyDetail = () => {
     const { agencyId } = useParams<{ agencyId: string }>()
-    const agency = marketerAgencies.find((a) => a.id === agencyId)
+    const { data: agency, isLoading, isError } = useMarketerAgencyDetail(agencyId)
 
-    if (!agency) {
+    if (isLoading) {
+        return (
+            <DashboardLayout variant="marketer">
+                <DynamicPageHeader title="Agency Detail" breadcrumbs={[{ label: "My Agencies", href: "/marketing/agencies" }]} />
+                <DashboardPageContent>
+                    <p className="text-sm text-muted-foreground">Loading…</p>
+                </DashboardPageContent>
+            </DashboardLayout>
+        )
+    }
+
+    if (isError || !agency) {
         return (
             <DashboardLayout variant="marketer">
                 <DynamicPageHeader
@@ -50,27 +69,19 @@ const MarketingAgencyDetail = () => {
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                             <div>
                                 <p className="mb-1 text-xs text-muted-foreground">Status</p>
-                                <span className={cn(badge, marketerAgencyStatusStyles[agency.status])}>
+                                <span className={cn(badge, statusStyles[agency.status] ?? "bg-gray-100 text-gray-600 border border-gray-200")}>
                                     {agency.status}
                                 </span>
                             </div>
-                            <OverviewRow label="Date Added" value={agency.dateAdded} />
+                            <OverviewRow label="Date Added" value={formatDate(agency.created_at)} />
                             <div>
                                 <p className="mb-1 text-xs text-muted-foreground">Attribution Method</p>
-                                <span className={cn(badge, attributionMethodStyles[agency.attributionMethod])}>
-                                    {agency.attributionMethod}
+                                <span className="inline-flex items-center rounded-full border border-border bg-gray-50 px-2.5 py-0.5 text-[10px] font-medium capitalize text-foreground lg:text-xs">
+                                    {agency.attribution_method}
                                 </span>
                             </div>
-                            <OverviewRow
-                                label="Attribution"
-                                value={agency.attributed ? "Locked to you" : "Pending — contact support"}
-                            />
-                            <OverviewRow label="Total Fraud Value" value={agency.totalFraudValue} />
-                            <OverviewRow label="Commission Earned" value={agency.totalCommission} />
-                            <OverviewRow label="Cases Found" value={agency.casesFound} />
-                            <OverviewRow label="Confirmed Fraud" value={agency.confirmedFraud} />
-                            <OverviewRow label="Cleared" value={agency.cleared} />
-                            <OverviewRow label="In Progress" value={agency.inProgress} />
+                            <OverviewRow label="Total Fraud Value" value={formatCurrency(agency.total_fraud_value)} />
+                            <OverviewRow label="Commission Earned" value={formatCurrency(agency.commission_earned)} />
                         </div>
                     </div>
                 </div>

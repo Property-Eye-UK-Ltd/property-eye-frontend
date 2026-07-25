@@ -57,6 +57,8 @@ export const queryKeys = {
         metrics: (period: string) => ["admin-billing", "metrics", period] as const,
         invoices: (params?: Record<string, unknown>) => ["admin-billing", "invoices", params] as const,
         invoiceDetail: (invoiceId: string) => ["admin-billing", "invoice-detail", invoiceId] as const,
+        commissions: (params?: Record<string, unknown>) => ["admin-billing", "commissions", params] as const,
+        agencyRecoveries: (params?: Record<string, unknown>) => ["admin-billing", "agency-recoveries", params] as const,
     },
     agencies: {
         all: ["agencies"] as const,

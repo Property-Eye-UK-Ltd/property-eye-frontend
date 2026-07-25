@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input"
 import { InfoCircle } from "iconsax-react"
 
 export interface InviteAgencyFormValues {
-    agencyName: string
     agencyEmail: string
 }
 
@@ -16,7 +15,6 @@ interface InviteAgencyModalProps {
 }
 
 const initialFormValues: InviteAgencyFormValues = {
-    agencyName: "",
     agencyEmail: "",
 }
 
@@ -69,19 +67,14 @@ export const InviteAgencyModal = ({
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        if (!validateEmail(formValues.agencyEmail)) {
-            return
-        }
-
-        if (!formValues.agencyName || isSubmitting) {
+        if (!validateEmail(formValues.agencyEmail) || isSubmitting) {
             return
         }
 
         onSubmit(formValues)
     }
 
-    const isSubmitDisabled =
-        !formValues.agencyName || !formValues.agencyEmail || isSubmitting || !!emailError
+    const isSubmitDisabled = !formValues.agencyEmail || isSubmitting || !!emailError
 
     return (
         <ModalShell
@@ -102,32 +95,18 @@ export const InviteAgencyModal = ({
 
                 <div className="overflow-y-auto bg-muted px-4 py-4 scrollbar-super-thin sm:px-6 sm:py-8">
                     <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-6">
-                        <div className="space-y-5">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-foreground">Agency Name</label>
-                                <Input
-                                    type="text"
-                                    name="agencyName"
-                                    value={formValues.agencyName}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter agency name"
-                                    className="h-12 rounded-xl border border-border bg-transparent px-4 text-sm"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-foreground">Contact Email</label>
-                                <Input
-                                    type="email"
-                                    name="agencyEmail"
-                                    value={formValues.agencyEmail}
-                                    onChange={handleInputChange}
-                                    onBlur={handleEmailBlur}
-                                    placeholder="Enter agency contact email"
-                                    className="h-12 rounded-xl border border-border bg-transparent px-4 text-sm"
-                                />
-                                {emailError && <p className="text-xs text-red-600">{emailError}</p>}
-                            </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Contact Email</label>
+                            <Input
+                                type="email"
+                                name="agencyEmail"
+                                value={formValues.agencyEmail}
+                                onChange={handleInputChange}
+                                onBlur={handleEmailBlur}
+                                placeholder="Enter agency contact email"
+                                className="h-12 rounded-xl border border-border bg-transparent px-4 text-sm"
+                            />
+                            {emailError && <p className="text-xs text-red-600">{emailError}</p>}
                         </div>
                     </div>
                 </div>

@@ -5,22 +5,31 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { CommissionLine, CommissionLineStatus, commissionLineStatusStyles } from "@/data/marketing-data"
+import { CommissionRow } from "@/features/marketing/api/marketerService"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
 const ITEMS_PER_PAGE = 7
 
-const STATUS_FILTERS: Array<CommissionLineStatus | "All"> = ["All", "Pending", "Approved", "Paid"]
-
-interface CommissionLinesTableProps {
-    data: CommissionLine[]
+const statusStyles: Record<string, string> = {
+    pending: "bg-amber-50 text-amber-600 border border-amber-100",
+    approved: "bg-blue-50 text-blue-600 border border-blue-100",
+    paid: "bg-green-50 text-green-600 border border-green-100",
 }
 
-export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
+const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(value)
+
+interface CommissionLinesTableProps {
+    data: CommissionRow[]
+    isLoading?: boolean
+}
+
+export const CommissionLinesTable = ({ data, isLoading }: CommissionLinesTableProps) => {
     const navigate = useNavigate()
-    const [statusFilter, setStatusFilter] = useState<CommissionLineStatus | "All">("All")
+    const statusOptions = useMemo(() => ["All", ...Array.from(new Set(data.map((line) => line.status)))], [data])
+    const [statusFilter, setStatusFilter] = useState<string>("All")
     const [currentPage, setCurrentPage] = useState(1)
 
     const filtered = useMemo(
@@ -46,12 +55,12 @@ export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
             noPadding
             hasBorder
             actions={
-                <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as CommissionLineStatus | "All")}>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="h-8 w-[130px] rounded-full border-border bg-background px-3 text-xs focus:ring-0 lg:h-9">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        {STATUS_FILTERS.map((status) => (
+                        {statusOptions.map((status) => (
                             <SelectItem key={status} value={status}>
                                 {status === "All" ? "All statuses" : status}
                             </SelectItem>
@@ -65,7 +74,7 @@ export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
                     <TableHeader>
                         <TableRow className="bg-gray-50">
                             <TableHead className={th}>Agency</TableHead>
-                            <TableHead className={th}>Fraud Case</TableHead>
+                            <TableHead className={cn(th, "text-right")}>Fraud Value</TableHead>
                             <TableHead className={cn(th, "text-right")}>Commission %</TableHead>
                             <TableHead className={cn(th, "text-right")}>Amount</TableHead>
                             <TableHead className={th}>Status</TableHead>
@@ -73,46 +82,53 @@ export const CommissionLinesTable = ({ data }: CommissionLinesTableProps) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginated.map((line) => (
-                            <TableRow key={line.id} className="border-b border-border">
-                                <TableCell className={cn(td, "font-medium text-foreground")}>
-                                    {line.agency}
-                                </TableCell>
-                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
-                                    {line.fraudCase ?? "—"}
-                                </TableCell>
-                                <TableCell className={cn(td, "text-right text-muted-foreground")}>
-                                    {line.commissionPct}
-                                </TableCell>
-                                <TableCell className={cn(td, "text-right font-medium text-foreground")}>
-                                    {line.amount}
-                                </TableCell>
-                                <TableCell className={td}>
-                                    <span
-                                        className={cn(
-                                            "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs",
-                                            commissionLineStatusStyles[line.status]
-                                        )}
-                                    >
-                                        {line.status}
-                                    </span>
-                                </TableCell>
-                                <TableCell className={cn(td, "text-right")}>
-                                    <button
-                                        onClick={() => navigate(`/marketing/commissions/${line.id}`)}
-                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                    >
-                                        View
-                                    </button>
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                    Loading commissions…
                                 </TableCell>
                             </TableRow>
-                        ))}
-                        {paginated.length === 0 && (
+                        ) : paginated.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     No commission lines match this filter.
                                 </TableCell>
                             </TableRow>
+                        ) : (
+                            paginated.map((line) => (
+                                <TableRow key={line.id} className="border-b border-border">
+                                    <TableCell className={cn(td, "font-medium text-foreground")}>
+                                        {line.agency_name}
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right text-muted-foreground")}>
+                                        {formatCurrency(line.fraud_value)}
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right text-muted-foreground")}>
+                                        {line.commission_percent}%
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right font-medium text-foreground")}>
+                                        {formatCurrency(line.commission_amount)}
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <span
+                                            className={cn(
+                                                "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize lg:text-xs",
+                                                statusStyles[line.status] ?? "bg-gray-100 text-gray-600 border border-gray-200"
+                                            )}
+                                        >
+                                            {line.status}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right")}>
+                                        <button
+                                            onClick={() => navigate(`/marketing/commissions/${line.id}`)}
+                                            className="text-xs font-medium text-progress hover:underline lg:text-sm"
+                                        >
+                                            View
+                                        </button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
                         )}
                     </TableBody>
                 </Table>

@@ -3,9 +3,11 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { MarketerAgenciesTable } from "@/features/marketing/agencies/components/MarketerAgenciesTable"
-import { marketerAgencies } from "@/data/marketing-data"
+import { useMarketerAgencies } from "@/features/marketing/api/useMarketer"
 
 const MarketingAgencies = () => {
+    const { data: agencies = [], isLoading } = useMarketerAgencies()
+
     return (
         <DashboardLayout variant="marketer">
             <DynamicPageHeader title="My Agencies" />
@@ -18,7 +20,7 @@ const MarketingAgencies = () => {
                     </Link>
                 </p>
 
-                <MarketerAgenciesTable data={marketerAgencies} />
+                <MarketerAgenciesTable data={agencies} isLoading={isLoading} />
             </DashboardPageContent>
         </DashboardLayout>
     )
