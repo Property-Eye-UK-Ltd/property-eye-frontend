@@ -14,16 +14,14 @@ import { SearchNormal, Filter, ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { BillingHistoryTable } from "@/features/adminbilling/components/BillingHistoryTable"
 import { CommissionApprovalTable } from "@/features/marketing-admin/finance/components/CommissionApprovalTable"
-import { AdminPayoutsTable } from "@/features/marketing-admin/finance/components/AdminPayoutsTable"
+import { AgencyRecoveriesTable } from "@/features/adminbilling/components/AgencyRecoveriesTable"
 import { billingPeriods } from "@/data/adminBillingData"
 import { useAdminBillingMetrics, useAdminInvoices } from "@/features/adminbilling/api/useAdminBilling"
 import { toBillingMetricCards } from "@/features/adminbilling/api/adminBillingService"
-import {
-    marketingAdminFinanceMetrics,
-    commissionLiabilityTrend,
-    adminCommissionApprovals,
-    adminPayouts,
-} from "@/data/marketing-data"
+import { useAdminCommissions } from "@/features/adminbilling/api/useAdminCommissions"
+import { useAdminAgencyRecoveries } from "@/features/adminbilling/api/useAdminAgencyRecoveries"
+import { commissionLiabilityTrend } from "@/data/marketing-data"
+import { MetricCard } from "@/features/overview/components/MetricCards"
 
 const formatGbp = (value: number) => `£${value.toLocaleString()}`
 const formatGbpAxis = (value: number) => `£${Math.round(value / 1000)}k`
@@ -41,12 +39,6 @@ const liabilityTrendConfig = {
     pending: { label: "Pending Approval", color: "#F59E0B" },
 }
 
-const pageTabs = [
-    { label: "Subscription Billing", value: "billing" },
-    { label: "Marketer Commissions", value: "commissions", count: adminCommissionApprovals.filter((c) => c.status === "Pending").length },
-    { label: "Marketer Payouts", value: "payouts", count: adminPayouts.filter((p) => p.status === "Scheduled").length },
-]
-
 const BillingFinance = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(billingPeriods[0])
     const [searchQuery, setSearchQuery] = useState("")
@@ -55,6 +47,63 @@ const BillingFinance = () => {
     const { data: billingMetrics } = useAdminBillingMetrics(selectedPeriod)
     const { data: invoicesData } = useAdminInvoices({ search: searchQuery || undefined, page_size: 100 })
     const billingHistory = invoicesData?.items ?? []
+
+    const { data: commissions = [] } = useAdminCommissions()
+    const { data: agencyRecoveries = [] } = useAdminAgencyRecoveries()
+
+    const pageTabs = [
+        { label: "Subscription Billing", value: "billing" },
+        { label: "Marketer Commissions", value: "commissions", count: commissions.filter((c) => c.status === "Pending").length },
+        { label: "Agencies Recoveries", value: "agency-recoveries", count: agencyRecoveries.filter((r) => r.status === "Pending").length },
+    ]
+
+    const commissionMetrics: MetricCard[] = [
+        {
+            title: "Commission Liability",
+            value: formatGbp(commissions.reduce((sum, c) => sum + c.amount, 0)),
+            period: "Earned to date",
+            change: "",
+            topBarClass: "bg-amber-500",
+        },
+        {
+            title: "Outstanding Commission",
+            value: formatGbp(commissions.filter((c) => c.status !== "Paid").reduce((sum, c) => sum + c.amount, 0)),
+            period: "Awaiting payout",
+            change: "",
+            topBarClass: "bg-purple-500",
+        },
+        {
+            title: "Paid",
+            value: formatGbp(commissions.filter((c) => c.status === "Paid").reduce((sum, c) => sum + c.amount, 0)),
+            period: "All time",
+            change: "",
+            topBarClass: "bg-green-500",
+        },
+    ]
+
+    const recoveryMetrics: MetricCard[] = [
+        {
+            title: "Total Recovery Liability",
+            value: formatGbp(agencyRecoveries.reduce((sum, r) => sum + r.amount, 0)),
+            period: "Owed to date",
+            change: "",
+            topBarClass: "bg-amber-500",
+        },
+        {
+            title: "Outstanding",
+            value: formatGbp(agencyRecoveries.filter((r) => r.status === "Pending").reduce((sum, r) => sum + r.amount, 0)),
+            period: "Awaiting payment",
+            change: "",
+            topBarClass: "bg-purple-500",
+        },
+        {
+            title: "Paid",
+            value: formatGbp(agencyRecoveries.filter((r) => r.status === "Paid").reduce((sum, r) => sum + r.amount, 0)),
+            period: "All time",
+            change: "",
+            topBarClass: "bg-green-500",
+        },
+    ]
 
     return (
         <DashboardLayout variant="super-admin">
@@ -130,7 +179,7 @@ const BillingFinance = () => {
 
                 {activeTab === "commissions" && (
                     <>
-                        <MetricCards metrics={marketingAdminFinanceMetrics} columns={3} />
+                        <MetricCards metrics={commissionMetrics} columns={3} />
                         <FraudDetectionPanel
                             title="Commission Liability Over Time"
                             data={liabilityTrendData}
@@ -139,11 +188,16 @@ const BillingFinance = () => {
                             valueFormatter={formatGbp}
                             yAxisTickFormatter={formatGbpAxis}
                         />
-                        <CommissionApprovalTable data={adminCommissionApprovals} />
+                        <CommissionApprovalTable data={commissions} />
                     </>
                 )}
 
-                {activeTab === "payouts" && <AdminPayoutsTable data={adminPayouts} />}
+                {activeTab === "agency-recoveries" && (
+                    <>
+                        <MetricCards metrics={recoveryMetrics} columns={3} />
+                        <AgencyRecoveriesTable data={agencyRecoveries} />
+                    </>
+                )}
             </DashboardPageContent>
         </DashboardLayout>
     )

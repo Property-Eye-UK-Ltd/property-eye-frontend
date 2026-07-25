@@ -5,32 +5,36 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { TablePagination } from "@/components/dashboard/TablePagination"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { CommissionLineStatus, commissionLineStatusStyles } from "@/data/marketing-data"
-import { AdminCommissionRow } from "@/features/adminbilling/api/adminCommissionsService"
+import { AdminAgencyRecoveryRow, AgencyRecoveryStatus } from "@/features/adminbilling/api/adminAgencyRecoveriesService"
 import {
-    useApproveCommission,
-    useMarkCommissionPaid,
-    useUpdateCommissionAmount,
-} from "@/features/adminbilling/api/useAdminCommissions"
+    useMarkAgencyRecoveryPaid,
+    useMarkAgencyRecoveryUnpaid,
+    useUpdateAgencyRecoveryAmount,
+} from "@/features/adminbilling/api/useAdminAgencyRecoveries"
 import { EditAmountDialog } from "@/features/adminbilling/components/EditAmountDialog"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 const ITEMS_PER_PAGE = 7
-const STATUS_FILTERS: Array<CommissionLineStatus | "All"> = ["All", "Pending", "Approved", "Paid"]
+const STATUS_FILTERS: Array<AgencyRecoveryStatus | "All"> = ["All", "Pending", "Paid"]
 
-interface CommissionApprovalTableProps {
-    data: AdminCommissionRow[]
+const statusStyles: Record<AgencyRecoveryStatus, string> = {
+    Pending: "bg-amber-50 text-amber-600 border border-amber-100",
+    Paid: "bg-green-50 text-green-600 border border-green-100",
 }
 
-export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) => {
-    const [statusFilter, setStatusFilter] = useState<CommissionLineStatus | "All">("All")
-    const [currentPage, setCurrentPage] = useState(1)
-    const [editing, setEditing] = useState<AdminCommissionRow | null>(null)
+interface AgencyRecoveriesTableProps {
+    data: AdminAgencyRecoveryRow[]
+}
 
-    const approveMutation = useApproveCommission()
-    const markPaidMutation = useMarkCommissionPaid()
-    const updateAmountMutation = useUpdateCommissionAmount()
+export const AgencyRecoveriesTable = ({ data }: AgencyRecoveriesTableProps) => {
+    const [statusFilter, setStatusFilter] = useState<AgencyRecoveryStatus | "All">("All")
+    const [currentPage, setCurrentPage] = useState(1)
+    const [editing, setEditing] = useState<AdminAgencyRecoveryRow | null>(null)
+
+    const markPaidMutation = useMarkAgencyRecoveryPaid()
+    const markUnpaidMutation = useMarkAgencyRecoveryUnpaid()
+    const updateAmountMutation = useUpdateAgencyRecoveryAmount()
 
     const filtered = useMemo(
         () => (statusFilter === "All" ? data : data.filter((r) => r.status === statusFilter)),
@@ -44,27 +48,27 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
         return filtered.slice(start, start + ITEMS_PER_PAGE)
     }, [filtered, safePage])
 
-    const handleApprove = (row: AdminCommissionRow) => {
-        approveMutation.mutate(row.id, {
-            onSuccess: () => toast.success(`Commission for ${row.marketer} approved`),
-            onError: () => toast.error("Failed to approve commission"),
+    const handleMarkPaid = (row: AdminAgencyRecoveryRow) => {
+        markPaidMutation.mutate(row.id, {
+            onSuccess: () => toast.success(`Recovery for ${row.agency} marked as paid`),
+            onError: () => toast.error("Failed to mark recovery as paid"),
         })
     }
 
-    const handleMarkPaid = (row: AdminCommissionRow) => {
-        markPaidMutation.mutate(row.id, {
-            onSuccess: () => toast.success(`Commission for ${row.marketer} marked as paid`),
-            onError: () => toast.error("Failed to mark commission as paid"),
+    const handleMarkUnpaid = (row: AdminAgencyRecoveryRow) => {
+        markUnpaidMutation.mutate(row.id, {
+            onSuccess: () => toast.success(`Recovery for ${row.agency} marked as not paid`),
+            onError: () => toast.error("Failed to update recovery"),
         })
     }
 
     const handleSaveAmount = (amount: number) => {
         if (!editing) return
         updateAmountMutation.mutate(
-            { commissionId: editing.id, amount },
+            { recoveryId: editing.id, amount },
             {
                 onSuccess: () => {
-                    toast.success("Commission amount updated")
+                    toast.success("Recovery amount updated")
                     setEditing(null)
                 },
                 onError: () => toast.error("Failed to update amount"),
@@ -74,12 +78,12 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
 
     return (
         <DashboardPanel
-            title="Commission Approval Queue"
-            description="Pending commissions awaiting admin approval before payout."
+            title="Agencies Recoveries"
+            description="Each agency's 50% share of a recovered fraud case. Payment happens outside the app — mark it here once sent."
             noPadding
             hasBorder
             actions={
-                <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as CommissionLineStatus | "All")}>
+                <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as AgencyRecoveryStatus | "All")}>
                     <SelectTrigger className="h-8 w-[130px] rounded-full border-border bg-background px-3 text-xs focus:ring-0 lg:h-9">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
@@ -92,13 +96,13 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
             }
         >
             <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-                <Table className="min-w-[760px]">
+                <Table className="min-w-[680px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className={th}>Marketer</TableHead>
                             <TableHead className={th}>Agency</TableHead>
                             <TableHead className={th}>Fraud Case</TableHead>
                             <TableHead className={cn(th, "text-right")}>Amount</TableHead>
+                            <TableHead className={th}>Date</TableHead>
                             <TableHead className={th}>Status</TableHead>
                             <TableHead className={cn(th, "text-right")}>Action</TableHead>
                         </TableRow>
@@ -106,12 +110,12 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
                     <TableBody>
                         {paginated.map((row) => (
                             <TableRow key={row.id} className="border-b border-border">
-                                <TableCell className={cn(td, "font-medium text-foreground")}>{row.marketer}</TableCell>
-                                <TableCell className={td}>{row.agency}</TableCell>
+                                <TableCell className={cn(td, "font-medium text-foreground")}>{row.agency}</TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>{row.fraudCase}</TableCell>
                                 <TableCell className={cn(td, "text-right font-medium")}>{row.amountLabel}</TableCell>
+                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>{row.createdAt}</TableCell>
                                 <TableCell className={td}>
-                                    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs", commissionLineStatusStyles[row.status])}>
+                                    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs", statusStyles[row.status])}>
                                         {row.status}
                                     </span>
                                 </TableCell>
@@ -125,16 +129,7 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
                                                 Edit
                                             </button>
                                         )}
-                                        {row.status === "Pending" && (
-                                            <button
-                                                onClick={() => handleApprove(row)}
-                                                disabled={approveMutation.isPending}
-                                                className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                            >
-                                                Approve
-                                            </button>
-                                        )}
-                                        {row.status === "Approved" && (
+                                        {row.status === "Pending" ? (
                                             <button
                                                 onClick={() => handleMarkPaid(row)}
                                                 disabled={markPaidMutation.isPending}
@@ -142,9 +137,14 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
                                             >
                                                 Mark as Paid
                                             </button>
-                                        )}
-                                        {row.status === "Paid" && (
-                                            <span className="text-xs text-muted-foreground lg:text-sm">—</span>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleMarkUnpaid(row)}
+                                                disabled={markUnpaidMutation.isPending}
+                                                className="text-xs font-medium text-muted-foreground hover:underline lg:text-sm"
+                                            >
+                                                Mark as Not Paid
+                                            </button>
                                         )}
                                     </div>
                                 </TableCell>
@@ -160,8 +160,8 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
             <EditAmountDialog
                 open={!!editing}
                 onClose={() => setEditing(null)}
-                title="Edit Commission Amount"
-                description={editing ? `Update the commission amount for ${editing.marketer}.` : ""}
+                title="Edit Recovery Amount"
+                description={editing ? `Update the recovery amount owed to ${editing.agency}.` : ""}
                 initialAmount={editing?.amount ?? 0}
                 isSubmitting={updateAmountMutation.isPending}
                 onSubmit={handleSaveAmount}
