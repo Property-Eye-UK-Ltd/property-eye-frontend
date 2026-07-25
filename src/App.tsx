@@ -21,6 +21,7 @@ import Signup from "./pages/auth/Signup";
 import OTPVerification from "./pages/auth/OTPVerification";
 import AgencyOwnerInfo from "./pages/auth/AgencyOwnerInfo";
 import AgencyInformation from "./pages/auth/AgencyInformation";
+import MarketerLogin from "./pages/auth/MarketerLogin";
 import MarketerSignup from "./pages/auth/MarketerSignup";
 import MarketerOTPVerification from "./pages/auth/MarketerOTPVerification";
 import MarketerProfile from "./pages/auth/MarketerProfile";
@@ -103,6 +104,7 @@ const App = () => (
             <Route path="/agency-owner-info" element={<AgencyOwnerInfo />} />
             <Route path="/agency-information" element={<AgencyInformation />} />
             {/* Marketer Auth Routes */}
+            <Route path="/marketer-login" element={<MarketerLogin />} />
             <Route path="/marketer-signup" element={<MarketerSignup />} />
             <Route path="/marketer-verify-otp" element={<MarketerOTPVerification />} />
             <Route path="/marketer-profile" element={<MarketerProfile />} />

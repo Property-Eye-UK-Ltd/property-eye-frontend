@@ -7,12 +7,22 @@ import { DashboardPageContent } from "@/components/dashboard/DashboardPageConten
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { LinkAgencyModal } from "@/features/marketing-admin/network/components/LinkAgencyModal"
 import { cn } from "@/lib/utils"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
+    useAdminMarketerAgencies,
     useAdminMarketerDetail,
     useLinkAgencyToMarketer,
     useUnattributedAgencies,
     useUpdateMarketerStatus,
 } from "@/features/marketing-admin/network/api/useAdminMarketers"
+
+const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
+const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
+
+const formatGbp = (amount: number) => `£${amount.toLocaleString("en-GB", { maximumFractionDigits: 0 })}`
+
+const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
 
 const badge = "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs"
 
@@ -29,6 +39,7 @@ const statusLabel = {
 const AdminMarketerDetail = () => {
     const { marketerId } = useParams<{ marketerId: string }>()
     const { data: marketer, isLoading } = useAdminMarketerDetail(marketerId)
+    const { data: linkedAgencies = [], isLoading: isLoadingAgencies } = useAdminMarketerAgencies(marketerId)
     const { data: unattributedAgencies = [] } = useUnattributedAgencies()
     const updateStatus = useUpdateMarketerStatus(marketerId ?? "")
     const linkAgency = useLinkAgencyToMarketer(marketerId ?? "")
@@ -131,6 +142,52 @@ const AdminMarketerDetail = () => {
                         This marketer is suspended and cannot log in to the portal.
                     </div>
                 )}
+
+                <DashboardPanel
+                    title="Linked Agencies"
+                    description="Agencies attributed to this marketer, and what they've earned from each."
+                    noPadding
+                    hasBorder
+                >
+                    <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                        <Table className="min-w-[640px]">
+                            <TableHeader>
+                                <TableRow className="bg-gray-50">
+                                    <TableHead className={th}>Agency</TableHead>
+                                    <TableHead className={th}>Attribution Method</TableHead>
+                                    <TableHead className={th}>Linked Since</TableHead>
+                                    <TableHead className={cn(th, "text-right")}>Fraud Value</TableHead>
+                                    <TableHead className={cn(th, "text-right")}>Commission Earned</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {isLoadingAgencies ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className={cn(td, "text-center text-muted-foreground")}>
+                                            Loading…
+                                        </TableCell>
+                                    </TableRow>
+                                ) : linkedAgencies.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className={cn(td, "text-center text-muted-foreground")}>
+                                            No agencies linked yet.
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    linkedAgencies.map((agency) => (
+                                        <TableRow key={agency.id} className="border-b border-border">
+                                            <TableCell className={cn(td, "font-medium text-foreground")}>{agency.name}</TableCell>
+                                            <TableCell className={cn(td, "capitalize text-muted-foreground")}>{agency.attribution_method}</TableCell>
+                                            <TableCell className={cn(td, "text-muted-foreground")}>{formatDate(agency.created_at)}</TableCell>
+                                            <TableCell className={cn(td, "text-right")}>{formatGbp(agency.total_fraud_value)}</TableCell>
+                                            <TableCell className={cn(td, "text-right font-medium")}>{formatGbp(agency.commission_earned)}</TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </DashboardPanel>
             </DashboardPageContent>
 
             <LinkAgencyModal

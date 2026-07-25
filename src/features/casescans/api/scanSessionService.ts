@@ -4,7 +4,32 @@ import {
   ScanSessionResponse,
   ScanSessionListResponse,
   ScanSessionResult,
+  RegisterExtractData,
 } from "@/types/scan-session.types"
+
+/**
+ * Fetch (and cache) the full register extract for a single case.
+ * GET .../register-extract performs the live HMLR fetch itself when no
+ * cached extract exists yet, so this doubles as the "verify this case
+ * against the Register" action.
+ */
+export const getRegisterExtract = async (
+  caseId: string,
+  forceRefresh = false
+): Promise<RegisterExtractData> => {
+  const { data } = await apiClient.get<RegisterExtractData>(
+    `/admin/fraud-reports/${caseId}/register-extract`,
+    { params: forceRefresh ? { force_refresh: true } : undefined }
+  )
+  return data
+}
+
+export const downloadRegisterExtractPdf = async (caseId: string): Promise<Blob> => {
+  const response = await apiClient.get(`/admin/fraud-reports/${caseId}/register-extract/pdf`, {
+    responseType: "blob",
+  })
+  return response.data
+}
 
 /**
  * Get a specific scan session by ID

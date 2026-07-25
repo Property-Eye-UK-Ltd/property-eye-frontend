@@ -16,6 +16,7 @@ import {
     submitCaseDetermination,
     SubmitDeterminationPayload,
 } from "./adminCasesService"
+import { getRegisterExtract } from "@/features/casescans/api/scanSessionService"
 
 export const useAdminCases = (params?: {
     page?: number
@@ -68,6 +69,31 @@ export const useAdminCaseDisputes = (params: { fraud_match_id?: string; agency_i
         enabled: !!(params.fraud_match_id || params.agency_id),
         staleTime: 10_000,
     })
+
+/**
+ * Fetches the full register extract for a case. GET .../register-extract
+ * performs the live HMLR fetch itself when no cached extract exists, so
+ * enabling this query is what actually runs "verify with register" for a
+ * single case (no separate scan-session round trip needed).
+ */
+export const useRegisterExtract = (caseId: string, enabled: boolean) =>
+    useQuery({
+        queryKey: queryKeys.adminCases.registerExtract(caseId),
+        queryFn: () => getRegisterExtract(caseId),
+        enabled: !!caseId && enabled,
+        staleTime: 60_000,
+    })
+
+export const useVerifyWithRegister = (caseId: string) => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (forceRefresh: boolean = false) => getRegisterExtract(caseId, forceRefresh),
+        onSuccess: (data) => {
+            queryClient.setQueryData(queryKeys.adminCases.registerExtract(caseId), data)
+            queryClient.invalidateQueries({ queryKey: queryKeys.adminCases.detail(caseId) })
+        },
+    })
+}
 
 const useInvalidateCase = (caseId: string) => {
     const queryClient = useQueryClient()

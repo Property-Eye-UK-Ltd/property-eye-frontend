@@ -21,11 +21,14 @@ import {
     useApproveAndCloseCase,
     useFlagCase,
     useReopenCase,
+    useRegisterExtract,
     useResolveAgencyDispute,
     useReturnCase,
     useStartCaseReview,
     useSubmitCaseDetermination,
+    useVerifyWithRegister,
 } from "@/features/admincases/api/useAdminCases"
+import { downloadRegisterExtractPdf } from "@/features/casescans/api/scanSessionService"
 import { toast } from "sonner"
 
 const AdminCaseDetails = () => {
@@ -48,6 +51,46 @@ const AdminCaseDetails = () => {
     const flagMutation = useFlagCase(decodedCaseId)
     const reopenMutation = useReopenCase(decodedCaseId)
     const resolveDisputeMutation = useResolveAgencyDispute(decodedCaseId)
+
+    // A case that's already been checked has a register extract cached
+    // server-side, so load it automatically; otherwise wait for the user
+    // to click "Verify with Register" before hitting the live HMLR lookup.
+    const [registerExtractRequested, setRegisterExtractRequested] = useState(
+        caseData?.status === "CHECKED"
+    )
+    const registerExtractQuery = useRegisterExtract(decodedCaseId, registerExtractRequested)
+    const verifyWithRegister = useVerifyWithRegister(decodedCaseId)
+    const [isDownloadingPdf, setIsDownloadingPdf] = useState(false)
+
+    const handleVerifyWithRegister = (forceRefresh = false) => {
+        setRegisterExtractRequested(true)
+        verifyWithRegister.mutate(forceRefresh, {
+            onSuccess: () => toast.success("Register extract updated"),
+            onError: (error: unknown) => {
+                const message =
+                    (error as { response?: { data?: { detail?: string } } })?.response?.data?.detail ||
+                    "Failed to fetch register extract"
+                toast.error(message)
+            },
+        })
+    }
+
+    const handleDownloadRegisterPdf = async () => {
+        setIsDownloadingPdf(true)
+        try {
+            const blob = await downloadRegisterExtractPdf(decodedCaseId)
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = url
+            link.download = `register-extract-${decodedCaseId}.pdf`
+            link.click()
+            window.URL.revokeObjectURL(url)
+        } catch {
+            toast.error("Failed to download register extract PDF")
+        } finally {
+            setIsDownloadingPdf(false)
+        }
+    }
 
     const [isDeterminationOpen, setIsDeterminationOpen] = useState(false)
     const [isReturnOpen, setIsReturnOpen] = useState(false)
@@ -172,11 +215,13 @@ const AdminCaseDetails = () => {
                         <TimelineAuditTrailPanel data={timelineRecords} />
                         {caseData && (
                             <RegisterInformationPanel
-                                verificationStatus={caseData.verification_status as "confirmed_fraud" | "not_fraud" | "error" | null}
-                                registerExtractFetchedAt={caseData.register_extract_fetched_at}
-                                titleNumber={caseData.title_number}
-                                propertyAddress={caseData.property_address}
-                                caseId={decodedCaseId}
+                                registerExtract={registerExtractQuery.data}
+                                isLoading={registerExtractRequested && registerExtractQuery.isLoading}
+                                isVerifying={verifyWithRegister.isPending}
+                                onVerify={handleVerifyWithRegister}
+                                onDownloadPdf={handleDownloadRegisterPdf}
+                                isDownloadingPdf={isDownloadingPdf}
+                                propertyAddress={caseData.propertyAddress}
                             />
                         )}
                     </div>

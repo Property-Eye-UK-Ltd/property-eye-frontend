@@ -84,7 +84,7 @@ const MarketerProfile = () => {
                     variant: "destructive",
                 });
                 navigate(
-                    detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ? "/login" : "/marketer-signup",
+                    detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ? "/marketer-login" : "/marketer-signup",
                     { replace: true }
                 );
                 return;

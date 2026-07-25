@@ -68,7 +68,7 @@ const MarketerSignup = () => {
                     title: "Account already exists",
                     description: "An account with this email already exists. Please sign in instead.",
                 });
-                navigate("/login");
+                navigate("/marketer-login");
                 return;
             }
 
@@ -190,7 +190,7 @@ const MarketerSignup = () => {
 
                     <div className="text-center text-sm text-muted-foreground">
                         Already have an account?{" "}
-                        <Link to="/login" className="text-progress font-medium hover:underline">
+                        <Link to="/marketer-login" className="text-progress font-medium hover:underline">
                             Login
                         </Link>
                     </div>

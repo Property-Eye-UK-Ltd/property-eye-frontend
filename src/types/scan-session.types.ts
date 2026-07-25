@@ -1,58 +1,62 @@
 // Scan Session and Register Extract types for Land Registry integration
 
 export interface RegisterExtractProp {
-  name: string
-  type: "Individual" | "Company"
-  address: string
-  is_mismatch_flag: boolean
+  name: string | null
+  type: string | null
+  address: string | null
+  mismatch: boolean
 }
 
-export interface RegisterExtractCharge {
-  entry_number: string
-  description: string
-  date?: string
+export interface RegisterExtractEntry {
+  entry_number: string | null
+  entry_text: string | null
+  registration_date: string | null
 }
 
-export interface RegisterExtractRestriction {
-  entry_number: string
-  description: string
-  date?: string
+export interface RegisterExtractProperty {
+  address: string | null
+  tenure: string | null
+  description: string | null
 }
 
-export interface RegisterExtractLease {
-  entry_number: string
-  description: string
-  commencement_date?: string
-}
-
-export interface RegisterExtractNotice {
-  entry_number: string
-  description: string
-  date?: string
-}
-
+/** Full register extract, as returned by GET /admin/fraud-reports/{id}/register-extract */
 export interface RegisterExtractData {
-  id: string
-  fraud_match_id: string
-  title_number: string
-  tenure: string
-  property_address: string
-  proprietors: RegisterExtractProp[]
-  charges: RegisterExtractCharge[]
-  restrictions: RegisterExtractRestriction[]
-  leases: RegisterExtractLease[]
-  notices: RegisterExtractNotice[]
+  report_id: string
+  title_number: string | null
   fetched_at: string
   status: "complete" | "pending" | "failed"
-  error_message?: string
+  property: RegisterExtractProperty
+  proprietors: RegisterExtractProp[]
+  charges: RegisterExtractEntry[]
+  restrictions: RegisterExtractEntry[]
+  leases: RegisterExtractEntry[]
+  notices: RegisterExtractEntry[]
+  quick_reference_flags: string[]
+  official_copy_available: boolean
+  error_message?: string | null
+}
+
+/** Register extract summary embedded in a scan session result, as returned by
+ *  RegisterExtractSummarySchema — counts only, not the full entry lists. */
+export interface RegisterExtractSummary {
+  title_number: string | null
+  property_address: string | null
+  tenure: string | null
+  proprietor_count: number
+  charge_count: number
+  restriction_count: number
+  has_mismatch: boolean
+  quick_reference_flags: string[]
+  official_copy_available: boolean
 }
 
 export interface ScanSessionResult {
   fraud_match_id: string
   case_id: string
   verification_status: "confirmed_fraud" | "not_fraud" | "error"
-  register_extract: RegisterExtractData | null
+  register_extract: RegisterExtractSummary | null
   scanned_at: string
+  error_message?: string | null
 }
 
 export interface ScanSession {

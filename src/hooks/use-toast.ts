@@ -6,7 +6,11 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+// Time between a toast closing (open: false, after Radix's own auto-close
+// duration or a manual dismiss) and it being unmounted from state — just
+// long enough for the exit animation. Previously 1000000ms (~17 min), which
+// meant toasts stayed visible across route navigations until manually closed.
+const TOAST_REMOVE_DELAY = 300
 
 type ToasterToast = ToastProps & {
   id: string

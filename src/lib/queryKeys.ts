@@ -51,6 +51,7 @@ export const queryKeys = {
         detail: (caseId: string) => ["admin-cases", "detail", caseId] as const,
         timeline: (caseId: string) => ["admin-cases", "timeline", caseId] as const,
         disputes: (params?: Record<string, unknown>) => ["admin-cases", "disputes", params] as const,
+        registerExtract: (caseId: string) => ["admin-cases", "register-extract", caseId] as const,
     },
     adminBilling: {
         all: ["admin-billing"] as const,
@@ -71,7 +72,12 @@ export const queryKeys = {
         all: ["admin-marketers"] as const,
         list: () => ["admin-marketers", "list"] as const,
         detail: (marketerId: string) => ["admin-marketers", "detail", marketerId] as const,
+        agencies: (marketerId: string) => ["admin-marketers", "agencies", marketerId] as const,
         unattributedAgencies: () => ["admin-marketers", "unattributed-agencies"] as const,
+    },
+    adminAttributions: {
+        all: ["admin-attributions"] as const,
+        list: (params?: Record<string, unknown>) => ["admin-attributions", "list", params] as const,
     },
     marketer: {
         all: ["marketer"] as const,

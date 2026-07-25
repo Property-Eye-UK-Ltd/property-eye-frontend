@@ -5,25 +5,45 @@ import { DashboardPageContent } from "@/components/dashboard/DashboardPageConten
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { AdminMarketersTable } from "@/features/marketing-admin/network/components/AdminMarketersTable"
-import { AdminAgenciesTable } from "@/features/marketing-admin/network/components/AdminAgenciesTable"
 import { AttributionQueueTable } from "@/features/marketing-admin/attribution/components/AttributionQueueTable"
 import { useAdminMarketers } from "@/features/marketing-admin/network/api/useAdminMarketers"
-import {
-    marketingAdminAttributionMetrics,
-    adminAgencies,
-    attributionClaims,
-} from "@/data/marketing-data"
-
-const pendingAttributions = attributionClaims.filter((c) => c.status === "Pending" || c.status === "Conflict").length
+import { useAdminAttributions } from "@/features/marketing-admin/attribution/api/useAdminAttributions"
+import { MetricCard } from "@/features/overview/components/MetricCards"
 
 const Affiliates = () => {
     const [activeTab, setActiveTab] = useState("marketers")
     const { data: marketers = [], isLoading: isLoadingMarketers } = useAdminMarketers()
+    const { data: attributions = [] } = useAdminAttributions()
+
+    const pendingAttributions = attributions.filter((a) => a.status === "pending" || a.status === "locked").length
 
     const tabs = [
         { label: "Marketers", value: "marketers", count: marketers.length },
-        { label: "Agencies", value: "agencies", count: adminAgencies.length },
         { label: "Attribution", value: "attribution", count: pendingAttributions },
+    ]
+
+    const attributionMetrics: MetricCard[] = [
+        {
+            title: "Pending Claims",
+            value: String(attributions.filter((a) => a.status === "pending").length),
+            period: "Awaiting decision",
+            change: "",
+            topBarClass: "bg-amber-500",
+        },
+        {
+            title: "Conflicts",
+            value: String(attributions.filter((a) => a.has_conflict).length),
+            period: "Needs review",
+            change: "",
+            topBarClass: "bg-red-500",
+        },
+        {
+            title: "Approved",
+            value: String(attributions.filter((a) => a.status === "approved").length),
+            period: "All time",
+            change: "",
+            topBarClass: "bg-green-500",
+        },
     ]
 
     return (
@@ -37,12 +57,10 @@ const Affiliates = () => {
                     <AdminMarketersTable data={marketers} isLoading={isLoadingMarketers} />
                 )}
 
-                {activeTab === "agencies" && <AdminAgenciesTable data={adminAgencies} />}
-
                 {activeTab === "attribution" && (
                     <>
-                        <MetricCards metrics={marketingAdminAttributionMetrics} columns={3} />
-                        <AttributionQueueTable data={attributionClaims} />
+                        <MetricCards metrics={attributionMetrics} columns={3} />
+                        <AttributionQueueTable data={attributions} />
                     </>
                 )}
             </DashboardPageContent>

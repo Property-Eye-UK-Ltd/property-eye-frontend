@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/queryKeys"
 import {
     AdminMarketerAuthStatus,
+    getAdminMarketerAgencies,
     getAdminMarketerDetail,
     getAdminMarketers,
     getUnattributedAgencies,
@@ -20,6 +21,14 @@ export const useAdminMarketerDetail = (marketerId: string | undefined) =>
     useQuery({
         queryKey: queryKeys.adminMarketers.detail(marketerId ?? ""),
         queryFn: () => getAdminMarketerDetail(marketerId as string),
+        enabled: !!marketerId,
+        staleTime: 15_000,
+    })
+
+export const useAdminMarketerAgencies = (marketerId: string | undefined) =>
+    useQuery({
+        queryKey: queryKeys.adminMarketers.agencies(marketerId ?? ""),
+        queryFn: () => getAdminMarketerAgencies(marketerId as string),
         enabled: !!marketerId,
         staleTime: 15_000,
     })

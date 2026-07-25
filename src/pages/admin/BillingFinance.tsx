@@ -7,7 +7,6 @@ import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
-import { FraudDetectionPanel } from "@/features/overview/components/FraudDetectionPanel"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SearchNormal, Filter, ArrowDown2 } from "iconsax-react"
@@ -20,24 +19,9 @@ import { useAdminBillingMetrics, useAdminInvoices } from "@/features/adminbillin
 import { toBillingMetricCards } from "@/features/adminbilling/api/adminBillingService"
 import { useAdminCommissions } from "@/features/adminbilling/api/useAdminCommissions"
 import { useAdminAgencyRecoveries } from "@/features/adminbilling/api/useAdminAgencyRecoveries"
-import { commissionLiabilityTrend } from "@/data/marketing-data"
 import { MetricCard } from "@/features/overview/components/MetricCards"
 
 const formatGbp = (value: number) => `£${value.toLocaleString()}`
-const formatGbpAxis = (value: number) => `£${Math.round(value / 1000)}k`
-
-const liabilityTrendData = commissionLiabilityTrend.map(({ label, value }) => ({
-    month: label,
-    paid: Math.round(value * 0.765),
-    approved: Math.round(value * 0.162),
-    pending: Math.round(value * 0.073),
-}))
-
-const liabilityTrendConfig = {
-    paid: { label: "Paid", color: "#22C55E" },
-    approved: { label: "Approved (Awaiting Payout)", color: "#4D66EA" },
-    pending: { label: "Pending Approval", color: "#F59E0B" },
-}
 
 const BillingFinance = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(billingPeriods[0])
@@ -180,14 +164,6 @@ const BillingFinance = () => {
                 {activeTab === "commissions" && (
                     <>
                         <MetricCards metrics={commissionMetrics} columns={3} />
-                        <FraudDetectionPanel
-                            title="Commission Liability Over Time"
-                            data={liabilityTrendData}
-                            config={liabilityTrendConfig}
-                            yAxisDomain={[0, "auto"]}
-                            valueFormatter={formatGbp}
-                            yAxisTickFormatter={formatGbpAxis}
-                        />
                         <CommissionApprovalTable data={commissions} />
                     </>
                 )}

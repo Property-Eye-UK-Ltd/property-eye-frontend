@@ -1,5 +1,3 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,40 +13,27 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ChevronDown, AlertCircle } from "lucide-react"
+import { ChevronDown, AlertCircle, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
 import type { RegisterExtractData } from "@/types/scan-session.types"
-import type { FraudMatch } from "@/types/casescans.types"
 
 interface RegisterInformationPanelProps {
-  /**
-   * Register extract data (null if not scanned yet)
-   */
+  /** Register extract data, if it has been fetched (null/undefined if not scanned yet) */
   registerExtract?: RegisterExtractData | null
-  /**
-   * Fraud match data for context (optional if using basic verification info)
-   */
-  fraudMatch?: FraudMatch
-  /**
-   * Verification status from case data
-   */
-  verificationStatus?: "confirmed_fraud" | "not_fraud" | "error" | null
-  /**
-   * When register was fetched
-   */
-  registerExtractFetchedAt?: string | null
-  /**
-   * Title number from case
-   */
-  titleNumber?: string | null
-  /**
-   * Property address
-   */
+  /** True while a fetch/verify request is in flight */
+  isVerifying?: boolean
+  /** True while the initial register extract query is loading */
+  isLoading?: boolean
+  /** Triggers a register extract fetch (initial verify or rescan) */
+  onVerify?: (forceRefresh?: boolean) => void
+  /** Triggers a PDF download of the official copy */
+  onDownloadPdf?: () => void
+  isDownloadingPdf?: boolean
+  /** Property address, used as a fallback before an extract has been fetched */
   propertyAddress?: string
-  /**
-   * Case ID for reference
-   */
-  caseId?: string
+  /** Title number, used as a fallback before an extract has been fetched */
+  titleNumber?: string | null
 }
 
 const fieldLabel = "mb-0.5 text-xs text-muted-foreground"
@@ -56,14 +41,14 @@ const fieldValue = "text-xs text-primary sm:text-sm"
 
 export const RegisterInformationPanel = ({
   registerExtract,
-  fraudMatch,
-  verificationStatus,
-  registerExtractFetchedAt,
-  titleNumber,
+  isVerifying = false,
+  isLoading = false,
+  onVerify,
+  onDownloadPdf,
+  isDownloadingPdf = false,
   propertyAddress,
-  caseId,
+  titleNumber,
 }: RegisterInformationPanelProps) => {
-  const navigate = useNavigate()
   const [openSections, setOpenSections] = useState<Set<string>>(new Set(["proprietors"]))
 
   const toggleSection = (section: string) => {
@@ -76,21 +61,14 @@ export const RegisterInformationPanel = ({
     setOpenSections(newOpen)
   }
 
-  // Use verification status from props if registerExtract not available
-  const isScanned = registerExtract || registerExtractFetchedAt
+  const isScanned = registerExtract?.status === "complete"
 
-  // Determine quick reference flags
-  const getQuickFlags = () => {
+  const quickFlags = (() => {
     if (!registerExtract) return []
 
-    const flags: Array<{
-      type: "error" | "warning" | "success"
-      label: string
-      message: string
-    }> = []
+    const flags: Array<{ type: "error" | "warning" | "success"; label: string; message: string }> = []
 
-    // Check for proprietor mismatch
-    const hasMismatch = registerExtract.proprietors.some((p) => p.is_mismatch_flag)
+    const hasMismatch = registerExtract.proprietors.some((p) => p.mismatch)
     if (hasMismatch) {
       flags.push({
         type: "error",
@@ -99,7 +77,6 @@ export const RegisterInformationPanel = ({
       })
     }
 
-    // Check for charges and restrictions
     const hasChargesOrRestrictions =
       registerExtract.charges.length > 0 || registerExtract.restrictions.length > 0
     if (hasChargesOrRestrictions) {
@@ -110,7 +87,10 @@ export const RegisterInformationPanel = ({
       })
     }
 
-    // If no issues
+    for (const flag of registerExtract.quick_reference_flags) {
+      flags.push({ type: "warning", label: "Fraud Indicator", message: flag })
+    }
+
     if (flags.length === 0) {
       flags.push({
         type: "success",
@@ -120,12 +100,10 @@ export const RegisterInformationPanel = ({
     }
 
     return flags
-  }
-
-  const quickFlags = getQuickFlags()
+  })()
 
   // Not scanned state
-  if (!isScanned) {
+  if (!registerExtract) {
     return (
       <div className="rounded-2xl border border-border bg-white p-3 shadow-sm sm:p-4 lg:p-6">
         <div className="space-y-4">
@@ -144,24 +122,16 @@ export const RegisterInformationPanel = ({
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/admin/case-scans")}
-              className="text-xs"
-            >
-              Request Scan
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate("/admin/case-scans")}
-              className="text-xs"
-            >
-              View in Case Scans
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onVerify?.(false)}
+            disabled={isLoading || isVerifying}
+            className="text-xs"
+          >
+            {(isLoading || isVerifying) && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
+            Verify with Register
+          </Button>
         </div>
       </div>
     )
@@ -176,27 +146,19 @@ export const RegisterInformationPanel = ({
           <p className="text-xs text-muted-foreground sm:text-sm font-medium">
             Register Information
           </p>
-          {registerExtractFetchedAt && (
+          {registerExtract.fetched_at && (
             <p className="mt-1 text-xs text-muted-foreground">
               Last Scanned:{" "}
               <span className="text-primary font-medium">
-                {new Date(registerExtractFetchedAt).toLocaleDateString("en-GB")}
+                {new Date(registerExtract.fetched_at).toLocaleDateString("en-GB")}
               </span>
             </p>
           )}
-          {verificationStatus && (
-            <p className="mt-1 text-xs text-muted-foreground">
-              Status:{" "}
-              <span className={cn(
-                "font-medium",
-                verificationStatus === "confirmed_fraud" ? "text-red-600" :
-                verificationStatus === "not_fraud" ? "text-green-600" :
-                "text-orange-600"
-              )}>
-                {verificationStatus === "confirmed_fraud" ? "Confirmed Fraud" :
-                 verificationStatus === "not_fraud" ? "Ruled Out" :
-                 "Error"}
-              </span>
+          {!isScanned && (
+            <p className="mt-1 text-xs text-amber-600">
+              {registerExtract.status === "pending"
+                ? "Register lookup still in progress."
+                : registerExtract.error_message || "Register lookup failed."}
             </p>
           )}
         </div>
@@ -209,315 +171,316 @@ export const RegisterInformationPanel = ({
           <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6">
             <div>
               <p className={fieldLabel}>Address</p>
-              <p className={fieldValue}>{propertyAddress || registerExtract?.property_address}</p>
+              <p className={fieldValue}>{registerExtract.property.address || propertyAddress}</p>
             </div>
             <div>
               <p className={fieldLabel}>Title Number</p>
-              <p className={fieldValue}>{titleNumber || registerExtract?.title_number}</p>
+              <p className={fieldValue}>{registerExtract.title_number || titleNumber}</p>
             </div>
-            {registerExtract?.tenure && (
+            {registerExtract.property.tenure && (
               <div>
                 <p className={fieldLabel}>Tenure</p>
-                <p className={fieldValue}>{registerExtract.tenure}</p>
+                <p className={fieldValue}>{registerExtract.property.tenure}</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Registered Proprietors */}
-        {registerExtract && (
-        <Collapsible
-          open={openSections.has("proprietors")}
-          onOpenChange={() => toggleSection("proprietors")}
-          className="border-t border-border"
-        >
-          <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
-            <div className="flex items-center gap-2">
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform text-muted-foreground",
-                  openSections.has("proprietors") ? "rotate-0" : "-rotate-90"
-                )}
-              />
-              <p className="text-xs font-medium text-primary sm:text-sm">
-                REGISTERED PROPRIETORS ({registerExtract?.proprietors.length || 0})
-              </p>
-            </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-4">
-            <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
-              <Table className="min-w-full">
-                <TableHeader>
-                  <TableRow className="bg-gray-50">
-                    <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">
-                      Name
-                    </TableHead>
-                    <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">
-                      Type
-                    </TableHead>
-                    <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">
-                      Address
-                    </TableHead>
-                    <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">
-                      Mismatch
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {registerExtract.proprietors.map((prop, idx) => (
-                    <TableRow key={idx} className="border-b border-border">
-                      <TableCell className="px-2 py-2 text-xs text-primary lg:px-4 lg:py-3">
-                        {prop.name}
-                      </TableCell>
-                      <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3">
-                        {prop.type}
-                      </TableCell>
-                      <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3">
-                        {prop.address}
-                      </TableCell>
-                      <TableCell className="px-2 py-2 text-xs lg:px-4 lg:py-3">
-                        {prop.is_mismatch_flag ? (
-                          <Badge className="rounded-full bg-red-50 text-red-600 border border-red-100 text-xs font-medium px-2 py-0.5">
-                            Yes
-                          </Badge>
-                        ) : (
-                          <Badge className="rounded-full bg-green-50 text-green-600 border border-green-100 text-xs font-medium px-2 py-0.5">
-                            No
-                          </Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-        )}
-
-        {/* Charges */}
-        {registerExtract && (
-        <Collapsible
-          open={openSections.has("charges")}
-          onOpenChange={() => toggleSection("charges")}
-          className="border-t border-border"
-        >
-          <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
-            <div className="flex items-center gap-2">
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform text-muted-foreground",
-                  openSections.has("charges") ? "rotate-0" : "-rotate-90"
-                )}
-              />
-              <p className="text-xs font-medium text-primary sm:text-sm">
-                CHARGES - MORTGAGES & SECURED DEBTS ({registerExtract.charges.length})
-              </p>
-            </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-4">
-            {registerExtract.charges.length === 0 ? (
-              <p className="text-xs text-muted-foreground">None found on this property</p>
-            ) : (
-              <ul className="space-y-2">
-                {registerExtract.charges.map((charge, idx) => (
-                  <li key={idx} className="text-xs text-primary">
-                    <span className="font-medium">Entry #{charge.entry_number}:</span>{" "}
-                    {charge.description}
-                    {charge.date && (
-                      <span className="text-muted-foreground">
-                        {" "}
-                        ({new Date(charge.date).toLocaleDateString("en-GB")})
-                      </span>
+        {isScanned && (
+          <>
+            {/* Registered Proprietors */}
+            <Collapsible
+              open={openSections.has("proprietors")}
+              onOpenChange={() => toggleSection("proprietors")}
+              className="border-t border-border"
+            >
+              <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
+                <div className="flex items-center gap-2">
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform text-muted-foreground",
+                      openSections.has("proprietors") ? "rotate-0" : "-rotate-90"
                     )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
-        )}
-
-        {/* Restrictions */}
-        {registerExtract && (
-        <Collapsible
-          open={openSections.has("restrictions")}
-          onOpenChange={() => toggleSection("restrictions")}
-          className="border-t border-border"
-        >
-          <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
-            <div className="flex items-center gap-2">
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform text-muted-foreground",
-                  openSections.has("restrictions") ? "rotate-0" : "-rotate-90"
-                )}
-              />
-              <p className="text-xs font-medium text-primary sm:text-sm">
-                RESTRICTIONS ({registerExtract.restrictions.length})
-              </p>
-            </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-4">
-            {registerExtract.restrictions.length === 0 ? (
-              <p className="text-xs text-muted-foreground">None found on this property</p>
-            ) : (
-              <ul className="space-y-2">
-                {registerExtract.restrictions.map((restriction, idx) => (
-                  <li key={idx} className="text-xs text-primary">
-                    <span className="font-medium">Entry #{restriction.entry_number}:</span>{" "}
-                    {restriction.description}
-                    {restriction.date && (
-                      <span className="text-muted-foreground">
-                        {" "}
-                        ({new Date(restriction.date).toLocaleDateString("en-GB")})
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
-        )}
-
-        {/* Leases */}
-        {registerExtract && (
-        <Collapsible
-          open={openSections.has("leases")}
-          onOpenChange={() => toggleSection("leases")}
-          className="border-t border-border"
-        >
-          <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
-            <div className="flex items-center gap-2">
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform text-muted-foreground",
-                  openSections.has("leases") ? "rotate-0" : "-rotate-90"
-                )}
-              />
-              <p className="text-xs font-medium text-primary sm:text-sm">
-                LEASES ({registerExtract.leases.length})
-              </p>
-            </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-4">
-            {registerExtract.leases.length === 0 ? (
-              <p className="text-xs text-muted-foreground">None found on this property</p>
-            ) : (
-              <ul className="space-y-2">
-                {registerExtract.leases.map((lease, idx) => (
-                  <li key={idx} className="text-xs text-primary">
-                    <span className="font-medium">Entry #{lease.entry_number}:</span>{" "}
-                    {lease.description}
-                    {lease.commencement_date && (
-                      <span className="text-muted-foreground">
-                        {" "}
-                        (from {new Date(lease.commencement_date).toLocaleDateString("en-GB")})
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
-        )}
-
-        {/* Notices */}
-        {registerExtract && (
-        <Collapsible
-          open={openSections.has("notices")}
-          onOpenChange={() => toggleSection("notices")}
-          className="border-t border-border"
-        >
-          <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
-            <div className="flex items-center gap-2">
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform text-muted-foreground",
-                  openSections.has("notices") ? "rotate-0" : "-rotate-90"
-                )}
-              />
-              <p className="text-xs font-medium text-primary sm:text-sm">
-                NOTICES ({registerExtract.notices.length})
-              </p>
-            </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-4">
-            {registerExtract.notices.length === 0 ? (
-              <p className="text-xs text-muted-foreground">None found on this property</p>
-            ) : (
-              <ul className="space-y-2">
-                {registerExtract.notices.map((notice, idx) => (
-                  <li key={idx} className="text-xs text-primary">
-                    <span className="font-medium">Entry #{notice.entry_number}:</span>{" "}
-                    {notice.description}
-                    {notice.date && (
-                      <span className="text-muted-foreground">
-                        {" "}
-                        ({new Date(notice.date).toLocaleDateString("en-GB")})
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
-        )}
-
-        {/* Quick Reference Flags */}
-        {registerExtract && (
-        <div className="border-t border-border pt-4 sm:pt-6">
-          <p className={cn(fieldLabel, "mb-3 sm:mb-4 font-medium text-primary")}>
-            QUICK REFERENCE FLAGS
-          </p>
-          <div className="space-y-2">
-            {quickFlags.map((flag, idx) => {
-              const bgColorMap = {
-                error: "bg-red-50 border-red-100",
-                warning: "bg-amber-50 border-amber-100",
-                success: "bg-green-50 border-green-100",
-              }
-              const textColorMap = {
-                error: "text-red-600",
-                warning: "text-amber-600",
-                success: "text-green-600",
-              }
-              return (
-                <div
-                  key={idx}
-                  className={cn(
-                    "flex items-start gap-2 rounded-lg p-3 border",
-                    bgColorMap[flag.type]
-                  )}
-                >
-                  <div className={cn("font-medium text-xs sm:text-sm", textColorMap[flag.type])}>
-                    {flag.label}
-                  </div>
-                  <p className={cn("text-xs", textColorMap[flag.type])}>{flag.message}</p>
+                  />
+                  <p className="text-xs font-medium text-primary sm:text-sm">
+                    REGISTERED PROPRIETORS ({registerExtract.proprietors.length})
+                  </p>
                 </div>
-              )
-            })}
-          </div>
-        </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-4">
+                <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                  <Table className="min-w-full">
+                    <TableHeader>
+                      <TableRow className="bg-gray-50">
+                        <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">
+                          Name
+                        </TableHead>
+                        <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">
+                          Type
+                        </TableHead>
+                        <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">
+                          Address
+                        </TableHead>
+                        <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">
+                          Mismatch
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {registerExtract.proprietors.map((prop, idx) => (
+                        <TableRow key={idx} className="border-b border-border">
+                          <TableCell className="px-2 py-2 text-xs text-primary lg:px-4 lg:py-3">
+                            {prop.name || "—"}
+                          </TableCell>
+                          <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3">
+                            {prop.type || "—"}
+                          </TableCell>
+                          <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3">
+                            {prop.address || "—"}
+                          </TableCell>
+                          <TableCell className="px-2 py-2 text-xs lg:px-4 lg:py-3">
+                            {prop.mismatch ? (
+                              <Badge className="rounded-full bg-red-50 text-red-600 border border-red-100 text-xs font-medium px-2 py-0.5">
+                                Yes
+                              </Badge>
+                            ) : (
+                              <Badge className="rounded-full bg-green-50 text-green-600 border border-green-100 text-xs font-medium px-2 py-0.5">
+                                No
+                              </Badge>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Charges */}
+            <Collapsible
+              open={openSections.has("charges")}
+              onOpenChange={() => toggleSection("charges")}
+              className="border-t border-border"
+            >
+              <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
+                <div className="flex items-center gap-2">
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform text-muted-foreground",
+                      openSections.has("charges") ? "rotate-0" : "-rotate-90"
+                    )}
+                  />
+                  <p className="text-xs font-medium text-primary sm:text-sm">
+                    CHARGES - MORTGAGES & SECURED DEBTS ({registerExtract.charges.length})
+                  </p>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-4">
+                {registerExtract.charges.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">None found on this property</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {registerExtract.charges.map((charge, idx) => (
+                      <li key={idx} className="text-xs text-primary">
+                        <span className="font-medium">Entry #{charge.entry_number}:</span>{" "}
+                        {charge.entry_text}
+                        {charge.registration_date && (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            ({new Date(charge.registration_date).toLocaleDateString("en-GB")})
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Restrictions */}
+            <Collapsible
+              open={openSections.has("restrictions")}
+              onOpenChange={() => toggleSection("restrictions")}
+              className="border-t border-border"
+            >
+              <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
+                <div className="flex items-center gap-2">
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform text-muted-foreground",
+                      openSections.has("restrictions") ? "rotate-0" : "-rotate-90"
+                    )}
+                  />
+                  <p className="text-xs font-medium text-primary sm:text-sm">
+                    RESTRICTIONS ({registerExtract.restrictions.length})
+                  </p>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-4">
+                {registerExtract.restrictions.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">None found on this property</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {registerExtract.restrictions.map((restriction, idx) => (
+                      <li key={idx} className="text-xs text-primary">
+                        <span className="font-medium">Entry #{restriction.entry_number}:</span>{" "}
+                        {restriction.entry_text}
+                        {restriction.registration_date && (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            ({new Date(restriction.registration_date).toLocaleDateString("en-GB")})
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Leases */}
+            <Collapsible
+              open={openSections.has("leases")}
+              onOpenChange={() => toggleSection("leases")}
+              className="border-t border-border"
+            >
+              <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
+                <div className="flex items-center gap-2">
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform text-muted-foreground",
+                      openSections.has("leases") ? "rotate-0" : "-rotate-90"
+                    )}
+                  />
+                  <p className="text-xs font-medium text-primary sm:text-sm">
+                    LEASES ({registerExtract.leases.length})
+                  </p>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-4">
+                {registerExtract.leases.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">None found on this property</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {registerExtract.leases.map((lease, idx) => (
+                      <li key={idx} className="text-xs text-primary">
+                        <span className="font-medium">Entry #{lease.entry_number}:</span>{" "}
+                        {lease.entry_text}
+                        {lease.registration_date && (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            (from {new Date(lease.registration_date).toLocaleDateString("en-GB")})
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Notices */}
+            <Collapsible
+              open={openSections.has("notices")}
+              onOpenChange={() => toggleSection("notices")}
+              className="border-t border-border"
+            >
+              <CollapsibleTrigger className="pt-4 sm:pt-6 w-full">
+                <div className="flex items-center gap-2">
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform text-muted-foreground",
+                      openSections.has("notices") ? "rotate-0" : "-rotate-90"
+                    )}
+                  />
+                  <p className="text-xs font-medium text-primary sm:text-sm">
+                    NOTICES ({registerExtract.notices.length})
+                  </p>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-4">
+                {registerExtract.notices.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">None found on this property</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {registerExtract.notices.map((notice, idx) => (
+                      <li key={idx} className="text-xs text-primary">
+                        <span className="font-medium">Entry #{notice.entry_number}:</span>{" "}
+                        {notice.entry_text}
+                        {notice.registration_date && (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            ({new Date(notice.registration_date).toLocaleDateString("en-GB")})
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Quick Reference Flags */}
+            <div className="border-t border-border pt-4 sm:pt-6">
+              <p className={cn(fieldLabel, "mb-3 sm:mb-4 font-medium text-primary")}>
+                QUICK REFERENCE FLAGS
+              </p>
+              <div className="space-y-2">
+                {quickFlags.map((flag, idx) => {
+                  const bgColorMap = {
+                    error: "bg-red-50 border-red-100",
+                    warning: "bg-amber-50 border-amber-100",
+                    success: "bg-green-50 border-green-100",
+                  }
+                  const textColorMap = {
+                    error: "text-red-600",
+                    warning: "text-amber-600",
+                    success: "text-green-600",
+                  }
+                  return (
+                    <div
+                      key={idx}
+                      className={cn(
+                        "flex items-start gap-2 rounded-lg p-3 border",
+                        bgColorMap[flag.type]
+                      )}
+                    >
+                      <div className={cn("font-medium text-xs sm:text-sm", textColorMap[flag.type])}>
+                        {flag.label}
+                      </div>
+                      <p className={cn("text-xs", textColorMap[flag.type])}>{flag.message}</p>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </>
         )}
 
         {/* Action Buttons */}
-        {registerExtract && (
         <div className="border-t border-border pt-4 sm:pt-6 flex flex-col gap-2 sm:flex-row">
-          <Button variant="outline" size="sm" className="text-xs" disabled>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs"
+            onClick={onDownloadPdf}
+            disabled={!registerExtract.official_copy_available || isDownloadingPdf}
+          >
+            {isDownloadingPdf && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
             View Official Copy PDF
           </Button>
-          <Button variant="outline" size="sm" className="text-xs" disabled>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs"
+            onClick={() => onVerify?.(true)}
+            disabled={isVerifying}
+          >
+            {isVerifying && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
             Rescan
           </Button>
-          <Button variant="outline" size="sm" className="text-xs" disabled>
-            Export
-          </Button>
         </div>
-        )}
       </div>
     </div>
   )

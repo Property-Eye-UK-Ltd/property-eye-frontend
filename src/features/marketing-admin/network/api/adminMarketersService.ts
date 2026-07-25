@@ -29,6 +29,16 @@ export interface AdminMarketerAttribution {
     created_at: string
 }
 
+export interface AdminMarketerAgency {
+    id: string
+    name: string
+    status: string
+    created_at: string
+    attribution_method: string
+    total_fraud_value: number
+    commission_earned: number
+}
+
 export const getAdminMarketers = async (): Promise<AdminMarketerRecord[]> => {
     const { data } = await apiClient.get<AdminMarketerRecord[]>("/admin/marketers")
     return data
@@ -44,6 +54,11 @@ export const updateAdminMarketerStatus = async (
     status: AdminMarketerAuthStatus
 ): Promise<AdminMarketerRecord> => {
     const { data } = await apiClient.patch<AdminMarketerRecord>(`/admin/marketers/${marketerId}/status`, { status })
+    return data
+}
+
+export const getAdminMarketerAgencies = async (marketerId: string): Promise<AdminMarketerAgency[]> => {
+    const { data } = await apiClient.get<AdminMarketerAgency[]>(`/admin/marketers/${marketerId}/agencies`)
     return data
 }
 
