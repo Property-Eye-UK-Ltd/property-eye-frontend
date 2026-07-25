@@ -196,6 +196,25 @@ const Signup = () => {
 
                     <FormField
                         control={form.control}
+                        name="referralCode"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Referral Code (optional)</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Enter a referral code, if you have one" {...field} />
+                                </FormControl>
+                                {referralCodeFromUrl && field.value === referralCodeFromUrl && (
+                                    <p className="text-xs text-muted-foreground">
+                                        Applied from your invite link.
+                                    </p>
+                                )}
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
                         name="termsAccepted"
                         render={({ field }) => (
                             <FormItem className="flex flex-row items-start space-x-3 space-y-0">

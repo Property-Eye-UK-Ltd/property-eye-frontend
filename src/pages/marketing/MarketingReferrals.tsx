@@ -3,52 +3,73 @@ import { toast } from "sonner"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
-import { MetricCards } from "@/features/overview/components/MetricCards"
+import { MetricCards, MetricCard } from "@/features/overview/components/MetricCards"
 import { ReferralLinkField } from "@/features/marketing/referrals/components/ReferralLinkField"
 import { InviteStatusTable } from "@/features/marketing/referrals/components/InviteStatusTable"
 import {
     InviteAgencyModal,
     InviteAgencyFormValues,
 } from "@/features/marketing/referrals/components/InviteAgencyModal"
-import { agencyInvites, AgencyInvite, marketerReferralMetrics } from "@/data/marketing-data"
-
-const formatToday = () =>
-    new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+import { useMarketerReferralStats, useSendMarketerInvite } from "@/features/marketing/api/useMarketer"
 
 const MarketingReferrals = () => {
     const [isInviteOpen, setIsInviteOpen] = useState(false)
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [invites, setInvites] = useState<AgencyInvite[]>(agencyInvites)
+    const { data: stats, isLoading } = useMarketerReferralStats()
+    const sendInvite = useSendMarketerInvite()
 
     const handleInviteSubmit = (values: InviteAgencyFormValues) => {
-        setIsSubmitting(true)
-
-        const newInvite: AgencyInvite = {
-            id: `inv-${Date.now()}`,
-            agencyName: values.agencyName,
-            agencyEmail: values.agencyEmail,
-            status: "Sent",
-            dateSent: formatToday(),
-        }
-
-        setInvites((prev) => [newInvite, ...prev])
-        setIsSubmitting(false)
-        setIsInviteOpen(false)
-        toast.success(`Invite sent to ${values.agencyName}`)
+        sendInvite.mutate(
+            { invited_email: values.agencyEmail },
+            {
+                onSuccess: () => {
+                    setIsInviteOpen(false)
+                    toast.success(`Invite sent to ${values.agencyEmail}`)
+                },
+                onError: () => {
+                    toast.error("Couldn't send that invite. Try again.")
+                },
+            }
+        )
     }
+
+    const metrics: MetricCard[] = [
+        {
+            title: "Invites Sent",
+            value: isLoading ? "—" : String(stats?.invites_sent ?? 0),
+            period: "All time",
+            change: "",
+            topBarClass: "bg-progress",
+        },
+        {
+            title: "Agencies Signed Up",
+            value: isLoading ? "—" : String(stats?.agencies_signed_up ?? 0),
+            period: "All time",
+            change: "",
+            topBarClass: "bg-green-500",
+        },
+        {
+            title: "Conversion Rate",
+            value: isLoading ? "—" : `${Math.round((stats?.conversion_rate ?? 0) * 100) / 100}%`,
+            period: "Signups / invites",
+            change: "",
+            topBarClass: "bg-secondary",
+        },
+    ]
 
     return (
         <DashboardLayout variant="marketer">
             <DynamicPageHeader
                 title="Referrals"
-                filters={<ReferralLinkField onInvite={() => setIsInviteOpen(true)} />}
+                filters={
+                    <ReferralLinkField url={stats?.referral_link} onInvite={() => setIsInviteOpen(true)} />
+                }
             />
 
             <DashboardPageContent>
-                <MetricCards metrics={marketerReferralMetrics} columns={3} />
+                <MetricCards metrics={metrics} columns={3} />
 
                 <InviteStatusTable
-                    data={invites}
+                    data={stats?.invites ?? []}
                     title="Invite tracking"
                     description="Every invite you've sent, from delivery through to signup."
                 />
@@ -58,7 +79,7 @@ const MarketingReferrals = () => {
                 open={isInviteOpen}
                 onClose={() => setIsInviteOpen(false)}
                 onSubmit={handleInviteSubmit}
-                isSubmitting={isSubmitting}
+                isSubmitting={sendInvite.isPending}
             />
         </DashboardLayout>
     )
