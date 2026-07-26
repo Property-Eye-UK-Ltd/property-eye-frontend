@@ -17,5 +17,6 @@ export const consumeRedirectIntent = (): string | null => {
 
 export const resolveRedirectPath = (intent: string | null, portalContext?: string): string => {
     if (portalContext === "marketer") return "/marketing/dashboard";
+    if (portalContext === "admin") return "/admin/dashboard";
     return intent === "billing" ? "/dashboard/billing" : "/dashboard";
 };

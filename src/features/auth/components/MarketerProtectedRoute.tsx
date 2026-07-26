@@ -14,13 +14,13 @@ const MarketerProtectedRoute = () => {
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/marketer-login" state={{ from: location }} replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     // A logged-in agency/admin user hitting a /marketing/* route directly
     // must not see marketer pages, even though they're authenticated elsewhere.
     if (user && user.portal_context !== "marketer") {
-        return <Navigate to="/marketer-login" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     return <Outlet />;

@@ -72,7 +72,7 @@ const AdminForgotPassword = () => {
                 new_password: values.newPassword,
             })
             toast.success(response.message)
-            navigate("/admin/login")
+            navigate("/login")
         } catch (error) {
             toast.error(extractErrorMessage(error, "Failed to reset password. Please try again."))
         } finally {
@@ -122,7 +122,7 @@ const AdminForgotPassword = () => {
                         <div className="text-center">
                             <button
                                 type="button"
-                                onClick={() => navigate("/admin/login")}
+                                onClick={() => navigate("/login")}
                                 className="text-sm text-progress font-medium hover:underline"
                             >
                                 Back to Login
@@ -221,7 +221,7 @@ const AdminForgotPassword = () => {
                         <div className="text-center">
                             <button
                                 type="button"
-                                onClick={() => navigate("/admin/login")}
+                                onClick={() => navigate("/login")}
                                 className="text-sm text-progress font-medium hover:underline"
                             >
                                 Back to Login

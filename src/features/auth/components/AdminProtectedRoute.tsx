@@ -14,13 +14,13 @@ const AdminProtectedRoute = () => {
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/admin/login" state={{ from: location }} replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     // A logged-in agency/marketer user hitting an /admin/* route directly
     // must not see admin pages, even though they're authenticated elsewhere.
     if (user && user.portal_context !== "admin") {
-        return <Navigate to="/admin/login" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     // Force a password change for newly-invited admin users still on their

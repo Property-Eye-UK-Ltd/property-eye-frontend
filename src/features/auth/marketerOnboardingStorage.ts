@@ -62,5 +62,5 @@ export const resolveMarketerOnboardingRoute = (nextStep: string): string => {
     }
     // "done" or any unrecognized value: nothing left for this flow to
     // resume, so send the user to sign in rather than guessing.
-    return "/marketer-login";
+    return "/login";
 };

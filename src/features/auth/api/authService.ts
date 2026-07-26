@@ -28,11 +28,6 @@ export const login = async (payload: AuthLoginRequest): Promise<AuthLoginRespons
     return data;
 };
 
-export const adminLogin = async (payload: AuthLoginRequest): Promise<AuthLoginResponse> => {
-    const { data } = await apiClient.post<AuthLoginResponse>("/auth/admin/login", payload);
-    return data;
-};
-
 export const refresh = async (): Promise<AuthLoginResponse> => {
     const { data } = await apiClient.post<AuthLoginResponse>("/auth/refresh");
     return data;

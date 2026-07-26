@@ -98,8 +98,10 @@ const AgencyInformation = () => {
             if (
                 status === 401 ||
                 detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ||
-                detail === AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP
+                detail === AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP ||
+                detail === AUTH_ERROR_DETAIL.AGENCY_TOKEN_PORTAL_MISMATCH
             ) {
+                clearOnboardingStorage();
                 toast({
                     title: "Let's start over",
                     description:
