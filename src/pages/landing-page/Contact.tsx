@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +7,7 @@ import Header from "@/components/landing-page/Header";
 import Footer from "@/components/landing-page/Footer";
 import { Sms, Call, Routing } from "iconsax-react";
 import { useToast } from "@/hooks/use-toast";
+import { submitContact } from "@/features/public-site/api/publicSiteService";
 
 export default function Contact() {
     const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ export default function Contact() {
         message: ""
     });
     const [isValid, setIsValid] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -27,23 +30,35 @@ export default function Contact() {
         setFormData(prev => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would typically send the data to your backend
-        console.log("Form submitted:", formData);
+        if (!isValid || isSubmitting) return;
 
-        toast({
-            title: "Message Sent",
-            description: "We've received your message and will get back to you shortly.",
-        });
+        setIsSubmitting(true);
+        try {
+            await submitContact(formData);
 
-        // Optional: Reset form
-        setFormData({
-            name: "",
-            email: "",
-            subject: "",
-            message: ""
-        });
+            toast({
+                title: "Message Sent",
+                description: "We've received your message and will get back to you shortly.",
+            });
+
+            setFormData({
+                name: "",
+                email: "",
+                subject: "",
+                message: ""
+            });
+        } catch (error) {
+            const detail = (error as AxiosError<{ detail?: string }>).response?.data?.detail;
+            toast({
+                title: "Message Not Sent",
+                description: detail ?? "Something went wrong. Please try again shortly.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -154,9 +169,9 @@ export default function Contact() {
                             <Button
                                 type="submit"
                                 className={`w-full h-12 text-white font-medium rounded-full mt-4 transition-colors ${isValid ? 'bg-primary hover:bg-primary/90' : 'bg-gray-200 hover:bg-gray-300'}`}
-                                disabled={!isValid}
+                                disabled={!isValid || isSubmitting}
                             >
-                                Send Message
+                                {isSubmitting ? "Sending..." : "Send Message"}
                             </Button>
                         </form>
                     </div>

@@ -41,48 +41,6 @@ export const faqData = {
             answer: "You can request a demo to see how Property Eye works and determine whether it fits your agency’s needs."
         }
     ],
-    "Pricing": [
-        {
-            question: "How is Property Eye priced?",
-            answer: "Pricing is simple and predictable, structured around the scale of your agency rather than complex usage metrics."
-        },
-        {
-            question: "Are there different pricing tiers?",
-            answer: "Yes. Plans are designed to reflect agency size while maintaining consistent fraud monitoring capabilities."
-        },
-        {
-            question: "Is pricing transparent?",
-            answer: "Yes. All pricing is clearly outlined upfront with no hidden fees."
-        },
-        {
-            question: "Are there setup costs?",
-            answer: "Any onboarding or setup costs are communicated clearly before subscription begins."
-        },
-        {
-            question: "Can pricing change over time?",
-            answer: "Pricing only changes if you choose to move to a different plan as your agency grows or changes."
-        },
-        {
-            question: "Do you offer discounts?",
-            answer: "Discounts may be available for longer-term commitments. Details are discussed during onboarding."
-        },
-        {
-            question: "Is there a minimum contract length?",
-            answer: "Contract terms are flexible and designed to suit agency needs."
-        },
-        {
-            question: "Can we pause or cancel our subscription?",
-            answer: "Subscription options and cancellation terms are clearly defined in your agreement."
-        },
-        {
-            question: "Does pricing increase per transaction?",
-            answer: "No. Pricing is not based on individual transactions, ensuring predictability."
-        },
-        {
-            question: "How do we choose the right plan?",
-            answer: "Our team helps you select a plan that aligns with your agency’s size and operational structure."
-        }
-    ],
     "Features": [
         {
             question: "What does Property Eye monitor?",
@@ -207,6 +165,46 @@ export const faqData = {
         {
             question: "Who do we contact for billing support?",
             answer: "Our support team is available to assist with billing questions."
+        },
+        {
+            question: "How is Property Eye priced?",
+            answer: "Pricing is simple and predictable, structured around the scale of your agency rather than complex usage metrics."
+        },
+        {
+            question: "Are there different pricing tiers?",
+            answer: "Yes. Plans are designed to reflect agency size while maintaining consistent fraud monitoring capabilities."
+        },
+        {
+            question: "Is pricing transparent?",
+            answer: "Yes. All pricing is clearly outlined upfront with no hidden fees."
+        },
+        {
+            question: "Are there setup costs?",
+            answer: "Any onboarding or setup costs are communicated clearly before subscription begins."
+        },
+        {
+            question: "Can pricing change over time?",
+            answer: "Pricing only changes if you choose to move to a different plan as your agency grows or changes."
+        },
+        {
+            question: "Do you offer discounts?",
+            answer: "Discounts may be available for longer-term commitments. Details are discussed during onboarding."
+        },
+        {
+            question: "Is there a minimum contract length?",
+            answer: "Contract terms are flexible and designed to suit agency needs."
+        },
+        {
+            question: "Can we pause or cancel our subscription?",
+            answer: "Subscription options and cancellation terms are clearly defined in your agreement."
+        },
+        {
+            question: "Does pricing increase per transaction?",
+            answer: "No. Pricing is not based on individual transactions, ensuring predictability."
+        },
+        {
+            question: "How do we choose the right plan?",
+            answer: "Our team helps you select a plan that aligns with your agency’s size and operational structure."
         }
     ],
     "Access & Permissions": [
