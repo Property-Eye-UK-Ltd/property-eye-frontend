@@ -113,16 +113,29 @@ export const agencyVerifyOtp = async (
     return data;
 };
 
-export const agencyUpdateProfile = async (
+// Onboarding-only: saves owner/agency profile fields during signup using the
+// short-lived onboarding token from /verify-otp. Backend: POST /auth/agency/onboarding-profile.
+export const agencyUpdateOnboardingProfile = async (
     payload: AgencyProfileUpdateRequest,
-    onboardingToken?: string
+    onboardingToken: string
+): Promise<AgencyProfileUpdateResponse> => {
+    const { data } = await apiClient.post<AgencyProfileUpdateResponse>(
+        "/auth/agency/onboarding-profile",
+        payload,
+        { headers: { Authorization: `Bearer ${onboardingToken}` } }
+    );
+    return data;
+};
+
+// Authenticated-only: edits profile fields for an already-signed-up agency
+// user (dashboard settings), relying on apiClient's normal bearer-cookie
+// interceptor. Backend: POST /auth/agency/profile.
+export const agencyUpdateProfile = async (
+    payload: AgencyProfileUpdateRequest
 ): Promise<AgencyProfileUpdateResponse> => {
     const { data } = await apiClient.post<AgencyProfileUpdateResponse>(
         "/auth/agency/profile",
-        payload,
-        onboardingToken
-            ? { headers: { Authorization: `Bearer ${onboardingToken}` } }
-            : undefined
+        payload
     );
     return data;
 };

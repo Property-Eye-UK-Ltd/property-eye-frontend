@@ -74,7 +74,7 @@ const AgencyOwnerInfo = () => {
                 profileImageUrl = sasData.clean_url;
             }
 
-            await authService.agencyUpdateProfile(
+            await authService.agencyUpdateOnboardingProfile(
                 {
                     first_name: data.firstName,
                     last_name: data.lastName,
@@ -89,22 +89,14 @@ const AgencyOwnerInfo = () => {
             const status = getErrorStatus(error);
             const detail = getErrorDetail(error);
 
-            // The onboarding bearer token expired/was invalidated, or the
-            // account was already completed elsewhere — either way this
-            // token is dead and the only way forward is to restart signup.
-            //
-            // AGENCY_TOKEN_PORTAL_MISMATCH is included here because
-            // update_agency_profile (backend/src/api/v1/endpoints/agency_onboarding.py
-            // _resolve_profile_actor) falls back to treating any non-onboarding
-            // bearer token as a real session token — a leftover/stale token in
-            // sessionStorage (e.g. from an abandoned earlier signup attempt
-            // that never reached the final step where storage is cleared)
-            // surfaces as this 403 rather than a plain 401.
+            // /auth/agency/onboarding-profile only ever accepts a live
+            // onboarding token — any missing/expired/reused token, or a
+            // signup completed elsewhere, always comes back as one of these
+            // three unambiguous cases, so recovery is always "start over".
             if (
                 status === 401 ||
                 detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ||
-                detail === AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP ||
-                detail === AUTH_ERROR_DETAIL.AGENCY_TOKEN_PORTAL_MISMATCH
+                detail === AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP
             ) {
                 clearOnboardingStorage();
                 toast({

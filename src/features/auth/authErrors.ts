@@ -18,11 +18,6 @@ export const AUTH_ERROR_DETAIL = {
     WRONG_PORTAL_PREFIX: "User must authenticate through the", // + "<portal> portal"
     ACCOUNT_NOT_ACTIVE: "User account is not active",
     COULD_NOT_VALIDATE_CREDENTIALS: "Could not validate credentials",
-    // Raised by GET/POST endpoints that accept either an onboarding token or
-    // a real session token (deps.py, auth_service.py resolve_user_from_access_token)
-    // when a stale/expired onboarding token — or any token issued for a
-    // different portal — is sent to an agency-scoped profile/media endpoint.
-    AGENCY_TOKEN_PORTAL_MISMATCH: "Token portal context does not match the agency portal",
     SESSION_EXPIRED: "Session expired or invalid",
     RESET_CODE_INVALID: "Reset code is invalid or expired",
     USER_NOT_FOUND: "User not found",

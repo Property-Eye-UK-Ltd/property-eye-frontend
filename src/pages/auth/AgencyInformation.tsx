@@ -69,7 +69,7 @@ const AgencyInformation = () => {
                 agencyLogoUrl = sasData.clean_url;
             }
 
-            const response = await authService.agencyUpdateProfile(
+            const response = await authService.agencyUpdateOnboardingProfile(
                 {
                     agency_name: data.agencyName,
                     agency_address: data.agencyAddress,
@@ -98,8 +98,7 @@ const AgencyInformation = () => {
             if (
                 status === 401 ||
                 detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ||
-                detail === AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP ||
-                detail === AUTH_ERROR_DETAIL.AGENCY_TOKEN_PORTAL_MISMATCH
+                detail === AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP
             ) {
                 clearOnboardingStorage();
                 toast({
