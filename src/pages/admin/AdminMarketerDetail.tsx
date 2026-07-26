@@ -67,7 +67,7 @@ const AdminMarketerDetail = () => {
         linkAgency.mutate(agencyId, {
             onSuccess: (attribution) => {
                 setIsLinkOpen(false)
-                toast.success(`${attribution.claimed_agency_name} attributed — approved immediately`)
+                toast.success(`${attribution.claimed_agency_name} attributed `)
             },
             onError: () => {
                 toast.error("Couldn't link that agency. Try again.")

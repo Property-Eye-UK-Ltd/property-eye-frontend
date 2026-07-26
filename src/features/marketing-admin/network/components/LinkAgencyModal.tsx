@@ -46,7 +46,7 @@ export const LinkAgencyModal = ({
                     <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Link Agency</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
                         Attribute an agency to {marketerName}. Only use this once you've verified the referral yourself
-                        (e.g. via a support conversation) — this link is created as approved immediately.
+                        (e.g. via a support conversation) — this link is created.
                     </p>
                 </div>
 
