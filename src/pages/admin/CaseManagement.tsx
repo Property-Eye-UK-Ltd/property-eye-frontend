@@ -12,6 +12,8 @@ import { AdminCasesTable } from "@/features/admincases/components/AdminCasesTabl
 import { AdminCaseStatus, CaseDetermination } from "@/data/agencyCasesData"
 import { useAdminCaseAgencies, useAdminCases } from "@/features/admincases/api/useAdminCases"
 import { adminStatusToCaseStatus } from "@/features/admincases/api/adminCasesService"
+import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
+
 
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
@@ -88,6 +90,29 @@ const AdminCaseManagement = () => {
         })
     }, [casesResponse, selectedSeverity, selectedDetermination, dateFrom, dateTo])
 
+    const handleExport = (format: "csv" | "pdf") => {
+        if (filteredCases.length === 0) return;
+
+        const dataToExport = filteredCases.map(c => ({
+            "Case ID": c.caseId,
+            "Agency Name": c.agencyName,
+            "Seller Name": c.sellerName,
+            "Buyer Name": c.buyerName,
+            "Address": c.propertyAddress,
+            "Amount": c.amount,
+            "Status": c.status,
+            "Severity": c.severity,
+            "Determination": c.determination || "—",
+            "Date": c.saleDate || "—"
+        }));
+
+        if (format === "csv") {
+            exportToCSV(dataToExport, "cases_report.csv");
+        } else {
+            exportToPDF(dataToExport, "Cases Management Report");
+        }
+    }
+
     return (
         <DashboardLayout variant="super-admin">
             <DynamicPageHeader title="Case Management" />
@@ -102,20 +127,19 @@ const AdminCaseManagement = () => {
                         <div className="flex w-full flex-col gap-2.5">
                             {/* Row 1 — Search + Primary Filters + Icons */}
                             <div className="flex gap-2 items-center flex-wrap">
-                                <div className="relative flex-1 min-w-[240px]">
+                                <div className="relative flex-1 min-w-[200px] lg:max-w-md">
                                     <SearchNormal
                                         size={16}
-                                        variant="Linear"
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                                     />
                                     <Input
-                                        placeholder="Search case ID, agency, address…"
+                                        placeholder="Search by ID, Address, or Parties..."
                                         value={searchQuery}
                                         onChange={(e) => {
                                             setSearchQuery(e.target.value)
                                             setPage(1)
                                         }}
-                                        className="h-8 w-full rounded-full border-border bg-background pl-9 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
+                                        className="h-8 rounded-full border-border bg-background pl-9 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
                                     />
                                 </div>
 
@@ -125,8 +149,10 @@ const AdminCaseManagement = () => {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All Statuses</SelectItem>
-                                        {statusOptions.map((status) => (
-                                            <SelectItem key={status} value={status}>{status}</SelectItem>
+                                        {statusOptions.map((opt) => (
+                                            <SelectItem key={opt} value={opt}>
+                                                {opt}
+                                            </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
@@ -167,8 +193,8 @@ const AdminCaseManagement = () => {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-40">
-                                        <DropdownMenuItem className="cursor-pointer text-xs">Export as CSV</DropdownMenuItem>
-                                        <DropdownMenuItem className="cursor-pointer text-xs">Export as PDF</DropdownMenuItem>
+                                        <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("csv")}>Export as CSV</DropdownMenuItem>
+                                        <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("pdf")}>Export as PDF</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>

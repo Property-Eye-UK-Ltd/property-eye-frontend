@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { EventLogTable } from "@/features/reports/components/EventLogTable"
 import { useAdminEventLog } from "@/features/reports/api/useReports"
+import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
 
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-10 lg:px-4 lg:text-sm"
@@ -26,6 +27,27 @@ const ReportsExports = () => {
     const [eventLogPage, setEventLogPage] = useState(1)
 
     const { data: eventLogData } = useAdminEventLog(eventLogPage, EVENT_LOG_PAGE_SIZE)
+
+    const handleExport = (format: "csv" | "pdf") => {
+        const list = eventLogData?.items ?? []
+        if (list.length === 0) return
+
+        const dataToExport = list.map((event: any) => ({
+            "Actor": event.actorName || "—",
+            "Role": event.actorRole || "—",
+            "Action": event.action || "—",
+            "Target Type": event.targetType || "—",
+            "Target Name": event.targetName || "—",
+            "Agency": event.agencyName || "—",
+            "Date": event.createdAt ? new Date(event.createdAt).toLocaleString("en-GB") : "—"
+        }))
+
+        if (format === "csv") {
+            exportToCSV(dataToExport, "event_log_report.csv")
+        } else {
+            exportToPDF(dataToExport, "System Event Log Report")
+        }
+    }
 
     return (
         <DashboardLayout variant="super-admin">
@@ -77,8 +99,8 @@ const ReportsExports = () => {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">
-                                    <DropdownMenuItem className="cursor-pointer">Export as CSV</DropdownMenuItem>
-                                    <DropdownMenuItem className="cursor-pointer">Export as PDF</DropdownMenuItem>
+                                    <DropdownMenuItem className="cursor-pointer" onClick={() => handleExport("csv")}>Export as CSV</DropdownMenuItem>
+                                    <DropdownMenuItem className="cursor-pointer" onClick={() => handleExport("pdf")}>Export as PDF</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         }

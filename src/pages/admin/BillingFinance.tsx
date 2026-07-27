@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { SearchNormal, Filter, ArrowDown2 } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { BillingHistoryTable } from "@/features/adminbilling/components/BillingHistoryTable"
+import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
 import { CommissionApprovalTable } from "@/features/marketing-admin/finance/components/CommissionApprovalTable"
 import { AgencyRecoveriesTable } from "@/features/adminbilling/components/AgencyRecoveriesTable"
 import { billingPeriods } from "@/data/adminBillingData"
@@ -89,6 +90,52 @@ const BillingFinance = () => {
         },
     ]
 
+    const handleExport = (format: "csv" | "pdf") => {
+        let dataToExport: any[] = []
+        let title = ""
+
+        if (activeTab === "billing") {
+            if (billingHistory.length === 0) return
+            dataToExport = billingHistory.map((b: any) => ({
+                "Transaction ID": b.transactionId,
+                "Agency": b.agencyName,
+                "Plan": b.planTier,
+                "Amount": b.amount,
+                "Date": b.transactionDate,
+                "Status": b.status,
+            }))
+            title = "Billing History Report"
+        } else if (activeTab === "commissions") {
+            if (commissions.length === 0) return
+            dataToExport = commissions.map((c: any) => ({
+                "Marketer": c.marketer,
+                "Agency": c.agency,
+                "Fraud Case": c.fraudCase,
+                "Amount": c.amountLabel || `£${c.amount}`,
+                "Status": c.status,
+            }))
+            title = "Marketer Commissions Report"
+        } else if (activeTab === "agency-recoveries") {
+            if (agencyRecoveries.length === 0) return
+            dataToExport = agencyRecoveries.map((r: any) => ({
+                "Agency": r.agency,
+                "Fraud Case": r.fraudCase,
+                "Amount": r.amountLabel || `£${r.amount}`,
+                "Date": r.dateLabel || r.createdAt || "—",
+                "Status": r.status,
+            }))
+            title = "Agencies Recoveries Report"
+        }
+
+        if (dataToExport.length === 0) return
+
+        if (format === "csv") {
+            exportToCSV(dataToExport, `${activeTab}_report.csv`)
+        } else {
+            exportToPDF(dataToExport, title)
+        }
+    }
+
     return (
         <DashboardLayout variant="super-admin">
             <DynamicPageHeader
@@ -103,9 +150,20 @@ const BillingFinance = () => {
                     ) : undefined
                 }
                 actions={
-                    activeTab !== "billing"
-                        ? [{ label: "Export", onClick: () => toast.success("Finance export started") }]
-                        : undefined
+                    activeTab !== "billing" ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" className="h-9 shrink-0 rounded-full border-border px-3 text-xs lg:h-10 lg:px-4 lg:text-sm bg-white text-foreground hover:bg-slate-50">
+                                    Export
+                                    <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem className="cursor-pointer" onClick={() => handleExport("csv")}>Export as CSV</DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer" onClick={() => handleExport("pdf")}>Export as PDF</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : undefined
                 }
             />
 
@@ -149,8 +207,8 @@ const BillingFinance = () => {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-48">
-                                            <DropdownMenuItem className="cursor-pointer">Export as CSV</DropdownMenuItem>
-                                            <DropdownMenuItem className="cursor-pointer">Export as PDF</DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleExport("csv")}>Export as CSV</DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleExport("pdf")}>Export as PDF</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>

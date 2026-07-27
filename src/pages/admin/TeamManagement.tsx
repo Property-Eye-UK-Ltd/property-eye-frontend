@@ -14,6 +14,7 @@ import { AddStaffModal, AddStaffFormValues } from "@/features/adminteam/componen
 import { toAdminRoleLabel, toAdminRoleValue } from "@/features/adminteam/api/adminTeamService"
 import { useAdminTeamSummary, useAdminTeamUsers, useInviteAdminTeamUser } from "@/features/adminteam/api/useAdminTeam"
 import { toast } from "sonner"
+import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
 
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
@@ -104,6 +105,24 @@ const TeamManagement = () => {
         }
     }
 
+    const handleExport = (format: "csv" | "pdf") => {
+        if (staffItems.length === 0) return;
+
+        const dataToExport = staffItems.map(s => ({
+            "Name": s.name || "—",
+            "Email": s.email || "—",
+            "Role": s.role || "—",
+            "Last Active": s.lastActiveDate || "—",
+            "Status": s.status || "—"
+        }));
+
+        if (format === "csv") {
+            exportToCSV(dataToExport, "staff_report.csv");
+        } else {
+            exportToPDF(dataToExport, "Team Management Report");
+        }
+    }
+
     return (
         <DashboardLayout variant="super-admin">
             {/* Page Header */}
@@ -114,9 +133,8 @@ const TeamManagement = () => {
                         onClick={() => setIsAddStaffModalOpen(true)}
                         className="h-9 shrink-0 rounded-full bg-primary px-3 text-sm font-normal text-white lg:h-10 lg:px-4"
                     >
-                        <ProfileAdd size={16} variant="Outline" className="mr-1.5 lg:mr-2" />
-                        <span className="hidden sm:inline">Add a Staff</span>
-                        <span className="sm:hidden">Add</span>
+                        <ProfileAdd size={16} variant="Outline" className="mr-1 lg:mr-2" />
+                        Invite Staff
                     </Button>
                 }
             />
@@ -128,8 +146,8 @@ const TeamManagement = () => {
 
                 {/* Staff List Panel */}
                 <DashboardPanel
-                    title="Staff List"
-                    description="Manage staffs, roles, and access permissions"
+                    title="Staff Members"
+                    description="View and manage administrative staff members"
                     noPadding
                     hasBorder
                     actions={
@@ -141,7 +159,7 @@ const TeamManagement = () => {
                                     className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground lg:left-3"
                                 />
                                 <Input
-                                    placeholder="Search"
+                                    placeholder="Search staff..."
                                     value={searchQuery}
                                     onChange={(e) => {
                                         setSearchQuery(e.target.value)
@@ -164,8 +182,8 @@ const TeamManagement = () => {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">
-                                    <DropdownMenuItem className="cursor-pointer">Export as CSV</DropdownMenuItem>
-                                    <DropdownMenuItem className="cursor-pointer">Export as PDF</DropdownMenuItem>
+                                    <DropdownMenuItem className="cursor-pointer" onClick={() => handleExport("csv")}>Export as CSV</DropdownMenuItem>
+                                    <DropdownMenuItem className="cursor-pointer" onClick={() => handleExport("pdf")}>Export as PDF</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>

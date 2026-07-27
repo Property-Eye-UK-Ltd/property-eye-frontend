@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AgenciesTablePanel } from "@/features/agencies/components/AgenciesTablePanel"
 import { useAdminAgenciesSummary, useAdminAgenciesList } from "@/features/agencies/api/useAgencies"
+import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
 
 const periods = ["All Time", "This Month", "Last Week"]
 
@@ -64,7 +65,22 @@ const Agencies = () => {
     ]
 
     const handleExport = (format: "pdf" | "csv") => {
-        console.log(`Exporting as ${format}`)
+        const list = agenciesList?.items || [];
+        if (list.length === 0) return;
+
+        const dataToExport = list.map((agency: any) => ({
+            "Agency Name": agency.name || "—",
+            "Plan": agency.plan_name || "—",
+            "Users": agency.users ?? 0,
+            "Integration": agency.integration_type || "—",
+            "Fraud Detected": agency.fraud_detected ?? 0
+        }));
+
+        if (format === "csv") {
+            exportToCSV(dataToExport, "agencies_report.csv");
+        } else {
+            exportToPDF(dataToExport, "Agencies Performance Report");
+        }
     }
 
     const handleViewAgency = (agencyId: string) => {

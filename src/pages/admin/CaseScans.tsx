@@ -12,11 +12,18 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   SearchNormal,
   CloseCircle,
   Calendar,
   ExportSquare,
 } from "iconsax-react";
+import { exportToCSV, exportToPDF } from "@/lib/exportUtils";
 import CaseScansTable from "@/features/casescans/components/CaseScansTable";
 import { ScanResultsTable } from "@/features/casescans/components/ScanResultsTable";
 import RunScanButton from "@/features/casescans/components/RunScanButton";
@@ -117,6 +124,25 @@ const CaseScans = () => {
     console.error("Scan error:", error);
   };
 
+  const handleExport = (format: "csv" | "pdf") => {
+    if (matches.length === 0) return;
+
+    const dataToExport = matches.map((match: any) => ({
+      "Match ID": match.fraud_match_id || "—",
+      "Case ID": match.case_id || "—",
+      "Agency": match.agency_name || "—",
+      "Risk Level": match.risk_level || "—",
+      "Detected Date": match.scanned_at ? new Date(match.scanned_at).toLocaleDateString("en-GB") : "—",
+      "Verification Status": match.verification_status || "—",
+    }));
+
+    if (format === "csv") {
+      exportToCSV(dataToExport, "case_scans_report.csv");
+    } else {
+      exportToPDF(dataToExport, "Case Scans Report");
+    }
+  };
+
   const totalPages = Math.ceil(totalMatches / itemsPerPage);
 
   return (
@@ -202,14 +228,22 @@ const CaseScans = () => {
               </Button>
             )}
 
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 shrink-0"
-              title="Export results"
-            >
-              <ExportSquare size={16} variant="Linear" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 shrink-0"
+                  title="Export results"
+                >
+                  <ExportSquare size={16} variant="Linear" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("csv")}>Export as CSV</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("pdf")}>Export as PDF</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Row 2: Date Range + Count + Action Button */}
