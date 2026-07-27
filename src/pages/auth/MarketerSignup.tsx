@@ -36,7 +36,6 @@ const MarketerSignup = () => {
     const form = useForm<MarketerSignupFormData>({
         resolver: zodResolver(marketerSignupSchema),
         defaultValues: {
-            phoneNumber: "",
             email: state?.email ?? "",
             password: state?.password ?? "",
             termsAccepted: !!state,
@@ -48,7 +47,6 @@ const MarketerSignup = () => {
         setIsSubmitting(true);
         try {
             const response = await authService.marketerRegister({
-                phone_number: data.phoneNumber,
                 email: data.email,
                 password: data.password,
             });
@@ -95,20 +93,6 @@ const MarketerSignup = () => {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="phoneNumber"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Phone Number</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Enter your phone number" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                     <FormField
                         control={form.control}
                         name="email"

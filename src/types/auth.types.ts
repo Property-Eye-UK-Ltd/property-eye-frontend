@@ -196,7 +196,6 @@ export interface AgencyProfileUpdateRequest {
 export type AgencyProfileUpdateResponse = AuthLoginResponse | AgencyOnboardingStepResponse;
 
 export interface MarketerOnboardingStartRequest {
-    phone_number: string;
     email: string;
     password: string;
 }

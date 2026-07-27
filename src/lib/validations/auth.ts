@@ -81,7 +81,6 @@ export const agencyInfoSchema = z.object({
 export type AgencyInfoFormData = z.infer<typeof agencyInfoSchema>;
 
 export const marketerSignupSchema = z.object({
-    phoneNumber: z.string().min(10, "Please enter a valid phone number"),
     email: z.string().email("Please enter a valid email address"),
     password: z
         .string()
