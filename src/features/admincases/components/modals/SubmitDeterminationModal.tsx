@@ -127,7 +127,7 @@ export const SubmitDeterminationModal = ({
                                     className="rounded-2xl border-border"
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    Split 50/50 — Agency Share and Property Eye Share are calculated automatically.
+                                    Agency Share and Property Eye Share are calculated automatically as a starting suggestion and can be edited afterward.
                                 </p>
                             </div>
                         )}

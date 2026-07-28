@@ -84,11 +84,11 @@ export const AdminCaseOverviewCard = ({ caseData }: AdminCaseOverviewCardProps) 
                 {shares && (
                     <div className="grid grid-cols-2 gap-3 rounded-xl bg-muted/50 p-3">
                         <div>
-                            <p className="mb-1 text-xs text-muted-foreground">Agency Share (50%)</p>
+                            <p className="mb-1 text-xs text-muted-foreground">Agency Share</p>
                             <p className="text-sm font-medium text-primary">{shares.agency}</p>
                         </div>
                         <div>
-                            <p className="mb-1 text-xs text-muted-foreground">Property Eye Share (50%)</p>
+                            <p className="mb-1 text-xs text-muted-foreground">Property Eye Share</p>
                             <p className="text-sm font-medium text-primary">{shares.propertyEye}</p>
                         </div>
                     </div>

@@ -27,6 +27,7 @@ import {
 
 const MarketerSignup = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
@@ -38,6 +39,7 @@ const MarketerSignup = () => {
         defaultValues: {
             email: state?.email ?? "",
             password: state?.password ?? "",
+            confirmPassword: "",
             termsAccepted: !!state,
         },
         mode: "onChange",
@@ -137,6 +139,37 @@ const MarketerSignup = () => {
                                 <p className="text-xs text-muted-foreground mt-2">
                                     Password must be at least 8 Characters and must contain at least a Capital Letter, a Number and a Special Character.
                                 </p>
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                    <div className="relative">
+                                        <Input
+                                            type={showConfirmPassword ? "text" : "password"}
+                                            placeholder="Confirm your password"
+                                            {...field}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                        >
+                                            {showConfirmPassword ? (
+                                                <EyeSlash size="20" variant="Linear" />
+                                            ) : (
+                                                <Eye size="20" variant="Linear" />
+                                            )}
+                                        </button>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />

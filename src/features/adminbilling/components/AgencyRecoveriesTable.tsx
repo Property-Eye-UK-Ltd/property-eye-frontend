@@ -79,7 +79,7 @@ export const AgencyRecoveriesTable = ({ data }: AgencyRecoveriesTableProps) => {
     return (
         <DashboardPanel
             title="Agencies Recoveries"
-            description="Each agency's 50% share of a recovered fraud case. Payment happens outside the app — mark it here once sent."
+            description="Each agency's share of a recovered fraud case, per your agreement with them. Payment happens outside the app — mark it here once sent."
             noPadding
             hasBorder
             actions={

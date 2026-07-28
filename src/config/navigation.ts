@@ -165,12 +165,6 @@ export const marketerNavConfig: NavConfig = {
             variant: "Bulk",
         },
         {
-            label: "Payments",
-            icon: Card,
-            path: "/marketing/payments",
-            variant: "Bulk",
-        },
-        {
             label: "Referrals",
             icon: Share,
             path: "/marketing/referrals",

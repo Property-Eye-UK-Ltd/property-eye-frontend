@@ -24,21 +24,26 @@ export const resetPasswordSchema = z
         message: "Passwords do not match",
         path: ["confirmPassword"],
     });
-
-export const signupSchema = z.object({
-    phoneNumber: z.string().min(10, "Please enter a valid phone number"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z
-        .string()
-        .min(8, "Password must be at least 8 characters")
-        .regex(/[A-Z]/, "Password must contain at least one capital letter")
-        .regex(/[0-9]/, "Password must contain at least one number")
-        .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
-    referralCode: z.string().optional(),
-    termsAccepted: z.boolean().refine((val) => val === true, {
-        message: "You must accept the terms and conditions",
-    }),
-});
+export const signupSchema = z
+    .object({
+        phoneNumber: z.string().min(10, "Please enter a valid phone number"),
+        email: z.string().email("Please enter a valid email address"),
+        password: z
+            .string()
+            .min(8, "Password must be at least 8 characters")
+            .regex(/[A-Z]/, "Password must contain at least one capital letter")
+            .regex(/[0-9]/, "Password must contain at least one number")
+            .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+        confirmPassword: z.string().min(1, "Please confirm your password"),
+        referralCode: z.string().optional(),
+        termsAccepted: z.boolean().refine((val) => val === true, {
+            message: "You must accept the terms and conditions",
+        }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+    });
 
 export const changePasswordSchema = z
     .object({
@@ -80,18 +85,24 @@ export const agencyInfoSchema = z.object({
 
 export type AgencyInfoFormData = z.infer<typeof agencyInfoSchema>;
 
-export const marketerSignupSchema = z.object({
-    email: z.string().email("Please enter a valid email address"),
-    password: z
-        .string()
-        .min(8, "Password must be at least 8 characters")
-        .regex(/[A-Z]/, "Password must contain at least one capital letter")
-        .regex(/[0-9]/, "Password must contain at least one number")
-        .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
-    termsAccepted: z.boolean().refine((val) => val === true, {
-        message: "You must accept the terms and conditions",
-    }),
-});
+export const marketerSignupSchema = z
+    .object({
+        email: z.string().email("Please enter a valid email address"),
+        password: z
+            .string()
+            .min(8, "Password must be at least 8 characters")
+            .regex(/[A-Z]/, "Password must contain at least one capital letter")
+            .regex(/[0-9]/, "Password must contain at least one number")
+            .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+        confirmPassword: z.string().min(1, "Please confirm your password"),
+        termsAccepted: z.boolean().refine((val) => val === true, {
+            message: "You must accept the terms and conditions",
+        }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+    });
 
 export type MarketerSignupFormData = z.infer<typeof marketerSignupSchema>;
 

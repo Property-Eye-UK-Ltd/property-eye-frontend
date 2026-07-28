@@ -29,6 +29,7 @@ import { captureRedirectIntent } from "@/features/auth/redirectIntent";
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
@@ -40,11 +41,13 @@ const Signup = () => {
         captureRedirectIntent(searchParams);
     }, [searchParams]);
 
-    // Prefilled from ?ref=<code> when arriving via a marketer's referral
-    // link (see backend/src/api/v1/endpoints/marketer.py referral_link
-    // construction) — still editable so a user can correct/enter one
-    // manually if the link was mistyped or shared outside the URL.
     const referralCodeFromUrl = searchParams.get("ref") ?? "";
+
+    // Set only when arriving via a marketer-generated agency invite link
+    // (?token=<invite_token>, see backend send_agency_invite_email). Passed
+    // straight through as a query param — the backend resolves attribution
+    // from it, it isn't a form field the user edits.
+    const inviteToken = searchParams.get("token") ?? undefined;
 
     const form = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
@@ -52,6 +55,7 @@ const Signup = () => {
             phoneNumber: "",
             email: state?.email ?? "",
             password: state?.password ?? "",
+            confirmPassword: "",
             referralCode: referralCodeFromUrl,
             termsAccepted: !!state,
         },
@@ -68,7 +72,10 @@ const Signup = () => {
                     email: data.email,
                     password: data.password,
                 },
-                trimmedReferralCode ? { ref: trimmedReferralCode } : undefined
+                {
+                    ...(trimmedReferralCode ? { ref: trimmedReferralCode } : {}),
+                    ...(inviteToken ? { token: inviteToken } : {}),
+                }
             );
             sessionStorage.setItem(ONBOARDING_EMAIL_KEY, response.email);
             if (response.otp_expires_at) {
@@ -77,17 +84,10 @@ const Signup = () => {
             if (response.token) {
                 setOnboardingToken(response.token);
             }
-            // next_step reflects where this email's signup actually is
-            // (verify_otp / complete_profile / complete_agency) rather than
-            // assuming every submission starts a brand-new OTP flow.
             navigate(resolveOnboardingRoute(response.next_step));
         } catch (error) {
             const status = getErrorStatus(error);
 
-            // 409 "Email already registered" only fires for a fully active
-            // account (backend/src/services/agency_onboarding_service.py
-            // `start_onboarding_session`) — anything still mid-signup resumes
-            // instead of conflicting, so this always means "go sign in".
             if (status === 409) {
                 toast({
                     title: "Account already exists",
@@ -97,8 +97,6 @@ const Signup = () => {
                 return;
             }
 
-            // Invalid referral code is a field-level problem the user can fix
-            // right here, so surface it inline instead of a dismissable toast.
             if (status === 400 && getErrorDetail(error) === AUTH_ERROR_DETAIL.REFERRAL_CODE_INVALID) {
                 form.setError("referralCode", {
                     type: "manual",
@@ -117,7 +115,6 @@ const Signup = () => {
             setIsSubmitting(false);
         }
     };
-
 
     return (
         <div className="space-y-6 sm:space-y-8">
@@ -190,6 +187,37 @@ const Signup = () => {
                                 <p className="text-xs text-muted-foreground mt-2">
                                     Password must be at least 8 Characters and must contain at least a Capital Letter, a Number and a Special Character.
                                 </p>
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                    <div className="relative">
+                                        <Input
+                                            type={showConfirmPassword ? "text" : "password"}
+                                            placeholder="Confirm your password"
+                                            {...field}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                        >
+                                            {showConfirmPassword ? (
+                                                <EyeSlash size="20" variant="Linear" />
+                                            ) : (
+                                                <Eye size="20" variant="Linear" />
+                                            )}
+                                        </button>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />

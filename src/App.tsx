@@ -66,8 +66,6 @@ import MarketingAgencyDetail from "./pages/marketing/MarketingAgencyDetail";
 import MarketingClaimAgency from "./pages/marketing/MarketingClaimAgency";
 import MarketingCommissions from "./pages/marketing/MarketingCommissions";
 import MarketingCommissionDetail from "./pages/marketing/MarketingCommissionDetail";
-import MarketingPayments from "./pages/marketing/MarketingPayments";
-import MarketingPaymentDetail from "./pages/marketing/MarketingPaymentDetail";
 import MarketingDisputes from "./pages/marketing/MarketingDisputes";
 import { SubscribeGateModal } from "./components/modals/SubscribeGateModal";
 
@@ -158,8 +156,6 @@ const App = () => (
             <Route path="/marketing/agencies/:agencyId" element={<MarketingAgencyDetail />} />
             <Route path="/marketing/commissions" element={<MarketingCommissions />} />
             <Route path="/marketing/commissions/:lineId" element={<MarketingCommissionDetail />} />
-            <Route path="/marketing/payments" element={<MarketingPayments />} />
-            <Route path="/marketing/payments/:paymentId" element={<MarketingPaymentDetail />} />
             <Route path="/marketing/disputes" element={<MarketingDisputes />} />
           </Route>
 

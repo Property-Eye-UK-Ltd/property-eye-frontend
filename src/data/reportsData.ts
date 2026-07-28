@@ -78,7 +78,7 @@ export const reportsMetricsData: Record<string, MetricCard[]> = {
         {
             title: "Commission Recovered",
             value: "£30,750",
-            period: "50% of recovered amounts",
+            period: "Recovered split share",
             change: "+£4,200",
             topBarClass: "bg-green-500",
         },
@@ -108,7 +108,7 @@ export const reportsMetricsData: Record<string, MetricCard[]> = {
         {
             title: "Commission Recovered",
             value: "£4,800",
-            period: "50% of recovered amounts",
+            period: "Recovered split share",
             change: "+£600",
             topBarClass: "bg-green-500",
         },
@@ -138,7 +138,7 @@ export const reportsMetricsData: Record<string, MetricCard[]> = {
         {
             title: "Commission Recovered",
             value: "£1,100",
-            period: "50% of recovered amounts",
+            period: "Recovered split share",
             change: "+£200",
             topBarClass: "bg-green-500",
         },

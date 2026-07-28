@@ -228,7 +228,7 @@ export const helpArticles: Record<string, HelpArticleContent> = {
             {
                 title: "Recovery Revenue Split",
                 content: [
-                    "If a fraud case results in a successful recovery, the recovered amount is split equally between your agency and Property Eye (50/50). This split is separate from your subscription fee and only applies to confirmed fraudulent cases where funds are recovered.",
+                    "If a fraud case results in a successful recovery, the recovered amount is split between your agency and Property Eye according to your agency's agreement. This split is separate from your subscription fee, is not fixed platform-wide, and only applies to confirmed fraudulent cases where funds are recovered.",
                 ],
             },
             {
