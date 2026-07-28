@@ -128,12 +128,12 @@ const CaseScans = () => {
     if (matches.length === 0) return;
 
     const dataToExport = matches.map((match: any) => ({
-      "Match ID": match.fraud_match_id || "—",
-      "Case ID": match.case_id || "—",
-      "Agency": match.agency_name || "—",
-      "Risk Level": match.risk_level || "—",
-      "Detected Date": match.scanned_at ? new Date(match.scanned_at).toLocaleDateString("en-GB") : "—",
-      "Verification Status": match.verification_status || "—",
+      matchId: match.fraud_match_id || "—",
+      caseId: match.case_id || "—",
+      agency: match.agency_name || "—",
+      riskLevel: match.risk_level || "—",
+      detectedDate: match.scanned_at ? new Date(match.scanned_at).toLocaleDateString("en-GB") : "—",
+      verificationStatus: match.verification_status || "—",
     }));
 
     if (format === "csv") {

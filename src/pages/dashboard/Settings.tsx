@@ -5,7 +5,6 @@ import { DashboardPageContent } from "@/components/dashboard/DashboardPageConten
 import { SettingsTabs } from "@/features/settings/components/SettingsTabs"
 import { AgencyProfileTab } from "@/features/settings/components/AgencyProfileTab"
 import { AgencyNotificationsTab } from "@/features/settings/components/AgencyNotificationsTab"
-import { IntegrationTab } from "@/features/settings/components/IntegrationTab"
 import { SecurityTab } from "@/features/settings/components/SecurityTab"
 import { AccountTab } from "@/features/settings/components/AccountTab"
 
@@ -15,7 +14,6 @@ const Settings = () => {
     const tabs = [
         { label: "Profile", value: "profile" },
         { label: "Notifications", value: "notifications" },
-        { label: "Integration", value: "integration" },
         { label: "Security", value: "security" },
         { label: "Account", value: "account" },
     ]
@@ -28,7 +26,6 @@ const Settings = () => {
 
                 {selectedTab === "profile" && <AgencyProfileTab />}
                 {selectedTab === "notifications" && <AgencyNotificationsTab />}
-                {selectedTab === "integration" && <IntegrationTab />}
                 {selectedTab === "security" && <SecurityTab />}
                 {selectedTab === "account" && <AccountTab />}
             </DashboardPageContent>

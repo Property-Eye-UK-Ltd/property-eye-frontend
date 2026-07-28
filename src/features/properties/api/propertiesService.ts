@@ -6,6 +6,11 @@
  *   DELETE /dashboard/listings/{id}     -> deleteListing(id)
  *   POST   /dashboard/listings/manual   -> ingestManualRecord(record)
  *   POST   /dashboard/listings/upload   -> uploadDocument(file)
+ *
+ * Admin-facing equivalents (admin acting on behalf of a specific agency):
+ *   GET    /admin/listings                          -> getAdminAgencyListings(agencyId)
+ *   POST   /admin/agencies/{agencyId}/listings        -> adminIngestManualRecord(agencyId, record)
+ *   POST   /admin/agencies/{agencyId}/listings/upload -> adminUploadDocument(agencyId, file)
  */
 import { AxiosError } from "axios"
 import apiClient from "@/lib/apiClient"
@@ -41,6 +46,24 @@ export const getAdminAgencyListings = async (
         { params: { agency_id: agencyId, page, limit } }
     )
     return data
+}
+
+// Admin creates a listing on behalf of a specific agency (e.g. one that's
+// just onboarded and hasn't started uploading yet). Reuses the same
+// ingest/dedup/scan-trigger logic as ingestManualRecord below.
+export const adminIngestManualRecord = async (
+    agencyId: string,
+    input: PropertyListingInput
+): Promise<DocumentUploadResult> => {
+    try {
+        const { data } = await apiClient.post<DocumentUploadResult>(
+            `/admin/agencies/${agencyId}/listings`,
+            { record: input }
+        )
+        return data
+    } catch (error) {
+        throw toUploadError(error)
+    }
 }
 
 export const listListings = async (
@@ -95,6 +118,23 @@ export const uploadDocument = async (file: File): Promise<DocumentUploadResult> 
         const { data } = await apiClient.post<DocumentUploadResult>("/dashboard/listings/upload", formData, {
             headers: { "Content-Type": "multipart/form-data" },
         })
+        return data
+    } catch (error) {
+        throw toUploadError(error)
+    }
+}
+
+// Admin bulk-uploads a CSV/PDF of listings on behalf of a specific agency.
+// Reuses the same AI-extraction/dedup/scan-trigger logic as uploadDocument above.
+export const adminUploadDocument = async (agencyId: string, file: File): Promise<DocumentUploadResult> => {
+    try {
+        const formData = new FormData()
+        formData.append("file", file)
+        const { data } = await apiClient.post<DocumentUploadResult>(
+            `/admin/agencies/${agencyId}/listings/upload`,
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } }
+        )
         return data
     } catch (error) {
         throw toUploadError(error)

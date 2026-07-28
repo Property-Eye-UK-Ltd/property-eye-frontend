@@ -94,16 +94,16 @@ const AdminCaseManagement = () => {
         if (filteredCases.length === 0) return;
 
         const dataToExport = filteredCases.map(c => ({
-            "Case ID": c.caseId,
-            "Agency Name": c.agencyName,
-            "Seller Name": c.sellerName,
-            "Buyer Name": c.buyerName,
-            "Address": c.propertyAddress,
-            "Amount": c.amount,
-            "Status": c.status,
-            "Severity": c.severity,
-            "Determination": c.determination || "—",
-            "Date": c.saleDate || "—"
+            caseId: c.caseId,
+            agencyName: c.agencyName || "—",
+            sellerName: c.sellerName || "—",
+            buyerName: c.buyerName || "—",
+            address: c.propertyAddress || "—",
+            amount: c.amount || "—",
+            status: c.adminStatus || "—",
+            severity: c.severity || "—",
+            determination: c.determination || "—",
+            date: c.saleDate || "—"
         }));
 
         if (format === "csv") {

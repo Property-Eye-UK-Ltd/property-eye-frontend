@@ -16,11 +16,13 @@ import { RoleOverrideModal } from "@/features/agencies/components/modals/RoleOve
 import { AgencyProfileData } from "@/data/agencyProfileData"
 import { useAdminAgencyDetail, useAdminAgencyUsers } from "@/features/agencies/api/useAgencies"
 import { useAdminCases } from "@/features/admincases/api/useAdminCases"
-import { ArrowDown2 } from "iconsax-react"
+import { ArrowDown2, DocumentUpload } from "iconsax-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
-import { getAdminAgencyListings } from "@/features/properties/api/propertiesService"
-import { PropertyListing } from "@/types/properties.types"
+import { getAdminAgencyListings, adminIngestManualRecord, adminUploadDocument } from "@/features/properties/api/propertiesService"
+import { PropertyListing, PropertyListingInput } from "@/types/properties.types"
+import { AddPropertyModal } from "@/features/properties/components/modals/AddPropertyModal"
+import { BulkUploadModal } from "@/features/properties/components/modals/BulkUploadModal"
 
 
 const AgencyProfile = () => {
@@ -35,6 +37,9 @@ const AgencyProfile = () => {
     const [listingsLoading, setListingsLoading] = useState(false)
     const [listingsPage, setListingsPage] = useState(1)
     const [listingsTotalPages, setListingsTotalPages] = useState(1)
+    const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false)
+    const [isAddingProperty, setIsAddingProperty] = useState(false)
+    const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false)
 
     const { data: agencyDetail, isLoading: isAgencyLoading } = useAdminAgencyDetail(agencyId)
     const { data: agencyUsers } = useAdminAgencyUsers(agencyId)
@@ -42,23 +47,45 @@ const AgencyProfile = () => {
         agencyId ? { agency_id: agencyId, page_size: 100 } : undefined
     )
 
+    const refreshListings = () => {
+        if (!agencyId) return
+        setListingsLoading(true)
+        getAdminAgencyListings(agencyId, listingsPage, 10)
+            .then((res) => {
+                setListings(res.items)
+                setListingsTotalPages(Math.ceil(res.total / 10) || 1)
+            })
+            .catch((err) => {
+                console.error("Error loading agency listings:", err)
+                toast.error("Failed to load property listings")
+            })
+            .finally(() => {
+                setListingsLoading(false)
+            })
+    }
+
     useEffect(() => {
         if (activeTab === "listings" && agencyId) {
-            setListingsLoading(true)
-            getAdminAgencyListings(agencyId, listingsPage, 10)
-                .then((res) => {
-                    setListings(res.items)
-                    setListingsTotalPages(Math.ceil(res.total / 10) || 1)
-                })
-                .catch((err) => {
-                    console.error("Error loading agency listings:", err)
-                    toast.error("Failed to load property listings")
-                })
-                .finally(() => {
-                    setListingsLoading(false)
-                })
+            refreshListings()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, agencyId, listingsPage])
+
+    const handleAddProperty = async (values: PropertyListingInput) => {
+        if (!agencyId) return
+        setIsAddingProperty(true)
+        try {
+            await adminIngestManualRecord(agencyId, values)
+            refreshListings()
+            setIsAddingProperty(false)
+            setIsAddPropertyModalOpen(false)
+            toast.success("Property added", { description: values.address })
+        } catch (error) {
+            setIsAddingProperty(false)
+            const detail = (error as { detail?: string })?.detail ?? "Failed to add property"
+            toast.error("Couldn't add property", { description: detail })
+        }
+    }
 
     if (isAgencyLoading) {
         return (
@@ -220,6 +247,24 @@ const AgencyProfile = () => {
                         description="Track properties registered under this agency."
                         noPadding
                         hasBorder
+                        actions={
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setIsBulkUploadModalOpen(true)}
+                                    className="rounded-full h-10 px-4 gap-2"
+                                >
+                                    <DocumentUpload size={18} variant="Outline" />
+                                    Bulk Upload
+                                </Button>
+                                <Button
+                                    onClick={() => setIsAddPropertyModalOpen(true)}
+                                    className="rounded-full h-10 px-4"
+                                >
+                                    Add Property
+                                </Button>
+                            </div>
+                        }
                     >
                         <AgencyListingsTablePanel
                             data={listings}
@@ -238,6 +283,20 @@ const AgencyProfile = () => {
                 open={isRoleModalOpen}
                 onClose={() => setIsRoleModalOpen(false)}
                 onConfirm={handleRoleUpdate}
+            />
+
+            <AddPropertyModal
+                open={isAddPropertyModalOpen}
+                onClose={() => setIsAddPropertyModalOpen(false)}
+                onSubmit={handleAddProperty}
+                isSubmitting={isAddingProperty}
+            />
+
+            <BulkUploadModal
+                open={isBulkUploadModalOpen}
+                onClose={() => setIsBulkUploadModalOpen(false)}
+                onUpload={(file) => adminUploadDocument(agencyId as string, file)}
+                onUploaded={refreshListings}
             />
         </DashboardLayout>
     )

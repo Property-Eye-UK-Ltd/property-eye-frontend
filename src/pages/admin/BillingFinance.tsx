@@ -97,32 +97,32 @@ const BillingFinance = () => {
         if (activeTab === "billing") {
             if (billingHistory.length === 0) return
             dataToExport = billingHistory.map((b: any) => ({
-                "Transaction ID": b.transactionId,
-                "Agency": b.agencyName,
-                "Plan": b.planTier,
-                "Amount": b.amount,
-                "Date": b.transactionDate,
-                "Status": b.status,
+                transactionId: b.transactionId,
+                agency: b.agencyName,
+                plan: b.planTier,
+                amount: b.amount,
+                date: b.transactionDate,
+                status: b.status,
             }))
             title = "Billing History Report"
         } else if (activeTab === "commissions") {
             if (commissions.length === 0) return
             dataToExport = commissions.map((c: any) => ({
-                "Marketer": c.marketer,
-                "Agency": c.agency,
-                "Fraud Case": c.fraudCase,
-                "Amount": c.amountLabel || `£${c.amount}`,
-                "Status": c.status,
+                marketer: c.marketer,
+                agency: c.agency,
+                fraudCase: c.fraudCase,
+                amount: c.amountLabel || `£${c.amount}`,
+                status: c.status,
             }))
             title = "Marketer Commissions Report"
         } else if (activeTab === "agency-recoveries") {
             if (agencyRecoveries.length === 0) return
             dataToExport = agencyRecoveries.map((r: any) => ({
-                "Agency": r.agency,
-                "Fraud Case": r.fraudCase,
-                "Amount": r.amountLabel || `£${r.amount}`,
-                "Date": r.dateLabel || r.createdAt || "—",
-                "Status": r.status,
+                agency: r.agency,
+                fraudCase: r.fraudCase,
+                amount: r.amountLabel || `£${r.amount}`,
+                date: r.dateLabel || r.createdAt || "—",
+                status: r.status,
             }))
             title = "Agencies Recoveries Report"
         }

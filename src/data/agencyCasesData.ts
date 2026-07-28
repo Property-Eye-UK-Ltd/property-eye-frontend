@@ -32,6 +32,8 @@ export interface AgencyCase {
     agencyDispute?: AgencyDisputeStatus
     disputeNote?: string
     disputeResolutionNote?: string
+    sellerName?: string
+    amount?: string
 }
 
 export const adminCaseStatusStyles: Record<AdminCaseStatus, string> = {

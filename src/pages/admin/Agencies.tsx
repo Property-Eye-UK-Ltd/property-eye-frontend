@@ -65,15 +65,15 @@ const Agencies = () => {
     ]
 
     const handleExport = (format: "pdf" | "csv") => {
-        const list = agenciesList?.items || [];
+        const list = agenciesList?.agencies || [];
         if (list.length === 0) return;
 
         const dataToExport = list.map((agency: any) => ({
-            "Agency Name": agency.name || "—",
-            "Plan": agency.plan_name || "—",
-            "Users": agency.users ?? 0,
-            "Integration": agency.integration_type || "—",
-            "Fraud Detected": agency.fraud_detected ?? 0
+            agencyName: agency.name || "—",
+            plan: agency.plan_name || "—",
+            users: agency.users ?? 0,
+            integration: agency.integration_type || "—",
+            fraudDetected: agency.fraud_detected ?? 0
         }));
 
         if (format === "csv") {

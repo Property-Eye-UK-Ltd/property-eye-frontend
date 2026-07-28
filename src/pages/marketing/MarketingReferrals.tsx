@@ -41,6 +41,13 @@ const MarketingReferrals = () => {
             change: "",
             topBarClass: "bg-progress",
         },
+        {
+            title: "Conversion Rate",
+            value: isLoading ? "—" : `${stats?.conversion_rate ?? 0}%`,
+            period: "Signups / invites",
+            change: "",
+            topBarClass: "bg-progress",
+        },
     ]
 
     return (

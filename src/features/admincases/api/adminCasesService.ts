@@ -176,6 +176,8 @@ export const fromApiAdminCase = (c: AdminFraudCaseApi): AgencyCase => ({
     flagNote: c.flag_note ?? undefined,
     returnNote: c.return_reason ?? undefined,
     submittedAt: c.submitted_at ?? undefined,
+    sellerName: c.vendor_name ?? "—",
+    amount: c.price ? (c.price.startsWith("£") ? c.price : `£${Number(c.price).toLocaleString("en-GB")}`) : "—",
 })
 
 export const getAdminCases = async (params?: {

@@ -32,14 +32,28 @@ const ReportsExports = () => {
         const list = eventLogData?.items ?? []
         if (list.length === 0) return
 
+        const actionLabels: Record<string, string> = {
+            login: "Login",
+            logout: "Logout",
+            create_case: "Case Created",
+            update_case: "Case Updated",
+            export_report: "Report Exported",
+        }
+
         const dataToExport = list.map((event: any) => ({
-            "Actor": event.actorName || "—",
-            "Role": event.actorRole || "—",
-            "Action": event.action || "—",
-            "Target Type": event.targetType || "—",
-            "Target Name": event.targetName || "—",
-            "Agency": event.agencyName || "—",
-            "Date": event.createdAt ? new Date(event.createdAt).toLocaleString("en-GB") : "—"
+            actor: event.actor_name || "—",
+            role: event.actor_role || "—",
+            action: actionLabels[event.action] || event.action || "—",
+            targetType: event.target_type || "—",
+            targetName: event.target_id || "—",
+            agency: event.agency_name || "—",
+            date: event.date
+                ? new Date(event.date).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                  })
+                : "—",
         }))
 
         if (format === "csv") {

@@ -61,6 +61,7 @@ export interface AttributionClaimResult {
 export interface ReferralStats {
     referral_link: string
     invites_sent: number
+    conversion_rate: number
     invites: RecentInvite[]
 }
 
