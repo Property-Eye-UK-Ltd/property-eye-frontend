@@ -229,7 +229,12 @@ const Signup = () => {
                             <FormItem>
                                 <FormLabel>Referral Code (optional)</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter a referral code, if you have one" {...field} />
+                                    <Input
+                                        placeholder="Enter a referral code, if you have one"
+                                        readOnly={!!referralCodeFromUrl}
+                                        className={referralCodeFromUrl ? "bg-muted cursor-not-allowed opacity-80" : ""}
+                                        {...field}
+                                    />
                                 </FormControl>
                                 {referralCodeFromUrl && field.value === referralCodeFromUrl && (
                                     <p className="text-xs text-muted-foreground">
