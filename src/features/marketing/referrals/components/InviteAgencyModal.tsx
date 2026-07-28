@@ -5,6 +5,7 @@ import { InfoCircle } from "iconsax-react"
 
 export interface InviteAgencyFormValues {
     agencyEmail: string
+    message: string
 }
 
 interface InviteAgencyModalProps {
@@ -12,10 +13,12 @@ interface InviteAgencyModalProps {
     onClose: () => void
     onSubmit: (values: InviteAgencyFormValues) => Promise<void> | void
     isSubmitting?: boolean
+    referralCode?: string
 }
 
 const initialFormValues: InviteAgencyFormValues = {
     agencyEmail: "",
+    message: "",
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -25,6 +28,7 @@ export const InviteAgencyModal = ({
     onClose,
     onSubmit,
     isSubmitting = false,
+    referralCode,
 }: InviteAgencyModalProps) => {
     const [formValues, setFormValues] = useState<InviteAgencyFormValues>(initialFormValues)
     const [emailError, setEmailError] = useState<string>("")
@@ -36,7 +40,7 @@ export const InviteAgencyModal = ({
         }
     }, [open])
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target
         setFormValues((prev) => ({ ...prev, [name]: value }))
 
@@ -89,12 +93,12 @@ export const InviteAgencyModal = ({
                 <div className="shrink-0 bg-white px-4 py-4 pr-12 text-left sm:px-6 sm:py-6 sm:pr-6">
                     <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Invite an Agency</h2>
                     <p className="text-sm text-muted-foreground mt-1">
-                        We'll send a branded invite tied to your referral code. Attribution locks once they sign up.
+                        We'll send an invite tied to your referral code. Attribution locks once they sign up.
                     </p>
                 </div>
 
                 <div className="overflow-y-auto bg-muted px-4 py-4 scrollbar-super-thin sm:px-6 sm:py-8">
-                    <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-6">
+                    <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-6 space-y-5">
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-foreground">Contact Email</label>
                             <Input
@@ -108,6 +112,27 @@ export const InviteAgencyModal = ({
                             />
                             {emailError && <p className="text-xs text-red-600">{emailError}</p>}
                         </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Message (optional)</label>
+                            <textarea
+                                name="message"
+                                value={formValues.message}
+                                onChange={handleInputChange}
+                                placeholder="Add a personal note to include in the invite"
+                                rows={4}
+                                className="w-full resize-none rounded-xl border border-border bg-transparent px-4 py-3 text-sm"
+                            />
+                        </div>
+
+                        {referralCode && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-foreground">Your Referral Code</label>
+                                <div className="h-12 flex items-center rounded-xl border border-border bg-muted px-4 text-sm text-muted-foreground">
+                                    {referralCode}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

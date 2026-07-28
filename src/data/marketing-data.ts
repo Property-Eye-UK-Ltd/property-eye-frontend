@@ -81,38 +81,6 @@ export const commissionLines: CommissionLine[] = [
     { id: "cl-9", agency: "Pinnacle Homes", commissionPct: "TBD*", amount: "£2,482", status: "Pending" },
 ]
 
-export type InviteStatus = "Sent" | "Opened" | "Signed up"
-
-export interface AgencyInvite {
-    id: string
-    agencyName: string
-    agencyEmail: string
-    status: InviteStatus
-    dateSent: string
-}
-
-export const inviteStatusStyles: Record<InviteStatus, string> = {
-    Sent: "bg-gray-100 text-gray-600 border border-gray-200",
-    Opened: "bg-blue-50 text-blue-600 border border-blue-100",
-    "Signed up": "bg-green-50 text-green-600 border border-green-100",
-}
-
-// Referral KPIs shown on the Referrals page
-export const marketerReferralMetrics: MetricCard[] = [
-    { title: "Invites Sent", value: "24", period: "All time", change: "+5", topBarClass: "bg-progress" },
-    { title: "Agencies Signed Up", value: "11", period: "All time", change: "+2", topBarClass: "bg-green-500" },
-    { title: "Conversion Rate", value: "46%", period: "Signups / invites", change: "+4%", topBarClass: "bg-secondary" },
-]
-
-export const agencyInvites: AgencyInvite[] = [
-    { id: "inv-1", agencyName: "Harborview Estates", agencyEmail: "ops@harborview.co.uk", status: "Signed up", dateSent: "2 Nov, 2025" },
-    { id: "inv-2", agencyName: "Crestline Properties", agencyEmail: "hello@crestline.co.uk", status: "Opened", dateSent: "28 Oct, 2025" },
-    { id: "inv-3", agencyName: "Maple & Co Lettings", agencyEmail: "info@mapleco.co.uk", status: "Sent", dateSent: "24 Oct, 2025" },
-    { id: "inv-4", agencyName: "Northgate Homes", agencyEmail: "team@northgatehomes.co.uk", status: "Signed up", dateSent: "15 Oct, 2025" },
-    { id: "inv-5", agencyName: "Bridgewater Realty", agencyEmail: "contact@bridgewater.co.uk", status: "Opened", dateSent: "9 Oct, 2025" },
-    { id: "inv-6", agencyName: "Sterling Property Group", agencyEmail: "admin@sterlingpg.co.uk", status: "Sent", dateSent: "3 Oct, 2025" },
-]
-
 // ---------------------------------------------------------------------------
 // My Agencies (portfolio)
 // ---------------------------------------------------------------------------

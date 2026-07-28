@@ -10,16 +10,17 @@ import {
     InviteAgencyModal,
     InviteAgencyFormValues,
 } from "@/features/marketing/referrals/components/InviteAgencyModal"
-import { useMarketerReferralStats, useSendMarketerInvite } from "@/features/marketing/api/useMarketer"
+import { useMarketerProfile, useMarketerReferralStats, useSendMarketerInvite } from "@/features/marketing/api/useMarketer"
 
 const MarketingReferrals = () => {
     const [isInviteOpen, setIsInviteOpen] = useState(false)
     const { data: stats, isLoading } = useMarketerReferralStats()
+    const { data: profile } = useMarketerProfile()
     const sendInvite = useSendMarketerInvite()
 
     const handleInviteSubmit = (values: InviteAgencyFormValues) => {
         sendInvite.mutate(
-            { invited_email: values.agencyEmail },
+            { invited_email: values.agencyEmail, message: values.message.trim() || undefined },
             {
                 onSuccess: () => {
                     setIsInviteOpen(false)
@@ -39,20 +40,6 @@ const MarketingReferrals = () => {
             period: "All time",
             change: "",
             topBarClass: "bg-progress",
-        },
-        {
-            title: "Agencies Signed Up",
-            value: isLoading ? "—" : String(stats?.agencies_signed_up ?? 0),
-            period: "All time",
-            change: "",
-            topBarClass: "bg-green-500",
-        },
-        {
-            title: "Conversion Rate",
-            value: isLoading ? "—" : `${Math.round((stats?.conversion_rate ?? 0) * 100) / 100}%`,
-            period: "Signups / invites",
-            change: "",
-            topBarClass: "bg-secondary",
         },
     ]
 
@@ -80,6 +67,7 @@ const MarketingReferrals = () => {
                 onClose={() => setIsInviteOpen(false)}
                 onSubmit={handleInviteSubmit}
                 isSubmitting={sendInvite.isPending}
+                referralCode={profile?.referral_code}
             />
         </DashboardLayout>
     )

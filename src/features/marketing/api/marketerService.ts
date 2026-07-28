@@ -61,8 +61,6 @@ export interface AttributionClaimResult {
 export interface ReferralStats {
     referral_link: string
     invites_sent: number
-    agencies_signed_up: number
-    conversion_rate: number
     invites: RecentInvite[]
 }
 
@@ -71,6 +69,7 @@ export interface AgencyInvite {
     token: string
     marketer_id: string
     invited_email: string
+    message: string | null
     status: string
     created_at: string
 }
@@ -201,7 +200,7 @@ export const getMarketerInviteDetail = async (inviteId: string): Promise<AgencyI
     return data
 }
 
-export const sendMarketerInvite = async (payload: { invited_email: string }): Promise<AgencyInvite> => {
+export const sendMarketerInvite = async (payload: { invited_email: string; message?: string }): Promise<AgencyInvite> => {
     const { data } = await apiClient.post<AgencyInvite>("/marketer/invites", payload)
     return data
 }

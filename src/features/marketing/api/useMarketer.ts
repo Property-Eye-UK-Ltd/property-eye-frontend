@@ -102,7 +102,7 @@ export const useMarketerInviteDetail = (inviteId: string | undefined) =>
 export const useSendMarketerInvite = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (payload: { invited_email: string }) => sendMarketerInvite(payload),
+        mutationFn: (payload: { invited_email: string; message?: string }) => sendMarketerInvite(payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: queryKeys.marketer.invites() })
             queryClient.invalidateQueries({ queryKey: queryKeys.marketer.referralStats() })

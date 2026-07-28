@@ -6,7 +6,6 @@ import { RecentInvite } from "@/features/marketing/api/marketerService"
 
 const statusStyles: Record<string, string> = {
     signed_up: "bg-green-50 text-green-600 border border-green-100",
-    opened: "bg-blue-50 text-blue-600 border border-blue-100",
     sent: "bg-amber-50 text-amber-600 border border-amber-100",
 }
 
