@@ -1,18 +1,29 @@
 import { useMemo, useState } from "react"
+import { isAxiosError } from "axios"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SearchNormal, ArrowDown2, Calendar, CloseCircle } from "iconsax-react"
 import { AdminCasesTable } from "@/features/admincases/components/AdminCasesTable"
 import { AdminCaseStatus, CaseDetermination } from "@/data/agencyCasesData"
 import { useAdminCaseAgencies, useAdminCases } from "@/features/admincases/api/useAdminCases"
-import { adminStatusToCaseStatus } from "@/features/admincases/api/adminCasesService"
+import { adminStatusToCaseStatus, getAdminCasesForExport } from "@/features/admincases/api/adminCasesService"
 import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
+
+const extractErrorMessage = (error: unknown, fallback: string): string => {
+    if (!isAxiosError(error)) return fallback
+    const detail = (error.response?.data as { detail?: string } | undefined)?.detail
+    return typeof detail === "string" ? detail : fallback
+}
 
 
 const panelBtnClass =
@@ -27,6 +38,11 @@ const AdminCaseManagement = () => {
     const [dateFrom, setDateFrom] = useState("")
     const [dateTo, setDateTo] = useState("")
     const [page, setPage] = useState(1)
+    const [exportDialogOpen, setExportDialogOpen] = useState(false)
+    const [pendingFormat, setPendingFormat] = useState<"csv" | "pdf" | null>(null)
+    const [exportDateFrom, setExportDateFrom] = useState("")
+    const [exportDateTo, setExportDateTo] = useState("")
+    const [isExporting, setIsExporting] = useState(false)
 
     const statusOptions: AdminCaseStatus[] = [
         "Open",

@@ -108,6 +108,21 @@ export const getAdminInvoices = async (params?: {
     }
 }
 
+export const getAdminInvoicesForExport = async (params?: {
+    search?: string
+    status?: string
+    date_from?: string
+    date_to?: string
+}): Promise<{ items: BillingTransaction[]; total: number }> => {
+    const { data } = await apiClient.get<AdminInvoiceListResponse>("/admin/billing/invoices", {
+        params: { ...params, export: true },
+    })
+    return {
+        items: data.items.map(fromApiInvoice),
+        total: data.total,
+    }
+}
+
 export interface AdminInvoiceDetail {
     id: string
     transactionId: string

@@ -53,6 +53,16 @@ export const getAdminAgencyRecoveries = async (params?: {
     return data.map(fromApiAgencyRecovery)
 }
 
+export const getAdminAgencyRecoveriesForExport = async (params?: {
+    status?: string
+    agency_id?: string
+    date_from?: string
+    date_to?: string
+}): Promise<AdminAgencyRecoveryRow[]> => {
+    const { data } = await apiClient.get<AdminAgencyRecoveryApi[]>("/admin/agency-recoveries", { params })
+    return data.map(fromApiAgencyRecovery)
+}
+
 export const markAgencyRecoveryPaid = async (recoveryId: string): Promise<AdminAgencyRecoveryRow> => {
     const { data } = await apiClient.post<AdminAgencyRecoveryApi>(`/admin/agency-recoveries/${recoveryId}/mark-paid`)
     return fromApiAgencyRecovery(data)

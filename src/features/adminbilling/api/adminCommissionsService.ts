@@ -53,6 +53,17 @@ export const getAdminCommissions = async (params?: {
     return data.map(fromApiCommission)
 }
 
+export const getAdminCommissionsForExport = async (params?: {
+    status?: string
+    marketer_id?: string
+    agency_id?: string
+    date_from?: string
+    date_to?: string
+}): Promise<AdminCommissionRow[]> => {
+    const { data } = await apiClient.get<AdminCommissionApi[]>("/admin/commissions", { params })
+    return data.map(fromApiCommission)
+}
+
 export const approveCommission = async (commissionId: string): Promise<AdminCommissionRow> => {
     const { data } = await apiClient.post<AdminCommissionApi>(`/admin/commissions/${commissionId}/approve`)
     return fromApiCommission(data)

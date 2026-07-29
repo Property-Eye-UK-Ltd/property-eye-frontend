@@ -76,10 +76,7 @@ export const ActiveAlertsPanel = ({
             <TableRow className="bg-gray-50">
               <TableHead className="px-4 font-medium">Property</TableHead>
               <TableHead className="px-4 font-medium">
-                <span className="flex flex-col items-start gap-0.5">
-                  <span>Match Confidence</span>
-                  <span className="text-[10px] font-normal text-muted-foreground normal-case">how well the record matches</span>
-                </span>
+                Match Confidence
               </TableHead>
               <TableHead className="px-4 font-medium">
                 <button
@@ -92,14 +89,11 @@ export const ActiveAlertsPanel = ({
               </TableHead>
               <TableHead className="px-4 font-medium">
                 <button
-                  className="flex flex-col items-start gap-0.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   onClick={() => handleSort("severity")}
                 >
-                  <span className="flex items-center gap-1">
-                    Timing Risk
-                    <ChevronsUpDown className="h-4 w-4" />
-                  </span>
-                  <span className="text-[10px] font-normal normal-case">days between withdrawal &amp; sale</span>
+                  Timing Risk
+                  <ChevronsUpDown className="h-4 w-4" />
                 </button>
               </TableHead>
               <TableHead className="px-4 font-medium">Date Detected</TableHead>

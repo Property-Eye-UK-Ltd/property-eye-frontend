@@ -79,12 +79,7 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                             </TableHead>
                             <TableHead className={th}>Withdrawal</TableHead>
                             <TableHead className={th}>Sale Date</TableHead>
-                            <TableHead className={th}>
-                                <span className="flex flex-col items-start gap-0.5">
-                                    <span>Timing Risk</span>
-                                    <span className="text-[10px] font-normal text-muted-foreground normal-case">days between withdrawal &amp; sale</span>
-                                </span>
-                            </TableHead>
+                            <TableHead className={th}>Timing Risk</TableHead>
                             <TableHead className={th}>Status</TableHead>
                             <TableHead className={th}>Determination</TableHead>
                         </TableRow>

@@ -80,6 +80,19 @@ export const getAdminTeamUsers = async (params?: {
     return { items: data.items.map(fromApiUser), total: data.total }
 }
 
+export const getAdminTeamUsersForExport = async (params?: {
+    status?: string
+    sort_by?: string
+    sort_dir?: string
+    search?: string
+}): Promise<PaginatedAdminUsersResponse> => {
+    const { data } = await apiClient.get<{ items: AdminTeamUserApiResponse[]; total: number }>(
+        "/dashboard/admin/team/users",
+        { params: { ...params, export: true } }
+    )
+    return { items: data.items.map(fromApiUser), total: data.total }
+}
+
 export const getAdminTeamUser = async (userId: string): Promise<AdminUser> => {
     const { data } = await apiClient.get<AdminTeamUserApiResponse>(`/dashboard/admin/team/users/${userId}`)
     return fromApiUser(data)

@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { isAxiosError } from "axios"
+import { Loader2 } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
@@ -11,10 +13,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { StaffListTable } from "@/features/adminteam/components/StaffListTable"
 import type { StaffRole } from "@/data/teamManagementData"
 import { AddStaffModal, AddStaffFormValues } from "@/features/adminteam/components/modals/AddStaffModal"
-import { toAdminRoleLabel, toAdminRoleValue } from "@/features/adminteam/api/adminTeamService"
+import { toAdminRoleLabel, toAdminRoleValue, getAdminTeamUsersForExport } from "@/features/adminteam/api/adminTeamService"
 import { useAdminTeamSummary, useAdminTeamUsers, useInviteAdminTeamUser } from "@/features/adminteam/api/useAdminTeam"
 import { toast } from "sonner"
 import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
+
+const extractErrorMessage = (error: unknown, fallback: string): string => {
+    if (!isAxiosError(error)) return fallback
+    const detail = (error.response?.data as { detail?: string } | undefined)?.detail
+    return typeof detail === "string" ? detail : fallback
+}
 
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-9 lg:px-4 lg:text-sm"
@@ -33,6 +41,7 @@ const TeamManagement = () => {
     const [sortColumn, setSortColumn] = useState<"role" | "lastActiveDate" | "status" | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false)
+    const [isExporting, setIsExporting] = useState(false)
 
     const { data: summary } = useAdminTeamSummary()
     const { data: staffPage } = useAdminTeamUsers({
@@ -105,21 +114,45 @@ const TeamManagement = () => {
         }
     }
 
-    const handleExport = (format: "csv" | "pdf") => {
-        if (staffItems.length === 0) return;
+    const handleExport = async (format: "csv" | "pdf") => {
+        setIsExporting(true)
+        try {
+            const fullPage = await getAdminTeamUsersForExport({
+                search: searchQuery || undefined,
+                sort_by: sortColumn ? sortByMap[sortColumn] : "name",
+                sort_dir: sortDirection,
+            })
+            const fullStaffItems = fullPage.items.map((s) => ({
+                id: s.id,
+                name: s.name,
+                email: s.email,
+                role: toAdminRoleLabel(s.role) as StaffRole,
+                lastActiveDate: s.lastActive ?? "Never",
+                status: s.status,
+            }))
 
-        const dataToExport = staffItems.map(s => ({
-            "Name": s.name || "—",
-            "Email": s.email || "—",
-            "Role": s.role || "—",
-            "Last Active": s.lastActiveDate || "—",
-            "Status": s.status || "—"
-        }));
+            if (fullStaffItems.length === 0) {
+                toast.error("No staff members found to export")
+                return
+            }
 
-        if (format === "csv") {
-            exportToCSV(dataToExport, "staff_report.csv");
-        } else {
-            exportToPDF(dataToExport, "Team Management Report");
+            const dataToExport = fullStaffItems.map(s => ({
+                "Name": s.name || "—",
+                "Email": s.email || "—",
+                "Role": s.role || "—",
+                "Last Active": s.lastActiveDate || "—",
+                "Status": s.status || "—"
+            }));
+
+            if (format === "csv") {
+                exportToCSV(dataToExport, "staff_report.csv");
+            } else {
+                exportToPDF(dataToExport, "Team Management Report");
+            }
+        } catch (error) {
+            toast.error(extractErrorMessage(error, "Failed to export staff list. Please try again."))
+        } finally {
+            setIsExporting(false)
         }
     }
 
@@ -176,9 +209,18 @@ const TeamManagement = () => {
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className={panelBtnClass}>
-                                        Export
-                                        <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
+                                    <Button variant="outline" className={panelBtnClass} disabled={isExporting}>
+                                        {isExporting ? (
+                                            <>
+                                                <Loader2 className="mr-1 h-4 w-4 animate-spin lg:mr-2" />
+                                                Exporting...
+                                            </>
+                                        ) : (
+                                            <>
+                                                Export
+                                                <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
+                                            </>
+                                        )}
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">

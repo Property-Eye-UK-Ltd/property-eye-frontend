@@ -1,15 +1,27 @@
 import { useState } from "react"
+import { isAxiosError } from "axios"
 import { DocumentText, ArrowDown2 } from "iconsax-react"
+import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { EventLogTable } from "@/features/reports/components/EventLogTable"
 import { useAdminEventLog } from "@/features/reports/api/useReports"
+import { getAdminEventLogForExport } from "@/features/reports/api/reportsService"
 import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
+
+const extractErrorMessage = (error: unknown, fallback: string): string => {
+    if (!isAxiosError(error)) return fallback
+    const detail = (error.response?.data as { detail?: string } | undefined)?.detail
+    return typeof detail === "string" ? detail : fallback
+}
 
 const panelBtnClass =
     "h-8 shrink-0 rounded-full border-border px-3 text-xs lg:h-10 lg:px-4 lg:text-sm"
@@ -22,45 +34,75 @@ const pageTabs = [
 
 const EVENT_LOG_PAGE_SIZE = 20
 
+const actionLabels: Record<string, string> = {
+    login: "Login",
+    logout: "Logout",
+    create_case: "Case Created",
+    update_case: "Case Updated",
+    export_report: "Report Exported",
+}
+
 const ReportsExports = () => {
     const [activeTab, setActiveTab] = useState("audit")
     const [eventLogPage, setEventLogPage] = useState(1)
+    const [exportDialogOpen, setExportDialogOpen] = useState(false)
+    const [pendingFormat, setPendingFormat] = useState<"csv" | "pdf" | null>(null)
+    const [exportDateFrom, setExportDateFrom] = useState("")
+    const [exportDateTo, setExportDateTo] = useState("")
+    const [isExporting, setIsExporting] = useState(false)
 
     const { data: eventLogData } = useAdminEventLog(eventLogPage, EVENT_LOG_PAGE_SIZE)
 
+    const runExport = async (format: "csv" | "pdf", dateFrom: string, dateTo: string) => {
+        setIsExporting(true)
+        try {
+            const fullData = await getAdminEventLogForExport(dateFrom || undefined, dateTo || undefined)
+            const list = fullData.items ?? []
+            if (list.length === 0) {
+                toast.error("No event log entries found for the selected date range")
+                return
+            }
+
+            const dataToExport = list.map((event: any) => ({
+                actor: event.actor_name || "—",
+                role: event.actor_role || "—",
+                action: actionLabels[event.action] || event.action || "—",
+                targetType: event.target_type || "—",
+                targetName: event.target_id || "—",
+                agency: event.agency_name || "—",
+                date: event.date
+                    ? new Date(event.date).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                      })
+                    : "—",
+            }))
+
+            if (format === "csv") {
+                exportToCSV(dataToExport, "event_log_report.csv")
+            } else {
+                exportToPDF(dataToExport, "System Event Log Report")
+            }
+        } catch (error) {
+            toast.error(extractErrorMessage(error, "Failed to export event log. Please try again."))
+        } finally {
+            setIsExporting(false)
+        }
+    }
+
     const handleExport = (format: "csv" | "pdf") => {
-        const list = eventLogData?.items ?? []
-        if (list.length === 0) return
+        setPendingFormat(format)
+        setExportDateFrom("")
+        setExportDateTo("")
+        setExportDialogOpen(true)
+    }
 
-        const actionLabels: Record<string, string> = {
-            login: "Login",
-            logout: "Logout",
-            create_case: "Case Created",
-            update_case: "Case Updated",
-            export_report: "Report Exported",
-        }
-
-        const dataToExport = list.map((event: any) => ({
-            actor: event.actor_name || "—",
-            role: event.actor_role || "—",
-            action: actionLabels[event.action] || event.action || "—",
-            targetType: event.target_type || "—",
-            targetName: event.target_id || "—",
-            agency: event.agency_name || "—",
-            date: event.date
-                ? new Date(event.date).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                  })
-                : "—",
-        }))
-
-        if (format === "csv") {
-            exportToCSV(dataToExport, "event_log_report.csv")
-        } else {
-            exportToPDF(dataToExport, "System Event Log Report")
-        }
+    const handleConfirmExport = async () => {
+        if (!pendingFormat) return
+        await runExport(pendingFormat, exportDateFrom, exportDateTo)
+        setExportDialogOpen(false)
+        setPendingFormat(null)
     }
 
     return (
@@ -129,6 +171,54 @@ const ReportsExports = () => {
                     </DashboardPanel>
                 )}
             </DashboardPageContent>
+
+            <Dialog open={exportDialogOpen} onOpenChange={(open) => !isExporting && setExportDialogOpen(open)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Export Event Log</DialogTitle>
+                        <DialogDescription>
+                            Optionally narrow the export to a date range. Leave both fields blank to export the full log (up to 10,000 rows).
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="event-log-export-from">From</Label>
+                            <input
+                                id="event-log-export-from"
+                                type="date"
+                                value={exportDateFrom}
+                                onChange={(e) => setExportDateFrom(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="event-log-export-to">To</Label>
+                            <input
+                                id="event-log-export-to"
+                                type="date"
+                                value={exportDateTo}
+                                onChange={(e) => setExportDateTo(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setExportDialogOpen(false)} disabled={isExporting}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleConfirmExport} disabled={isExporting}>
+                            {isExporting ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Exporting...
+                                </>
+                            ) : (
+                                "Export"
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </DashboardLayout>
     )
 }

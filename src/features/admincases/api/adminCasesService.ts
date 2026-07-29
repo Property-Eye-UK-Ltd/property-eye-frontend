@@ -196,6 +196,22 @@ export const getAdminCases = async (params?: {
     }
 }
 
+export const getAdminCasesForExport = async (params?: {
+    search?: string
+    status?: string
+    agency_id?: string
+    detected_from?: string
+    detected_to?: string
+}): Promise<{ items: AgencyCase[]; total: number }> => {
+    const { data } = await apiClient.get<AdminFraudCaseListResponse>("/admin/fraud-reports", {
+        params: { ...params, export: true },
+    })
+    return {
+        items: data.items.map(fromApiAdminCase),
+        total: data.total,
+    }
+}
+
 export const getAdminCaseAgencies = async (): Promise<AdminFraudAgencyFilter[]> => {
     const { data } = await apiClient.get<AdminFraudAgencyFilter[]>("/admin/fraud-reports/agencies")
     return data
