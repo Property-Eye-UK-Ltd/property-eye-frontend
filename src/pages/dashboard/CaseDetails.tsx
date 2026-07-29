@@ -26,20 +26,17 @@ const caseStatusStyles: Record<AgencyCaseStatus, string> = {
   closed_not_fraudulent: "bg-green-50 text-green-600 border border-green-100",
 }
 
-const severityLabels: Record<string, string> = {
-  low: "Low",
-  medium: "Medium",
-  high: "High",
-  critical: "Critical",
-}
-
 interface AgencyCaseOverviewCardProps {
   caseDetail: CaseDetail
 }
 
+// Deliberately does not show Match Confidence / Fraud Type / Timing Risk:
+// per FR-005.11 and the backend get_case_detail docstring
+// (backend/src/api/v1/endpoints/dashboard.py), agencies must never see this
+// internal scoring data — only Status. See findings report for the pre-existing
+// dead-code bug this replaced.
 const AgencyCaseOverviewCard = ({ caseDetail }: AgencyCaseOverviewCardProps) => {
   const status = caseDetail.status
-  const severity = caseDetail.severity?.toLowerCase() ?? "low"
 
   return (
     <div className="rounded-2xl border border-border/50 bg-background p-6 space-y-6">
@@ -49,29 +46,6 @@ const AgencyCaseOverviewCard = ({ caseDetail }: AgencyCaseOverviewCardProps) => 
           <p className="text-xs text-muted-foreground uppercase font-medium tracking-wider">Status</p>
           <Badge className={cn("mt-1 rounded-full px-3 py-0.5 text-xs font-medium", caseStatusStyles[status])}>
             {caseStatusLabels[status]}
-          </Badge>
-        </div>
-      </div>
-
-      <div className="flex flex-col items-center py-4 text-center border-y border-border/50">
-        <div className="relative flex items-center justify-center">
-          <div className="w-28 h-28 rounded-full border-8 border-muted flex items-center justify-center">
-            <span className="text-2xl font-bold text-foreground">{Math.round(caseDetail.fraud_score)}%</span>
-          </div>
-        </div>
-        <p className="mt-3 text-sm font-semibold text-foreground">Fraud Likelihood Score</p>
-        <p className="text-xs text-muted-foreground mt-1">Based on multi-factor pattern matching</p>
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex justify-between items-center text-xs">
-          <span className="text-muted-foreground">Fraud Type</span>
-          <span className="font-medium text-foreground">{caseDetail.fraud_type}</span>
-        </div>
-        <div className="flex justify-between items-center text-xs">
-          <span className="text-muted-foreground">Severity Level</span>
-          <Badge variant="outline" className="rounded-full capitalize">
-            {severityLabels[severity] ?? severity}
           </Badge>
         </div>
       </div>

@@ -159,10 +159,10 @@ const AdminCaseManagement = () => {
 
                                 <Select value={selectedSeverity} onValueChange={setSelectedSeverity}>
                                     <SelectTrigger className="h-8 w-fit min-w-[100px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0">
-                                        <SelectValue placeholder="Severity" />
+                                        <SelectValue placeholder="Timing Risk" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">All Severity</SelectItem>
+                                        <SelectItem value="all">All Timing Risk</SelectItem>
                                         {severityOptions.map((s) => (
                                             <SelectItem key={s} value={s}>{s}</SelectItem>
                                         ))}

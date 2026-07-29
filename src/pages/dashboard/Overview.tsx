@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
@@ -12,15 +12,6 @@ import {
   useSeverityDistribution,
   useTopRecoveries,
 } from "@/features/overview/api/useOverview"
-import type { OverviewPeriod } from "@/features/overview/api/overviewService"
-
-const periods = ["All Time", "First Half of Year", "Second Half of Year"]
-
-const periodToApiParam: Record<string, OverviewPeriod> = {
-  "All Time": "all_time",
-  "First Half of Year": "h1",
-  "Second Half of Year": "h2",
-}
 
 const severityStyles: Record<AlertRecord["severity"], string> = {
   Critical: "bg-red-500/10 text-red-600",
@@ -41,13 +32,10 @@ const formatCurrency = (value: number): string =>
   `£${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
 
 const Overview = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState(periods[0])
-  const apiPeriod = periodToApiParam[selectedPeriod]
-
-  const { data: summary, isLoading: summaryLoading } = useOverviewSummary(apiPeriod)
-  const { data: severity } = useSeverityDistribution(apiPeriod)
+  const { data: summary, isLoading: summaryLoading } = useOverviewSummary()
+  const { data: severity } = useSeverityDistribution()
   const { data: topRecoveries = [] } = useTopRecoveries()
-  const { data: highPriorityAlerts = [] } = useHighPriorityAlerts(1, apiPeriod)
+  const { data: highPriorityAlerts = [] } = useHighPriorityAlerts(1)
 
   const metrics: MetricCard[] = useMemo(() => {
     if (!summary) return []
@@ -55,19 +43,19 @@ const Overview = () => {
       {
         title: "Total Recoveries",
         value: String(summary.total_recoveries),
-        period: selectedPeriod,
+        period: "All time",
         change: summary.delta_recoveries ? `+${summary.delta_recoveries}` : "",
         topBarClass: "bg-emerald-500",
       },
       {
         title: "Revenue from Recoveries",
         value: formatCurrency(summary.total_recovery_revenue),
-        period: selectedPeriod,
+        period: "All time",
         change: "",
         topBarClass: "bg-purple-500",
       },
     ]
-  }, [summary, selectedPeriod])
+  }, [summary])
 
   const topProperties: TopProperty[] = useMemo(
     () =>
@@ -114,7 +102,7 @@ const Overview = () => {
         )}
 
         {severity && (
-          <DashboardPanel title="Severity Distribution" hasBorder>
+          <DashboardPanel title="Timing Risk Distribution" description="Days between withdrawal & sale" hasBorder>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {(
                 [

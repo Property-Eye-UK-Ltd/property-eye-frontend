@@ -8,21 +8,14 @@ import type {
     NextSweepResponse,
 } from "@/types/overview.types"
 
-export type OverviewPeriod = "all_time" | "h1" | "h2"
-
-export const getOverviewSummary = async (period: OverviewPeriod = "all_time"): Promise<OverviewSummaryResponse> => {
-    const { data } = await apiClient.get<OverviewSummaryResponse>("/dashboard/overview/summary", {
-        params: { period },
-    })
+export const getOverviewSummary = async (): Promise<OverviewSummaryResponse> => {
+    const { data } = await apiClient.get<OverviewSummaryResponse>("/dashboard/overview/summary")
     return data
 }
 
-export const getSeverityDistribution = async (
-    period: OverviewPeriod = "all_time"
-): Promise<SeverityDistributionResponse> => {
+export const getSeverityDistribution = async (): Promise<SeverityDistributionResponse> => {
     const { data } = await apiClient.get<SeverityDistributionResponse>(
-        "/dashboard/overview/severity-distribution",
-        { params: { period } }
+        "/dashboard/overview/severity-distribution"
     )
     return data
 }
@@ -35,7 +28,6 @@ export const getTopRecoveries = async (): Promise<TopRecoveryItem[]> => {
 export const getHighPriorityAlerts = async (params?: {
     page?: number
     page_size?: number
-    period?: OverviewPeriod
 }): Promise<HighPriorityAlertItem[]> => {
     const { data } = await apiClient.get<HighPriorityAlertItem[]>(
         "/dashboard/overview/high-priority-alerts",

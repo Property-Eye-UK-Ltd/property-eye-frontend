@@ -96,25 +96,28 @@ export const PaymentsHistoryTable = ({ data, isLoading }: PaymentsHistoryTablePr
                             <TableHead className={cn(th, "text-right")}>Amount</TableHead>
                             <TableHead className={th}>Status</TableHead>
                             <TableHead className={cn(th, "text-right")}>Statement</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={4} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     Loading payments…
                                 </TableCell>
                             </TableRow>
                         ) : paginated.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={4} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     No payments match this filter.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             paginated.map((payment) => (
-                                <TableRow key={payment.id} className="border-b border-border">
+                                <TableRow 
+                                    key={payment.id} 
+                                    onClick={() => navigate(`/marketing/payments/${payment.id}`)}
+                                    className="border-b border-border cursor-pointer hover:bg-slate-50 transition-colors"
+                                >
                                     <TableCell className={cn(td, "whitespace-nowrap font-medium text-foreground")}>
                                         {formatDate(payment.created_at)}
                                     </TableCell>
@@ -133,20 +136,15 @@ export const PaymentsHistoryTable = ({ data, isLoading }: PaymentsHistoryTablePr
                                     </TableCell>
                                     <TableCell className={cn(td, "text-right")}>
                                         <button
-                                            onClick={() => handleDownload(payment.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                handleDownload(payment.id)
+                                            }}
                                             disabled={downloadingId === payment.id}
                                             className="inline-flex items-center gap-1.5 text-xs font-medium text-progress hover:underline disabled:opacity-60 lg:text-sm"
                                         >
                                             <DocumentText size={16} variant="Bulk" />
                                             {downloadingId === payment.id ? "Fetching…" : "Download"}
-                                        </button>
-                                    </TableCell>
-                                    <TableCell className={cn(td, "text-right")}>
-                                        <button
-                                            onClick={() => navigate(`/marketing/payments/${payment.id}`)}
-                                            className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                        >
-                                            View
                                         </button>
                                     </TableCell>
                                 </TableRow>

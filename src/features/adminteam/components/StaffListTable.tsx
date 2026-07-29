@@ -76,12 +76,15 @@ export const StaffListTable = ({
                                     />
                                 </button>
                             </TableHead>
-                            <TableHead className={th}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {data.map((staff) => (
-                            <TableRow key={staff.id} className="border-b border-border">
+                            <TableRow 
+                                key={staff.id} 
+                                onClick={() => navigate(`/admin/team/staff/${staff.id}`)}
+                                className="border-b border-border cursor-pointer hover:bg-slate-50 transition-colors"
+                            >
                                 <TableCell className={td}>
                                     <div className="flex items-center gap-2">
                                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-progress/30 lg:h-9 lg:w-9">
@@ -117,14 +120,6 @@ export const StaffListTable = ({
                                     >
                                         {staff.status}
                                     </Badge>
-                                </TableCell>
-                                <TableCell className={td}>
-                                    <button
-                                        onClick={() => navigate(`/admin/team/staff/${staff.id}`)}
-                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                    >
-                                        Edit
-                                    </button>
                                 </TableCell>
                             </TableRow>
                         ))}

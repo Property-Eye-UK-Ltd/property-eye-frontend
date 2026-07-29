@@ -81,12 +81,15 @@ export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
                                     <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className={th}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {paginatedData.map((transaction) => (
-                            <TableRow key={transaction.id} className="border-b border-border">
+                            <TableRow 
+                                key={transaction.id} 
+                                onClick={() => navigate(`/admin/billing/transaction/${transaction.id}`)}
+                                className="border-b border-border cursor-pointer hover:bg-slate-50 transition-colors"
+                            >
                                 <TableCell className={cn(td, "text-muted-foreground")}>
                                     {transaction.transactionId}
                                 </TableCell>
@@ -111,16 +114,6 @@ export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
                                     >
                                         {transaction.status}
                                     </Badge>
-                                </TableCell>
-                                <TableCell className={td}>
-                                    <button
-                                        onClick={() =>
-                                            navigate(`/admin/billing/transaction/${transaction.id}`)
-                                        }
-                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                    >
-                                        View
-                                    </button>
                                 </TableCell>
                             </TableRow>
                         ))}

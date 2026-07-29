@@ -8,6 +8,9 @@ export interface AgencyProfileData {
     subscriptionPlan: string | null
     integrationType: "ALTO" | "CSV" | "PDF" | "API" | "Reapit" | null
     openCases: number
-    recoveredCommission: string
+    recoveredCommission: number
     nextBillingDate: string | null
+    totalListings: number
+    confirmedFraud: number
+    potentialSavings: number
 }

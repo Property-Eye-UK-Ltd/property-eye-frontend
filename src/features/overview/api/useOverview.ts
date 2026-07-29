@@ -7,20 +7,19 @@ import {
     getOverviewSummary,
     getSeverityDistribution,
     getTopRecoveries,
-    type OverviewPeriod,
 } from "./overviewService"
 
-export const useOverviewSummary = (period: OverviewPeriod) =>
+export const useOverviewSummary = () =>
     useQuery({
-        queryKey: queryKeys.overview.summary(period),
-        queryFn: () => getOverviewSummary(period),
+        queryKey: queryKeys.overview.summary(),
+        queryFn: () => getOverviewSummary(),
         staleTime: 30_000,
     })
 
-export const useSeverityDistribution = (period: OverviewPeriod) =>
+export const useSeverityDistribution = () =>
     useQuery({
-        queryKey: queryKeys.overview.severityDistribution(period),
-        queryFn: () => getSeverityDistribution(period),
+        queryKey: queryKeys.overview.severityDistribution(),
+        queryFn: () => getSeverityDistribution(),
         staleTime: 30_000,
     })
 
@@ -31,10 +30,10 @@ export const useTopRecoveries = () =>
         staleTime: 30_000,
     })
 
-export const useHighPriorityAlerts = (page: number, period: OverviewPeriod) =>
+export const useHighPriorityAlerts = (page: number) =>
     useQuery({
-        queryKey: queryKeys.overview.highPriorityAlerts({ page, period }),
-        queryFn: () => getHighPriorityAlerts({ page, period, page_size: 10 }),
+        queryKey: queryKeys.overview.highPriorityAlerts({ page }),
+        queryFn: () => getHighPriorityAlerts({ page, page_size: 10 }),
         staleTime: 30_000,
     })
 

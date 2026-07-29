@@ -42,40 +42,6 @@ const timeRangeOptions = [
   { label: "Last 2 Years", value: "24" },
 ]
 
-const generateDailyData = (categories: string[]): FraudDataPoint[] => {
-  const days = 30
-  const dailyData: FraudDataPoint[] = []
-
-  for (let i = 1; i <= days; i++) {
-    const dataPoint: FraudDataPoint = { month: `Day ${i}` }
-    categories.forEach((category) => {
-      dataPoint[category] = Math.floor(Math.random() * 100)
-    })
-    dailyData.push(dataPoint)
-  }
-
-  return dailyData
-}
-
-const generateExtendedMonthlyData = (baseData: FraudDataPoint[], monthsNeeded: number): FraudDataPoint[] => {
-  const extended: FraudDataPoint[] = []
-  const baseLength = baseData.length
-
-  for (let i = 0; i < monthsNeeded; i++) {
-    const baseIndex = i % baseLength
-    const yearOffset = Math.floor(i / baseLength)
-    const dataPoint = { ...baseData[baseIndex] }
-
-    if (yearOffset > 0) {
-      dataPoint.month = `${dataPoint.month} '${24 - yearOffset}`
-    }
-
-    extended.push(dataPoint)
-  }
-
-  return extended
-}
-
 const FraudTooltip = ({
   active,
   payload,
@@ -143,17 +109,8 @@ export const FraudDetectionPanel = ({
 
   const filteredData = useMemo(() => {
     const monthsToShow = parseInt(timeRange)
-
-    if (monthsToShow === 1) {
-      return generateDailyData(Object.keys(config))
-    }
-
-    if (monthsToShow > data.length) {
-      return generateExtendedMonthlyData(data, monthsToShow)
-    }
-
     return data.slice(-monthsToShow)
-  }, [data, timeRange, config])
+  }, [data, timeRange])
 
   const filteredConfig = useMemo(() => {
     return Object.fromEntries(

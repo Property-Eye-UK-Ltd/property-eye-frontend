@@ -126,7 +126,7 @@ export const helpArticles: Record<string, HelpArticleContent> = {
                     "✓ Invite, edit, or deactivate team members",
                     "✓ Manage billing and subscription plan",
                     "✓ Configure integration, notifications, and security settings",
-                    "✗ Cannot see internal case severity, recovered amounts, or Property Eye's internal notes",
+                    "✗ Cannot see internal case timing risk, recovered amounts, or Property Eye's internal notes",
                 ],
             },
             {
@@ -137,7 +137,7 @@ export const helpArticles: Record<string, HelpArticleContent> = {
                     "✓ Raise a dispute on any closed case",
                     "✗ Cannot manage other staff members",
                     "✗ Cannot change billing, integration, or security settings",
-                    "✗ Cannot see internal case severity, recovered amounts, or Property Eye's internal notes",
+                    "✗ Cannot see internal case timing risk, recovered amounts, or Property Eye's internal notes",
                 ],
             },
             {
@@ -153,7 +153,7 @@ export const helpArticles: Record<string, HelpArticleContent> = {
             {
                 title: "What All Roles Have in Common",
                 content: [
-                    "All three roles see exactly the same case information: status (Open, Processing Dispute, Closed) and outcome (Confirmed Fraud / Not Fraudulent). No role at the agency level can see the internal severity score, the recovered amount, or any notes left by Property Eye analysts. This is intentional — Property Eye acts as the intermediary and that information stays internal.",
+                    "All three roles see exactly the same case information: status (Open, Processing Dispute, Closed) and outcome (Confirmed Fraud / Not Fraudulent). No role at the agency level can see the internal timing risk score, the recovered amount, or any notes left by Property Eye analysts. This is intentional — Property Eye acts as the intermediary and that information stays internal.",
                 ],
             },
             {
@@ -291,7 +291,7 @@ export const helpArticles: Record<string, HelpArticleContent> = {
                 content: [
                     "Each case has two distinct pieces of information: Status (where the case is in the process) and Recovery Outcome (the result of any legal or financial recovery effort).",
                     "Status values: Open, Under Legal Review, Flagged, Processing Dispute, Pending Approval, Closed. Recovery Outcome values: Recovered, Unrecovered, In Progress — these are set by Property Eye after legal action concludes.",
-                    "You will only ever see Status and Outcome. You will not see severity scores, internal notes, or the recovered amount — these are internal to Property Eye.",
+                    "You will only ever see Status and Outcome. You will not see timing risk scores, internal notes, or the recovered amount — these are internal to Property Eye.",
                 ],
             },
             {

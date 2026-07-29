@@ -103,12 +103,11 @@ export const ScanResultsTable = ({ results, sessionId, loading = false }: ScanRe
               <TableHead className={th}>Address</TableHead>
               <TableHead className={th}>Result</TableHead>
               <TableHead className={th}>Scan Date</TableHead>
-              <TableHead className={th}>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell colSpan={5} className={cn(td, "text-center text-muted-foreground")}>
+              <TableCell colSpan={4} className={cn(td, "text-center text-muted-foreground")}>
                 Loading results...
               </TableCell>
             </TableRow>
@@ -128,12 +127,11 @@ export const ScanResultsTable = ({ results, sessionId, loading = false }: ScanRe
               <TableHead className={th}>Address</TableHead>
               <TableHead className={th}>Result</TableHead>
               <TableHead className={th}>Scan Date</TableHead>
-              <TableHead className={th}>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell colSpan={5} className={cn(td, "text-center text-muted-foreground")}>
+              <TableCell colSpan={4} className={cn(td, "text-center text-muted-foreground")}>
                 No results found
               </TableCell>
             </TableRow>
@@ -169,14 +167,14 @@ export const ScanResultsTable = ({ results, sessionId, loading = false }: ScanRe
                   <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                 </button>
               </TableHead>
-              <TableHead className={th}>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedResults.map((result) => (
               <TableRow
                 key={result.fraud_match_id}
-                className="border-b border-border cursor-pointer hover:bg-slate-50/60"
+                onClick={() => handleViewCase(result.case_id)}
+                className="border-b border-border cursor-pointer hover:bg-slate-50 transition-colors"
               >
                 <TableCell className={cn(td, "text-muted-foreground font-medium")}>
                   {result.case_id}
@@ -196,16 +194,6 @@ export const ScanResultsTable = ({ results, sessionId, loading = false }: ScanRe
                 </TableCell>
                 <TableCell className={cn(td, "text-muted-foreground")}>
                   {new Date(result.scanned_at).toLocaleDateString("en-GB")}
-                </TableCell>
-                <TableCell className={td}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleViewCase(result.case_id)}
-                    className="text-xs text-blue-600 hover:text-blue-700 h-auto p-1"
-                  >
-                    View Details
-                  </Button>
                 </TableCell>
               </TableRow>
             ))}

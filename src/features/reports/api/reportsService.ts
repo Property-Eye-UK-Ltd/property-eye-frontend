@@ -27,3 +27,20 @@ export const getAdminEventLog = async (
     )
     return data
 }
+
+export const getAdminEventLogForExport = async (
+    dateFrom?: string,
+    dateTo?: string
+): Promise<PaginatedAdminEventLogResponse> => {
+    const { data } = await apiClient.get<PaginatedAdminEventLogResponse>(
+        "/dashboard/admin/analytics/event-log",
+        {
+            params: {
+                export: true,
+                date_from: dateFrom || undefined,
+                date_to: dateTo || undefined,
+            },
+        }
+    )
+    return data
+}

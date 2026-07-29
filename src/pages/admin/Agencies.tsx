@@ -151,26 +151,6 @@ const Agencies = () => {
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className={panelBtnClass}>
-                                        Action
-                                        <ArrowDown2 size={16} variant="Outline" className="ml-1 lg:ml-2" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48">
-                                    <DropdownMenuItem className="cursor-pointer">
-                                        Force Data Pull
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className="cursor-pointer">
-                                        Reactivate Account
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className="cursor-pointer text-destructive">
-                                        Suspend Account
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
                         </div>
                     }
                 >

@@ -35,6 +35,10 @@ export interface AdminAgencyDetail {
     plan_name: string | null
     next_billing_date: string | null
     open_cases: number
+    total_listings: number
+    confirmed_fraud: number
+    potential_savings: number
+    recovered_commission: number
 }
 
 export const getAdminAgenciesSummary = async (): Promise<AdminAgenciesSummary> => {

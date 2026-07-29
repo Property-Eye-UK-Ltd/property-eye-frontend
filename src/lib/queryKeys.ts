@@ -15,8 +15,8 @@ export const queryKeys = {
     },
     overview: {
         all: ["overview"] as const,
-        summary: (period?: string) => ["overview", "summary", period] as const,
-        severityDistribution: (period?: string) => ["overview", "severity-distribution", period] as const,
+        summary: () => ["overview", "summary"] as const,
+        severityDistribution: () => ["overview", "severity-distribution"] as const,
         topRecoveries: (period?: string) => ["overview", "top-recoveries", period] as const,
         highPriorityAlerts: (params?: Record<string, unknown>) => ["overview", "high-priority-alerts", params] as const,
         fraudDetectionGrowth: (range?: string) => ["overview", "fraud-detection-growth", range] as const,
@@ -60,6 +60,13 @@ export const queryKeys = {
         invoiceDetail: (invoiceId: string) => ["admin-billing", "invoice-detail", invoiceId] as const,
         commissions: (params?: Record<string, unknown>) => ["admin-billing", "commissions", params] as const,
         agencyRecoveries: (params?: Record<string, unknown>) => ["admin-billing", "agency-recoveries", params] as const,
+    },
+    adminOverview: {
+        all: ["admin-overview"] as const,
+        summary: () => ["admin-overview", "summary"] as const,
+        severityDistribution: () => ["admin-overview", "severity-distribution"] as const,
+        revenueByPlan: () => ["admin-overview", "revenue-by-plan"] as const,
+        fraudDetectionGrowth: () => ["admin-overview", "fraud-detection-growth"] as const,
     },
     agencies: {
         all: ["agencies"] as const,

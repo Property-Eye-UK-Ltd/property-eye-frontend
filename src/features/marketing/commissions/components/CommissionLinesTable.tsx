@@ -78,25 +78,28 @@ export const CommissionLinesTable = ({ data, isLoading }: CommissionLinesTablePr
                             <TableHead className={cn(th, "text-right")}>Commission %</TableHead>
                             <TableHead className={cn(th, "text-right")}>Amount</TableHead>
                             <TableHead className={th}>Status</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     Loading commissions…
                                 </TableCell>
                             </TableRow>
                         ) : paginated.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     No commission lines match this filter.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             paginated.map((line) => (
-                                <TableRow key={line.id} className="border-b border-border">
+                                <TableRow 
+                                    key={line.id} 
+                                    onClick={() => navigate(`/marketing/commissions/${line.id}`)}
+                                    className="border-b border-border cursor-pointer hover:bg-slate-50 transition-colors"
+                                >
                                     <TableCell className={cn(td, "font-medium text-foreground")}>
                                         {line.agency_name}
                                     </TableCell>
@@ -118,14 +121,6 @@ export const CommissionLinesTable = ({ data, isLoading }: CommissionLinesTablePr
                                         >
                                             {line.status}
                                         </span>
-                                    </TableCell>
-                                    <TableCell className={cn(td, "text-right")}>
-                                        <button
-                                            onClick={() => navigate(`/marketing/commissions/${line.id}`)}
-                                            className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                        >
-                                            View
-                                        </button>
                                     </TableCell>
                                 </TableRow>
                             ))

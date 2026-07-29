@@ -38,15 +38,20 @@ export const AgenciesTablePanel = ({
                             <TableHead className={th}>Users</TableHead>
                             <TableHead className={th}>Integration</TableHead>
                             <TableHead className={th}>Fraud</TableHead>
-                            <TableHead className={th}>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {data.map((agency) => (
-                            <TableRow key={agency.id} className="border-b border-border">
+                            <TableRow 
+                                key={agency.id} 
+                                onClick={() => onViewAgency?.(agency.id)}
+                                className="border-b border-border cursor-pointer hover:bg-slate-50 transition-colors"
+                            >
                                 <TableCell className={td}>
                                     <div className="flex items-center gap-2">
-                                        <Checkbox className="data-[state=checked]:border-progress data-[state=checked]:bg-progress" />
+                                        <div onClick={(e) => e.stopPropagation()}>
+                                            <Checkbox className="data-[state=checked]:border-progress data-[state=checked]:bg-progress" />
+                                        </div>
                                         <span className="whitespace-nowrap font-normal">{agency.name}</span>
                                     </div>
                                 </TableCell>
@@ -62,14 +67,6 @@ export const AgenciesTablePanel = ({
                                     )}
                                 </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>{agency.fraud_detected}</TableCell>
-                                <TableCell className={td}>
-                                    <button
-                                        onClick={() => onViewAgency?.(agency.id)}
-                                        className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                    >
-                                        View
-                                    </button>
-                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

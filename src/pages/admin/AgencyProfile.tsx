@@ -124,8 +124,11 @@ const AgencyProfile = () => {
         subscriptionPlan: agencyDetail.plan_name,
         integrationType: agencyDetail.integration_type,
         openCases: agencyDetail.open_cases,
-        recoveredCommission: "£45,317",
+        recoveredCommission: agencyDetail.recovered_commission,
         nextBillingDate: agencyDetail.next_billing_date,
+        totalListings: agencyDetail.total_listings,
+        confirmedFraud: agencyDetail.confirmed_fraud,
+        potentialSavings: agencyDetail.potential_savings,
     }
 
     const tabs = [

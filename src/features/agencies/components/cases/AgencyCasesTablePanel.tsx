@@ -71,14 +71,23 @@ export const AgencyCasesTablePanel = ({ data }: AgencyCasesTablePanelProps) => {
                             </TableHead>
                             <TableHead className="px-4 font-medium">Status</TableHead>
                             <TableHead className="px-4 font-medium">Outcome</TableHead>
-                            <TableHead className="px-4 font-medium">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {sortedCases.map((caseItem) => {
                             const displayStatus = getAgencyCaseDisplayStatus(caseItem.adminStatus)
                             return (
-                                <TableRow key={caseItem.id} className="border-b border-border">
+                                <TableRow 
+                                    key={caseItem.id} 
+                                    onClick={() => navigate(`/admin/cases/${encodeURIComponent(caseItem.caseId)}`, {
+                                        state: {
+                                            returnPath: window.location.pathname,
+                                            returnLabel: "Agency Profile",
+                                            activeTab: "cases",
+                                        },
+                                    })}
+                                    className="border-b border-border cursor-pointer hover:bg-slate-50 transition-colors"
+                                >
                                     <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.caseId}</TableCell>
                                     <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.propertyAddress}</TableCell>
                                     <TableCell className="px-4 py-3 text-muted-foreground">{caseItem.completionDate}</TableCell>
@@ -89,21 +98,6 @@ export const AgencyCasesTablePanel = ({ data }: AgencyCasesTablePanelProps) => {
                                     </TableCell>
                                     <TableCell className="px-4 py-3 text-muted-foreground">
                                         {caseItem.adminStatus === "Closed" ? (caseItem.determination ?? "—") : "—"}
-                                    </TableCell>
-                                    <TableCell className="px-4 py-3">
-                                        <button
-                                            onClick={() => navigate(`/admin/cases/${encodeURIComponent(caseItem.caseId)}`, {
-                                                state: {
-                                                    returnPath: window.location.pathname,
-                                                    returnLabel: "Agency Profile",
-                                                    activeTab: "cases",
-                                                },
-                                            })}
-                                            className="text-sm font-medium transition-colors hover:underline"
-                                            style={{ color: "var(--progress)" }}
-                                        >
-                                            View
-                                        </button>
                                     </TableCell>
                                 </TableRow>
                             )

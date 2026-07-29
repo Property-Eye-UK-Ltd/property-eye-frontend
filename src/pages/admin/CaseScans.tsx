@@ -3,13 +3,6 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader";
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,22 +10,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  SearchNormal,
-  CloseCircle,
-  Calendar,
-  ExportSquare,
-} from "iconsax-react";
+import { SearchNormal, Filter, ExportSquare } from "iconsax-react";
 import { exportToCSV, exportToPDF } from "@/lib/exportUtils";
 import CaseScansTable from "@/features/casescans/components/CaseScansTable";
 import { ScanResultsTable } from "@/features/casescans/components/ScanResultsTable";
 import RunScanButton from "@/features/casescans/components/RunScanButton";
+import { CaseScansFilterModal } from "@/features/casescans/components/CaseScansFilterModal";
 import type {
   FraudMatch,
   PaginatedFraudMatchResponse,
 } from "@/types/casescans.types";
 import type { ScanSession } from "@/types/scan-session.types";
-import { getSuspiciousMatches } from "@/features/casescans/api/scanService";
+import {
+  getSuspiciousMatches,
+  getFraudReportAgencies,
+  type FraudReportAgencyOption,
+} from "@/features/casescans/api/scanService";
+import {
+  CaseScansFilters,
+  emptyCaseScansFilters,
+  countActiveFilters,
+} from "@/features/casescans/types/caseScansFilters.types";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -48,25 +46,53 @@ const CaseScans = () => {
 
   // Filter state
   const [searchInput, setSearchInput] = useState("");
-  const [selectedAgency, setSelectedAgency] = useState("all");
-  const [selectedRiskLevel, setSelectedRiskLevel] = useState("all");
-  const [detectedDateFrom, setDetectedDateFrom] = useState("");
-  const [detectedDateTo, setDetectedDateTo] = useState("");
+  const [filters, setFilters] = useState<CaseScansFilters>(emptyCaseScansFilters);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [agencyOptions, setAgencyOptions] = useState<FraudReportAgencyOption[]>([]);
   const [page, setPage] = useState(1);
   const [totalMatches, setTotalMatches] = useState(0);
 
   const itemsPerPage = 10;
 
+  useEffect(() => {
+    getFraudReportAgencies()
+      .then(setAgencyOptions)
+      .catch(() => {
+        // Non-fatal — the Agency filter section just won't render if this
+        // fails; every other filter still works.
+      });
+  }, []);
+
   // Fetch matches with filters
   const fetchMatches = useCallback(async () => {
     setLoading(true);
     try {
+      const confidenceMin = filters.confidenceMin ? Number(filters.confidenceMin) : undefined;
+      const confidenceMax = filters.confidenceMax ? Number(filters.confidenceMax) : undefined;
+      const minSubscriptionRevenue = filters.minSubscriptionRevenue
+        ? Number(filters.minSubscriptionRevenue)
+        : undefined;
+
       const response = await getSuspiciousMatches({
         search: searchInput || undefined,
-        agency_id: selectedAgency !== "all" ? selectedAgency : undefined,
-        risk_level: selectedRiskLevel !== "all" ? selectedRiskLevel : undefined,
         page,
-        limit: itemsPerPage,
+        page_size: itemsPerPage,
+        risk_levels: filters.riskLevels.length > 0 ? filters.riskLevels : undefined,
+        verification_statuses:
+          filters.verificationStatuses.length > 0 ? filters.verificationStatuses : undefined,
+        case_statuses: filters.caseStatuses.length > 0 ? filters.caseStatuses : undefined,
+        determinations: filters.determinations.length > 0 ? filters.determinations : undefined,
+        recovery_outcomes:
+          filters.recoveryOutcomes.length > 0 ? filters.recoveryOutcomes : undefined,
+        agency_ids: filters.agencyIds.length > 0 ? filters.agencyIds : undefined,
+        detected_from: filters.detectedFrom || undefined,
+        detected_to: filters.detectedTo || undefined,
+        confidence_min: Number.isFinite(confidenceMin) ? confidenceMin : undefined,
+        confidence_max: Number.isFinite(confidenceMax) ? confidenceMax : undefined,
+        flag_active: filters.flagActiveOnly || undefined,
+        min_subscription_revenue: Number.isFinite(minSubscriptionRevenue)
+          ? minSubscriptionRevenue
+          : undefined,
       });
 
       setMatches(response.items);
@@ -84,13 +110,7 @@ const CaseScans = () => {
     } finally {
       setLoading(false);
     }
-  }, [
-    searchInput,
-    selectedAgency,
-    selectedRiskLevel,
-    page,
-    toast,
-  ]);
+  }, [searchInput, filters, page, toast]);
 
   // Filters/pagination changing means the user is looking at a different
   // set of matches — clear any previous scan results so they don't linger
@@ -103,10 +123,7 @@ const CaseScans = () => {
 
   const handleClearFilters = () => {
     setSearchInput("");
-    setSelectedAgency("all");
-    setSelectedRiskLevel("all");
-    setDetectedDateFrom("");
-    setDetectedDateTo("");
+    setFilters(emptyCaseScansFilters);
     setPage(1);
   };
 
@@ -161,10 +178,9 @@ const CaseScans = () => {
         }
       />
 
-      {/* Filter Panel - Compact 2-row layout */}
+      {/* Filter Panel - single search bar + Filter & Export */}
       <DashboardPanel className="mb-6">
         <div className="space-y-3">
-          {/* Row 1: Search + Filters */}
           <div className="flex gap-2 items-center flex-wrap">
             <div className="relative flex-1 min-w-[240px]">
               <SearchNormal
@@ -183,96 +199,54 @@ const CaseScans = () => {
               />
             </div>
 
-            <Select value={selectedRiskLevel} onValueChange={(val) => {
-              setSelectedRiskLevel(val);
-              setPage(1);
-            }}>
-              <SelectTrigger className="h-8 w-fit min-w-[110px] shrink-0 rounded-full border-border bg-background px-3 text-xs">
-                <SelectValue placeholder="Timing Risk" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Timing Risk</SelectItem>
-                <SelectItem value="CRITICAL">🔴 Critical</SelectItem>
-                <SelectItem value="HIGH">🟠 High</SelectItem>
-                <SelectItem value="MEDIUM">🟡 Medium</SelectItem>
-                <SelectItem value="LOW">⚫ Low</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedAgency} onValueChange={(val) => {
-              setSelectedAgency(val);
-              setPage(1);
-            }}>
-              <SelectTrigger className="h-8 w-fit min-w-[110px] shrink-0 rounded-full border-border bg-background px-3 text-xs">
-                <SelectValue placeholder="Agency" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Agencies</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Icon Buttons */}
-            {(searchInput ||
-              selectedAgency !== "all" ||
-              selectedRiskLevel !== "all" ||
-              detectedDateFrom ||
-              detectedDateTo) && (
+            {(searchInput || countActiveFilters(filters) > 0) && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleClearFilters}
-                className="h-8 w-8 p-0 shrink-0"
-                title="Clear filters"
+                className="h-8 shrink-0 text-xs"
               >
-                <CloseCircle size={16} variant="Linear" />
+                Clear filters
               </Button>
             )}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  className="h-8 w-8 p-0 shrink-0"
-                  title="Export results"
+                  className="h-8 shrink-0 rounded-full gap-2 text-xs"
                 >
-                  <ExportSquare size={16} variant="Linear" />
+                  <Filter size={16} variant="Linear" />
+                  Filter &amp; Export
+                  {countActiveFilters(filters) > 0 && (
+                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                      {countActiveFilters(filters)}
+                    </span>
+                  )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("csv")}>Export as CSV</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("pdf")}>Export as PDF</DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem
+                  className="cursor-pointer text-xs"
+                  onClick={() => setIsFilterModalOpen(true)}
+                >
+                  <Filter size={14} variant="Linear" className="mr-2" />
+                  Filters
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("csv")}>
+                  <ExportSquare size={14} variant="Linear" className="mr-2" />
+                  Export as CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("pdf")}>
+                  <ExportSquare size={14} variant="Linear" className="mr-2" />
+                  Export as PDF
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
-          {/* Row 2: Date Range + Count + Action Button */}
-          <div className="flex gap-2 items-center justify-between">
-            <div className="flex items-center gap-2 min-w-fit">
-              <Calendar size={16} variant="Linear" className="text-muted-foreground" />
-              <input
-                type="date"
-                value={detectedDateFrom}
-                onChange={(e) => {
-                  setDetectedDateFrom(e.target.value);
-                  setPage(1);
-                }}
-                className="h-8 px-2 text-xs rounded border border-border bg-background"
-                title="From date"
-              />
-              <span className="text-xs text-muted-foreground">–</span>
-              <input
-                type="date"
-                value={detectedDateTo}
-                onChange={(e) => {
-                  setDetectedDateTo(e.target.value);
-                  setPage(1);
-                }}
-                className="h-8 px-2 text-xs rounded border border-border bg-background"
-                title="To date"
-              />
-            </div>
-
+          <div className="flex gap-2 items-center justify-end">
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted-foreground px-3 py-1.5 bg-slate-50/50 rounded-full whitespace-nowrap">
                 {selectedMatchIds.size > 0
@@ -381,6 +355,17 @@ const CaseScans = () => {
           )}
         </div>
       </DashboardPanel>
+
+      <CaseScansFilterModal
+        open={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        filters={filters}
+        onApply={(nextFilters) => {
+          setFilters(nextFilters);
+          setPage(1);
+        }}
+        agencyOptions={agencyOptions}
+      />
     </DashboardLayout>
   );
 };

@@ -43,7 +43,7 @@ export const AdminCaseOverviewCard = ({ caseData }: AdminCaseOverviewCardProps) 
                     </div>
                 </div>
                 <div>
-                    <p className="mb-1 text-xs text-muted-foreground">Severity</p>
+                    <p className="mb-1 text-xs text-muted-foreground">Timing Risk <span className="text-muted-foreground/70">(days between withdrawal &amp; sale)</span></p>
                     <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", caseSeverityStyles[caseData.severity])}>
                         {caseData.severity}
                     </Badge>

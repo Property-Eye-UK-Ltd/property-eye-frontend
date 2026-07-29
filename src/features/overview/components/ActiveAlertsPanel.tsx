@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { ChevronsUpDown } from "lucide-react"
+import { MatchConfidenceMeter } from "@/components/dashboard/MatchConfidenceMeter"
 
 export interface AlertRecord {
   id?: string
@@ -64,7 +65,7 @@ export const ActiveAlertsPanel = ({
   return (
     <DashboardPanel
       title="Active Alerts table"
-      description="Tracks recent high-priority alerts based on severity and fraud score."
+      description="Tracks recent high-priority alerts based on timing risk and match confidence."
       className="overflow-hidden"
       noPadding
       hasBorder
@@ -74,7 +75,12 @@ export const ActiveAlertsPanel = ({
           <TableHeader>
             <TableRow className="bg-gray-50">
               <TableHead className="px-4 font-medium">Property</TableHead>
-              <TableHead className="px-4 font-medium">Fraud Score</TableHead>
+              <TableHead className="px-4 font-medium">
+                <span className="flex flex-col items-start gap-0.5">
+                  <span>Match Confidence</span>
+                  <span className="text-[10px] font-normal text-muted-foreground normal-case">how well the record matches</span>
+                </span>
+              </TableHead>
               <TableHead className="px-4 font-medium">
                 <button
                   className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -86,11 +92,14 @@ export const ActiveAlertsPanel = ({
               </TableHead>
               <TableHead className="px-4 font-medium">
                 <button
-                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex flex-col items-start gap-0.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   onClick={() => handleSort("severity")}
                 >
-                  Severity
-                  <ChevronsUpDown className="h-4 w-4" />
+                  <span className="flex items-center gap-1">
+                    Timing Risk
+                    <ChevronsUpDown className="h-4 w-4" />
+                  </span>
+                  <span className="text-[10px] font-normal normal-case">days between withdrawal &amp; sale</span>
                 </button>
               </TableHead>
               <TableHead className="px-4 font-medium">Date Detected</TableHead>
@@ -104,7 +113,9 @@ export const ActiveAlertsPanel = ({
                 className="border-b border-border"
               >
                 <TableCell className="px-4 py-3 font-normal">{alert.property}</TableCell>
-                <TableCell className="px-4 py-3">{alert.fraudScore}%</TableCell>
+                <TableCell className="px-4 py-3">
+                  <MatchConfidenceMeter value={alert.fraudScore} variant="compact" />
+                </TableCell>
                 <TableCell className="px-4 py-3">{alert.type}</TableCell>
                 <TableCell className="px-4 py-4">
                   <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", severityStyles[alert.severity])}>
