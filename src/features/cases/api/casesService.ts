@@ -1,5 +1,11 @@
 import apiClient from "@/lib/apiClient"
 
+// Derived composite of case_status + determination (open / closed as
+// confirmed fraud / closed as not fraudulent) — distinct from the raw
+// verification_status (automated scan result) and case_status (admin
+// lifecycle state) fields used on the admin side. Field is still named
+// `status` (matches the backend wire format exactly), but its own type name
+// (AgencyCaseStatus) makes clear it's neither of those two.
 export type AgencyCaseStatus = "open" | "closed_confirmed_fraud" | "closed_not_fraudulent"
 
 export interface CaseListItem {

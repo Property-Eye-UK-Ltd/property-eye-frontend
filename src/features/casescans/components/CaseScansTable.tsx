@@ -48,6 +48,22 @@ const verificationStatusLabel: Record<string, string> = {
   error: "Verification Error",
 };
 
+const caseStatusStyles: Record<string, string> = {
+  open: "bg-blue-50 text-blue-600 border border-blue-100",
+  under_legal_review: "bg-purple-50 text-purple-600 border border-purple-100",
+  flagged: "bg-amber-50 text-amber-600 border border-amber-100",
+  pending_approval: "bg-indigo-50 text-indigo-600 border border-indigo-100",
+  closed: "bg-green-50 text-green-600 border border-green-100",
+};
+
+const caseStatusLabel: Record<string, string> = {
+  open: "Open",
+  under_legal_review: "Under Legal Review",
+  flagged: "Flagged",
+  pending_approval: "Pending Approval",
+  closed: "Closed",
+};
+
 const CaseScansTable = ({
   matches,
   loading = false,
@@ -184,7 +200,8 @@ const CaseScansTable = ({
                 <ChevronsUpDown size={14} variant="Linear" />
               </button>
             </TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Scan Result</TableHead>
+            <TableHead>Case Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -249,6 +266,16 @@ const CaseScansTable = ({
                 >
                   {verificationStatusLabel[match.verification_status] ||
                     "Unknown"}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge
+                  className={cn(
+                    "rounded-full px-2 py-0.5 text-xs",
+                    caseStatusStyles[match.case_status] || caseStatusStyles.open
+                  )}
+                >
+                  {caseStatusLabel[match.case_status] || "Unknown"}
                 </Badge>
               </TableCell>
             </TableRow>

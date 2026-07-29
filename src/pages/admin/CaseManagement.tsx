@@ -106,27 +106,79 @@ const AdminCaseManagement = () => {
         })
     }, [casesResponse, selectedSeverity, selectedDetermination, dateFrom, dateTo])
 
-    const handleExport = (format: "csv" | "pdf") => {
-        if (filteredCases.length === 0) return;
+    const runExport = async (format: "csv" | "pdf", detectedFrom: string, detectedTo: string) => {
+        setIsExporting(true)
+        try {
+            const fullCases = await getAdminCasesForExport({
+                search: searchQuery || undefined,
+                status: selectedStatus !== "all" ? adminStatusToCaseStatus[selectedStatus as AdminCaseStatus] : undefined,
+                agency_id: selectedAgency !== "all" ? selectedAgency : undefined,
+                detected_from: detectedFrom || undefined,
+                detected_to: detectedTo || undefined,
+            })
 
-        const dataToExport = filteredCases.map(c => ({
-            caseId: c.caseId,
-            agencyName: c.agencyName || "—",
-            sellerName: c.sellerName || "—",
-            buyerName: c.buyerName || "—",
-            address: c.propertyAddress || "—",
-            amount: c.amount || "—",
-            status: c.adminStatus || "—",
-            severity: c.severity || "—",
-            determination: c.determination || "—",
-            date: c.saleDate || "—"
-        }));
+            // Severity/determination filters aren't backend query params yet
+            // (see comment above on filteredCases) — apply them client-side
+            // over the full exported dataset, same as the on-screen table.
+            const items = fullCases.items.filter((c) => {
+                const matchesSeverity = selectedSeverity === "all" || c.severity === selectedSeverity
+                const matchesDetermination =
+                    selectedDetermination === "all" || c.determination === selectedDetermination
+                return matchesSeverity && matchesDetermination
+            })
 
-        if (format === "csv") {
-            exportToCSV(dataToExport, "cases_report.csv");
-        } else {
-            exportToPDF(dataToExport, "Cases Management Report");
+            if (items.length === 0) {
+                toast.error("No cases found for the selected date range/filters")
+                return
+            }
+
+            const dataToExport = items.map(c => ({
+                caseId: c.caseId,
+                agencyName: c.agencyName || "—",
+                sellerName: c.sellerName || "—",
+                buyerName: c.buyerName || "—",
+                address: c.propertyAddress || "—",
+                amount: c.amount || "—",
+                status: c.adminStatus || "—",
+                severity: c.severity || "—",
+                determination: c.determination || "—",
+                date: c.saleDate || "—"
+            }));
+
+            if (format === "csv") {
+                exportToCSV(dataToExport, "cases_report.csv");
+            } else {
+                exportToPDF(dataToExport, "Cases Management Report");
+            }
+        } catch (error) {
+            toast.error(extractErrorMessage(error, "Failed to export cases. Please try again."))
+        } finally {
+            setIsExporting(false)
         }
+    }
+
+    const handleExport = (format: "csv" | "pdf") => {
+        setPendingFormat(format)
+        if (dateFrom || dateTo) {
+            // Filter row already has a date range set — use it directly,
+            // no need to prompt again.
+            void runExport(format, dateFrom, dateTo)
+            return
+        }
+        setExportDateFrom("")
+        setExportDateTo("")
+        setExportDialogOpen(true)
+    }
+
+    const handleConfirmExport = async (mode: "all" | "range") => {
+        if (!pendingFormat) return
+        if (mode === "range") {
+            await runExport(pendingFormat, exportDateFrom, exportDateTo)
+        } else {
+            await runExport(pendingFormat, "", "")
+        }
+        setExportDialogOpen(false)
+        setPendingFormat(null)
     }
 
     return (
@@ -204,8 +256,13 @@ const AdminCaseManagement = () => {
                                             size="sm"
                                             className="h-8 w-8 p-0 shrink-0"
                                             title="Export results"
+                                            disabled={isExporting}
                                         >
-                                            <ArrowDown2 size={16} variant="Linear" />
+                                            {isExporting ? (
+                                                <Loader2 size={16} className="animate-spin" />
+                                            ) : (
+                                                <ArrowDown2 size={16} variant="Linear" />
+                                            )}
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-40">
@@ -277,6 +334,49 @@ const AdminCaseManagement = () => {
                     )}
                 </DashboardPanel>
             </DashboardPageContent>
+
+            <Dialog open={exportDialogOpen} onOpenChange={(open) => !isExporting && setExportDialogOpen(open)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Export Cases</DialogTitle>
+                        <DialogDescription>
+                            No date range is set in the filters above. Choose a detection-date range to export, or export all matching cases (up to 10,000 rows).
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="case-export-from">Detected from</Label>
+                            <input
+                                id="case-export-from"
+                                type="date"
+                                value={exportDateFrom}
+                                onChange={(e) => setExportDateFrom(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="case-export-to">Detected to</Label>
+                            <input
+                                id="case-export-to"
+                                type="date"
+                                value={exportDateTo}
+                                onChange={(e) => setExportDateTo(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="gap-2 sm:gap-2">
+                        <Button variant="outline" onClick={() => handleConfirmExport("all")} disabled={isExporting}>
+                            {isExporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            Export all
+                        </Button>
+                        <Button onClick={() => handleConfirmExport("range")} disabled={isExporting || (!exportDateFrom && !exportDateTo)}>
+                            {isExporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            Export date range
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </DashboardLayout>
     )
 }

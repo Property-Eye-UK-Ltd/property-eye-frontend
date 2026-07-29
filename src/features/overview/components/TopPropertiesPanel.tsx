@@ -5,7 +5,7 @@ import { Buildings } from "iconsax-react"
 export interface TopProperty {
     name: string
     location: string
-    commission: string
+    recoveredAmount: string
 }
 
 interface TopPropertiesPanelProps {
@@ -28,7 +28,7 @@ export const TopPropertiesPanel = ({
                     <TableRow className="bg-gray-50">
                         <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">Property</TableHead>
                         <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3">Location</TableHead>
-                        <TableHead className="px-2 py-2 text-right text-xs font-medium lg:px-4 lg:py-3">Commission</TableHead>
+                        <TableHead className="px-2 py-2 text-right text-xs font-medium lg:px-4 lg:py-3">Recovered Amount</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -36,7 +36,7 @@ export const TopPropertiesPanel = ({
                         <TableRow key={`${row.name}-${index}`} className="border-b border-border">
                             <TableCell className="px-2 py-2 text-xs font-normal text-foreground lg:px-4 lg:py-3 lg:text-sm">{row.name}</TableCell>
                             <TableCell className="px-2 py-2 text-xs text-muted-foreground lg:px-4 lg:py-3 lg:text-sm">{row.location}</TableCell>
-                            <TableCell className="px-2 py-2 text-right text-xs font-medium text-foreground lg:px-4 lg:py-3 lg:text-sm">{row.commission}</TableCell>
+                            <TableCell className="px-2 py-2 text-right text-xs font-medium text-foreground lg:px-4 lg:py-3 lg:text-sm">{row.recoveredAmount}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

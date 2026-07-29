@@ -50,11 +50,6 @@ export const AgencyStatsCard = ({ data }: AgencyStatsCardProps) => {
                         </div>
 
                         <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground">Potential Savings</p>
-                            <p className="text-sm font-medium text-emerald-600">{formatCurrency(data.potentialSavings)}</p>
-                        </div>
-
-                        <div className="space-y-1">
                             <p className="text-xs text-muted-foreground">Recovered Commission</p>
                             <p className="text-sm font-medium text-primary">{formatCurrency(data.recoveredCommission)}</p>
                         </div>

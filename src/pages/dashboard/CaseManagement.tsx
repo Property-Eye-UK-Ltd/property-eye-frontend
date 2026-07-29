@@ -22,12 +22,12 @@ const CaseManagement = () => {
 
       <DashboardPageContent className="space-y-3 lg:space-y-6">
         <div className="grid gap-3 lg:gap-4 grid-cols-1 md:grid-cols-2">
-          {/* Card 1: Total Fraud Alerts */}
+          {/* Card 1: Flagged Cases */}
           <Card className="relative overflow-hidden hover:shadow-md transition-shadow duration-300">
             <div className="absolute top-0 left-0 right-0 h-2 bg-primary" />
             <CardHeader className="p-3 pb-1 lg:p-6 lg:pb-3">
               <CardTitle className="text-xs font-normal text-muted-foreground lg:text-sm">
-                Total Fraud Alerts
+                Flagged Cases
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0 flex flex-col justify-between h-[80px]">

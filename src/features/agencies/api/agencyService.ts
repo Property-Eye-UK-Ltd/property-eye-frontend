@@ -37,7 +37,6 @@ export interface AdminAgencyDetail {
     open_cases: number
     total_listings: number
     confirmed_fraud: number
-    potential_savings: number
     recovered_commission: number
 }
 
@@ -52,6 +51,15 @@ export const getAdminAgenciesList = async (params?: {
     search?: string
 }): Promise<AdminAgencyListResponse> => {
     const { data } = await apiClient.get<AdminAgencyListResponse>("/dashboard/admin/agencies", { params })
+    return data
+}
+
+export const getAdminAgenciesForExport = async (params?: {
+    search?: string
+}): Promise<AdminAgencyListResponse> => {
+    const { data } = await apiClient.get<AdminAgencyListResponse>("/dashboard/admin/agencies", {
+        params: { ...params, export: true },
+    })
     return data
 }
 

@@ -4,7 +4,6 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { ArrowLeft, ArrowRight } from "iconsax-react"
 import { ChevronsUpDown } from "lucide-react"
 import { MatchConfidenceMeter } from "@/components/dashboard/MatchConfidenceMeter"
 
@@ -13,7 +12,6 @@ export interface AlertRecord {
   caseId?: string
   property: string
   fraudScore: number
-  type: string
   severity: "Critical" | "High" | "Medium" | "Low"
   dateDetected: string
 }
@@ -21,18 +19,15 @@ export interface AlertRecord {
 interface ActiveAlertsPanelProps {
   data: AlertRecord[]
   severityStyles: Record<AlertRecord["severity"], string>
-  pagination?: (number | "ellipsis")[]
 }
 
 export const ActiveAlertsPanel = ({
   data,
   severityStyles,
-  pagination = [1, 2, 3, "ellipsis", 8, 9, 10],
 }: ActiveAlertsPanelProps) => {
   const navigate = useNavigate()
-  const [sortColumn, setSortColumn] = useState<"type" | "severity" | null>(null)
+  const [sortColumn, setSortColumn] = useState<"severity" | null>(null)
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
-  const [currentPage, setCurrentPage] = useState(1)
 
   const severityWeight: Record<AlertRecord["severity"], number> = {
     Critical: 3,
@@ -46,14 +41,11 @@ export const ActiveAlertsPanel = ({
     const direction = sortDirection === "asc" ? 1 : -1
 
     return [...data].sort((a, b) => {
-      if (sortColumn === "type") {
-        return a.type.localeCompare(b.type) * direction
-      }
       return (severityWeight[a.severity] - severityWeight[b.severity]) * direction
     })
   }, [data, sortColumn, sortDirection, severityWeight])
 
-  const handleSort = (column: "type" | "severity") => {
+  const handleSort = (column: "severity") => {
     if (sortColumn === column) {
       setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
     } else {
@@ -81,15 +73,6 @@ export const ActiveAlertsPanel = ({
               <TableHead className="px-4 font-medium">
                 <button
                   className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                  onClick={() => handleSort("type")}
-                >
-                  Type
-                  <ChevronsUpDown className="h-4 w-4" />
-                </button>
-              </TableHead>
-              <TableHead className="px-4 font-medium">
-                <button
-                  className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   onClick={() => handleSort("severity")}
                 >
                   Timing Risk
@@ -110,7 +93,6 @@ export const ActiveAlertsPanel = ({
                 <TableCell className="px-4 py-3">
                   <MatchConfidenceMeter value={alert.fraudScore} variant="compact" />
                 </TableCell>
-                <TableCell className="px-4 py-3">{alert.type}</TableCell>
                 <TableCell className="px-4 py-4">
                   <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", severityStyles[alert.severity])}>
                     {alert.severity}
@@ -135,44 +117,6 @@ export const ActiveAlertsPanel = ({
             ))}
           </TableBody>
         </Table>
-        <div className="flex flex-col gap-4 border-t border-border px-4 py-4 text-white md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
-            {pagination.map((item, idx) =>
-              item === "ellipsis" ? (
-                <div key={`ellipsis-${idx}`} className="flex h-9 w-9 items-center justify-center rounded-full border border-primary text-primary">
-                  ...
-                </div>
-              ) : (
-                <button
-                  key={item}
-                  onClick={() => setCurrentPage(item)}
-                  className={cn(
-                    "h-9 w-9 rounded-full border border-primary text-sm font-medium transition-colors",
-                    currentPage === item ? "bg-primary text-secondary" : "text-primary"
-                  )}
-                >
-                  {item}
-                </button>
-              )
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary"
-            >
-              <ArrowLeft size={16} variant="Outline" className="text-primary" />
-              Previous
-            </button>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(10, prev + 1))}
-              className="flex items-center gap-2 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary"
-            >
-              Next
-              <ArrowRight size={16} variant="Outline" className="text-primary" />
-            </button>
-          </div>
-        </div>
       </div>
     </DashboardPanel>
   )

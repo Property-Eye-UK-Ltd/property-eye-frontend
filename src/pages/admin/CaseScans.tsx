@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { isAxiosError } from "axios";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader";
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel";
@@ -23,6 +24,7 @@ import type {
 import type { ScanSession } from "@/types/scan-session.types";
 import {
   getSuspiciousMatches,
+  getSuspiciousMatchesForExport,
   getFraudReportAgencies,
   type FraudReportAgencyOption,
 } from "@/features/casescans/api/scanService";
@@ -33,6 +35,12 @@ import {
 } from "@/features/casescans/types/caseScansFilters.types";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+
+const extractErrorMessage = (error: unknown, fallback: string): string => {
+  if (!isAxiosError(error)) return fallback;
+  const detail = (error.response?.data as { detail?: string } | undefined)?.detail;
+  return typeof detail === "string" ? detail : fallback;
+};
 
 const CaseScans = () => {
   const navigate = useNavigate();
@@ -51,6 +59,7 @@ const CaseScans = () => {
   const [agencyOptions, setAgencyOptions] = useState<FraudReportAgencyOption[]>([]);
   const [page, setPage] = useState(1);
   const [totalMatches, setTotalMatches] = useState(0);
+  const [isExporting, setIsExporting] = useState(false);
 
   const itemsPerPage = 10;
 
@@ -141,22 +150,60 @@ const CaseScans = () => {
     console.error("Scan error:", error);
   };
 
-  const handleExport = (format: "csv" | "pdf") => {
-    if (matches.length === 0) return;
+  const handleExport = async (format: "csv" | "pdf") => {
+    if (totalMatches === 0) return;
+    setIsExporting(true);
+    try {
+      // Export the full filtered result set (server-capped at 10,000), not
+      // just the currently visible page.
+      const confidenceMin = filters.confidenceMin ? Number(filters.confidenceMin) : undefined;
+      const confidenceMax = filters.confidenceMax ? Number(filters.confidenceMax) : undefined;
+      const minSubscriptionRevenue = filters.minSubscriptionRevenue
+        ? Number(filters.minSubscriptionRevenue)
+        : undefined;
 
-    const dataToExport = matches.map((match: any) => ({
-      matchId: match.fraud_match_id || "—",
-      caseId: match.case_id || "—",
-      agency: match.agency_name || "—",
-      timingRisk: match.risk_level || "—",
-      detectedDate: match.scanned_at ? new Date(match.scanned_at).toLocaleDateString("en-GB") : "—",
-      verificationStatus: match.verification_status || "—",
-    }));
+      const response = await getSuspiciousMatchesForExport({
+        search: searchInput || undefined,
+        risk_levels: filters.riskLevels.length > 0 ? filters.riskLevels : undefined,
+        verification_statuses:
+          filters.verificationStatuses.length > 0 ? filters.verificationStatuses : undefined,
+        case_statuses: filters.caseStatuses.length > 0 ? filters.caseStatuses : undefined,
+        determinations: filters.determinations.length > 0 ? filters.determinations : undefined,
+        recovery_outcomes:
+          filters.recoveryOutcomes.length > 0 ? filters.recoveryOutcomes : undefined,
+        agency_ids: filters.agencyIds.length > 0 ? filters.agencyIds : undefined,
+        detected_from: filters.detectedFrom || undefined,
+        detected_to: filters.detectedTo || undefined,
+        confidence_min: Number.isFinite(confidenceMin) ? confidenceMin : undefined,
+        confidence_max: Number.isFinite(confidenceMax) ? confidenceMax : undefined,
+        flag_active: filters.flagActiveOnly || undefined,
+        min_subscription_revenue: Number.isFinite(minSubscriptionRevenue)
+          ? minSubscriptionRevenue
+          : undefined,
+      });
 
-    if (format === "csv") {
-      exportToCSV(dataToExport, "case_scans_report.csv");
-    } else {
-      exportToPDF(dataToExport, "Case Scans Report");
+      const dataToExport = response.items.map((match) => ({
+        matchId: match.id || "—",
+        caseId: match.id || "—",
+        agency: match.agency_name || "—",
+        timingRisk: match.risk_level || "—",
+        detectedDate: match.detected_at ? new Date(match.detected_at).toLocaleDateString("en-GB") : "—",
+        verificationStatus: match.verification_status || "—",
+      }));
+
+      if (format === "csv") {
+        exportToCSV(dataToExport, "case_scans_report.csv");
+      } else {
+        exportToPDF(dataToExport, "Case Scans Report");
+      }
+    } catch (error) {
+      toast({
+        title: "Export failed",
+        description: extractErrorMessage(error, "Failed to export case scans"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -234,13 +281,13 @@ const CaseScans = () => {
                   <Filter size={14} variant="Linear" className="mr-2" />
                   Filters
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("csv")}>
+                <DropdownMenuItem className="cursor-pointer text-xs" disabled={isExporting} onClick={() => handleExport("csv")}>
                   <ExportSquare size={14} variant="Linear" className="mr-2" />
-                  Export as CSV
+                  {isExporting ? "Exporting..." : "Export as CSV"}
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleExport("pdf")}>
+                <DropdownMenuItem className="cursor-pointer text-xs" disabled={isExporting} onClick={() => handleExport("pdf")}>
                   <ExportSquare size={14} variant="Linear" className="mr-2" />
-                  Export as PDF
+                  {isExporting ? "Exporting..." : "Export as PDF"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

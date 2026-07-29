@@ -12,5 +12,4 @@ export interface AgencyProfileData {
     nextBillingDate: string | null
     totalListings: number
     confirmedFraud: number
-    potentialSavings: number
 }

@@ -22,14 +22,13 @@ export interface SeverityDistributionResponse {
 export interface TopRecoveryItem {
     property_address: string
     location: string
-    commission_amount: number
+    recovered_amount: number
 }
 
 export interface HighPriorityAlertItem {
     case_id: string
     property_address: string
-    fraud_score: number
-    fraud_type: string
+    fraud_score: number | null
     severity: string
     date_detected: string
 }

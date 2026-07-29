@@ -56,7 +56,7 @@ const AdminCaseDetails = () => {
     // server-side, so load it automatically; otherwise wait for the user
     // to click "Verify with Register" before hitting the live HMLR lookup.
     const [registerExtractRequested, setRegisterExtractRequested] = useState(
-        caseData?.status === "CHECKED"
+        Boolean(caseData?.hasRegisterCheck)
     )
     const registerExtractQuery = useRegisterExtract(decodedCaseId, registerExtractRequested)
     const verifyWithRegister = useVerifyWithRegister(decodedCaseId)

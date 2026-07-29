@@ -13,7 +13,7 @@ const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:t
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
 interface AdminCasesTableProps {
-    data: (AgencyCase & { verification_status?: string; register_extract_fetched_at?: string | null })[]
+    data: AgencyCase[]
     /** Server-side pagination (falls back to client-side single-page display when omitted) */
     page?: number
     totalPages?: number
@@ -67,7 +67,7 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                 <Table className="min-w-[1100px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className={cn(th, "w-8")}>Scan</TableHead>
+                            <TableHead className={cn(th, "w-8")}>Scan Result</TableHead>
                             <TableHead className={th}>Case ID</TableHead>
                             <TableHead className={th}>Agency</TableHead>
                             <TableHead className={th}>Address</TableHead>
@@ -80,7 +80,7 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                             <TableHead className={th}>Withdrawal</TableHead>
                             <TableHead className={th}>Sale Date</TableHead>
                             <TableHead className={th}>Timing Risk</TableHead>
-                            <TableHead className={th}>Status</TableHead>
+                            <TableHead className={th}>Case Status</TableHead>
                             <TableHead className={th}>Determination</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -94,8 +94,8 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                                 <TableCell className={cn(td, "w-8 text-center")}>
                                     <div onClick={(e) => e.stopPropagation()}>
                                         <ScanIndicator
-                                            verification_status={caseItem.verification_status as "suspicious" | "confirmed_fraud" | "not_fraud" | "error" | null}
-                                            scan_date={caseItem.register_extract_fetched_at}
+                                            verification_status={caseItem.verificationStatus ?? null}
+                                            scan_date={caseItem.scanDate}
                                             onClick={() => handleViewCase(caseItem.caseId)}
                                         />
                                     </div>

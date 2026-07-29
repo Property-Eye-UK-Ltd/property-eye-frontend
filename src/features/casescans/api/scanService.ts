@@ -29,6 +29,7 @@ export interface FraudReportsFilterParams {
   search?: string;
   page?: number;
   page_size?: number;
+  export?: boolean;
   risk_levels?: string[];
   verification_statuses?: string[];
   case_statuses?: string[];
@@ -53,6 +54,24 @@ export const getSuspiciousMatches = async (
       // Axios defaults to `foo[]=a&foo[]=b` for arrays, which FastAPI does
       // NOT parse into list[str] — it expects repeated bare params
       // (foo=a&foo=b). This matches how FastAPI's Query(list[str]) binds.
+      paramsSerializer: {
+        indexes: null,
+      },
+    }
+  );
+  return data;
+};
+
+// Same endpoint, export=true — returns every row matching the current
+// filters (server-capped at 10,000) instead of one paginated page, so
+// "export" reflects the full filtered result set, not just the visible page.
+export const getSuspiciousMatchesForExport = async (
+  params: FraudReportsFilterParams
+): Promise<PaginatedFraudMatchResponse> => {
+  const { data } = await apiClient.get<PaginatedFraudMatchResponse>(
+    "/admin/fraud-reports",
+    {
+      params: { ...params, export: true },
       paramsSerializer: {
         indexes: null,
       },

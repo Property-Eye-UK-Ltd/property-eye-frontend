@@ -16,8 +16,17 @@ export interface AgencyCase {
     withdrawalDate: string
     saleDate: string
     buyerName: string
-    /** Legacy agency-facing checked state */
-    status: "CHECKED" | ""
+    /** Whether a Land Registry check has already been run for this case
+     * (derived from register_extract_status) — distinct from both
+     * verification_status (the scan RESULT) and adminStatus/case_status
+     * (the case lifecycle state). */
+    hasRegisterCheck: boolean
+    /** Scan Result: the automated verification signal (suspicious/
+     * confirmed_fraud/not_fraud/error), shown via ScanIndicator — distinct
+     * from adminStatus (the case lifecycle state) below. */
+    verificationStatus?: "suspicious" | "confirmed_fraud" | "not_fraud" | "error" | null
+    /** When the register extract was last fetched, for the ScanIndicator tooltip. */
+    scanDate?: string | null
     agencyName?: string
     adminStatus: AdminCaseStatus
     severity: "Critical" | "High" | "Medium" | "Low"
@@ -53,7 +62,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "15 Aug, 2025",
         saleDate: "15 Aug, 2025",
         buyerName: "Kris Luther",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Solict Homes",
         adminStatus: "Closed",
         severity: "Critical",
@@ -70,7 +79,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "2 Jul, 2025",
         saleDate: "2 Jul, 2025",
         buyerName: "Iverson James",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Baltimore Homes",
         adminStatus: "Under Legal Review",
         severity: "High",
@@ -83,7 +92,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "18 Jun, 2025",
         saleDate: "18 Jun, 2025",
         buyerName: "Sarah Jenkins",
-        status: "",
+        hasRegisterCheck: false,
         agencyName: "Mindcraft Homes",
         adminStatus: "Open",
         severity: "Medium",
@@ -96,7 +105,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "9 May, 2025",
         saleDate: "9 May, 2025",
         buyerName: "David Wilson",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Dresscket",
         adminStatus: "Flagged",
         severity: "High",
@@ -110,7 +119,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "30 Apr, 2025",
         saleDate: "30 Apr, 2025",
         buyerName: "Emma Thompson",
-        status: "",
+        hasRegisterCheck: false,
         agencyName: "Solict Homes",
         adminStatus: "Pending Approval",
         severity: "Low",
@@ -126,7 +135,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "12 Mar, 2025",
         saleDate: "12 Mar, 2025",
         buyerName: "Michael Brown",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Baltimore Homes",
         adminStatus: "Closed",
         severity: "Medium",
@@ -143,7 +152,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "25 Oct, 2025",
         saleDate: "25 Oct, 2025",
         buyerName: "Liam Neeson",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Mindcraft Homes",
         adminStatus: "Open",
         severity: "Critical",
@@ -156,7 +165,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "5 Sep, 2025",
         saleDate: "5 Sep, 2025",
         buyerName: "Paul McCartney",
-        status: "",
+        hasRegisterCheck: false,
         agencyName: "Dresscket",
         adminStatus: "Under Legal Review",
         severity: "High",
@@ -169,7 +178,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "19 Nov, 2025",
         saleDate: "19 Nov, 2025",
         buyerName: "Sean Connery",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Baltimore Homes",
         adminStatus: "Closed",
         severity: "Low",
@@ -186,7 +195,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "1 Jan, 2026",
         saleDate: "1 Jan, 2026",
         buyerName: "Sherlock Holmes",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Solict Homes",
         adminStatus: "Pending Approval",
         severity: "Critical",
@@ -202,7 +211,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "14 Feb, 2025",
         saleDate: "14 Feb, 2025",
         buyerName: "John Doe",
-        status: "",
+        hasRegisterCheck: false,
         agencyName: "Baltimore Homes",
         adminStatus: "Open",
         severity: "Low",
@@ -215,7 +224,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "22 Mar, 2025",
         saleDate: "22 Mar, 2025",
         buyerName: "Jane Smith",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Mindcraft Homes",
         adminStatus: "Closed",
         severity: "Medium",
@@ -231,7 +240,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "11 Apr, 2025",
         saleDate: "11 Apr, 2025",
         buyerName: "Robert Bruce",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Dresscket",
         adminStatus: "Flagged",
         severity: "High",
@@ -245,7 +254,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "3 May, 2025",
         saleDate: "3 May, 2025",
         buyerName: "Alice Wonderland",
-        status: "",
+        hasRegisterCheck: false,
         agencyName: "Solict Homes",
         adminStatus: "Under Legal Review",
         severity: "Medium",
@@ -258,7 +267,7 @@ export const mockAgencyCases: AgencyCase[] = [
         withdrawalDate: "21 Jun, 2025",
         saleDate: "21 Jun, 2025",
         buyerName: "Isaac Newton",
-        status: "CHECKED",
+        hasRegisterCheck: true,
         agencyName: "Baltimore Homes",
         adminStatus: "Closed",
         severity: "Critical",

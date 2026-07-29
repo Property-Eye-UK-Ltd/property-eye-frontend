@@ -8,7 +8,12 @@ export interface FraudMatch {
   vendor_name: string;
   confidence_score: number;
   risk_level: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
+  // Scan Result: the automated Land Registry/Stage-1&2 verification signal.
   verification_status: "suspicious" | "confirmed_fraud" | "not_fraud" | "error";
+  // Case Status: the human/admin case-lifecycle state, layered on top of the
+  // scan result — distinct field, do not conflate the two (see FraudMatch
+  // model comment in backend/src/models/fraud_match.py).
+  case_status: "open" | "under_legal_review" | "flagged" | "pending_approval" | "closed";
   verified_owner_name?: string;
   is_confirmed_fraud: boolean;
   detected_at: string;

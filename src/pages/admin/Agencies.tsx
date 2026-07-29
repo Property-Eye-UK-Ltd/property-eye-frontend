@@ -1,5 +1,8 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { isAxiosError } from "axios"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
@@ -16,7 +19,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AgenciesTablePanel } from "@/features/agencies/components/AgenciesTablePanel"
 import { useAdminAgenciesSummary, useAdminAgenciesList } from "@/features/agencies/api/useAgencies"
+import { getAdminAgenciesForExport } from "@/features/agencies/api/agencyService"
 import { exportToCSV, exportToPDF } from "@/lib/exportUtils"
+
+const extractErrorMessage = (error: unknown, fallback: string): string => {
+    if (!isAxiosError(error)) return fallback
+    const detail = (error.response?.data as { detail?: string } | undefined)?.detail
+    return typeof detail === "string" ? detail : fallback
+}
 
 const periods = ["All Time", "This Month", "Last Week"]
 
@@ -31,6 +41,7 @@ const Agencies = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [page, setPage] = useState(1)
     const [isExportOpen, setIsExportOpen] = useState(false)
+    const [isExporting, setIsExporting] = useState(false)
 
     const { data: summary } = useAdminAgenciesSummary()
     const { data: agenciesList } = useAdminAgenciesList({
@@ -63,22 +74,35 @@ const Agencies = () => {
         },
     ]
 
-    const handleExport = (format: "pdf" | "csv") => {
-        const list = agenciesList?.agencies || [];
-        if (list.length === 0) return;
+    const handleExport = async (format: "pdf" | "csv") => {
+        setIsExporting(true)
+        try {
+            const fullList = await getAdminAgenciesForExport({
+                search: searchQuery || undefined,
+            })
+            const list = fullList.agencies || [];
+            if (list.length === 0) {
+                toast.error("No agencies found to export")
+                return
+            }
 
-        const dataToExport = list.map((agency: any) => ({
-            agencyName: agency.name || "—",
-            plan: agency.plan_name || "—",
-            users: agency.users ?? 0,
-            integration: agency.integration_type || "—",
-            fraudDetected: agency.fraud_detected ?? 0
-        }));
+            const dataToExport = list.map((agency: any) => ({
+                agencyName: agency.name || "—",
+                plan: agency.plan_name || "—",
+                users: agency.users ?? 0,
+                integration: agency.integration_type || "—",
+                fraudDetected: agency.fraud_detected ?? 0
+            }));
 
-        if (format === "csv") {
-            exportToCSV(dataToExport, "agencies_report.csv");
-        } else {
-            exportToPDF(dataToExport, "Agencies Performance Report");
+            if (format === "csv") {
+                exportToCSV(dataToExport, "agencies_report.csv");
+            } else {
+                exportToPDF(dataToExport, "Agencies Performance Report");
+            }
+        } catch (error) {
+            toast.error(extractErrorMessage(error, "Failed to export agencies. Please try again."))
+        } finally {
+            setIsExporting(false)
         }
     }
 
@@ -127,13 +151,22 @@ const Agencies = () => {
 
                             <DropdownMenu onOpenChange={setIsExportOpen}>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className={panelBtnClass}>
-                                        Export
-                                        <ArrowDown2
-                                            size={16}
-                                            variant="Outline"
-                                            className={`ml-1 transition-transform duration-200 lg:ml-2 ${isExportOpen ? "rotate-180" : ""}`}
-                                        />
+                                    <Button variant="outline" className={panelBtnClass} disabled={isExporting}>
+                                        {isExporting ? (
+                                            <>
+                                                <Loader2 className="mr-1 h-4 w-4 animate-spin lg:mr-2" />
+                                                Exporting...
+                                            </>
+                                        ) : (
+                                            <>
+                                                Export
+                                                <ArrowDown2
+                                                    size={16}
+                                                    variant="Outline"
+                                                    className={`ml-1 transition-transform duration-200 lg:ml-2 ${isExportOpen ? "rotate-180" : ""}`}
+                                                />
+                                            </>
+                                        )}
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-40">

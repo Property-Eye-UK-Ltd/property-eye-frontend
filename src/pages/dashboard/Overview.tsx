@@ -62,7 +62,7 @@ const Overview = () => {
       topRecoveries.map((item) => ({
         name: item.property_address,
         location: item.location,
-        commission: formatCurrency(item.commission_amount),
+        recoveredAmount: formatCurrency(item.recovered_amount),
       })),
     [topRecoveries]
   )
@@ -73,7 +73,6 @@ const Overview = () => {
         caseId: item.case_id,
         property: item.property_address,
         fraudScore: Math.round(item.fraud_score),
-        type: item.fraud_type,
         severity: toTitleCaseSeverity(item.severity),
         dateDetected: new Date(item.date_detected).toLocaleDateString("en-GB", {
           day: "numeric",

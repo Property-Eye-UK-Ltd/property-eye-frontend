@@ -128,7 +128,6 @@ const AgencyProfile = () => {
         nextBillingDate: agencyDetail.next_billing_date,
         totalListings: agencyDetail.total_listings,
         confirmedFraud: agencyDetail.confirmed_fraud,
-        potentialSavings: agencyDetail.potential_savings,
     }
 
     const tabs = [
