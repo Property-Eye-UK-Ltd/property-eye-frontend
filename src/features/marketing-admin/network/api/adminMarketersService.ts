@@ -37,6 +37,8 @@ export interface AdminMarketerAgency {
     attribution_method: string
     total_fraud_value: number
     commission_earned: number
+    attribution_id?: string
+    attribution_status?: string
 }
 
 export const getAdminMarketers = async (): Promise<AdminMarketerRecord[]> => {

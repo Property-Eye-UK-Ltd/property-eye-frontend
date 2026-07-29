@@ -67,9 +67,7 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                 <Table className="min-w-[1100px]">
                     <TableHeader>
                         <TableRow className="bg-gray-50">
-                            <TableHead className={cn(th, "w-8")}>Scan Result</TableHead>
                             <TableHead className={th}>Case ID</TableHead>
-                            <TableHead className={th}>Agency</TableHead>
                             <TableHead className={th}>Address</TableHead>
                             <TableHead className={th}>
                                 <button className={sortBtnClass} onClick={() => handleSort("buyerName")}>
@@ -77,11 +75,12 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                                     <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
-                            <TableHead className={th}>Withdrawal</TableHead>
-                            <TableHead className={th}>Sale Date</TableHead>
                             <TableHead className={th}>Timing Risk</TableHead>
                             <TableHead className={th}>Case Status</TableHead>
                             <TableHead className={th}>Determination</TableHead>
+                            <TableHead className={th}>Withdrawal</TableHead>
+                            <TableHead className={th}>Sale Date</TableHead>
+                            <TableHead className={cn(th, "w-8")}>Scan Result</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -91,37 +90,22 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                                 onClick={() => handleViewCase(caseItem.caseId)}
                                 className="border-b border-border cursor-pointer hover:bg-slate-50/60"
                             >
-                                <TableCell className={cn(td, "w-8 text-center")}>
-                                    <div onClick={(e) => e.stopPropagation()}>
-                                        <ScanIndicator
-                                            verification_status={caseItem.verificationStatus ?? null}
-                                            scan_date={caseItem.scanDate}
-                                            onClick={() => handleViewCase(caseItem.caseId)}
-                                        />
-                                    </div>
-                                </TableCell>
                                 <TableCell className={td}>
                                     <div className="flex items-center gap-2">
                                         <Checkbox className="data-[state=checked]:border-progress data-[state=checked]:bg-progress" onClick={(e) => e.stopPropagation()} />
-                                        <span className="whitespace-nowrap text-muted-foreground">
-                                            {caseItem.caseId}
-                                        </span>
+                                        <button
+                                            onClick={() => handleViewCase(caseItem.caseId)}
+                                            className="whitespace-nowrap text-primary hover:underline font-medium text-xs"
+                                        >
+                                            {caseItem.caseId.substring(0, 4)}
+                                        </button>
                                     </div>
-                                </TableCell>
-                                <TableCell className={cn(td, "text-muted-foreground")}>
-                                    {caseItem.agencyName}
                                 </TableCell>
                                 <TableCell className={cn(td, "max-w-[140px] truncate text-muted-foreground lg:max-w-none")}>
                                     {caseItem.propertyAddress}
                                 </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>
                                     {caseItem.buyerName}
-                                </TableCell>
-                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
-                                    {caseItem.withdrawalDate}
-                                </TableCell>
-                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
-                                    {caseItem.saleDate}
                                 </TableCell>
                                 <TableCell className={td}>
                                     <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1 lg:text-xs", caseSeverityStyles[caseItem.severity])}>
@@ -140,6 +124,21 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                                 </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>
                                     {caseItem.determination ?? "—"}
+                                </TableCell>
+                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
+                                    {caseItem.withdrawalDate}
+                                </TableCell>
+                                <TableCell className={cn(td, "whitespace-nowrap text-muted-foreground")}>
+                                    {caseItem.saleDate}
+                                </TableCell>
+                                <TableCell className={cn(td, "w-8 text-center")}>
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                        <ScanIndicator
+                                            verification_status={caseItem.verificationStatus ?? null}
+                                            scan_date={caseItem.scanDate}
+                                            onClick={() => handleViewCase(caseItem.caseId)}
+                                        />
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ))}

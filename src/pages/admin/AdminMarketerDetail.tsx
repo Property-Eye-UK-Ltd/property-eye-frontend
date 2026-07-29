@@ -15,6 +15,7 @@ import {
     useUnattributedAgencies,
     useUpdateMarketerStatus,
 } from "@/features/marketing-admin/network/api/useAdminMarketers"
+import { useApproveAttribution, useRejectAttribution } from "@/features/marketing-admin/attribution/api/useAdminAttributions"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -45,6 +46,26 @@ const AdminMarketerDetail = () => {
     const linkAgency = useLinkAgencyToMarketer(marketerId ?? "")
 
     const [isLinkOpen, setIsLinkOpen] = useState(false)
+
+    const approveMutation = useApproveAttribution()
+    const rejectMutation = useRejectAttribution()
+
+    const handleApproveAttribution = (attributionId: string, agencyName: string) => {
+        approveMutation.mutate(attributionId, {
+            onSuccess: () => toast.success(`Attribution approved for ${agencyName}`),
+            onError: () => toast.error("Failed to approve attribution"),
+        })
+    }
+
+    const handleRejectAttribution = (attributionId: string, agencyName: string) => {
+        rejectMutation.mutate(
+            { attributionId, reason: "Rejected by admin" },
+            {
+                onSuccess: () => toast.success(`Attribution rejected for ${agencyName}`),
+                onError: () => toast.error("Failed to reject attribution"),
+            }
+        )
+    }
 
     const handleToggleStatus = () => {
         if (!marketer) return
@@ -144,8 +165,8 @@ const AdminMarketerDetail = () => {
                 )}
 
                 <DashboardPanel
-                    title="Linked Agencies"
-                    description="Agencies attributed to this marketer, and what they've earned from each."
+                    title="Referrals"
+                    description="Agencies referred by this marketer and their attribution status."
                     noPadding
                     hasBorder
                 >
@@ -154,35 +175,78 @@ const AdminMarketerDetail = () => {
                             <TableHeader>
                                 <TableRow className="bg-gray-50">
                                     <TableHead className={th}>Agency</TableHead>
-                                    <TableHead className={th}>Attribution Method</TableHead>
+                                    <TableHead className={th}>Method</TableHead>
+                                    <TableHead className={th}>Attribution Status</TableHead>
                                     <TableHead className={th}>Linked Since</TableHead>
                                     <TableHead className={cn(th, "text-right")}>Fraud Value</TableHead>
                                     <TableHead className={cn(th, "text-right")}>Commission Earned</TableHead>
+                                    <TableHead className={cn(th, "text-right")}>Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {isLoadingAgencies ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className={cn(td, "text-center text-muted-foreground")}>
+                                        <TableCell colSpan={7} className={cn(td, "text-center text-muted-foreground")}>
                                             Loading…
                                         </TableCell>
                                     </TableRow>
                                 ) : linkedAgencies.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className={cn(td, "text-center text-muted-foreground")}>
+                                        <TableCell colSpan={7} className={cn(td, "text-center text-muted-foreground")}>
                                             No agencies linked yet.
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    linkedAgencies.map((agency) => (
-                                        <TableRow key={agency.id} className="border-b border-border">
-                                            <TableCell className={cn(td, "font-medium text-foreground")}>{agency.name}</TableCell>
-                                            <TableCell className={cn(td, "capitalize text-muted-foreground")}>{agency.attribution_method}</TableCell>
-                                            <TableCell className={cn(td, "text-muted-foreground")}>{formatDate(agency.created_at)}</TableCell>
-                                            <TableCell className={cn(td, "text-right")}>{formatGbp(agency.total_fraud_value)}</TableCell>
-                                            <TableCell className={cn(td, "text-right font-medium")}>{formatGbp(agency.commission_earned)}</TableCell>
-                                        </TableRow>
-                                    ))
+                                    linkedAgencies.map((agency) => {
+                                        const attrStatus = agency.attribution_status
+                                        const attrId = agency.attribution_id
+                                        return (
+                                            <TableRow key={agency.id} className="border-b border-border">
+                                                <TableCell className={cn(td, "font-medium text-foreground")}>{agency.name}</TableCell>
+                                                <TableCell className={cn(td, "capitalize text-muted-foreground")}>{agency.attribution_method}</TableCell>
+                                                <TableCell className={td}>
+                                                    {attrStatus ? (
+                                                        <span className={cn(
+                                                            "inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs",
+                                                            attrStatus === "approved" ? "bg-green-50 text-green-600 border border-green-100" :
+                                                            attrStatus === "denied" ? "bg-gray-100 text-gray-600 border border-gray-200" :
+                                                            attrStatus === "locked" ? "bg-blue-50 text-blue-600 border border-blue-100" :
+                                                            "bg-amber-50 text-amber-600 border border-amber-100"
+                                                        )}>
+                                                            {attrStatus === "denied" ? "Rejected" : attrStatus.charAt(0).toUpperCase() + attrStatus.slice(1)}
+                                                        </span>
+                                                    ) : "—"}
+                                                </TableCell>
+                                                <TableCell className={cn(td, "text-muted-foreground")}>{formatDate(agency.created_at)}</TableCell>
+                                                <TableCell className={cn(td, "text-right")}>{formatGbp(agency.total_fraud_value)}</TableCell>
+                                                <TableCell className={cn(td, "text-right font-medium")}>{formatGbp(agency.commission_earned)}</TableCell>
+                                                <TableCell className={cn(td, "text-right")}>
+                                                    {attrId ? (
+                                                        <div className="flex justify-end gap-2">
+                                                            {(attrStatus === "pending" || attrStatus === "locked" || attrStatus === "denied") && (
+                                                                <button
+                                                                    onClick={() => handleApproveAttribution(attrId, agency.name)}
+                                                                    disabled={approveMutation.isPending}
+                                                                    className="text-xs font-medium text-progress hover:underline lg:text-sm"
+                                                                >
+                                                                    Approve
+                                                                </button>
+                                                            )}
+                                                            {(attrStatus === "pending" || attrStatus === "locked" || attrStatus === "approved") && (
+                                                                <button
+                                                                    onClick={() => handleRejectAttribution(attrId, agency.name)}
+                                                                    disabled={rejectMutation.isPending}
+                                                                    className="text-xs font-medium text-red-600 hover:underline lg:text-sm"
+                                                                >
+                                                                    Reject
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    ) : "—"}
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    })
                                 )}
                             </TableBody>
                         </Table>

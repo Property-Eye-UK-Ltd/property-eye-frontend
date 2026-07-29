@@ -11,7 +11,10 @@ export const useAdminAttributions = (params?: { status?: string; has_conflict?: 
 
 const useInvalidateAttributions = () => {
     const queryClient = useQueryClient()
-    return () => queryClient.invalidateQueries({ queryKey: queryKeys.adminAttributions.all })
+    return () => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.adminAttributions.all })
+        queryClient.invalidateQueries({ queryKey: queryKeys.adminMarketers.all })
+    }
 }
 
 export const useApproveAttribution = () => {

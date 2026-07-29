@@ -136,8 +136,8 @@ export const AttributionQueueTable = ({ data }: AttributionQueueTableProps) => {
                                         </span>
                                     </TableCell>
                                     <TableCell className={cn(td, "text-right")}>
-                                        {attribution.status === "pending" || attribution.status === "locked" ? (
-                                            <div className="flex justify-end gap-2">
+                                        <div className="flex justify-end gap-2">
+                                            {(attribution.status === "pending" || attribution.status === "locked" || attribution.status === "denied") && (
                                                 <button
                                                     onClick={() => handleApprove(attribution)}
                                                     disabled={approveMutation.isPending}
@@ -145,6 +145,8 @@ export const AttributionQueueTable = ({ data }: AttributionQueueTableProps) => {
                                                 >
                                                     Approve
                                                 </button>
+                                            )}
+                                            {(attribution.status === "pending" || attribution.status === "locked" || attribution.status === "approved") && (
                                                 <button
                                                     onClick={() => handleReject(attribution)}
                                                     disabled={rejectMutation.isPending}
@@ -152,10 +154,8 @@ export const AttributionQueueTable = ({ data }: AttributionQueueTableProps) => {
                                                 >
                                                     Reject
                                                 </button>
-                                            </div>
-                                        ) : (
-                                            <span className="text-xs text-muted-foreground lg:text-sm">Closed</span>
-                                        )}
+                                            )}
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))
