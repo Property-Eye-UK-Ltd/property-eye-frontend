@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
@@ -8,8 +9,8 @@ import { cn } from "@/lib/utils"
 import { CommissionLineStatus, commissionLineStatusStyles } from "@/data/marketing-data"
 import { AdminCommissionRow } from "@/features/adminbilling/api/adminCommissionsService"
 import {
-    useApproveCommission,
     useMarkCommissionPaid,
+    useMarkCommissionUnpaid,
     useUpdateCommissionAmount,
 } from "@/features/adminbilling/api/useAdminCommissions"
 import { EditAmountDialog } from "@/features/adminbilling/components/EditAmountDialog"
@@ -17,19 +18,20 @@ import { EditAmountDialog } from "@/features/adminbilling/components/EditAmountD
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 const ITEMS_PER_PAGE = 7
-const STATUS_FILTERS: Array<CommissionLineStatus | "All"> = ["All", "Pending", "Approved", "Paid"]
+const STATUS_FILTERS: Array<CommissionLineStatus | "All"> = ["All", "Pending", "Paid"]
 
 interface CommissionApprovalTableProps {
     data: AdminCommissionRow[]
 }
 
 export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) => {
+    const navigate = useNavigate()
     const [statusFilter, setStatusFilter] = useState<CommissionLineStatus | "All">("All")
     const [currentPage, setCurrentPage] = useState(1)
     const [editing, setEditing] = useState<AdminCommissionRow | null>(null)
 
-    const approveMutation = useApproveCommission()
     const markPaidMutation = useMarkCommissionPaid()
+    const markUnpaidMutation = useMarkCommissionUnpaid()
     const updateAmountMutation = useUpdateCommissionAmount()
 
     const filtered = useMemo(
@@ -44,17 +46,17 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
         return filtered.slice(start, start + ITEMS_PER_PAGE)
     }, [filtered, safePage])
 
-    const handleApprove = (row: AdminCommissionRow) => {
-        approveMutation.mutate(row.id, {
-            onSuccess: () => toast.success(`Commission for ${row.marketer} approved`),
-            onError: () => toast.error("Failed to approve commission"),
-        })
-    }
-
     const handleMarkPaid = (row: AdminCommissionRow) => {
         markPaidMutation.mutate(row.id, {
             onSuccess: () => toast.success(`Commission for ${row.marketer} marked as paid`),
             onError: () => toast.error("Failed to mark commission as paid"),
+        })
+    }
+
+    const handleMarkUnpaid = (row: AdminCommissionRow) => {
+        markUnpaidMutation.mutate(row.id, {
+            onSuccess: () => toast.success(`Commission for ${row.marketer} marked as not paid`),
+            onError: () => toast.error("Failed to mark commission as unpaid"),
         })
     }
 
@@ -108,7 +110,24 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
                             <TableRow key={row.id} className="border-b border-border">
                                 <TableCell className={cn(td, "font-medium text-foreground")}>{row.marketer}</TableCell>
                                 <TableCell className={td}>{row.agency}</TableCell>
-                                <TableCell className={cn(td, "text-muted-foreground")}>{row.fraudCase}</TableCell>
+                                <TableCell className={cn(td, "text-muted-foreground")}>
+                                    {row.caseId ? (
+                                        <button
+                                            onClick={() => navigate(`/admin/cases/${encodeURIComponent(row.caseId!)}`, {
+                                                state: {
+                                                    returnPath: window.location.pathname,
+                                                    returnLabel: "Billing & Finance",
+                                                    activeTab: "commissions"
+                                                }
+                                            })}
+                                            className="font-medium text-progress hover:underline"
+                                        >
+                                            {row.fraudCase}
+                                        </button>
+                                    ) : (
+                                        row.fraudCase
+                                    )}
+                                </TableCell>
                                 <TableCell className={cn(td, "text-right font-medium")}>{row.amountLabel}</TableCell>
                                 <TableCell className={td}>
                                     <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-medium lg:text-xs", commissionLineStatusStyles[row.status])}>
@@ -125,16 +144,7 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
                                                 Edit
                                             </button>
                                         )}
-                                        {row.status === "Pending" && (
-                                            <button
-                                                onClick={() => handleApprove(row)}
-                                                disabled={approveMutation.isPending}
-                                                className="text-xs font-medium text-progress hover:underline lg:text-sm"
-                                            >
-                                                Approve
-                                            </button>
-                                        )}
-                                        {row.status === "Approved" && (
+                                        {row.status !== "Paid" ? (
                                             <button
                                                 onClick={() => handleMarkPaid(row)}
                                                 disabled={markPaidMutation.isPending}
@@ -142,9 +152,14 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
                                             >
                                                 Mark as Paid
                                             </button>
-                                        )}
-                                        {row.status === "Paid" && (
-                                            <span className="text-xs text-muted-foreground lg:text-sm">—</span>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleMarkUnpaid(row)}
+                                                disabled={markUnpaidMutation.isPending}
+                                                className="text-xs font-medium text-muted-foreground hover:underline lg:text-sm"
+                                            >
+                                                Mark as Not Paid
+                                            </button>
                                         )}
                                     </div>
                                 </TableCell>

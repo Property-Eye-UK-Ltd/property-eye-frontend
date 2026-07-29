@@ -18,9 +18,14 @@ const formatDate = (value?: string) => {
     return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
 }
 
-const formatCurrency = (value?: number) => {
-    if (value === undefined || value === null) return "—"
-    return `£${value.toLocaleString("en-GB")}`
+const formatCurrency = (value?: string | number | null) => {
+    if (value === undefined || value === null || value === "") return "—"
+    if (typeof value === "number") {
+        return `£${value.toLocaleString("en-GB")}`
+    }
+    const num = parseFloat(value.replace(/[^0-9.]/g, ""))
+    if (Number.isNaN(num)) return value
+    return `£${num.toLocaleString("en-GB")}`
 }
 
 interface PropertyListPanelProps {

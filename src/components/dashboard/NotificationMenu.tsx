@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { CheckCheck } from "lucide-react"
+import { CheckCheck, RefreshCw } from "lucide-react"
 import {
     Popover,
     PopoverContent,
@@ -7,11 +7,9 @@ import {
 } from "@/components/ui/popover"
 import { Notification as NotificationIcon } from "iconsax-react"
 import { useMarkAllNotificationsRead, useNotifications } from "@/features/notifications/api/useNotifications"
+import { cn } from "@/lib/utils"
 
 interface NotificationMenuProps {
-    // /dashboard/notifications is agency-scoped on the backend (403s for
-    // admin/marketer JWTs) — only fetch real data for the agency portal.
-    // Admin/marketer notification wiring is out of scope for this pass.
     isAgencyPortal?: boolean
 }
 
@@ -28,7 +26,7 @@ const formatRelativeTime = (isoTimestamp: string): string => {
 
 export const NotificationMenu = ({ isAgencyPortal = false }: NotificationMenuProps) => {
     const [isOpen, setIsOpen] = useState(false)
-    const { data: notifications = [], isLoading } = useNotifications({ enabled: isAgencyPortal })
+    const { data: notifications = [], isLoading, isFetching, refetch } = useNotifications()
     const markAllAsRead = useMarkAllNotificationsRead()
 
     const unreadCount = notifications.filter((n) => !n.is_read).length
@@ -58,7 +56,20 @@ export const NotificationMenu = ({ isAgencyPortal = false }: NotificationMenuPro
             >
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4">
-                    <h4 className="font-medium text-foreground">Notification</h4>
+                    <div className="flex items-center gap-2">
+                        <h4 className="font-medium text-foreground">Notification</h4>
+                        <button
+                            onClick={() => refetch()}
+                            className={cn(
+                                "p-1 rounded-full text-muted-foreground hover:text-foreground transition-colors",
+                                isFetching && "animate-spin"
+                            )}
+                            title="Refresh notifications"
+                            disabled={isLoading}
+                        >
+                            <RefreshCw size={14} />
+                        </button>
+                    </div>
                     {hasNotifications && (
                         <button
                             onClick={handleMarkAllAsRead}
@@ -76,7 +87,7 @@ export const NotificationMenu = ({ isAgencyPortal = false }: NotificationMenuPro
 
                 {/* Content */}
                 <div className="max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-track]:bg-transparent">
-                    {isAgencyPortal && isLoading ? (
+                    {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-10 text-center">
                             <p className="text-sm text-muted-foreground">Loading notifications…</p>
                         </div>

@@ -18,3 +18,22 @@ export const updateCommissionRateSetting = async (ratePercent: number): Promise<
     })
     return data
 }
+
+// --- Raw backend shapes (src/schemas/platform_settings.py) ---
+
+export interface PlatformSettingsApi {
+    property_eye_share_percent: number
+    updated_at: string
+}
+
+export const getPlatformSettings = async (): Promise<PlatformSettingsApi> => {
+    const { data } = await apiClient.get<PlatformSettingsApi>("/admin/settings/platform")
+    return data
+}
+
+export const updatePlatformSettings = async (propertyEyeSharePercent: number): Promise<PlatformSettingsApi> => {
+    const { data } = await apiClient.patch<PlatformSettingsApi>("/admin/settings/platform", {
+        property_eye_share_percent: propertyEyeSharePercent,
+    })
+    return data
+}

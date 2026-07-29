@@ -219,7 +219,7 @@ const CaseScans = () => {
         }
       />
 
-      {/* Filter Panel - single search bar + Filter & Export */}
+      {/* Filter Panel - search bar + separate Filter and Export controls */}
       <DashboardPanel className="mb-6">
         <div className="space-y-3">
           <div className="flex gap-2 items-center flex-wrap">
@@ -251,30 +251,34 @@ const CaseScans = () => {
               </Button>
             )}
 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsFilterModalOpen(true)}
+              className="h-8 shrink-0 rounded-full gap-2 text-xs"
+            >
+              <Filter size={16} variant="Linear" />
+              Filter
+              {countActiveFilters(filters) > 0 && (
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                  {countActiveFilters(filters)}
+                </span>
+              )}
+            </Button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  className="h-8 shrink-0 rounded-full gap-2 text-xs"
+                  className="h-8 w-8 p-0 shrink-0"
+                  title="Export results"
+                  disabled={isExporting}
                 >
-                  <Filter size={16} variant="Linear" />
-                  Filter &amp; Export
-                  {countActiveFilters(filters) > 0 && (
-                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
-                      {countActiveFilters(filters)}
-                    </span>
-                  )}
+                  <ExportSquare size={16} variant="Linear" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuItem
-                  className="cursor-pointer text-xs"
-                  onClick={() => setIsFilterModalOpen(true)}
-                >
-                  <Filter size={14} variant="Linear" className="mr-2" />
-                  Filters
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuItem className="cursor-pointer text-xs" disabled={isExporting} onClick={() => handleExport("csv")}>
                   <ExportSquare size={14} variant="Linear" className="mr-2" />
                   {isExporting ? "Exporting..." : "Export as CSV"}

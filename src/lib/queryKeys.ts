@@ -71,6 +71,7 @@ export const queryKeys = {
     adminConfig: {
         all: ["admin-config"] as const,
         commissionRate: () => ["admin-config", "commission-rate"] as const,
+        platformSettings: () => ["admin-config", "platform-settings"] as const,
     },
     agencies: {
         all: ["agencies"] as const,

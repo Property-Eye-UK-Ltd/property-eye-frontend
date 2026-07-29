@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/queryKeys"
-import { approveCommission, getAdminCommissions, markCommissionPaid, updateCommissionAmount } from "./adminCommissionsService"
+import { approveCommission, getAdminCommissions, markCommissionPaid, markCommissionUnpaid, updateCommissionAmount } from "./adminCommissionsService"
 
 export const useAdminCommissions = (params?: { status?: string; marketer_id?: string; agency_id?: string }) =>
     useQuery({
@@ -26,6 +26,14 @@ export const useMarkCommissionPaid = () => {
     const invalidate = useInvalidateCommissions()
     return useMutation({
         mutationFn: (commissionId: string) => markCommissionPaid(commissionId),
+        onSuccess: invalidate,
+    })
+}
+
+export const useMarkCommissionUnpaid = () => {
+    const invalidate = useInvalidateCommissions()
+    return useMutation({
+        mutationFn: (commissionId: string) => markCommissionUnpaid(commissionId),
         onSuccess: invalidate,
     })
 }

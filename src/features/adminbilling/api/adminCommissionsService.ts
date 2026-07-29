@@ -21,6 +21,7 @@ export interface AdminCommissionRow {
     marketer: string
     agency: string
     fraudCase: string
+    caseId?: string | null
     amount: number
     amountLabel: string
     status: CommissionLineStatus
@@ -39,6 +40,7 @@ export const fromApiCommission = (c: AdminCommissionApi): AdminCommissionRow => 
     marketer: c.marketer_name ?? "Unknown Marketer",
     agency: c.agency_name ?? "—",
     fraudCase: c.fraud_match_id ? `#${c.fraud_match_id.slice(0, 8).toUpperCase()}` : "—",
+    caseId: c.fraud_match_id,
     amount: c.amount,
     amountLabel: formatGbp(c.amount),
     status: statusToLabel[c.status],
@@ -71,6 +73,11 @@ export const approveCommission = async (commissionId: string): Promise<AdminComm
 
 export const markCommissionPaid = async (commissionId: string): Promise<AdminCommissionRow> => {
     const { data } = await apiClient.post<AdminCommissionApi>(`/admin/commissions/${commissionId}/mark-paid`)
+    return fromApiCommission(data)
+}
+
+export const markCommissionUnpaid = async (commissionId: string): Promise<AdminCommissionRow> => {
+    const { data } = await apiClient.post<AdminCommissionApi>(`/admin/commissions/${commissionId}/mark-unpaid`)
     return fromApiCommission(data)
 }
 
