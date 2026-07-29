@@ -9,7 +9,6 @@ import { ActiveAlertsPanel, type AlertRecord } from "@/features/overview/compone
 import {
   useHighPriorityAlerts,
   useOverviewSummary,
-  useSeverityDistribution,
   useTopRecoveries,
 } from "@/features/overview/api/useOverview"
 
@@ -33,7 +32,6 @@ const formatCurrency = (value: number): string =>
 
 const Overview = () => {
   const { data: summary, isLoading: summaryLoading } = useOverviewSummary()
-  const { data: severity } = useSeverityDistribution()
   const { data: topRecoveries = [] } = useTopRecoveries()
   const { data: highPriorityAlerts = [] } = useHighPriorityAlerts(1)
 
@@ -100,26 +98,6 @@ const Overview = () => {
           <MetricCards metrics={metrics} columns={2} />
         )}
 
-        {severity && (
-          <DashboardPanel title="Timing Risk Distribution" description="Days between withdrawal & sale" hasBorder>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {(
-                [
-                  ["Low", severity.low, "bg-muted-foreground/40"],
-                  ["Medium", severity.medium, "bg-yellow-500"],
-                  ["High", severity.high, "bg-orange-500"],
-                  ["Critical", severity.critical, "bg-red-500"],
-                ] as const
-              ).map(([label, value, dotClass]) => (
-                <div key={label} className="flex items-center gap-2">
-                  <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${dotClass}`} />
-                  <span className="text-sm text-muted-foreground">{label}</span>
-                  <span className="ml-auto text-sm font-medium text-foreground">{value}</span>
-                </div>
-              ))}
-            </div>
-          </DashboardPanel>
-        )}
 
         {topProperties.length > 0 && (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

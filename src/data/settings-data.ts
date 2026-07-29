@@ -26,12 +26,6 @@ export interface SecuritySettings {
     twoFactorAuth: boolean
 }
 
-export interface DataRetentionSettings {
-    retentionPeriod: number
-    autoDelete: boolean
-    backupFrequency: string
-}
-
 // Mock data - in real app, this would come from API
 export const mockProfileSettings: ProfileSettings = {
     companyLogo: "/placeholder-logo.png",
@@ -61,8 +55,3 @@ export const mockSecuritySettings: SecuritySettings = {
     twoFactorAuth: true,
 }
 
-export const mockDataRetentionSettings: DataRetentionSettings = {
-    retentionPeriod: 365,
-    autoDelete: false,
-    backupFrequency: "daily",
-}
