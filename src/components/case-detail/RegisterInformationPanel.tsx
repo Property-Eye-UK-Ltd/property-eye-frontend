@@ -68,12 +68,15 @@ export const RegisterInformationPanel = ({
 
     const flags: Array<{ type: "error" | "warning" | "success"; label: string; message: string }> = []
 
-    const hasMismatch = registerExtract.proprietors.some((p) => p.mismatch)
-    if (hasMismatch) {
+    // p.mismatch means this proprietor's name does NOT match the agency's
+    // buyer name — the fraud signal is the opposite: a MATCH means the buyer
+    // really did end up as the registered owner, off-book.
+    const buyerMatchesAProprietor = registerExtract.proprietors.some((p) => !p.mismatch)
+    if (buyerMatchesAProprietor) {
       flags.push({
         type: "error",
-        label: "Mismatch Alert",
-        message: "Owner name differs from agency seller name",
+        label: "Fraud Indicator",
+        message: "Registered owner name matches the agency buyer name",
       })
     }
 

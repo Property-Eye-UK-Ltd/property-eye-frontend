@@ -3,7 +3,6 @@ import { toast } from "sonner"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
-import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { CaseTypeTabs } from "@/components/dashboard/CaseTypeTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
@@ -140,15 +139,6 @@ const BillingFinance = () => {
         <DashboardLayout variant="super-admin">
             <DynamicPageHeader
                 title="Billing & Finance"
-                filters={
-                    activeTab === "billing" ? (
-                        <PeriodTabs
-                            periods={billingPeriods}
-                            selected={selectedPeriod}
-                            onSelect={setSelectedPeriod}
-                        />
-                    ) : undefined
-                }
                 actions={
                     activeTab !== "billing" ? (
                         <DropdownMenu>

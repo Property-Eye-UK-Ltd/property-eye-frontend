@@ -3,13 +3,10 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
-import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { MetricCards, type MetricCard } from "@/features/overview/components/MetricCards"
-import { FraudDetectionPanel } from "@/features/overview/components/FraudDetectionPanel"
 import { TopPropertiesPanel, type TopProperty } from "@/features/overview/components/TopPropertiesPanel"
 import { ActiveAlertsPanel, type AlertRecord } from "@/features/overview/components/ActiveAlertsPanel"
 import {
-  useFraudDetectionGrowth,
   useHighPriorityAlerts,
   useOverviewSummary,
   useSeverityDistribution,
@@ -51,18 +48,10 @@ const Overview = () => {
   const { data: severity } = useSeverityDistribution(apiPeriod)
   const { data: topRecoveries = [] } = useTopRecoveries()
   const { data: highPriorityAlerts = [] } = useHighPriorityAlerts(1, apiPeriod)
-  const { data: growthPoints = [], isLoading: growthLoading } = useFraudDetectionGrowth()
 
   const metrics: MetricCard[] = useMemo(() => {
     if (!summary) return []
     return [
-      {
-        title: "Total Fraud Alerts",
-        value: String(summary.total_fraud_alerts),
-        period: selectedPeriod,
-        change: summary.delta_fraud_alerts ? `+${summary.delta_fraud_alerts}` : "",
-        topBarClass: "bg-red-500",
-      },
       {
         title: "Total Recoveries",
         value: String(summary.total_recoveries),
@@ -71,10 +60,10 @@ const Overview = () => {
         topBarClass: "bg-emerald-500",
       },
       {
-        title: "Total Checks",
-        value: String(summary.total_checks),
+        title: "Revenue from Recoveries",
+        value: formatCurrency(summary.total_recovery_revenue),
         period: selectedPeriod,
-        change: summary.delta_checks ? `+${summary.delta_checks}` : "",
+        change: "",
         topBarClass: "bg-purple-500",
       },
     ]
@@ -111,18 +100,17 @@ const Overview = () => {
     <DashboardLayout>
       <DynamicPageHeader
         title="Overview"
-        filters={<PeriodTabs periods={periods} selected={selectedPeriod} onSelect={setSelectedPeriod} />}
       />
 
       <DashboardPageContent className="space-y-4 lg:space-y-6">
         {summaryLoading ? (
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
-            {[0, 1, 2].map((i) => (
+          <div className="grid grid-cols-2 gap-3 lg:gap-4">
+            {[0, 1].map((i) => (
               <div key={i} className="h-28 animate-pulse rounded-xl bg-muted" />
             ))}
           </div>
         ) : (
-          <MetricCards metrics={metrics} columns={3} />
+          <MetricCards metrics={metrics} columns={2} />
         )}
 
         {severity && (
@@ -153,30 +141,6 @@ const Overview = () => {
         )}
 
         {alerts.length > 0 && <ActiveAlertsPanel data={alerts} severityStyles={severityStyles} />}
-
-        <div className="w-full">
-          {growthLoading ? (
-            <div className="h-[280px] animate-pulse rounded-xl bg-muted" />
-          ) : growthPoints.length > 0 ? (
-            <FraudDetectionPanel
-              title="Fraud Detection Growth"
-              data={growthPoints.map((p) => ({ month: p.period_label, rate: p.count }))}
-              config={{ rate: { label: "Detections", color: "#00072C" } }}
-              showCategoryFilter={false}
-              valueFormatter={(value) => String(value)}
-              yAxisTickFormatter={(value) => String(value)}
-            />
-          ) : (
-            <DashboardPanel title="Fraud Detection Growth" hasBorder>
-              <div className="flex h-[200px] flex-col items-center justify-center gap-1 text-center">
-                <p className="text-sm font-medium text-foreground">Coming soon</p>
-                <p className="text-xs text-muted-foreground">
-                  Trend data for fraud detection growth is not available yet.
-                </p>
-              </div>
-            </DashboardPanel>
-          )}
-        </div>
       </DashboardPageContent>
     </DashboardLayout>
   )

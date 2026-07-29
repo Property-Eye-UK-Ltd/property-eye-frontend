@@ -4,6 +4,7 @@ export interface OverviewSummaryResponse {
     total_fraud_alerts: number
     total_recoveries: number
     total_checks: number
+    total_recovery_revenue: number
     // Hardcoded to 0 server-side today (no real period-over-period
     // comparison implemented) — render as-is, known-inert.
     delta_fraud_alerts: number

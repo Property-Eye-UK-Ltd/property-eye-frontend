@@ -59,6 +59,7 @@ const MarketingClaimAgency = () => {
                     title="Claim this agency"
                     description="Send support the agency's name and how you referred them — they'll take it from there."
                     lockedSubject="Agency Ownership Dispute"
+                    hideDetails={true}
                 />
             </DashboardPageContent>
         </DashboardLayout>

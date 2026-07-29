@@ -131,7 +131,7 @@ const CaseScans = () => {
       matchId: match.fraud_match_id || "—",
       caseId: match.case_id || "—",
       agency: match.agency_name || "—",
-      riskLevel: match.risk_level || "—",
+      timingRisk: match.risk_level || "—",
       detectedDate: match.scanned_at ? new Date(match.scanned_at).toLocaleDateString("en-GB") : "—",
       verificationStatus: match.verification_status || "—",
     }));
@@ -188,10 +188,10 @@ const CaseScans = () => {
               setPage(1);
             }}>
               <SelectTrigger className="h-8 w-fit min-w-[110px] shrink-0 rounded-full border-border bg-background px-3 text-xs">
-                <SelectValue placeholder="Risk" />
+                <SelectValue placeholder="Timing Risk" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Risk</SelectItem>
+                <SelectItem value="all">Timing Risk</SelectItem>
                 <SelectItem value="CRITICAL">🔴 Critical</SelectItem>
                 <SelectItem value="HIGH">🟠 High</SelectItem>
                 <SelectItem value="MEDIUM">🟡 Medium</SelectItem>

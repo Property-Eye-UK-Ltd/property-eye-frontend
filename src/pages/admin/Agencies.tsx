@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
-import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Input } from "@/components/ui/input"
@@ -91,13 +90,6 @@ const Agencies = () => {
         <DashboardLayout variant="super-admin">
             <DynamicPageHeader
                 title="Agencies"
-                filters={
-                    <PeriodTabs
-                        periods={periods}
-                        selected={selectedPeriod}
-                        onSelect={setSelectedPeriod}
-                    />
-                }
             />
 
             <DashboardPageContent className="space-y-3 lg:space-y-4">

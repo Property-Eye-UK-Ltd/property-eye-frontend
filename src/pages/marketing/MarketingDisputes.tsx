@@ -12,6 +12,7 @@ const MarketingDisputes = () => {
                 <ContactSupportPanel
                     title="Raise a Dispute"
                     description="Attribution and commission disputes are reviewed and resolved by our support team directly, not through the app."
+                    hideDetails={true}
                 />
             </DashboardPageContent>
         </DashboardLayout>

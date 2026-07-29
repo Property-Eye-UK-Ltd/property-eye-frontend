@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardPageContent } from "@/components/dashboard/DashboardPageContent"
 import { DynamicPageHeader } from "@/components/dashboard/DynamicPageHeader"
-import { PeriodTabs } from "@/components/dashboard/PeriodTabs"
 import { MetricCards } from "@/features/overview/components/MetricCards"
 import { CommissionBreakdownPanel } from "@/features/overview/components/CommissionBreakdownPanel"
 import { FraudDetectionPanel } from "@/features/overview/components/FraudDetectionPanel"
@@ -39,13 +38,6 @@ const AdminOverview = () => {
         <DashboardLayout variant="super-admin">
             <DynamicPageHeader
                 title="Overview"
-                filters={
-                    <PeriodTabs
-                        periods={periods}
-                        selected={selectedPeriod}
-                        onSelect={setSelectedPeriod}
-                    />
-                }
             />
 
             <DashboardPageContent className="space-y-3 lg:space-y-4">

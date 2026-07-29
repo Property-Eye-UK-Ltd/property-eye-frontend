@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { Sms, InfoCircle } from "iconsax-react"
+import { Sms, InfoCircle, Copy, TickCircle } from "iconsax-react"
+import { toast } from "sonner"
 import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
@@ -18,13 +19,15 @@ interface ContactSupportPanelProps {
     lockedSubject?: SupportSubject
     /** Prefilled into the email body, e.g. an agency name */
     context?: string
+    /** Hides the details text box, leaving just the email support button */
+    hideDetails?: boolean
 }
 
-const buildMailto = (subject: SupportSubject, details: string, context: string) => {
+const buildMailto = (subject: SupportSubject, details: string, context: string, hideDetails?: boolean) => {
     const lines = [
         context ? `Agency / reference: ${context}` : null,
         "",
-        details || "(describe the issue here)",
+        details || (hideDetails ? "I am writing to claim the attribution for my referred agency." : "(describe the issue here)"),
     ].filter((line) => line !== null)
 
     const body = lines.join("\n")
@@ -40,9 +43,23 @@ export const ContactSupportPanel = ({
     description = "Marketer disputes and attribution issues are handled directly by our support team, not in-app.",
     lockedSubject,
     context = "",
+    hideDetails = false,
 }: ContactSupportPanelProps) => {
     const [subject, setSubject] = useState<SupportSubject>(lockedSubject ?? supportSubjects[0])
     const [details, setDetails] = useState("")
+    const [showEmail, setShowEmail] = useState(false)
+    const [copied, setCopied] = useState(false)
+
+    const handleCopyEmail = async () => {
+        try {
+            await navigator.clipboard.writeText(marketerSupportEmail)
+            setCopied(true)
+            toast.success("Support email copied to clipboard")
+            setTimeout(() => setCopied(false), 2000)
+        } catch {
+            toast.error("Couldn't copy email. Please copy it manually.")
+        }
+    }
 
     return (
         <DashboardPanel
@@ -52,14 +69,6 @@ export const ContactSupportPanel = ({
             hasBorder
         >
             <div className="space-y-5">
-                <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-3 lg:p-4">
-                    <InfoCircle size={18} variant="TwoTone" className="mt-0.5 shrink-0 text-primary" />
-                    <p className="text-xs text-primary lg:text-sm">
-                        Select what you're contacting us about below, then hit the button — it opens your email app with
-                        the details filled in. Everything from there, including the resolution, happens over email.
-                    </p>
-                </div>
-
                 {!lockedSubject && (
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-foreground">What's this about?</label>
@@ -79,26 +88,56 @@ export const ContactSupportPanel = ({
                     </div>
                 )}
 
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Details (optional)</label>
-                    <Textarea
-                        value={details}
-                        onChange={(e) => setDetails(e.target.value)}
-                        placeholder="Add any context that will help support look into this…"
-                        className="min-h-[100px] rounded-xl border border-border bg-transparent px-4 py-3 text-sm"
-                    />
-                </div>
+                {!hideDetails && (
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Details (optional)</label>
+                        <Textarea
+                            value={details}
+                            onChange={(e) => setDetails(e.target.value)}
+                            placeholder="Add any context that will help support look into this…"
+                            className="min-h-[100px] rounded-xl border border-border bg-transparent px-4 py-3 text-sm"
+                        />
+                    </div>
+                )}
 
-                <a
-                    href={buildMailto(subject, details, context)}
-                    className={cn(
-                        "inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground",
-                        "sm:w-auto"
-                    )}
-                >
-                    <Sms size={18} variant="Bold" />
-                    Email Support
-                </a>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <a
+                        href={buildMailto(subject, details, context, hideDetails)}
+                        onClick={() => setShowEmail(true)}
+                        className={cn(
+                            "inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all duration-300 hover:bg-primary/90 shadow-md hover:shadow-lg active:scale-95 shrink-0",
+                            "sm:w-auto cursor-pointer"
+                        )}
+                    >
+                        <Sms size={18} variant="Bold" />
+                        Email Support
+                    </a>
+
+                    <div
+                        className={cn(
+                            "transition-all duration-500 ease-out flex items-center justify-between sm:justify-start gap-2.5 rounded-full border bg-card/50 text-sm text-muted-foreground backdrop-blur-sm shadow-sm overflow-hidden whitespace-nowrap",
+                            showEmail
+                                ? "opacity-100 translate-x-0 max-w-[320px] scale-100 px-4 py-2.5 border-border"
+                                : "opacity-0 -translate-x-4 max-w-0 scale-95 pointer-events-none py-0 px-0 border-transparent"
+                        )}
+                    >
+                        <span className="font-mono text-xs text-foreground font-medium select-all">
+                            {marketerSupportEmail}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={handleCopyEmail}
+                            aria-label="Copy support email address"
+                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-primary transition-colors hover:bg-primary/10 active:scale-90"
+                        >
+                            {copied ? (
+                                <TickCircle size={16} variant="Bulk" className="text-green-600 animate-in fade-in zoom-in duration-200" />
+                            ) : (
+                                <Copy size={16} variant="Bulk" />
+                            )}
+                        </button>
+                    </div>
+                </div>
             </div>
         </DashboardPanel>
     )

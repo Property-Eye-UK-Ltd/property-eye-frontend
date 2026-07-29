@@ -11,6 +11,12 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { ChevronsUpDown } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { FraudMatch } from "@/types/casescans.types";
 
@@ -154,19 +160,29 @@ const CaseScansTable = ({
             <TableHead className="text-right">
               <button
                 onClick={() => handleSort("confidence_score")}
-                className="flex items-center gap-1 ml-auto hover:text-foreground"
+                className="flex flex-col items-end gap-0.5 ml-auto hover:text-foreground"
               >
-                Confidence
-                <ChevronsUpDown size={14} variant="Linear" />
+                <span className="flex items-center gap-1">
+                  Match Confidence
+                  <ChevronsUpDown size={14} variant="Linear" />
+                </span>
+                <span className="text-[10px] font-normal text-muted-foreground normal-case">
+                  how well the record matches
+                </span>
               </button>
             </TableHead>
             <TableHead>
               <button
                 onClick={() => handleSort("risk_level")}
-                className="flex items-center gap-1 hover:text-foreground"
+                className="flex flex-col items-start gap-0.5 hover:text-foreground"
               >
-                Risk Level
-                <ChevronsUpDown size={14} variant="Linear" />
+                <span className="flex items-center gap-1">
+                  Timing Risk
+                  <ChevronsUpDown size={14} variant="Linear" />
+                </span>
+                <span className="text-[10px] font-normal text-muted-foreground normal-case">
+                  days between withdrawal & sale
+                </span>
               </button>
             </TableHead>
             <TableHead>
