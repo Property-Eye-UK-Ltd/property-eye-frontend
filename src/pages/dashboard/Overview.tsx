@@ -72,7 +72,7 @@ const Overview = () => {
       highPriorityAlerts.map((item) => ({
         caseId: item.case_id,
         property: item.property_address,
-        fraudScore: Math.round(item.fraud_score),
+        fraudScore: item.fraud_score === null ? null : Math.round(item.fraud_score),
         severity: toTitleCaseSeverity(item.severity),
         dateDetected: new Date(item.date_detected).toLocaleDateString("en-GB", {
           day: "numeric",

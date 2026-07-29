@@ -11,6 +11,7 @@ import {
     caseStatusOptions,
     determinationOptions,
     recoveryOutcomeOptions,
+    confidenceBandOptions,
 } from "../types/caseScansFilters.types"
 import type { FraudReportAgencyOption } from "../api/scanService"
 
@@ -130,27 +131,12 @@ export const CaseScansFilterModal = ({
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <p className="text-sm font-medium text-foreground">Match Confidence Range (%)</p>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Input
-                                type="number"
-                                min={0}
-                                max={100}
-                                placeholder="Min"
-                                value={draft.confidenceMin}
-                                onChange={(e) => patch({ confidenceMin: e.target.value })}
-                            />
-                            <Input
-                                type="number"
-                                min={0}
-                                max={100}
-                                placeholder="Max"
-                                value={draft.confidenceMax}
-                                onChange={(e) => patch({ confidenceMax: e.target.value })}
-                            />
-                        </div>
-                    </div>
+                    <MultiSelectCheckboxGroup
+                        label="Match Confidence"
+                        options={confidenceBandOptions}
+                        selected={draft.confidenceBands}
+                        onChange={(confidenceBands) => patch({ confidenceBands })}
+                    />
 
                     <div className="space-y-2">
                         <p className="text-sm font-medium text-foreground">

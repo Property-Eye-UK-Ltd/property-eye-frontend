@@ -68,6 +68,10 @@ export const queryKeys = {
         revenueByPlan: () => ["admin-overview", "revenue-by-plan"] as const,
         fraudDetectionGrowth: () => ["admin-overview", "fraud-detection-growth"] as const,
     },
+    adminConfig: {
+        all: ["admin-config"] as const,
+        commissionRate: () => ["admin-config", "commission-rate"] as const,
+    },
     agencies: {
         all: ["agencies"] as const,
         summary: () => ["agencies", "summary"] as const,

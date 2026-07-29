@@ -11,6 +11,20 @@ interface AdminCaseOverviewCardProps {
     caseData: AgencyCase
 }
 
+const verificationStatusStyles: Record<string, string> = {
+    suspicious: "bg-blue-50 text-blue-600 border border-blue-100",
+    confirmed_fraud: "bg-red-50 text-red-600 border border-red-100",
+    not_fraud: "bg-green-50 text-green-600 border border-green-100",
+    error: "bg-amber-50 text-amber-600 border border-amber-100",
+}
+
+const verificationStatusLabel: Record<string, string> = {
+    suspicious: "Awaiting Verification",
+    confirmed_fraud: "Confirmed Fraud",
+    not_fraud: "Ruled Out",
+    error: "Verification Error",
+}
+
 export const AdminCaseOverviewCard = ({ caseData }: AdminCaseOverviewCardProps) => {
     const shares = formatShareSplit(caseData.recoveredAmount)
 
@@ -48,8 +62,22 @@ export const AdminCaseOverviewCard = ({ caseData }: AdminCaseOverviewCardProps) 
                         {caseData.severity}
                     </Badge>
                 </div>
+                {caseData.verificationStatus && (
+                    <div>
+                        <p className="mb-1 text-xs text-muted-foreground">Scan Result</p>
+                        <Badge
+                            className={cn(
+                                "rounded-full px-3 py-1 text-xs font-medium",
+                                verificationStatusStyles[caseData.verificationStatus] ||
+                                    verificationStatusStyles.suspicious
+                            )}
+                        >
+                            {verificationStatusLabel[caseData.verificationStatus] || "Unknown"}
+                        </Badge>
+                    </div>
+                )}
                 <div>
-                    <p className="mb-1 text-xs text-muted-foreground">Status</p>
+                    <p className="mb-1 text-xs text-muted-foreground">Case Status</p>
                     <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", adminCaseStatusStyles[caseData.adminStatus])}>
                         {caseData.adminStatus}
                     </Badge>

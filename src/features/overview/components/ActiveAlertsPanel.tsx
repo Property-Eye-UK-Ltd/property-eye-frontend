@@ -11,7 +11,7 @@ export interface AlertRecord {
   id?: string
   caseId?: string
   property: string
-  fraudScore: number
+  fraudScore: number | null
   severity: "Critical" | "High" | "Medium" | "Low"
   dateDetected: string
 }
@@ -91,7 +91,11 @@ export const ActiveAlertsPanel = ({
               >
                 <TableCell className="px-4 py-3 font-normal">{alert.property}</TableCell>
                 <TableCell className="px-4 py-3">
-                  <MatchConfidenceMeter value={alert.fraudScore} variant="compact" />
+                  {alert.fraudScore === null ? (
+                    <span className="text-sm text-muted-foreground">Unconfirmed</span>
+                  ) : (
+                    <MatchConfidenceMeter value={alert.fraudScore} variant="compact" />
+                  )}
                 </TableCell>
                 <TableCell className="px-4 py-4">
                   <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", severityStyles[alert.severity])}>

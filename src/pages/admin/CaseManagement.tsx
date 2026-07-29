@@ -213,10 +213,10 @@ const AdminCaseManagement = () => {
 
                                 <Select value={selectedStatus} onValueChange={(v) => { setSelectedStatus(v); setPage(1) }}>
                                     <SelectTrigger className="h-8 w-fit min-w-[100px] shrink-0 rounded-full border-border bg-background px-3 text-xs focus:ring-0 focus:ring-offset-0">
-                                        <SelectValue placeholder="Status" />
+                                        <SelectValue placeholder="Case Status" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">All Statuses</SelectItem>
+                                        <SelectItem value="all">All Case Statuses</SelectItem>
                                         {statusOptions.map((opt) => (
                                             <SelectItem key={opt} value={opt}>
                                                 {opt}

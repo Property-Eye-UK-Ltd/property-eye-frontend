@@ -76,8 +76,6 @@ const CaseScans = () => {
   const fetchMatches = useCallback(async () => {
     setLoading(true);
     try {
-      const confidenceMin = filters.confidenceMin ? Number(filters.confidenceMin) : undefined;
-      const confidenceMax = filters.confidenceMax ? Number(filters.confidenceMax) : undefined;
       const minSubscriptionRevenue = filters.minSubscriptionRevenue
         ? Number(filters.minSubscriptionRevenue)
         : undefined;
@@ -96,8 +94,7 @@ const CaseScans = () => {
         agency_ids: filters.agencyIds.length > 0 ? filters.agencyIds : undefined,
         detected_from: filters.detectedFrom || undefined,
         detected_to: filters.detectedTo || undefined,
-        confidence_min: Number.isFinite(confidenceMin) ? confidenceMin : undefined,
-        confidence_max: Number.isFinite(confidenceMax) ? confidenceMax : undefined,
+        confidence_bands: filters.confidenceBands.length > 0 ? filters.confidenceBands : undefined,
         flag_active: filters.flagActiveOnly || undefined,
         min_subscription_revenue: Number.isFinite(minSubscriptionRevenue)
           ? minSubscriptionRevenue
@@ -156,8 +153,6 @@ const CaseScans = () => {
     try {
       // Export the full filtered result set (server-capped at 10,000), not
       // just the currently visible page.
-      const confidenceMin = filters.confidenceMin ? Number(filters.confidenceMin) : undefined;
-      const confidenceMax = filters.confidenceMax ? Number(filters.confidenceMax) : undefined;
       const minSubscriptionRevenue = filters.minSubscriptionRevenue
         ? Number(filters.minSubscriptionRevenue)
         : undefined;
@@ -174,8 +169,7 @@ const CaseScans = () => {
         agency_ids: filters.agencyIds.length > 0 ? filters.agencyIds : undefined,
         detected_from: filters.detectedFrom || undefined,
         detected_to: filters.detectedTo || undefined,
-        confidence_min: Number.isFinite(confidenceMin) ? confidenceMin : undefined,
-        confidence_max: Number.isFinite(confidenceMax) ? confidenceMax : undefined,
+        confidence_bands: filters.confidenceBands.length > 0 ? filters.confidenceBands : undefined,
         flag_active: filters.flagActiveOnly || undefined,
         min_subscription_revenue: Number.isFinite(minSubscriptionRevenue)
           ? minSubscriptionRevenue

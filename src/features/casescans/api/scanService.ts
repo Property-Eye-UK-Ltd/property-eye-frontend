@@ -40,6 +40,7 @@ export interface FraudReportsFilterParams {
   detected_to?: string;
   confidence_min?: number;
   confidence_max?: number;
+  confidence_bands?: string[];
   flag_active?: boolean;
   min_subscription_revenue?: number;
 }
