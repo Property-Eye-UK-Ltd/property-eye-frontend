@@ -90,7 +90,6 @@ const Agencies = () => {
                 agencyName: agency.name || "—",
                 plan: agency.plan_name || "—",
                 users: agency.users ?? 0,
-                integration: agency.integration_type || "—",
                 fraudDetected: agency.fraud_detected ?? 0
             }));
 

@@ -1,6 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TablePagination } from "@/components/dashboard/TablePagination"
-import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import { AdminAgencyListItem } from "@/features/agencies/api/agencyService"
@@ -36,7 +35,6 @@ export const AgenciesTablePanel = ({
                             <TableHead className={th}>Agency Name</TableHead>
                             <TableHead className={th}>Plan</TableHead>
                             <TableHead className={th}>Users</TableHead>
-                            <TableHead className={th}>Integration</TableHead>
                             <TableHead className={th}>Fraud</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -57,15 +55,6 @@ export const AgenciesTablePanel = ({
                                 </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>{agency.plan_name ?? "—"}</TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>{agency.users}</TableCell>
-                                <TableCell className={td}>
-                                    {agency.integration_type ? (
-                                        <Badge className="rounded-full border border-primary/10 bg-primary/5 px-2 py-0.5 text-[10px] font-medium text-primary lg:px-3 lg:text-xs">
-                                            {agency.integration_type}
-                                        </Badge>
-                                    ) : (
-                                        <span className="text-muted-foreground">—</span>
-                                    )}
-                                </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>{agency.fraud_detected}</TableCell>
                             </TableRow>
                         ))}
