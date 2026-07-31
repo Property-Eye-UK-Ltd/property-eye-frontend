@@ -27,7 +27,7 @@ export interface CaseRecord {
     caseId: string
     propertyAddress: string
     completionDate: string
-    buyerName: string
+    purchaserName: string
     caseStatus: AgencyFacingCaseStatus
     agencyDispute?: AgencyDisputeStatus
     disputeNote?: string
@@ -39,7 +39,7 @@ export function getAllCasesData(): CaseRecord[] {
         caseId: c.caseId,
         propertyAddress: c.propertyAddress,
         completionDate: c.completionDate,
-        buyerName: c.buyerName,
+        purchaserName: c.purchaserName,
         caseStatus: getAgencyFacingCaseStatus(c),
         agencyDispute: c.agencyDispute,
         disputeNote: c.disputeNote,

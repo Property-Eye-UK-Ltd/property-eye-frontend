@@ -168,10 +168,10 @@ const CaseDetails = () => {
     dateWithdrawn: caseDetail.date_withdrawn ? new Date(caseDetail.date_withdrawn).toLocaleDateString("en-GB") : "-",
     dateSold: caseDetail.date_sold ? new Date(caseDetail.date_sold).toLocaleDateString("en-GB") : "-",
     soldAmount: "",
-    soldTo: caseDetail.buyer_name ?? "-",
+    purchaser: caseDetail.buyer_name ?? "-",
     landRegistry: {
       completionDate: caseDetail.lr_completion_date ? new Date(caseDetail.lr_completion_date).toLocaleDateString("en-GB") : "-",
-      buyerName: caseDetail.lr_buyer_name ?? "-",
+      purchaserName: caseDetail.lr_buyer_name ?? "-",
     },
   }
 

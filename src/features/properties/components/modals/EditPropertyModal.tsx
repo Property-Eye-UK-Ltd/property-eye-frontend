@@ -191,7 +191,7 @@ export const EditPropertyModal = ({
                             <div className="space-y-4">
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-foreground">Buyer Name</label>
+                                        <label className="text-sm font-medium text-foreground">Purchaser Name</label>
                                         <Input
                                             type="text"
                                             name="client_name"

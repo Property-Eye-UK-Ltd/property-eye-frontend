@@ -154,21 +154,13 @@ const AdminOverview = () => {
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-4">
-                    <div className="lg:col-span-2">
-                        <CommissionBreakdownPanel
-                            title="Subscription Revenue Breakdown"
-                            data={revenueData}
-                            chartSize={200}
-                        />
-                    </div>
-                    <div className="lg:col-span-3">
-                        <CommissionBreakdownPanel
-                            title="Timing Risk Distribution"
-                            data={severityData}
-                            chartSize={200}
-                        />
-                    </div>
+                <div className="w-full">
+                    <CommissionBreakdownPanel
+                        title="Timing Risk Distribution"
+                        data={severityData}
+                        chartSize={200}
+                        className="w-full"
+                    />
                 </div>
 
                 <RecentDeterminationsPanel />

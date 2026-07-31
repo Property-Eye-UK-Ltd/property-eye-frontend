@@ -2,11 +2,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/queryKeys"
 import { approveCommission, getAdminCommissions, markCommissionPaid, markCommissionUnpaid, updateCommissionAmount } from "./adminCommissionsService"
 
-export const useAdminCommissions = (params?: { status?: string; marketer_id?: string; agency_id?: string }) =>
+export const useAdminCommissions = (
+    params?: { status?: string; marketer_id?: string; agency_id?: string },
+    options?: { enabled?: boolean }
+) =>
     useQuery({
         queryKey: queryKeys.adminBilling.commissions(params),
         queryFn: () => getAdminCommissions(params),
         staleTime: 15_000,
+        enabled: options?.enabled !== false,
     })
 
 const useInvalidateCommissions = () => {

@@ -267,7 +267,7 @@ export const marketingAuditLog: MarketingAuditRecord[] = [
 // Support (marketer disputes/claims — handled outside the platform via email)
 // ---------------------------------------------------------------------------
 
-export const marketerSupportEmail = "support@propertyeye.com"
+export const marketerSupportEmail = "support@propertyeyeuk.com"
 
 export type SupportSubject = "Agency Ownership Dispute" | "Commission Dispute" | "Other"
 

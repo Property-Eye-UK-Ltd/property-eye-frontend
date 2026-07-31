@@ -27,11 +27,12 @@ export const useAdminAgencyDetail = (agencyId: string | undefined) =>
 
 export const useAdminAgencyUsers = (
     agencyId: string | undefined,
-    params?: { status?: string; sort_by?: string; sort_dir?: string }
+    params?: { status?: string; sort_by?: string; sort_dir?: string },
+    options?: { enabled?: boolean }
 ) =>
     useQuery({
         queryKey: queryKeys.agencies.users(agencyId ?? "", params),
         queryFn: () => getAdminAgencyUsers(agencyId as string, params),
-        enabled: !!agencyId,
+        enabled: !!agencyId && options?.enabled !== false,
         staleTime: 15_000,
     })

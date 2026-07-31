@@ -145,7 +145,7 @@ export const BulkUploadModal = ({ open, onClose, onUpload, onUploaded }: BulkUpl
                                 Bulk Upload Properties
                             </h2>
                             <p className="mt-1 text-sm text-muted-foreground">
-                                Upload a CSV or PDF and our AI will extract and add the properties for you.
+                                Upload a CSV or PDF to extract and add the properties for you.
                             </p>
                         </div>
 
@@ -295,7 +295,7 @@ export const BulkUploadModal = ({ open, onClose, onUpload, onUploaded }: BulkUpl
                                 Analyzing your file...
                             </h2>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Our AI is reading {file?.name} and extracting property records. This
+                                Reading {file?.name} and extracting property records. This
                                 usually takes a few seconds.
                             </p>
                         </div>

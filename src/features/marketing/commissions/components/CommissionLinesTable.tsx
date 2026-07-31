@@ -75,7 +75,6 @@ export const CommissionLinesTable = ({ data, isLoading }: CommissionLinesTablePr
                         <TableRow className="bg-gray-50">
                             <TableHead className={th}>Agency</TableHead>
                             <TableHead className={cn(th, "text-right")}>Fraud Value</TableHead>
-                            <TableHead className={cn(th, "text-right")}>Commission %</TableHead>
                             <TableHead className={cn(th, "text-right")}>Amount</TableHead>
                             <TableHead className={th}>Status</TableHead>
                         </TableRow>
@@ -83,13 +82,13 @@ export const CommissionLinesTable = ({ data, isLoading }: CommissionLinesTablePr
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={4} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     Loading commissions…
                                 </TableCell>
                             </TableRow>
                         ) : paginated.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                                <TableCell colSpan={4} className="px-4 py-10 text-center text-sm text-muted-foreground">
                                     No commission lines match this filter.
                                 </TableCell>
                             </TableRow>
@@ -105,9 +104,6 @@ export const CommissionLinesTable = ({ data, isLoading }: CommissionLinesTablePr
                                     </TableCell>
                                     <TableCell className={cn(td, "text-right text-muted-foreground")}>
                                         {formatCurrency(line.fraud_value)}
-                                    </TableCell>
-                                    <TableCell className={cn(td, "text-right text-muted-foreground")}>
-                                        {line.commission_percent}%
                                     </TableCell>
                                     <TableCell className={cn(td, "text-right font-medium text-foreground")}>
                                         {formatCurrency(line.commission_amount)}

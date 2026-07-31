@@ -51,7 +51,7 @@ const ReportsExports = () => {
     const [exportDateTo, setExportDateTo] = useState("")
     const [isExporting, setIsExporting] = useState(false)
 
-    const { data: eventLogData } = useAdminEventLog(eventLogPage, EVENT_LOG_PAGE_SIZE)
+    const { data: eventLogData } = useAdminEventLog(eventLogPage, EVENT_LOG_PAGE_SIZE, { enabled: activeTab === "audit" })
 
     const runExport = async (format: "csv" | "pdf", dateFrom: string, dateTo: string) => {
         setIsExporting(true)
@@ -67,8 +67,7 @@ const ReportsExports = () => {
                 actor: event.actor_name || "—",
                 role: event.actor_role || "—",
                 action: actionLabels[event.action] || event.action || "—",
-                targetType: event.target_type || "—",
-                targetName: event.target_id || "—",
+                target: event.target_type || "—",
                 agency: event.agency_name || "—",
                 date: event.date
                     ? new Date(event.date).toLocaleDateString("en-GB", {

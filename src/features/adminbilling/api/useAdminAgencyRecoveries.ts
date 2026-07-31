@@ -7,11 +7,15 @@ import {
     updateAgencyRecoveryAmount,
 } from "./adminAgencyRecoveriesService"
 
-export const useAdminAgencyRecoveries = (params?: { status?: string; agency_id?: string }) =>
+export const useAdminAgencyRecoveries = (
+    params?: { status?: string; agency_id?: string },
+    options?: { enabled?: boolean }
+) =>
     useQuery({
         queryKey: queryKeys.adminBilling.agencyRecoveries(params),
         queryFn: () => getAdminAgencyRecoveries(params),
         staleTime: 15_000,
+        enabled: options?.enabled !== false,
     })
 
 const useInvalidateAgencyRecoveries = () => {

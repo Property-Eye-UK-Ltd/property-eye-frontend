@@ -177,12 +177,13 @@ const CaseScans = () => {
       });
 
       const dataToExport = response.items.map((match) => ({
-        matchId: match.id || "—",
-        caseId: match.id || "—",
+        propertyAddress: match.property_address || "—",
         agency: match.agency_name || "—",
+        matchConfidence: match.confidence_score ? `${match.confidence_score}%` : "—",
         timingRisk: match.risk_level || "—",
         detectedDate: match.detected_at ? new Date(match.detected_at).toLocaleDateString("en-GB") : "—",
         verificationStatus: match.verification_status || "—",
+        caseStatus: match.case_status || "—",
       }));
 
       if (format === "csv") {

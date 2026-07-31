@@ -4,10 +4,10 @@ export interface PropertyPartiesData {
   dateWithdrawn: string
   dateSold: string
   soldAmount: string
-  soldTo: string
+  purchaser: string
   landRegistry: {
     completionDate: string
-    buyerName: string
+    purchaserName: string
   }
 }
 
@@ -51,8 +51,8 @@ export const PropertyPartiesPanel = ({ data, variant = "default" }: PropertyPart
               </div>
             )}
             <div>
-              <p className={fieldLabel}>Sold To (Buyer)</p>
-              <p className={fieldValue}>{data.soldTo}</p>
+              <p className={fieldLabel}>Purchaser</p>
+              <p className={fieldValue}>{data.purchaser}</p>
             </div>
           </div>
         </div>
@@ -65,8 +65,8 @@ export const PropertyPartiesPanel = ({ data, variant = "default" }: PropertyPart
               <p className={fieldValue}>{data.landRegistry.completionDate}</p>
             </div>
             <div>
-              <p className={fieldLabel}>Buyer Name</p>
-              <p className={fieldValue}>{data.landRegistry.buyerName}</p>
+              <p className={fieldLabel}>Purchaser Name</p>
+              <p className={fieldValue}>{data.landRegistry.purchaserName}</p>
             </div>
           </div>
         </div>

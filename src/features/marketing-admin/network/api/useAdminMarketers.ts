@@ -10,11 +10,12 @@ import {
     updateAdminMarketerStatus,
 } from "./adminMarketersService"
 
-export const useAdminMarketers = () =>
+export const useAdminMarketers = (options?: { enabled?: boolean }) =>
     useQuery({
         queryKey: queryKeys.adminMarketers.list(),
         queryFn: getAdminMarketers,
         staleTime: 15_000,
+        enabled: options?.enabled !== false,
     })
 
 export const useAdminMarketerDetail = (marketerId: string | undefined) =>

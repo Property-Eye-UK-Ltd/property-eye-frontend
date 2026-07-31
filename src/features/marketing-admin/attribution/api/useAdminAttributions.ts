@@ -2,11 +2,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/queryKeys"
 import { approveAttribution, getAdminAttributions, rejectAttribution } from "./adminAttributionsService"
 
-export const useAdminAttributions = (params?: { status?: string; has_conflict?: boolean; method?: string }) =>
+export const useAdminAttributions = (
+    params?: { status?: string; has_conflict?: boolean; method?: string },
+    options?: { enabled?: boolean }
+) =>
     useQuery({
         queryKey: queryKeys.adminAttributions.list(params),
         queryFn: () => getAdminAttributions(params),
         staleTime: 15_000,
+        enabled: options?.enabled !== false,
     })
 
 const useInvalidateAttributions = () => {

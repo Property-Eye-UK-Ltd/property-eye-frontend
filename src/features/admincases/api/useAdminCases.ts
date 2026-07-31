@@ -18,24 +18,29 @@ import {
 } from "./adminCasesService"
 import { getRegisterExtract } from "@/features/casescans/api/scanSessionService"
 
-export const useAdminCases = (params?: {
-    page?: number
-    page_size?: number
-    search?: string
-    status?: string
-    agency_id?: string
-}) =>
+export const useAdminCases = (
+    params?: {
+        page?: number
+        page_size?: number
+        search?: string
+        status?: string
+        agency_ids?: string[]
+    },
+    options?: { enabled?: boolean }
+) =>
     useQuery({
         queryKey: queryKeys.adminCases.list(params),
         queryFn: () => getAdminCases(params),
         staleTime: 15_000,
+        enabled: options?.enabled !== false,
     })
 
-export const useAdminCaseAgencies = () =>
+export const useAdminCaseAgencies = (options?: { enabled?: boolean }) =>
     useQuery({
         queryKey: queryKeys.adminCases.agencies(),
         queryFn: getAdminCaseAgencies,
         staleTime: 60_000,
+        enabled: options?.enabled !== false,
     })
 
 export const useAdminCaseDetail = (caseId: string) =>

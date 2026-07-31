@@ -83,7 +83,7 @@ export const CaseListPanel = () => {
               <TableHead className={th}>Case ID</TableHead>
               <TableHead className={th}>Property Address</TableHead>
               <TableHead className={th}>Completion Date</TableHead>
-              <TableHead className={th}>Buyer Name</TableHead>
+              <TableHead className={th}>Purchaser Name</TableHead>
               <TableHead className={cn(th, "text-center")}>Status</TableHead>
             </TableRow>
           </TableHeader>

@@ -12,14 +12,21 @@ import { MetricCard } from "@/features/overview/components/MetricCards"
 
 const Affiliates = () => {
     const [activeTab, setActiveTab] = useState("marketers")
-    const { data: marketers = [], isLoading: isLoadingMarketers } = useAdminMarketers()
-    const { data: attributions = [] } = useAdminAttributions()
+    // Only fetch data for the active tab
+    const { data: marketers = [], isLoading: isLoadingMarketers } = useAdminMarketers(
+        { enabled: activeTab === "marketers" }
+    )
+    const { data: attributions = [] } = useAdminAttributions(
+        undefined,
+        { enabled: activeTab === "attribution" }
+    )
 
     const pendingAttributions = attributions.filter((a) => a.status === "pending" || a.status === "locked").length
 
+    // Tabs without counts to avoid forcing all data loads
     const tabs = [
-        { label: "Marketers", value: "marketers", count: marketers.length },
-        { label: "Attribution", value: "attribution", count: pendingAttributions },
+        { label: "Marketers", value: "marketers" },
+        { label: "Attribution", value: "attribution" },
     ]
 
     const attributionMetrics: MetricCard[] = [

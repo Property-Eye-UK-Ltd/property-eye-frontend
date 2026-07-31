@@ -41,16 +41,20 @@ const BillingFinance = () => {
     const [activeTab, setActiveTab] = useState("billing")
 
     const { data: billingMetrics } = useAdminBillingMetrics(selectedPeriod)
-    const { data: invoicesData } = useAdminInvoices({ search: searchQuery || undefined, page_size: 100 })
+    const { data: invoicesData } = useAdminInvoices(
+        { search: searchQuery || undefined, page_size: 100 },
+        { enabled: activeTab === "billing" }
+    )
     const billingHistory = invoicesData?.items ?? []
 
-    const { data: commissions = [] } = useAdminCommissions()
-    const { data: agencyRecoveries = [] } = useAdminAgencyRecoveries()
+    // Only fetch data when those tabs are viewed
+    const { data: commissions = [] } = useAdminCommissions(undefined, { enabled: activeTab === "commissions" })
+    const { data: agencyRecoveries = [] } = useAdminAgencyRecoveries(undefined, { enabled: activeTab === "agency-recoveries" })
 
     const pageTabs = [
         { label: "Subscription Billing", value: "billing" },
-        { label: "Marketer Commissions", value: "commissions", count: commissions.filter((c) => c.status === "Pending").length },
-        { label: "Agencies Recoveries", value: "agency-recoveries", count: agencyRecoveries.filter((r) => r.status === "Pending").length },
+        { label: "Marketer Commissions", value: "commissions" },
+        { label: "Agencies Recoveries", value: "agency-recoveries" },
     ]
 
     const commissionMetrics: MetricCard[] = [

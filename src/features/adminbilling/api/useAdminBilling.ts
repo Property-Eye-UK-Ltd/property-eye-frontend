@@ -9,16 +9,20 @@ export const useAdminBillingMetrics = (period: string) =>
         staleTime: 15_000,
     })
 
-export const useAdminInvoices = (params?: {
-    page?: number
-    page_size?: number
-    search?: string
-    status?: string
-}) =>
+export const useAdminInvoices = (
+    params?: {
+        page?: number
+        page_size?: number
+        search?: string
+        status?: string
+    },
+    options?: { enabled?: boolean }
+) =>
     useQuery({
         queryKey: queryKeys.adminBilling.invoices(params),
         queryFn: () => getAdminInvoices(params),
         staleTime: 15_000,
+        enabled: options?.enabled !== false,
     })
 
 export const useAdminInvoiceDetail = (invoiceId: string) =>

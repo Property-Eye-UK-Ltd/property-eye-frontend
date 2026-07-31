@@ -42,9 +42,11 @@ const AgencyProfile = () => {
     const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false)
 
     const { data: agencyDetail, isLoading: isAgencyLoading } = useAdminAgencyDetail(agencyId)
-    const { data: agencyUsers } = useAdminAgencyUsers(agencyId)
+    // Only fetch users and cases when those tabs are active
+    const { data: agencyUsers } = useAdminAgencyUsers(agencyId, undefined, { enabled: activeTab === "users" })
     const { data: agencyCasesResponse, isLoading: isAgencyCasesLoading } = useAdminCases(
-        agencyId ? { agency_id: agencyId, page_size: 100 } : undefined
+        agencyId ? { agency_ids: [agencyId], page_size: 100 } : undefined,
+        { enabled: activeTab === "cases" }
     )
 
     const refreshListings = () => {

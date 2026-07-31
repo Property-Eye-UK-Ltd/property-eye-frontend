@@ -70,8 +70,8 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                             <TableHead className={th}>Case ID</TableHead>
                             <TableHead className={th}>Address</TableHead>
                             <TableHead className={th}>
-                                <button className={sortBtnClass} onClick={() => handleSort("buyerName")}>
-                                    Buyer
+                                <button className={sortBtnClass} onClick={() => handleSort("purchaserName")}>
+                                    Purchaser
                                     <ChevronsUpDown className="h-3 w-3 lg:h-4 lg:w-4" />
                                 </button>
                             </TableHead>
@@ -105,7 +105,7 @@ export const AdminCasesTable = ({ data, page, totalPages, onPageChange }: AdminC
                                     {caseItem.propertyAddress}
                                 </TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>
-                                    {caseItem.buyerName}
+                                    {caseItem.purchaserName}
                                 </TableCell>
                                 <TableCell className={td}>
                                     <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1 lg:text-xs", caseSeverityStyles[caseItem.severity])}>

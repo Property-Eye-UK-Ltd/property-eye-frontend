@@ -3,6 +3,7 @@ import { ModalShell } from "@/components/modals/ModalShell"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { MultiSelectCheckboxGroup } from "@/features/casescans/components/MultiSelectCheckboxGroup"
+import { SearchableAgencyMultiSelect } from "@/components/dashboard/SearchableAgencyMultiSelect"
 import {
   AdminCasesFilters,
   emptyAdminCasesFilters,
@@ -104,12 +105,11 @@ export const AdminCasesFilterModal = ({
           />
 
           {agencyCheckboxOptions.length > 0 && (
-            <MultiSelectCheckboxGroup
+            <SearchableAgencyMultiSelect
               label="Agency"
               options={agencyCheckboxOptions}
               selected={draft.agencyIds}
               onChange={(agencyIds) => patch({ agencyIds })}
-              columns={1}
             />
           )}
 

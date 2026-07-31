@@ -163,7 +163,7 @@ export const fromApiAdminCase = (c: AdminFraudCaseApi): AgencyCase => ({
     completionDate: formatDate(c.withdrawn_date),
     withdrawalDate: formatDate(c.withdrawn_date),
     saleDate: formatDate(c.withdrawn_date),
-    buyerName: c.client_name ?? "Unknown Buyer",
+    purchaserName: c.client_name ?? "Unknown Purchaser",
     hasRegisterCheck: Boolean(c.register_extract_status),
     verificationStatus: c.verification_status as AgencyCase["verificationStatus"],
     scanDate: c.register_extract_fetched_at,
@@ -187,7 +187,7 @@ export const getAdminCases = async (params?: {
     page_size?: number
     search?: string
     status?: string
-    agency_id?: string
+    agency_ids?: string[]
 }): Promise<{ items: AgencyCase[]; total: number; page: number; page_size: number }> => {
     const { data } = await apiClient.get<AdminFraudCaseListResponse>("/admin/fraud-reports", { params })
     return {
@@ -201,7 +201,7 @@ export const getAdminCases = async (params?: {
 export const getAdminCasesForExport = async (params?: {
     search?: string
     status?: string
-    agency_id?: string
+    agency_ids?: string[]
     detected_from?: string
     detected_to?: string
 }): Promise<{ items: AgencyCase[]; total: number }> => {
@@ -232,10 +232,10 @@ export const getAdminCasePropertyParties = async (caseId: string): Promise<Prope
         dateWithdrawn: formatDate(data.withdrawn_date),
         dateSold: formatDate(data.ppd_transfer_date),
         soldAmount: data.ppd_price ? formatGbp(data.ppd_price) ?? "—" : (data.price ?? "—"),
-        soldTo: data.client_name ?? "Unknown Buyer",
+        purchaser: data.client_name ?? "Unknown Purchaser",
         landRegistry: {
             completionDate: formatDate(data.ppd_transfer_date),
-            buyerName: data.verified_owner_name ?? data.client_name ?? "—",
+            purchaserName: data.verified_owner_name ?? data.client_name ?? "—",
         },
     }
 }

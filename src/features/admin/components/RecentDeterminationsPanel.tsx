@@ -64,9 +64,9 @@ export const RecentDeterminationsPanel = () => {
                             <TableRow
                                 key={item.id}
                                 className="cursor-pointer border-b border-border transition-colors hover:bg-muted/40"
-                                onClick={() => navigate(`/admin/cases/${encodeURIComponent(`#${item.caseId}`)}`)}
+                                onClick={() => navigate(`/admin/cases/${item.caseId}`)}
                             >
-                                <TableCell className="px-2 py-2 text-xs font-normal text-progress lg:px-4 lg:py-3 lg:text-sm">#{item.caseId}</TableCell>
+                                <TableCell className="px-2 py-2 text-xs font-normal text-progress lg:px-4 lg:py-3 lg:text-sm">#{item.caseId.slice(-4)}</TableCell>
                                 <TableCell className="px-2 py-2 text-xs font-medium text-primary lg:px-4 lg:py-3 lg:text-sm">{item.agencyName}</TableCell>
                                 <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
                                     <Badge className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium lg:px-3 lg:py-1 lg:text-xs", determinationStyles[item.determination ?? ""])}>

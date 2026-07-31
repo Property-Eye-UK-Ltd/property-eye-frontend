@@ -5,6 +5,7 @@ import {
   XCircle,
   AlertCircle,
   Loader2,
+  CircleSlash,
 } from "lucide-react"
 import {
   Tooltip,
@@ -48,6 +49,16 @@ export const ScanIndicator = ({
 
   // Determine icon, color, and label based on status
   const getIconConfig = () => {
+    // If there is no scan date, the check has not been processed/run yet
+    if (!scan_date) {
+      return {
+        Icon: CircleSlash,
+        colorClass: "text-gray-400",
+        bgClass: "hover:bg-gray-50",
+        label: "Not Scanned",
+      }
+    }
+
     switch (verification_status) {
       case "confirmed_fraud":
         return {
@@ -72,15 +83,15 @@ export const ScanIndicator = ({
         }
       case "suspicious":
         return {
-          Icon: Loader2,
-          colorClass: "text-blue-600 animate-spin",
-          bgClass: "hover:bg-blue-50",
-          label: "Scanning...",
+          Icon: Circle,
+          colorClass: "text-gray-400",
+          bgClass: "hover:bg-gray-50",
+          label: "Awaiting Verification",
         }
       case null:
       default:
         return {
-          Icon: Circle,
+          Icon: CircleSlash,
           colorClass: "text-gray-400",
           bgClass: "hover:bg-gray-50",
           label: "Not Scanned",

@@ -91,7 +91,7 @@ export const AgencyListingsTablePanel = ({
                                 </button>
                             </TableHead>
                             <TableHead className="px-4 font-medium text-muted-foreground">Postcode</TableHead>
-                            <TableHead className="px-4 font-medium text-muted-foreground">Buyer</TableHead>
+                            <TableHead className="px-4 font-medium text-muted-foreground">Purchaser</TableHead>
                             <TableHead className="px-4 font-medium text-muted-foreground">Vendor</TableHead>
                             <TableHead className="px-4 font-medium text-muted-foreground">Withdrawn Date</TableHead>
                             <TableHead className="px-4 font-medium text-muted-foreground">Price</TableHead>

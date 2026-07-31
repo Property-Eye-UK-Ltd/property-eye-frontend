@@ -40,6 +40,7 @@ const AdminCaseManagement = () => {
         setPage(1)
     }
 
+    // Only fetch agencies when filter modal is needed (already lazy in CaseManagement pattern)
     const { data: agencies } = useAdminCaseAgencies()
 
     // Convert agencies from useAdminCaseAgencies to FraudReportAgencyOption format
@@ -58,7 +59,7 @@ const AdminCaseManagement = () => {
         page_size: 20,
         search: searchQuery || undefined,
         status: filters.status.length > 0 ? adminStatusToCaseStatus[filters.status[0] as AdminCaseStatus] : undefined,
-        agency_id: filters.agencyIds.length > 0 ? filters.agencyIds[0] : undefined,
+        agency_ids: filters.agencyIds.length > 0 ? filters.agencyIds : undefined,
     })
 
     const parseLooseDate = (value: string) => {
@@ -93,7 +94,7 @@ const AdminCaseManagement = () => {
             const response = await getAdminCasesForExport({
                 search: searchQuery || undefined,
                 status: filters.status.length > 0 ? adminStatusToCaseStatus[filters.status[0] as AdminCaseStatus] : undefined,
-                agency_id: filters.agencyIds.length > 0 ? filters.agencyIds[0] : undefined,
+                agency_ids: filters.agencyIds.length > 0 ? filters.agencyIds : undefined,
             })
 
             // Apply client-side filters (severity, determination, sale-date range)
@@ -113,9 +114,9 @@ const AdminCaseManagement = () => {
             })
 
             const dataToExport = items.map((c) => ({
-                caseId: c.caseId || "—",
                 address: c.propertyAddress || "—",
-                buyer: c.buyerName || "—",
+                purchaser: c.purchaserName || "—",
+                agency: c.agencyName || "—",
                 timingRisk: c.severity || "—",
                 caseStatus: c.adminStatus || "—",
                 determination: c.determination || "—",
