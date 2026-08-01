@@ -56,7 +56,7 @@ const TeamSection = () => {
                                 <img
                                     src={member.image}
                                     alt={member.name}
-                                    className="w-full h-full object-cover object-top"
+                                    className="w-full h-full object-cover object-[center_25%]"
                                 />
                             </div>
                             <div className="flex flex-col p-4 md:p-5">
