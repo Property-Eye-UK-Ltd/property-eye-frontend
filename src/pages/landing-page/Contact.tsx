@@ -86,29 +86,37 @@ export default function Contact() {
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mt-auto">
                                 {/* Email */}
                                 <div className="flex flex-col items-center text-center">
-                                    <Sms variant="Outline" size={24} className="mb-3" />
-                                    <h3 className="font-medium mb-2">Email</h3>
-                                    <p className="text-gray-500 text-sm mb-3">Have a question or want to collaborate?</p>
-                                    <a href="mailto:support@propertyeyeuk.com" className="text-progress font-normal text-sm hover:underline">
-                                        support@propertyeyeuk.com
+                                    <a 
+                                        href="mailto:support@propertyeyeuk.com" 
+                                        className="inline-flex items-center justify-center p-3.5 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-[#FFBD09] hover:scale-110 transition-all duration-300 mb-3"
+                                        title="support@propertyeyeuk.com"
+                                    >
+                                        <Sms variant="Outline" size={24} />
                                     </a>
+                                    <h3 className="font-medium mb-2">Email</h3>
+                                    <p className="text-gray-500 text-xs md:text-sm">Have a question or want to collaborate?</p>
                                 </div>
 
                                 {/* Call */}
                                 <div className="flex flex-col items-center text-center">
-                                    <Call variant="Outline" size={24} className="mb-3" />
-                                    <h3 className="font-medium mb-2">Call</h3>
-                                    <p className="text-gray-500 text-sm mb-3">Need to talk it through? Let's connect.</p>
-                                    <a href="tel:+447860468665" className="text-[#00072C] hover:text-[#00072C]/80 font-medium text-sm hover:underline">
-                                        +44 7860 468665
+                                    <a 
+                                        href="tel:+447860468665" 
+                                        className="inline-flex items-center justify-center p-3.5 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-[#FFBD09] hover:scale-110 transition-all duration-300 mb-3"
+                                        title="+44 7860 468665"
+                                    >
+                                        <Call variant="Outline" size={24} />
                                     </a>
+                                    <h3 className="font-medium mb-2">Call</h3>
+                                    <p className="text-gray-500 text-xs md:text-sm">Need to talk it through? Let's connect.</p>
                                 </div>
 
                                 {/* Address */}
                                 <div className="flex flex-col items-center text-center">
-                                    <Routing variant="Outline" size={24} className="mb-3" />
+                                    <div className="inline-flex items-center justify-center p-3.5 rounded-full bg-primary/5 text-primary mb-3">
+                                        <Routing variant="Outline" size={24} />
+                                    </div>
                                     <h3 className="font-medium mb-2">Address</h3>
-                                    <p className="text-gray-500 text-sm">
+                                    <p className="text-gray-500 text-xs md:text-sm">
                                         123, Phantom Avenue, Bournemouth, United Kingdom
                                     </p>
                                 </div>
