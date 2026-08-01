@@ -33,11 +33,11 @@ const MissionSection = () => {
 
                                 {/* Content */}
                                 <div className="mt-auto">
-                                    <div className="text-secondary text-5xl md:text-6xl font-medium mb-4">
-                                        <span style={{ color: '#FFF2CE' }}>£</span>2.4B<span style={{ color: '#FFF2CE' }}>+</span>
+                                    <div className="text-secondary text-2xl md:text-3xl font-medium mb-4 leading-snug max-w-[280px]">
+                                        Commission fraud is <span style={{ color: '#FFF2CE' }}>draining</span> the UK real estate industry.
                                     </div>
                                     <p className="text-white text-sm md:text-lg leading-relaxed max-w-[280px]">
-                                        Lost annually to commission fraud in real estate in the United Kingdom.
+                                        The damage compounds every year it goes unchecked.
                                     </p>
                                 </div>
                             </div>
