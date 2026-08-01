@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast"
 import * as settingsService from "@/features/settings/api/settingsService"
 import { extractErrorMessage } from "@/features/auth/authErrors"
 import type { SettingsNotificationsResponse } from "@/types/settings.types"
+import { useAuth } from "@/features/auth/context/AuthContext"
 
 const DEFAULT_NOTIFICATIONS: SettingsNotificationsResponse = {
     email_enabled: false,
@@ -15,6 +16,10 @@ const DEFAULT_NOTIFICATIONS: SettingsNotificationsResponse = {
 
 export const AgencyNotificationsTab = () => {
     const { toast } = useToast()
+    const { user } = useAuth()
+    // Backend restricts PATCH /dashboard/settings/notifications to
+    // agency_owner and agency_staff — agency_viewer is read-only.
+    const canEditNotifications = user?.role === "agency_owner" || user?.role === "agency_staff"
     const [settings, setSettings] = useState<SettingsNotificationsResponse>(DEFAULT_NOTIFICATIONS)
     const [formData, setFormData] = useState<SettingsNotificationsResponse>(DEFAULT_NOTIFICATIONS)
     const [isLoading, setIsLoading] = useState(true)
@@ -80,6 +85,7 @@ export const AgencyNotificationsTab = () => {
             useAlternativeCTA={true}
             hasChanges={hasChanges && !isLoading}
             saveButtonText={isSaving ? "Saving..." : "Save"}
+            showCTA={canEditNotifications}
         >
             <div className="space-y-6">
                 {/* Email Notification */}
@@ -93,7 +99,7 @@ export const AgencyNotificationsTab = () => {
                     <Switch
                         checked={formData.email_enabled}
                         onCheckedChange={() => handleToggle("email_enabled")}
-                        disabled={isLoading}
+                        disabled={isLoading || !canEditNotifications}
                         className="shrink-0"
                     />
                 </div>

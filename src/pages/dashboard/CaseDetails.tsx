@@ -13,6 +13,7 @@ import type { AgencyCaseStatus, CaseDetail } from "@/features/cases/api/casesSer
 import { RaiseDisputeModal } from "@/features/cases/components/modals/RaiseDisputeModal"
 import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useAuth } from "@/features/auth/context/AuthContext"
 
 const caseStatusLabels: Record<AgencyCaseStatus, string> = {
   open: "Open",
@@ -57,6 +58,7 @@ const CaseDetails = () => {
   const { caseId } = useParams<{ caseId: string }>()
   const location = useLocation()
   const decodedCaseId = caseId ? decodeURIComponent(caseId) : ""
+  const { user } = useAuth()
 
   const { data: caseDetail, isLoading: isCaseLoading } = useCaseDetail(decodedCaseId)
   const { data: timeline = [] } = useCaseTimeline(decodedCaseId)
@@ -66,7 +68,10 @@ const CaseDetails = () => {
 
   const isClosed = caseDetail?.status === "closed_confirmed_fraud" || caseDetail?.status === "closed_not_fraudulent"
   const disputeStatus = caseDetail?.agency_dispute_status ?? "none"
-  const canRaiseDispute = isClosed && disputeStatus === "none"
+  // Backend restricts POST /dashboard/cases/{id}/dispute to agency_owner and
+  // agency_staff (fraud_reports.py) — agency_viewer is read-only per FR-005.12.
+  const canRaiseDisputeForRole = user?.role === "agency_owner" || user?.role === "agency_staff"
+  const canRaiseDispute = isClosed && disputeStatus === "none" && canRaiseDisputeForRole
 
   const handleRaiseDispute = async (note: string) => {
     try {

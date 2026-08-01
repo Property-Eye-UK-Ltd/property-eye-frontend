@@ -33,12 +33,15 @@ const AdminProtectedRoute = () => {
         return <Navigate to="/admin/change-password" replace />;
     }
 
-    // Official Records (PPD uploads) is superadmin-only — analyst/viewer
-    // admin-portal roles must not reach it, even via a direct URL.
+    // Official Records (PPD uploads) and Team Management are superadmin-only
+    // (backend/src/api/v1/endpoints/ppd_upload.py, dashboard.py /admin/team/*)
+    // — analyst/viewer admin-portal roles must not reach them, even via a
+    // direct URL.
     if (
         user &&
         user.role !== "superadmin" &&
-        location.pathname.startsWith("/admin/ppd-records")
+        (location.pathname.startsWith("/admin/ppd-records") ||
+            location.pathname.startsWith("/admin/team"))
     ) {
         return <Navigate to="/admin/dashboard" replace />;
     }

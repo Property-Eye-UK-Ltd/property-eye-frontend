@@ -119,6 +119,7 @@ export const superAdminNavConfig: NavConfig = {
             icon: People,
             path: "/admin/team",
             variant: "Bulk",
+            key: "team",
         },
         {
             label: "Billing & Finance",
@@ -189,8 +190,10 @@ export const getNavConfig = (variant: DashboardVariant): NavConfig => {
 }
 
 // Admin-portal roles below superadmin (analyst, viewer) don't get
-// superadmin-only nav items — currently just Official Records (PPD uploads).
-const SUPER_ADMIN_ONLY_KEYS = ["ppd-records"]
+// superadmin-only nav items — Official Records (PPD uploads) and Team
+// Management, both gated to `require_admin_role("superadmin")` on the backend
+// (backend/src/api/v1/endpoints/ppd_upload.py, dashboard.py /admin/team/*).
+const SUPER_ADMIN_ONLY_KEYS = ["ppd-records", "team"]
 
 export const getVisibleNavConfig = (variant: DashboardVariant, role?: string): NavConfig => {
     const config = getNavConfig(variant)
