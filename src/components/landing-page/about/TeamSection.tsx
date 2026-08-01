@@ -6,6 +6,7 @@ const teamMembers = [
         name: "Richard Cook",
         role: "Founder & Chief Executive Officer",
         image: "/assets/about/richard.png",
+        imagePosition: "center 45%",
         linkedin: "https://www.linkedin.com/in/richard-cook-39529442/",
         bio: [
             "Serial entrepreneur with experience building and successfully exiting businesses across property, finance, publishing, hospitality and technology",
@@ -18,6 +19,7 @@ const teamMembers = [
         name: "Leonard Onyiriuba",
         role: "Chief Technology Officer",
         image: "/assets/about/leonard.png",
+        imagePosition: "center 25%",
         linkedin: "https://www.linkedin.com/in/chukwubuikem-leonard-onyiriuba/",
         bio: [
             "Applied Data Scientist and technology entrepreneur",
@@ -56,7 +58,8 @@ const TeamSection = () => {
                                 <img
                                     src={member.image}
                                     alt={member.name}
-                                    className="w-full h-full object-cover object-[center_25%]"
+                                    className="w-full h-full object-cover"
+                                    style={{ objectPosition: member.imagePosition }}
                                 />
                             </div>
                             <div className="flex flex-col p-4 md:p-5">
