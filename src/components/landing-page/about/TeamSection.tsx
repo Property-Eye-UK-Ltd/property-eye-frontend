@@ -46,39 +46,37 @@ const TeamSection = () => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-3xl mx-auto">
                     {teamMembers.map((member, index) => (
                         <div
                             key={index}
-                            className="flex flex-col sm:flex-row gap-6 p-6 rounded-2xl bg-white shadow-sm border border-primary/10 hover:shadow-md hover:border-primary/20 transition-all duration-300"
+                            className="flex flex-col rounded-2xl bg-white shadow-sm border border-primary/10 hover:shadow-md hover:border-primary/20 transition-all duration-300 overflow-hidden"
                         >
-                            <div className="w-24 h-24 sm:w-40 sm:h-40 shrink-0 mx-auto sm:mx-0 bg-white/10 overflow-hidden rounded-xl border border-primary/10">
+                            <div className="w-full aspect-[16/9] md:aspect-[3/2] bg-white/10 overflow-hidden">
                                 <img
                                     src={member.image}
                                     alt={member.name}
                                     className="w-full h-full object-cover object-top"
                                 />
                             </div>
-                            <div className="flex flex-col justify-between flex-1 min-w-0">
-                                <div>
-                                    <div className="flex items-start justify-between gap-4 mb-2">
-                                        <h3 className="text-lg md:text-xl font-medium text-primary leading-tight">{member.name}</h3>
-                                        <a
-                                            href={member.linkedin}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-primary/60 hover:text-primary transition-colors shrink-0"
-                                        >
-                                            <Linkedin className="w-5 h-5" />
-                                        </a>
-                                    </div>
-                                    <p className="text-primary/60 text-xs font-medium uppercase tracking-wider mb-4">{member.role}</p>
-                                    <ul className="space-y-2 text-primary/80 text-xs md:text-sm leading-relaxed list-disc list-inside">
-                                        {member.bio.map((bullet, i) => (
-                                            <li key={i} className="pl-4 -indent-4">{bullet}</li>
-                                        ))}
-                                    </ul>
+                            <div className="flex flex-col p-4 md:p-5">
+                                <div className="flex items-start justify-between gap-4 mb-1">
+                                    <h3 className="text-base md:text-lg font-medium text-primary leading-tight">{member.name}</h3>
+                                    <a
+                                        href={member.linkedin}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-primary/60 hover:text-primary transition-colors shrink-0"
+                                    >
+                                        <Linkedin className="w-4 h-4" />
+                                    </a>
                                 </div>
+                                <p className="text-primary/60 text-[10px] font-medium uppercase tracking-wider mb-3">{member.role}</p>
+                                <ul className="space-y-1.5 text-primary/80 text-xs leading-relaxed list-disc list-inside">
+                                    {member.bio.map((bullet, i) => (
+                                        <li key={i} className="pl-4 -indent-4">{bullet}</li>
+                                    ))}
+                                </ul>
                             </div>
                         </div>
                     ))}
