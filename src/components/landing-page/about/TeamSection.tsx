@@ -6,7 +6,7 @@ const teamMembers = [
         name: "Richard Cook",
         role: "Founder & Chief Executive Officer",
         image: "/assets/about/richard.png",
-        imagePosition: "center top",
+        imagePosition: "center 0",
         linkedin: "https://www.linkedin.com/in/richard-cook-39529442/",
         bio: [
             "Serial entrepreneur with experience building and successfully exiting businesses across property, finance, publishing, hospitality and technology",
@@ -54,7 +54,7 @@ const TeamSection = () => {
                             key={index}
                             className="flex flex-col rounded-2xl bg-white shadow-sm border border-primary/10 hover:shadow-md hover:border-primary/20 transition-all duration-300 overflow-hidden"
                         >
-                            <div className="w-full aspect-[3/2] bg-white/10 overflow-hidden">
+                            <div className="w-full aspect-[5/4] bg-white/10 overflow-hidden">
                                 <img
                                     src={member.image}
                                     alt={member.name}
