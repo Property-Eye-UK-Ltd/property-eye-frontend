@@ -89,8 +89,8 @@ export default function Contact() {
                                     <Sms variant="Outline" size={24} className="mb-3" />
                                     <h3 className="font-medium mb-2">Email</h3>
                                     <p className="text-gray-500 text-sm mb-3">Have a question or want to collaborate?</p>
-                                    <a href="mailto:hello@propertyeye.uk" className="text-progress font-normal text-sm hover:underline">
-                                        Send an Email
+                                    <a href="mailto:support@propertyeyeuk.com" className="text-progress font-normal text-sm hover:underline">
+                                        support@propertyeyeuk.com
                                     </a>
                                 </div>
 
@@ -99,8 +99,8 @@ export default function Contact() {
                                     <Call variant="Outline" size={24} className="mb-3" />
                                     <h3 className="font-medium mb-2">Call</h3>
                                     <p className="text-gray-500 text-sm mb-3">Need to talk it through? Let's connect.</p>
-                                    <a href="tel:+441234567890" className="text-progress font-normal text-sm hover:underline">
-                                        Make a Call
+                                    <a href="tel:+447860468665" className="text-[#00072C] hover:text-[#00072C]/80 font-medium text-sm hover:underline">
+                                        +44 7860 468665
                                     </a>
                                 </div>
 

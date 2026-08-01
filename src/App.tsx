@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/landing-page/Home";
 import Contact from "./pages/landing-page/Contact";
+import CookieConsentBanner from "./components/landing-page/CookieConsentBanner";
 // RequestDemo page kept at ./pages/landing-page/RequestDemo.tsx — route hidden
 import ScrollToTop from "./components/ScrollToTop";
 import PrivacyPolicy from "./pages/landing-page/PrivacyPolicy";
@@ -80,6 +81,7 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <SubscribeGateModal />
+        <CookieConsentBanner />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />

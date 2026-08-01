@@ -4,13 +4,6 @@ import CTASection from "@/components/landing-page/CTASection";
 import { PlanCard } from "@/features/billing/components/PlanCard";
 import { usePlan } from "@/features/billing/api/usePlans";
 import { useNavigate } from "react-router-dom";
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
-import { faqData } from "@/data/faq-data";
 
 const Pricing = () => {
     const navigate = useNavigate();
@@ -55,31 +48,6 @@ const Pricing = () => {
                             onSubscribe={handleSelectPlan}
                         />
                     )}
-                </div>
-
-                {/* Billing FAQ Section */}
-                <div className="mx-auto w-full max-w-7xl px-4 md:px-6 mb-12 md:mb-24">
-                    <div className="text-center mb-8 md:mb-12">
-                        <h2 className="text-2xl md:text-3xl font-medium text-black">
-                            Frequently Asked Questions
-                        </h2>
-                    </div>
-                    <Accordion type="single" collapsible className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                        {faqData["Billing"].map((item, index) => (
-                            <AccordionItem
-                                key={index}
-                                value={`item-${index}`}
-                                className="border rounded-2xl px-6 bg-gray-200 data-[state=open]:bg-gray-200 transition-colors"
-                            >
-                                <AccordionTrigger className="text-left text-base font-medium text-gray-900 hover:no-underline py-4">
-                                    {item.question}
-                                </AccordionTrigger>
-                                <AccordionContent className="text-gray-600 text-sm leading-relaxed pb-4">
-                                    {item.answer}
-                                </AccordionContent>
-                            </AccordionItem>
-                        ))}
-                    </Accordion>
                 </div>
 
                 <CTASection />
