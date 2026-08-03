@@ -6,6 +6,7 @@ import { useCasesSummary } from "@/features/cases/api/useCases"
 import { useSeverityDistribution } from "@/features/overview/api/useOverview"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const CaseManagement = () => {
   const { data: summary, isLoading: summaryLoading } = useCasesSummary()
@@ -32,9 +33,13 @@ const CaseManagement = () => {
             </CardHeader>
             <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0 flex flex-col justify-between h-[80px]">
               <div className="space-y-1.5 lg:space-y-2">
-                <p className="text-xl font-medium text-foreground lg:text-3xl">
-                  {summaryLoading ? "-" : totalAlerts}
-                </p>
+                <div className="text-xl font-medium text-foreground lg:text-3xl">
+                  {summaryLoading ? (
+                    <Skeleton className="h-8 w-12" />
+                  ) : (
+                    totalAlerts
+                  )}
+                </div>
                 <div className="flex items-center justify-between text-[10px] lg:text-xs">
                   <span className="text-muted-foreground">All time</span>
                 </div>

@@ -43,8 +43,8 @@ const Agencies = () => {
     const [isExportOpen, setIsExportOpen] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
 
-    const { data: summary } = useAdminAgenciesSummary()
-    const { data: agenciesList } = useAdminAgenciesList({
+    const { data: summary, isLoading: summaryLoading } = useAdminAgenciesSummary()
+    const { data: agenciesList, isLoading: agenciesListLoading } = useAdminAgenciesList({
         page,
         page_size: PAGE_SIZE,
         search: searchQuery || undefined,
@@ -116,7 +116,7 @@ const Agencies = () => {
             />
 
             <DashboardPageContent className="space-y-3 lg:space-y-4">
-                <MetricCards metrics={metrics} columns={3} />
+                <MetricCards metrics={metrics} columns={3} isLoading={summaryLoading} />
 
                 <DashboardPanel
                     title="Agencies List"
@@ -193,6 +193,7 @@ const Agencies = () => {
                         pageSize={PAGE_SIZE}
                         onPageChange={setPage}
                         onViewAgency={handleViewAgency}
+                        isLoading={agenciesListLoading}
                     />
                 </DashboardPanel>
             </DashboardPageContent>

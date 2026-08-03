@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTeamSummary } from "@/features/team/api/useTeam"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export const TeamMetrics = () => {
     const { data: summary, isLoading } = useTeamSummary()
@@ -14,9 +15,9 @@ export const TeamMetrics = () => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-3 pt-0 lg:p-6">
-                    <p className="text-2xl font-medium text-foreground lg:text-4xl">
-                        {isLoading ? "-" : summary?.total_users ?? 0}
-                    </p>
+                    <div className="text-2xl font-medium text-foreground lg:text-4xl">
+                        {isLoading ? <Skeleton className="h-8 w-12" /> : summary?.total_users ?? 0}
+                    </div>
                 </CardContent>
             </Card>
 
@@ -28,11 +29,12 @@ export const TeamMetrics = () => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-3 pt-0 lg:p-6">
-                    <p className="text-2xl font-medium text-foreground lg:text-4xl">
-                        {isLoading ? "-" : summary?.active_today_count ?? 0}
-                    </p>
+                    <div className="text-2xl font-medium text-foreground lg:text-4xl">
+                        {isLoading ? <Skeleton className="h-8 w-12" /> : summary?.active_today_count ?? 0}
+                    </div>
                 </CardContent>
             </Card>
         </div>
     )
 }
+

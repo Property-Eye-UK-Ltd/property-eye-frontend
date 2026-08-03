@@ -9,6 +9,7 @@ import { FraudDetectionPanel, type FraudDataPoint, type FraudSeriesConfig } from
 import { RecentDeterminationsPanel } from "@/features/admin/components/RecentDeterminationsPanel"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowUp } from "iconsax-react"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
     useAdminFraudDetectionGrowth,
     useAdminOverviewSummary,
@@ -39,9 +40,9 @@ const AdminOverview = () => {
     const navigate = useNavigate()
 
     const { data: summary, isLoading: summaryLoading } = useAdminOverviewSummary()
-    const { data: severity } = useAdminSeverityDistribution()
+    const { data: severity, isLoading: severityLoading } = useAdminSeverityDistribution()
     const { data: revenueByPlan = [] } = useAdminRevenueByPlan()
-    const { data: fraudGrowth = [] } = useAdminFraudDetectionGrowth()
+    const { data: fraudGrowth = [], isLoading: fraudGrowthLoading } = useAdminFraudDetectionGrowth()
 
     const metrics: MetricCard[] = useMemo(() => {
         if (!summary) return []
@@ -94,63 +95,90 @@ const AdminOverview = () => {
 
             <DashboardPageContent className="space-y-3 lg:space-y-4">
                 {/* Top 4 KPIs */}
-                {summaryLoading ? (
-                    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-                        {[0, 1, 2, 3].map((i) => (
-                            <div key={i} className="h-28 animate-pulse rounded-xl bg-muted" />
-                        ))}
-                    </div>
-                ) : (
-                    <MetricCards metrics={metrics} columns={4} />
-                )}
+                <MetricCards metrics={metrics} columns={4} isLoading={summaryLoading} />
 
                 {/* Clearance Rate + Active Marketers side by side */}
                 <div className="grid grid-cols-2 gap-3 lg:gap-4">
-                    {clearanceMetric && (
-                        <Card className="relative overflow-hidden">
-                            <div className={`absolute left-0 right-0 top-0 h-2 ${clearanceMetric.topBarClass}`} />
-                            <CardHeader className="p-3 pb-1 lg:p-6 lg:pb-3">
-                                <CardTitle className="text-xs font-normal text-muted-foreground lg:text-sm">
-                                    {clearanceMetric.title}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
-                                <div className="space-y-1.5 lg:space-y-2">
-                                    <p className="text-xl font-medium text-foreground lg:text-3xl">{clearanceMetric.value}</p>
-                                    <p className="text-[10px] text-muted-foreground lg:text-xs">{clearanceMetric.period}</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )}
-
-                    {activeMarketersMetric && (
-                        <button
-                            type="button"
-                            onClick={() => navigate("/admin/affiliates")}
-                            className="text-left transition-opacity hover:opacity-90"
-                        >
-                            <Card className="relative overflow-hidden h-full">
-                                <div className={`absolute left-0 right-0 top-0 h-2 ${activeMarketersMetric.topBarClass}`} />
+                    {summaryLoading ? (
+                        <>
+                            <Card className="relative overflow-hidden">
+                                <div className="absolute left-0 right-0 top-0 h-2 bg-slate-200 animate-pulse" />
                                 <CardHeader className="p-3 pb-1 lg:p-6 lg:pb-3">
                                     <CardTitle className="text-xs font-normal text-muted-foreground lg:text-sm">
-                                        {activeMarketersMetric.title}
+                                        <Skeleton className="h-4 w-24" />
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
-                                    <div className="flex items-end justify-between gap-4">
-                                        <div className="space-y-1.5 lg:space-y-2">
-                                            <p className="text-xl font-medium text-foreground lg:text-3xl">{activeMarketersMetric.value}</p>
-                                            <p className="text-[10px] text-muted-foreground lg:text-xs">{activeMarketersMetric.period}</p>
-                                        </div>
-                                        <span className="flex items-center gap-3">
-                                            <span className="text-xs font-medium text-progress hover:underline lg:text-sm">
-                                                View Affiliates
-                                            </span>
-                                        </span>
+                                    <div className="space-y-2">
+                                        <Skeleton className="h-8 w-16 lg:h-9" />
+                                        <Skeleton className="h-3.5 w-28" />
                                     </div>
                                 </CardContent>
                             </Card>
-                        </button>
+                            <Card className="relative overflow-hidden">
+                                <div className="absolute left-0 right-0 top-0 h-2 bg-slate-200 animate-pulse" />
+                                <CardHeader className="p-3 pb-1 lg:p-6 lg:pb-3">
+                                    <CardTitle className="text-xs font-normal text-muted-foreground lg:text-sm">
+                                        <Skeleton className="h-4 w-24" />
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
+                                    <div className="space-y-2">
+                                        <Skeleton className="h-8 w-16 lg:h-9" />
+                                        <Skeleton className="h-3.5 w-28" />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </>
+                    ) : (
+                        <>
+                            {clearanceMetric && (
+                                <Card className="relative overflow-hidden">
+                                    <div className={`absolute left-0 right-0 top-0 h-2 ${clearanceMetric.topBarClass}`} />
+                                    <CardHeader className="p-3 pb-1 lg:p-6 lg:pb-3">
+                                        <CardTitle className="text-xs font-normal text-muted-foreground lg:text-sm">
+                                            {clearanceMetric.title}
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
+                                        <div className="space-y-1.5 lg:space-y-2">
+                                            <p className="text-xl font-medium text-foreground lg:text-3xl">{clearanceMetric.value}</p>
+                                            <p className="text-[10px] text-muted-foreground lg:text-xs">{clearanceMetric.period}</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {activeMarketersMetric && (
+                                <button
+                                    type="button"
+                                    onClick={() => navigate("/admin/affiliates")}
+                                    className="text-left transition-opacity hover:opacity-90"
+                                >
+                                    <Card className="relative overflow-hidden h-full">
+                                        <div className={`absolute left-0 right-0 top-0 h-2 ${activeMarketersMetric.topBarClass}`} />
+                                        <CardHeader className="p-3 pb-1 lg:p-6 lg:pb-3">
+                                            <CardTitle className="text-xs font-normal text-muted-foreground lg:text-sm">
+                                                {activeMarketersMetric.title}
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
+                                            <div className="flex items-end justify-between gap-4">
+                                                <div className="space-y-1.5 lg:space-y-2">
+                                                    <p className="text-xl font-medium text-foreground lg:text-3xl">{activeMarketersMetric.value}</p>
+                                                    <p className="text-[10px] text-muted-foreground lg:text-xs">{activeMarketersMetric.period}</p>
+                                                </div>
+                                                <span className="flex items-center gap-3">
+                                                    <span className="text-xs font-medium text-progress hover:underline lg:text-sm">
+                                                        View Affiliates
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </button>
+                            )}
+                        </>
                     )}
                 </div>
 
@@ -160,17 +188,19 @@ const AdminOverview = () => {
                         data={severityData}
                         chartSize={200}
                         className="w-full"
+                        isLoading={severityLoading}
                     />
                 </div>
 
                 <RecentDeterminationsPanel />
 
-                {fraudGrowthData.length > 0 ? (
+                {fraudGrowthLoading || fraudGrowthData.length > 0 ? (
                     <FraudDetectionPanel
                         title="Fraud Detection Growth"
                         data={fraudGrowthData}
                         config={fraudGrowthConfig}
                         showCategoryFilter={false}
+                        isLoading={fraudGrowthLoading}
                     />
                 ) : (
                     <Card className="p-6 text-center text-sm text-muted-foreground">

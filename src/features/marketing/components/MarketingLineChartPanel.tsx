@@ -14,6 +14,7 @@ import {
 } from "recharts"
 import { cn } from "@/lib/utils"
 import { BarChartDatum } from "./MarketingBarChartPanel"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface MarketingLineChartPanelProps {
     data: BarChartDatum[]
@@ -24,6 +25,7 @@ interface MarketingLineChartPanelProps {
     icon?: ReactNode
     /** Format the value shown on the axis and tooltip (e.g. currency). */
     valueFormatter?: (value: number) => string
+    isLoading?: boolean
 }
 
 const defaultFormatter = (value: number) => value.toLocaleString()
@@ -36,6 +38,7 @@ export const MarketingLineChartPanel = ({
     className,
     icon,
     valueFormatter = defaultFormatter,
+    isLoading = false,
 }: MarketingLineChartPanelProps) => {
     const gradientId = `marketingLine-${title.replace(/\s+/g, "-").toLowerCase()}`
 
@@ -48,8 +51,28 @@ export const MarketingLineChartPanel = ({
             hasBorder
             compactContent
         >
-            <ChartContainer config={{}} className="h-[240px] w-full sm:h-[260px] lg:h-[280px]">
-                <ResponsiveContainer width="100%" height="100%">
+            {isLoading ? (
+                <div className="h-[240px] w-full sm:h-[260px] lg:h-[280px] flex flex-col justify-between p-4 bg-slate-50/50 rounded-xl">
+                    <div className="flex justify-between items-end h-[80%] border-b border-dashed border-slate-200 pb-2">
+                        <Skeleton className="h-[20%] w-[10%] rounded-md" />
+                        <Skeleton className="h-[50%] w-[10%] rounded-md" />
+                        <Skeleton className="h-[35%] w-[10%] rounded-md" />
+                        <Skeleton className="h-[75%] w-[10%] rounded-md" />
+                        <Skeleton className="h-[60%] w-[10%] rounded-md" />
+                        <Skeleton className="h-[90%] w-[10%] rounded-md" />
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground pt-2 px-1">
+                        <Skeleton className="h-3 w-10" />
+                        <Skeleton className="h-3 w-10" />
+                        <Skeleton className="h-3 w-10" />
+                        <Skeleton className="h-3 w-10" />
+                        <Skeleton className="h-3 w-10" />
+                        <Skeleton className="h-3 w-10" />
+                    </div>
+                </div>
+            ) : (
+                <ChartContainer config={{}} className="h-[240px] w-full sm:h-[260px] lg:h-[280px]">
+                    <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 8 }}>
                         <defs>
                             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -95,6 +118,7 @@ export const MarketingLineChartPanel = ({
                     </ComposedChart>
                 </ResponsiveContainer>
             </ChartContainer>
+            )}
         </DashboardPanel>
     )
 }

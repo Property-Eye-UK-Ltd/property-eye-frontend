@@ -14,6 +14,7 @@ import {
     useUpdateCommissionAmount,
 } from "@/features/adminbilling/api/useAdminCommissions"
 import { EditAmountDialog } from "@/features/adminbilling/components/EditAmountDialog"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -22,9 +23,10 @@ const STATUS_FILTERS: Array<CommissionLineStatus | "All"> = ["All", "Pending", "
 
 interface CommissionApprovalTableProps {
     data: AdminCommissionRow[]
+    isLoading?: boolean
 }
 
-export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) => {
+export const CommissionApprovalTable = ({ data, isLoading = false }: CommissionApprovalTableProps) => {
     const navigate = useNavigate()
     const [statusFilter, setStatusFilter] = useState<CommissionLineStatus | "All">("All")
     const [currentPage, setCurrentPage] = useState(1)
@@ -106,7 +108,37 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginated.map((row) => (
+                        {isLoading ? (
+                            Array.from({ length: 4 }).map((_, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-32" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-28" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-24" />
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right")}>
+                                        <Skeleton className="ml-auto h-4 w-16" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-5 w-16 rounded-full" />
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right")}>
+                                        <Skeleton className="ml-auto h-4 w-24" />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : paginated.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                                    No commissions pending.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            paginated.map((row) => (
                             <TableRow key={row.id} className="border-b border-border">
                                 <TableCell className={cn(td, "font-medium text-foreground")}>{row.marketer}</TableCell>
                                 <TableCell className={td}>{row.agency}</TableCell>
@@ -164,7 +196,7 @@ export const CommissionApprovalTable = ({ data }: CommissionApprovalTableProps) 
                                     </div>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )))}
                     </TableBody>
                 </Table>
             </div>

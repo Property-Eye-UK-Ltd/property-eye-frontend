@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 export interface FraudDataPoint {
   month: string
   [key: string]: number | string
@@ -32,6 +34,7 @@ interface FraudDetectionPanelProps {
   yAxisDomain?: [number | "auto", number | "auto"]
   valueFormatter?: (value: number) => string
   yAxisTickFormatter?: (value: number) => string
+  isLoading?: boolean
 }
 
 const timeRangeOptions = [
@@ -103,6 +106,7 @@ export const FraudDetectionPanel = ({
   yAxisDomain = [0, "auto"],
   valueFormatter,
   yAxisTickFormatter,
+  isLoading = false,
 }: FraudDetectionPanelProps) => {
   const [timeRange, setTimeRange] = useState("12")
   const [selectedCategories, setSelectedCategories] = useState<string[]>(Object.keys(config))
@@ -175,8 +179,32 @@ export const FraudDetectionPanel = ({
         </div>
       }
     >
-      <ChartContainer config={filteredConfig} className="h-[240px] w-full sm:h-[260px] lg:h-[280px]">
-        <ResponsiveContainer width="100%" height="100%">
+      {isLoading ? (
+        <div className="h-[240px] w-full sm:h-[260px] lg:h-[280px] flex flex-col justify-between p-4 bg-slate-50/50 rounded-xl">
+          <div className="flex justify-between items-end h-[80%] border-b border-dashed border-slate-200 pb-2">
+            <Skeleton className="h-[30%] w-[8%] rounded-md" />
+            <Skeleton className="h-[45%] w-[8%] rounded-md" />
+            <Skeleton className="h-[35%] w-[8%] rounded-md" />
+            <Skeleton className="h-[60%] w-[8%] rounded-md" />
+            <Skeleton className="h-[55%] w-[8%] rounded-md" />
+            <Skeleton className="h-[75%] w-[8%] rounded-md" />
+            <Skeleton className="h-[65%] w-[8%] rounded-md" />
+            <Skeleton className="h-[85%] w-[8%] rounded-md" />
+          </div>
+          <div className="flex justify-between text-xs text-muted-foreground pt-2 px-1">
+            <Skeleton className="h-3 w-8" />
+            <Skeleton className="h-3 w-8" />
+            <Skeleton className="h-3 w-8" />
+            <Skeleton className="h-3 w-8" />
+            <Skeleton className="h-3 w-8" />
+            <Skeleton className="h-3 w-8" />
+            <Skeleton className="h-3 w-8" />
+            <Skeleton className="h-3 w-8" />
+          </div>
+        </div>
+      ) : (
+        <ChartContainer config={filteredConfig} className="h-[240px] w-full sm:h-[260px] lg:h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={filteredData} margin={{ left: -8, right: 4, top: 4, bottom: 0 }}>
             <defs>
               {Object.entries(filteredConfig).map(([key, value]) => (
@@ -222,6 +250,7 @@ export const FraudDetectionPanel = ({
           </ComposedChart>
         </ResponsiveContainer>
       </ChartContainer>
+      )}
     </DashboardPanel>
   )
 }

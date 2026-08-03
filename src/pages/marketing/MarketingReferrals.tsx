@@ -36,14 +36,14 @@ const MarketingReferrals = () => {
     const metrics: MetricCard[] = [
         {
             title: "Invites Sent",
-            value: isLoading ? "—" : String(stats?.invites_sent ?? 0),
+            value: String(stats?.invites_sent ?? 0),
             period: "All time",
             change: "",
             topBarClass: "bg-progress",
         },
         {
             title: "Conversion Rate",
-            value: isLoading ? "—" : `${stats?.conversion_rate ?? 0}%`,
+            value: `${stats?.conversion_rate ?? 0}%`,
             period: "Signups / invites",
             change: "",
             topBarClass: "bg-progress",
@@ -60,12 +60,13 @@ const MarketingReferrals = () => {
             />
 
             <DashboardPageContent>
-                <MetricCards metrics={metrics} columns={3} />
+                <MetricCards metrics={metrics} columns={3} isLoading={isLoading} />
 
                 <InviteStatusTable
                     data={stats?.invites ?? []}
                     title="Invite tracking"
                     description="Every invite you've sent, from delivery through to signup."
+                    isLoading={isLoading}
                 />
             </DashboardPageContent>
 

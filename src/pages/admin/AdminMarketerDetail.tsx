@@ -8,6 +8,7 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { LinkAgencyModal } from "@/features/marketing-admin/network/components/LinkAgencyModal"
 import { cn } from "@/lib/utils"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
     useAdminMarketerAgencies,
     useAdminMarketerDetail,
@@ -100,8 +101,17 @@ const AdminMarketerDetail = () => {
         return (
             <DashboardLayout variant="super-admin">
                 <DynamicPageHeader title="Marketer" breadcrumbs={[{ label: "Affiliates", href: "/admin/affiliates" }]} />
-                <DashboardPageContent>
-                    <p className="text-sm text-muted-foreground">Loading…</p>
+                <DashboardPageContent className="space-y-4 lg:space-y-6">
+                    <DashboardPanel title="Marketer Overview" hasBorder>
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 animate-pulse">
+                            {Array.from({ length: 4 }).map((_, idx) => (
+                                <div key={idx} className="space-y-2">
+                                    <Skeleton className="h-3.5 w-24" />
+                                    <Skeleton className="h-4 w-40" />
+                                </div>
+                            ))}
+                        </div>
+                    </DashboardPanel>
                 </DashboardPageContent>
             </DashboardLayout>
         )
@@ -185,11 +195,31 @@ const AdminMarketerDetail = () => {
                             </TableHeader>
                             <TableBody>
                                 {isLoadingAgencies ? (
-                                    <TableRow>
-                                        <TableCell colSpan={7} className={cn(td, "text-center text-muted-foreground")}>
-                                            Loading…
-                                        </TableCell>
-                                    </TableRow>
+                                    Array.from({ length: 3 }).map((_, idx) => (
+                                        <TableRow key={idx}>
+                                            <TableCell className={td}>
+                                                <Skeleton className="h-4 w-32" />
+                                            </TableCell>
+                                            <TableCell className={td}>
+                                                <Skeleton className="h-4 w-20" />
+                                            </TableCell>
+                                            <TableCell className={td}>
+                                                <Skeleton className="h-5 w-16 rounded-full" />
+                                            </TableCell>
+                                            <TableCell className={td}>
+                                                <Skeleton className="h-4 w-24" />
+                                            </TableCell>
+                                            <TableCell className={cn(td, "text-right")}>
+                                                <Skeleton className="ml-auto h-4 w-16" />
+                                            </TableCell>
+                                            <TableCell className={cn(td, "text-right")}>
+                                                <Skeleton className="ml-auto h-4 w-16" />
+                                            </TableCell>
+                                            <TableCell className={cn(td, "text-right")}>
+                                                <Skeleton className="ml-auto h-4 w-16" />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
                                 ) : linkedAgencies.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={7} className={cn(td, "text-center text-muted-foreground")}>

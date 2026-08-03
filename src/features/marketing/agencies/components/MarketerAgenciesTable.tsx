@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils"
 import { ReferredAgency } from "@/features/marketing/api/marketerService"
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
@@ -82,11 +84,25 @@ export const MarketerAgenciesTable = ({ data, isLoading }: MarketerAgenciesTable
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">
-                                    Loading agencies…
-                                </TableCell>
-                            </TableRow>
+                            Array.from({ length: 4 }).map((_, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-40" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-5 w-16 rounded-full" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-20" />
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right")}>
+                                        <Skeleton className="ml-auto h-4 w-16" />
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right")}>
+                                        <Skeleton className="ml-auto h-4 w-16" />
+                                    </TableCell>
+                                </TableRow>
+                            ))
                         ) : paginated.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={5} className="px-4 py-10 text-center text-sm text-muted-foreground">

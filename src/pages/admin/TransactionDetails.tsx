@@ -8,6 +8,8 @@ import { billingStatusStyles } from "@/data/adminBillingData"
 import { useAdminInvoiceDetail } from "@/features/adminbilling/api/useAdminBilling"
 import { cn } from "@/lib/utils"
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 const TransactionDetails = () => {
     const { transactionId } = useParams<{ transactionId: string }>()
     const { data: transaction, isLoading } = useAdminInvoiceDetail(transactionId ?? "")
@@ -15,8 +17,28 @@ const TransactionDetails = () => {
     if (isLoading) {
         return (
             <DashboardLayout variant="super-admin">
+                <DynamicPageHeader title="Transaction Detail" breadcrumbs={[{ label: "Billing & Finance", href: "/admin/billing" }]} />
                 <DashboardPageContent>
-                    <p>Loading...</p>
+                    <div className="rounded-2xl border border-border bg-white p-4 shadow-sm sm:p-6 lg:p-8 space-y-6 animate-pulse">
+                        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                            <div className="space-y-6">
+                                {Array.from({ length: 5 }).map((_, idx) => (
+                                    <div key={idx} className="space-y-2">
+                                        <Skeleton className="h-3.5 w-24" />
+                                        <Skeleton className="h-4 w-48" />
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="space-y-6">
+                                {Array.from({ length: 5 }).map((_, idx) => (
+                                    <div key={idx} className="space-y-2">
+                                        <Skeleton className="h-3.5 w-24" />
+                                        <Skeleton className="h-4 w-48" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </DashboardPageContent>
             </DashboardLayout>
         )

@@ -224,16 +224,13 @@ const AdminCaseManagement = () => {
                         </div>
                     }
                 >
-                    {isLoading ? (
-                        <p className="p-6 text-sm text-muted-foreground">Loading cases…</p>
-                    ) : (
-                        <AdminCasesTable
-                            data={filteredCases}
-                            page={casesResponse?.page ?? 1}
-                            totalPages={Math.ceil((casesResponse?.total ?? 0) / (casesResponse?.page_size ?? 20)) || 1}
-                            onPageChange={setPage}
-                        />
-                    )}
+                    <AdminCasesTable
+                        data={filteredCases}
+                        page={casesResponse?.page ?? 1}
+                        totalPages={Math.ceil((casesResponse?.total ?? 0) / (casesResponse?.page_size ?? 20)) || 1}
+                        onPageChange={setPage}
+                        isLoading={isLoading}
+                    />
                 </DashboardPanel>
             </DashboardPageContent>
 

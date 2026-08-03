@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils"
 import { AdminAttributionApi } from "@/features/marketing-admin/attribution/api/adminAttributionsService"
 import { useApproveAttribution, useRejectAttribution } from "@/features/marketing-admin/attribution/api/useAdminAttributions"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -37,9 +38,10 @@ const methodStyles: Record<string, string> = {
 
 interface AttributionQueueTableProps {
     data: AdminAttributionApi[]
+    isLoading?: boolean
 }
 
-export const AttributionQueueTable = ({ data }: AttributionQueueTableProps) => {
+export const AttributionQueueTable = ({ data, isLoading = false }: AttributionQueueTableProps) => {
     const [statusFilter, setStatusFilter] = useState<StatusFilter>("All")
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -109,7 +111,30 @@ export const AttributionQueueTable = ({ data }: AttributionQueueTableProps) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginated.length === 0 ? (
+                        {isLoading ? (
+                            Array.from({ length: 4 }).map((_, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-36" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-28" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-5 w-16 rounded-full" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-8" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-5 w-16 rounded-full" />
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right")}>
+                                        <Skeleton className="ml-auto h-4 w-24" />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : paginated.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className={cn(td, "text-center text-muted-foreground")}>
                                     No attribution claims.

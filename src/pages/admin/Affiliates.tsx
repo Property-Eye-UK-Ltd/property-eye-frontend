@@ -16,7 +16,7 @@ const Affiliates = () => {
     const { data: marketers = [], isLoading: isLoadingMarketers } = useAdminMarketers(
         { enabled: activeTab === "marketers" }
     )
-    const { data: attributions = [] } = useAdminAttributions(
+    const { data: attributions = [], isLoading: isLoadingAttributions } = useAdminAttributions(
         undefined,
         { enabled: activeTab === "attribution" }
     )
@@ -66,8 +66,8 @@ const Affiliates = () => {
 
                 {activeTab === "attribution" && (
                     <>
-                        <MetricCards metrics={attributionMetrics} columns={3} />
-                        <AttributionQueueTable data={attributions} />
+                        <MetricCards metrics={attributionMetrics} columns={3} isLoading={isLoadingAttributions} />
+                        <AttributionQueueTable data={attributions} isLoading={isLoadingAttributions} />
                     </>
                 )}
             </DashboardPageContent>

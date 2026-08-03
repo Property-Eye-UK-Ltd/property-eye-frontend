@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ChevronsUpDown } from "lucide-react"
 import { MatchConfidenceMeter } from "@/components/dashboard/MatchConfidenceMeter"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export interface AlertRecord {
   id?: string
@@ -19,11 +20,13 @@ export interface AlertRecord {
 interface ActiveAlertsPanelProps {
   data: AlertRecord[]
   severityStyles: Record<AlertRecord["severity"], string>
+  isLoading?: boolean
 }
 
 export const ActiveAlertsPanel = ({
   data,
   severityStyles,
+  isLoading = false,
 }: ActiveAlertsPanelProps) => {
   const navigate = useNavigate()
   const [sortColumn, setSortColumn] = useState<"severity" | null>(null)
@@ -84,41 +87,69 @@ export const ActiveAlertsPanel = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedAlerts.map((alert, index) => (
-              <TableRow
-                key={`${alert.property}-${alert.dateDetected}-${index}`}
-                className="border-b border-border"
-              >
-                <TableCell className="px-4 py-3 font-normal">{alert.property}</TableCell>
-                <TableCell className="px-4 py-3">
-                  {alert.fraudScore === null ? (
-                    <span className="text-sm text-muted-foreground">Unconfirmed</span>
-                  ) : (
-                    <MatchConfidenceMeter value={alert.fraudScore} variant="compact" />
-                  )}
-                </TableCell>
-                <TableCell className="px-4 py-4">
-                  <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", severityStyles[alert.severity])}>
-                    {alert.severity}
-                  </Badge>
-                </TableCell>
-                <TableCell className="px-4 py-3">{alert.dateDetected}</TableCell>
-                <TableCell className="px-4 py-3">
-                  <button
-                    onClick={() => navigate(`/dashboard/cases/${encodeURIComponent(alert.caseId || "")}`, {
-                      state: {
-                        returnPath: "/dashboard",
-                        returnLabel: "Overview"
-                      }
-                    })}
-                    className="text-sm font-medium transition-colors hover:underline"
-                    style={{ color: "var(--progress)" }}
-                  >
-                    View
-                  </button>
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, idx) => (
+                <TableRow key={idx} className="border-b border-border">
+                  <TableCell className="px-4 py-3">
+                    <Skeleton className="h-4 w-56" />
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
+                    <Skeleton className="h-4 w-28" />
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
+                    <Skeleton className="h-6 w-16 rounded-full" />
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
+                    <Skeleton className="h-4 w-12" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : sortedAlerts.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                  No active alerts found.
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              sortedAlerts.map((alert, index) => (
+                <TableRow
+                  key={`${alert.property}-${alert.dateDetected}-${index}`}
+                  className="border-b border-border"
+                >
+                  <TableCell className="px-4 py-3 font-normal">{alert.property}</TableCell>
+                  <TableCell className="px-4 py-3">
+                    {alert.fraudScore === null ? (
+                      <span className="text-sm text-muted-foreground">Unconfirmed</span>
+                    ) : (
+                      <MatchConfidenceMeter value={alert.fraudScore} variant="compact" />
+                    )}
+                  </TableCell>
+                  <TableCell className="px-4 py-4">
+                    <Badge className={cn("rounded-full px-3 py-1 text-xs font-medium", severityStyles[alert.severity])}>
+                      {alert.severity}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="px-4 py-3">{alert.dateDetected}</TableCell>
+                  <TableCell className="px-4 py-3">
+                    <button
+                      onClick={() => navigate(`/dashboard/cases/${encodeURIComponent(alert.caseId || "")}`, {
+                        state: {
+                          returnPath: "/dashboard",
+                          returnLabel: "Overview"
+                        }
+                      })}
+                      className="text-sm font-medium transition-colors hover:underline"
+                      style={{ color: "var(--progress)" }}
+                    >
+                      View
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

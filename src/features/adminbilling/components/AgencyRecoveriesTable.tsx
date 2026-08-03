@@ -12,6 +12,7 @@ import {
     useUpdateAgencyRecoveryAmount,
 } from "@/features/adminbilling/api/useAdminAgencyRecoveries"
 import { EditAmountDialog } from "@/features/adminbilling/components/EditAmountDialog"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -25,9 +26,10 @@ const statusStyles: Record<AgencyRecoveryStatus, string> = {
 
 interface AgencyRecoveriesTableProps {
     data: AdminAgencyRecoveryRow[]
+    isLoading?: boolean
 }
 
-export const AgencyRecoveriesTable = ({ data }: AgencyRecoveriesTableProps) => {
+export const AgencyRecoveriesTable = ({ data, isLoading = false }: AgencyRecoveriesTableProps) => {
     const [statusFilter, setStatusFilter] = useState<AgencyRecoveryStatus | "All">("All")
     const [currentPage, setCurrentPage] = useState(1)
     const [editing, setEditing] = useState<AdminAgencyRecoveryRow | null>(null)
@@ -108,7 +110,37 @@ export const AgencyRecoveriesTable = ({ data }: AgencyRecoveriesTableProps) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginated.map((row) => (
+                        {isLoading ? (
+                            Array.from({ length: 4 }).map((_, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-32" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-28" />
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right")}>
+                                        <Skeleton className="ml-auto h-4 w-16" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-24" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-5 w-16 rounded-full" />
+                                    </TableCell>
+                                    <TableCell className={cn(td, "text-right")}>
+                                        <Skeleton className="ml-auto h-4 w-24" />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : paginated.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                                    No recoveries recorded.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            paginated.map((row) => (
                             <TableRow key={row.id} className="border-b border-border">
                                 <TableCell className={cn(td, "font-medium text-foreground")}>{row.agency}</TableCell>
                                 <TableCell className={cn(td, "text-muted-foreground")}>{row.fraudCase}</TableCell>
@@ -149,7 +181,7 @@ export const AgencyRecoveriesTable = ({ data }: AgencyRecoveriesTableProps) => {
                                     </div>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )))}
                     </TableBody>
                 </Table>
             </div>

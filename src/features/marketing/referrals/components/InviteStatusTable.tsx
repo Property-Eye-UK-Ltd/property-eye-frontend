@@ -18,6 +18,8 @@ const formatStatus = (status: string) =>
 const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 interface InviteStatusTableProps {
     data: RecentInvite[]
     title?: string
@@ -26,6 +28,7 @@ interface InviteStatusTableProps {
     limit?: number
     viewAllHref?: string
     className?: string
+    isLoading?: boolean
 }
 
 export const InviteStatusTable = ({
@@ -35,6 +38,7 @@ export const InviteStatusTable = ({
     limit,
     viewAllHref,
     className,
+    isLoading = false,
 }: InviteStatusTableProps) => {
     const rows = limit ? data.slice(0, limit) : data
 
@@ -56,7 +60,40 @@ export const InviteStatusTable = ({
                 ) : undefined
             }
         >
-            {rows.length === 0 ? (
+            {isLoading ? (
+                <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+                    <Table className="min-w-[480px]">
+                        <TableHeader>
+                            <TableRow className="bg-gray-50">
+                                <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">
+                                    Invited Email
+                                </TableHead>
+                                <TableHead className="px-2 py-2 text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">
+                                    Date Sent
+                                </TableHead>
+                                <TableHead className="px-2 py-2 text-right text-xs font-medium lg:px-4 lg:py-3 lg:text-sm">
+                                    Status
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {Array.from({ length: limit || 4 }).map((_, idx) => (
+                                <TableRow key={idx} className="border-b border-border">
+                                    <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
+                                        <Skeleton className="h-4 w-48" />
+                                    </TableCell>
+                                    <TableCell className="px-2 py-2 lg:px-4 lg:py-3">
+                                        <Skeleton className="h-4 w-24" />
+                                    </TableCell>
+                                    <TableCell className="px-2 py-2 text-right lg:px-4 lg:py-3">
+                                        <Skeleton className="inline-block h-5 w-16 rounded-full" />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+            ) : rows.length === 0 ? (
                 <div className="px-4 py-10 text-center text-sm text-muted-foreground">
                     No invites yet. Use “Invite agency” to send your first one.
                 </div>

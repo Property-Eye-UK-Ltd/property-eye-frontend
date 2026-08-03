@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { ArrowUp } from "iconsax-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export interface MetricCard {
   title: string
@@ -13,9 +14,10 @@ export interface MetricCard {
 interface MetricCardsProps {
   metrics: MetricCard[]
   columns?: 2 | 3 | 4
+  isLoading?: boolean
 }
 
-export const MetricCards = ({ metrics, columns = 4 }: MetricCardsProps) => {
+export const MetricCards = ({ metrics, columns = 4, isLoading = false }: MetricCardsProps) => {
   const isThreeUpLayout = columns === 3 && metrics.length === 3
 
   const gridClass = cn("grid gap-3 lg:gap-4", {
@@ -23,6 +25,36 @@ export const MetricCards = ({ metrics, columns = 4 }: MetricCardsProps) => {
     "grid-cols-2 lg:grid-cols-3": columns === 3,
     "grid-cols-2 lg:grid-cols-4": columns === 4,
   })
+
+  if (isLoading) {
+    const cardCount = metrics.length > 0 ? metrics.length : columns
+    return (
+      <div className={gridClass}>
+        {Array.from({ length: cardCount }).map((_, index) => (
+          <Card
+            key={index}
+            className={cn(
+              "relative overflow-hidden",
+              columns === 3 && index === 2 && "col-span-2 lg:col-span-1"
+            )}
+          >
+            <div className="absolute top-0 left-0 right-0 h-2 bg-slate-200 animate-pulse" />
+            <CardHeader className="p-3 pb-1 lg:p-6 lg:pb-3">
+              <CardTitle className="text-xs font-normal text-muted-foreground lg:text-sm">
+                <Skeleton className="h-4 w-24" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-16 lg:h-9" />
+                <Skeleton className="h-3 w-20" />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div className={gridClass}>

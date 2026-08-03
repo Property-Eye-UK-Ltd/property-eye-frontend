@@ -6,15 +6,17 @@ import { Badge } from "@/components/ui/badge"
 import { ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { BillingTransaction, billingStatusStyles } from "@/data/adminBillingData"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
 
 interface BillingHistoryTableProps {
     data: BillingTransaction[]
+    isLoading?: boolean
 }
 
-export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
+export const BillingHistoryTable = ({ data, isLoading = false }: BillingHistoryTableProps) => {
     const navigate = useNavigate()
     const [sortColumn, setSortColumn] = useState<keyof BillingTransaction | null>(null)
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
@@ -84,7 +86,37 @@ export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginatedData.map((transaction) => (
+                        {isLoading ? (
+                            Array.from({ length: 4 }).map((_, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-32" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-40" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-20" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-16" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-24" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-5 w-16 rounded-full" />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : paginatedData.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                                    No transaction records found.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            paginatedData.map((transaction) => (
                             <TableRow 
                                 key={transaction.id} 
                                 onClick={() => navigate(`/admin/billing/transaction/${transaction.id}`)}
@@ -116,7 +148,7 @@ export const BillingHistoryTable = ({ data }: BillingHistoryTableProps) => {
                                     </Badge>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )))}
                     </TableBody>
                 </Table>
             </div>

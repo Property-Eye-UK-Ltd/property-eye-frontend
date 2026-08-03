@@ -16,21 +16,21 @@ const MarketingCommissions = () => {
     const metrics: MetricCard[] = [
         {
             title: "Total Commission Earned",
-            value: isLoading ? "—" : formatGbp(data?.total_commission_earned ?? 0),
+            value: formatGbp(data?.total_commission_earned ?? 0),
             period: "All time",
             change: "",
             topBarClass: "bg-secondary",
         },
         {
             title: "Pending Commission",
-            value: isLoading ? "—" : formatGbp(data?.pending_commission ?? 0),
+            value: formatGbp(data?.pending_commission ?? 0),
             period: "Awaiting approval/payment",
             change: "",
             topBarClass: "bg-amber-500",
         },
         {
             title: "Paid Commission",
-            value: isLoading ? "—" : formatGbp(data?.paid_commission ?? 0),
+            value: formatGbp(data?.paid_commission ?? 0),
             period: "All time",
             change: "",
             topBarClass: "bg-green-500",
@@ -42,7 +42,7 @@ const MarketingCommissions = () => {
             <DynamicPageHeader title="Commissions" />
 
             <DashboardPageContent>
-                <MetricCards metrics={metrics} columns={3} />
+                <MetricCards metrics={metrics} columns={3} isLoading={isLoading} />
 
                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-6 lg:gap-4">
                     <MarketingLineChartPanel
@@ -52,12 +52,14 @@ const MarketingCommissions = () => {
                         color="#4D66EA"
                         valueFormatter={formatGbp}
                         className="lg:col-span-4"
+                        isLoading={isLoading}
                     />
                     <DonutBreakdownPanel
                         title="Commission Tracker"
                         data={toDonutData(data?.donut_data ?? [])}
                         description="By status"
                         className="lg:col-span-2"
+                        isLoading={isLoading}
                     />
                 </div>
 

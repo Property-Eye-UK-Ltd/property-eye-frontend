@@ -6,6 +6,7 @@ import { MetricCards, MetricCard } from "@/features/overview/components/MetricCa
 import { ReferralLinkField } from "@/features/marketing/referrals/components/ReferralLinkField"
 import { InviteStatusTable } from "@/features/marketing/referrals/components/InviteStatusTable"
 import { useMarketerOverview } from "@/features/marketing/api/useMarketer"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const MarketingOverview = () => {
     const navigate = useNavigate()
@@ -25,21 +26,21 @@ const MarketingOverview = () => {
     const metrics: MetricCard[] = [
         {
             title: "Total Agencies Referred",
-            value: isLoading ? "—" : String(overview?.total_agencies_referred ?? 0),
+            value: String(overview?.total_agencies_referred ?? 0),
             period: "All time",
             change: "",
             topBarClass: "bg-progress",
         },
         {
             title: "Active Agencies",
-            value: isLoading ? "—" : String(overview?.active_agencies ?? 0),
+            value: String(overview?.active_agencies ?? 0),
             period: "All time",
             change: "",
             topBarClass: "bg-green-500",
         },
         {
             title: "Fraud Cases Identified",
-            value: isLoading ? "—" : String(overview?.fraud_cases_identified ?? 0),
+            value: String(overview?.fraud_cases_identified ?? 0),
             period: "All time",
             change: "",
             topBarClass: "bg-red-500",
@@ -57,9 +58,13 @@ const MarketingOverview = () => {
                                 Referral Code
                             </span>
                             <div className="flex h-11 items-center rounded-xl border border-border bg-muted/30 px-3 select-all">
-                                <code className="font-mono text-sm font-semibold text-foreground">
-                                    {getReferralCode(overview?.referral_link)}
-                                </code>
+                                {isLoading ? (
+                                    <Skeleton className="h-4 w-16" />
+                                ) : (
+                                    <code className="font-mono text-sm font-semibold text-foreground">
+                                        {getReferralCode(overview?.referral_link)}
+                                    </code>
+                                )}
                             </div>
                         </div>
                         <ReferralLinkField
@@ -71,7 +76,7 @@ const MarketingOverview = () => {
             />
 
             <DashboardPageContent>
-                <MetricCards metrics={metrics} columns={3} />
+                <MetricCards metrics={metrics} columns={3} isLoading={isLoading} />
 
                 <InviteStatusTable
                     data={overview?.recent_invites ?? []}
@@ -79,6 +84,7 @@ const MarketingOverview = () => {
                     description="Your latest agency invitations and their status."
                     limit={6}
                     viewAllHref="/marketing/referrals"
+                    isLoading={isLoading}
                 />
             </DashboardPageContent>
         </DashboardLayout>
@@ -86,3 +92,4 @@ const MarketingOverview = () => {
 }
 
 export default MarketingOverview
+

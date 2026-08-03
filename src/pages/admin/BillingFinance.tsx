@@ -40,16 +40,16 @@ const BillingFinance = () => {
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("billing")
 
-    const { data: billingMetrics } = useAdminBillingMetrics(selectedPeriod)
-    const { data: invoicesData } = useAdminInvoices(
+    const { data: billingMetrics, isLoading: isLoadingBillingMetrics } = useAdminBillingMetrics(selectedPeriod)
+    const { data: invoicesData, isLoading: isLoadingInvoices } = useAdminInvoices(
         { search: searchQuery || undefined, page_size: 100 },
         { enabled: activeTab === "billing" }
     )
     const billingHistory = invoicesData?.items ?? []
 
     // Only fetch data when those tabs are viewed
-    const { data: commissions = [] } = useAdminCommissions(undefined, { enabled: activeTab === "commissions" })
-    const { data: agencyRecoveries = [] } = useAdminAgencyRecoveries(undefined, { enabled: activeTab === "agency-recoveries" })
+    const { data: commissions = [], isLoading: isLoadingCommissions } = useAdminCommissions(undefined, { enabled: activeTab === "commissions" })
+    const { data: agencyRecoveries = [], isLoading: isLoadingRecoveries } = useAdminAgencyRecoveries(undefined, { enabled: activeTab === "agency-recoveries" })
 
     const pageTabs = [
         { label: "Subscription Billing", value: "billing" },
@@ -287,22 +287,22 @@ const BillingFinance = () => {
                                 </div>
                             }
                         >
-                            <BillingHistoryTable data={billingHistory} />
+                            <BillingHistoryTable data={billingHistory} isLoading={isLoadingInvoices} />
                         </DashboardPanel>
                     </>
                 )}
 
                 {activeTab === "commissions" && (
                     <>
-                        <MetricCards metrics={commissionMetrics} columns={3} />
-                        <CommissionApprovalTable data={commissions} />
+                        <MetricCards metrics={commissionMetrics} columns={3} isLoading={isLoadingCommissions} />
+                        <CommissionApprovalTable data={commissions} isLoading={isLoadingCommissions} />
                     </>
                 )}
 
                 {activeTab === "agency-recoveries" && (
                     <>
-                        <MetricCards metrics={recoveryMetrics} columns={3} />
-                        <AgencyRecoveriesTable data={agencyRecoveries} />
+                        <MetricCards metrics={recoveryMetrics} columns={3} isLoading={isLoadingRecoveries} />
+                        <AgencyRecoveriesTable data={agencyRecoveries} isLoading={isLoadingRecoveries} />
                     </>
                 )}
             </DashboardPageContent>

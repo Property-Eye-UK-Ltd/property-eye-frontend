@@ -32,8 +32,8 @@ const formatCurrency = (value: number): string =>
 
 const Overview = () => {
   const { data: summary, isLoading: summaryLoading } = useOverviewSummary()
-  const { data: topRecoveries = [] } = useTopRecoveries()
-  const { data: highPriorityAlerts = [] } = useHighPriorityAlerts(1)
+  const { data: topRecoveries = [], isLoading: topRecoveriesLoading } = useTopRecoveries()
+  const { data: highPriorityAlerts = [], isLoading: highPriorityAlertsLoading } = useHighPriorityAlerts(1)
 
   const metrics: MetricCard[] = useMemo(() => {
     if (!summary) return []
@@ -88,24 +88,18 @@ const Overview = () => {
       />
 
       <DashboardPageContent className="space-y-4 lg:space-y-6">
-        {summaryLoading ? (
-          <div className="grid grid-cols-2 gap-3 lg:gap-4">
-            {[0, 1].map((i) => (
-              <div key={i} className="h-28 animate-pulse rounded-xl bg-muted" />
-            ))}
-          </div>
-        ) : (
-          <MetricCards metrics={metrics} columns={2} />
-        )}
+        <MetricCards metrics={metrics} columns={2} isLoading={summaryLoading} />
 
 
-        {topProperties.length > 0 && (
+        {(topRecoveriesLoading || topProperties.length > 0) && (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <TopPropertiesPanel properties={topProperties} />
+            <TopPropertiesPanel properties={topProperties} isLoading={topRecoveriesLoading} />
           </div>
         )}
 
-        {alerts.length > 0 && <ActiveAlertsPanel data={alerts} severityStyles={severityStyles} />}
+        {(highPriorityAlertsLoading || alerts.length > 0) && (
+          <ActiveAlertsPanel data={alerts} severityStyles={severityStyles} isLoading={highPriorityAlertsLoading} />
+        )}
       </DashboardPageContent>
     </DashboardLayout>
   )

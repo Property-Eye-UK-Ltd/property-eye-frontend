@@ -31,6 +31,9 @@ import {
 import { downloadRegisterExtractPdf } from "@/features/casescans/api/scanSessionService"
 import { toast } from "sonner"
 
+import { Skeleton } from "@/components/ui/skeleton"
+import { Card } from "@/components/ui/card"
+
 const AdminCaseDetails = () => {
     const { caseId } = useParams<{ caseId: string }>()
     const location = useLocation()
@@ -100,8 +103,56 @@ const AdminCaseDetails = () => {
     if (isLoading) {
         return (
             <DashboardLayout variant="super-admin">
+                <DynamicPageHeader title="Case Details" breadcrumbs={[{ label: "Case Management", href: "/admin/cases" }]} />
                 <DashboardPageContent>
-                    <p className="text-sm text-muted-foreground">Loading case…</p>
+                    <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:gap-4 animate-pulse">
+                        <div className="space-y-3 lg:col-span-2 lg:space-y-4">
+                            <Card className="p-4 lg:p-6">
+                                <div className="space-y-4">
+                                    <Skeleton className="h-6 w-1/3" />
+                                    <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+                                        {[...Array(6)].map((_, i) => (
+                                            <div key={i} className="space-y-2">
+                                                <Skeleton className="h-4 w-1/2" />
+                                                <Skeleton className="h-5 w-3/4" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </Card>
+                            <Card className="p-4 lg:p-6">
+                                <div className="space-y-4">
+                                    <Skeleton className="h-6 w-1/4" />
+                                    <div className="space-y-3">
+                                        {[...Array(3)].map((_, i) => (
+                                            <div key={i} className="flex gap-4">
+                                                <Skeleton className="h-10 w-10 rounded-full" />
+                                                <div className="space-y-2 flex-1">
+                                                    <Skeleton className="h-4 w-1/4" />
+                                                    <Skeleton className="h-3 w-1/2" />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </Card>
+                        </div>
+                        <div className="space-y-3 lg:col-span-1 lg:space-y-4">
+                            <Card className="p-4 lg:p-6">
+                                <div className="space-y-4">
+                                    <Skeleton className="h-6 w-1/2" />
+                                    <div className="space-y-3">
+                                        {[...Array(4)].map((_, i) => (
+                                            <div key={i} className="space-y-2">
+                                                <Skeleton className="h-4 w-1/3" />
+                                                <Skeleton className="h-5 w-2/3" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </Card>
+                        </div>
+                    </div>
                 </DashboardPageContent>
             </DashboardLayout>
         )

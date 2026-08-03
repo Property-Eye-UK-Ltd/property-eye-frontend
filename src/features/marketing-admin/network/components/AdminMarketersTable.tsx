@@ -4,6 +4,7 @@ import { DashboardPanel } from "@/components/dashboard/DashboardPanel"
 import { Cup } from "iconsax-react"
 import { cn } from "@/lib/utils"
 import { AdminMarketerRecord } from "@/features/marketing-admin/network/api/adminMarketersService"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const th = "px-2 py-2 text-xs font-medium whitespace-nowrap lg:px-4 lg:py-3 lg:text-sm"
 const td = "px-2 py-2 text-xs lg:px-4 lg:py-3 lg:text-sm"
@@ -46,11 +47,22 @@ export const AdminMarketersTable = ({ data, isLoading }: AdminMarketersTableProp
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={4} className={cn(td, "text-center text-muted-foreground")}>
-                                    Loading marketers…
-                                </TableCell>
-                            </TableRow>
+                            Array.from({ length: 4 }).map((_, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-32" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-40" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-4 w-20" />
+                                    </TableCell>
+                                    <TableCell className={td}>
+                                        <Skeleton className="h-5 w-16 rounded-full" />
+                                    </TableCell>
+                                </TableRow>
+                            ))
                         ) : data.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={4} className={cn(td, "text-center text-muted-foreground")}>
