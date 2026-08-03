@@ -41,13 +41,15 @@ export const helpCenterCards: HelpCenterCard[] = [
         description: "Configure notifications, scheduling, data retention, and message templates.",
         link: "/dashboard/help/settings",
     },
-    {
-        id: "4",
-        icon: "Wallet1",
-        title: "Billing",
-        description: "Understand your subscription plan, billing cycle, and payment history.",
-        link: "/dashboard/help/billing",
-    },
+    // WARNING: "Billing" help card hidden while subscriptions are disconnected
+    // from the critical path — see backend/src/api/deps.py has_active_subscription().
+    // {
+    //     id: "4",
+    //     icon: "Wallet1",
+    //     title: "Billing",
+    //     description: "Understand your subscription plan, billing cycle, and payment history.",
+    //     link: "/dashboard/help/billing",
+    // },
     {
         id: "6",
         icon: "Profile",
@@ -124,7 +126,6 @@ export const helpArticles: Record<string, HelpArticleContent> = {
                     "✓ View all cases (status and outcome only)",
                     "✓ Raise a dispute on any closed case",
                     "✓ Invite, edit, or deactivate team members",
-                    "✓ Manage billing and subscription plan",
                     "✓ Configure integration, notifications, and security settings",
                     "✗ Cannot see internal case timing risk, recovered amounts, or Property Eye's internal notes",
                 ],
@@ -136,7 +137,7 @@ export const helpArticles: Record<string, HelpArticleContent> = {
                     "✓ View all cases (status and outcome only)",
                     "✓ Raise a dispute on any closed case",
                     "✗ Cannot manage other staff members",
-                    "✗ Cannot change billing, integration, or security settings",
+                    "✗ Cannot change integration or security settings",
                     "✗ Cannot see internal case timing risk, recovered amounts, or Property Eye's internal notes",
                 ],
             },
@@ -206,39 +207,42 @@ export const helpArticles: Record<string, HelpArticleContent> = {
         ],
     },
 
-    "billing": {
-        slug: "billing",
-        description: "Understand your subscription plan, billing cycle, and payment history.",
-        lastModified: "Jul 2025",
-        sections: [
-            {
-                title: "Subscription Plans",
-                content: [
-                    "Property Eye offers two plans: Starter and Enterprise. Both plans include the same core service — fraud monitoring against the Land Registry Price Paid Dataset. The difference is pricing, which scales by agency size rather than by features.",
-                    "Your current plan and next billing date are shown at the top of the Billing page.",
-                ],
-            },
-            {
-                title: "How Billing Works",
-                content: [
-                    "You are billed monthly. Property Eye sends an SMS reminder three days before your billing date. If payment fails, your access may be suspended until it is resolved.",
-                    "The monthly subscription fee funds the cost of running checks against the Land Registry. Checks run twice a year in batch, not monthly — your monthly fees accumulate to cover each run.",
-                ],
-            },
-            {
-                title: "Recovery Revenue Split",
-                content: [
-                    "If a fraud case results in a successful recovery, the recovered amount is split between your agency and Property Eye according to your agency's agreement. This split is separate from your subscription fee, is not fixed platform-wide, and only applies to confirmed fraudulent cases where funds are recovered.",
-                ],
-            },
-            {
-                title: "Payment History",
-                content: [
-                    "The Billing page shows a full history of payments made. You can download individual invoices from this page for your records.",
-                ],
-            },
-        ],
-    },
+    // WARNING: "billing" help article hidden while subscriptions are
+    // disconnected from the critical path — see backend/src/api/deps.py
+    // has_active_subscription(). Uncomment to reactivate.
+    // "billing": {
+    //     slug: "billing",
+    //     description: "Understand your subscription plan, billing cycle, and payment history.",
+    //     lastModified: "Jul 2025",
+    //     sections: [
+    //         {
+    //             title: "Subscription Plans",
+    //             content: [
+    //                 "Property Eye offers two plans: Starter and Enterprise. Both plans include the same core service — fraud monitoring against the Land Registry Price Paid Dataset. The difference is pricing, which scales by agency size rather than by features.",
+    //                 "Your current plan and next billing date are shown at the top of the Billing page.",
+    //             ],
+    //         },
+    //         {
+    //             title: "How Billing Works",
+    //             content: [
+    //                 "You are billed monthly. Property Eye sends an SMS reminder three days before your billing date. If payment fails, your access may be suspended until it is resolved.",
+    //                 "The monthly subscription fee funds the cost of running checks against the Land Registry. Checks run twice a year in batch, not monthly — your monthly fees accumulate to cover each run.",
+    //             ],
+    //         },
+    //         {
+    //             title: "Recovery Revenue Split",
+    //             content: [
+    //                 "If a fraud case results in a successful recovery, the recovered amount is split between your agency and Property Eye according to your agency's agreement. This split is separate from your subscription fee, is not fixed platform-wide, and only applies to confirmed fraudulent cases where funds are recovered.",
+    //             ],
+    //         },
+    //         {
+    //             title: "Payment History",
+    //             content: [
+    //                 "The Billing page shows a full history of payments made. You can download individual invoices from this page for your records.",
+    //             ],
+    //         },
+    //     ],
+    // },
 
     "profile": {
         slug: "profile",

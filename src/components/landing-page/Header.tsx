@@ -17,10 +17,12 @@ const Header = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // WARNING: "Pricing" link removed while subscriptions are disconnected from
+    // the critical path — see backend/src/api/deps.py has_active_subscription().
+    // The /pricing route and Pricing.tsx page still exist for reactivation.
     const navLinks = [
         { label: "Home", href: "/" },
         { label: "About", href: "/about" },
-        { label: "Pricing", href: "/pricing" },
         { label: "FAQ", href: "/faq" },
     ];
 

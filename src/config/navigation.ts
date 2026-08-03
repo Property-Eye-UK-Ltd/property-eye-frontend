@@ -48,13 +48,10 @@ export const agencyNavConfig: NavConfig = {
             variant: "Bulk",
             key: "team",
         },
-        {
-            label: "Account & Billing",
-            icon: Wallet1,
-            path: "/dashboard/billing",
-            variant: "Bulk",
-            key: "billing",
-        },
+        // WARNING: "Account & Billing" nav item removed while subscriptions
+        // are disconnected from the critical path — see backend/src/api/deps.py
+        // has_active_subscription(). The route, page, and components still
+        // exist for later reactivation; only the sidebar link is hidden.
     ],
     bottomItems: [
         {
@@ -72,7 +69,10 @@ export const agencyNavConfig: NavConfig = {
             key: "help",
         },
     ],
-    showProCard: true,
+    // WARNING: was `true` — the sidebar "pro card" (plan name / next billing
+    // date) is hidden while subscriptions are disconnected from the critical
+    // path. Flip back to `true` to restore it.
+    showProCard: false,
 }
 
 export const superAdminNavConfig: NavConfig = {

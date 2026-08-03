@@ -36,9 +36,11 @@ import CaseManagement from "./pages/dashboard/CaseManagement";
 import CaseDetails from "./pages/dashboard/CaseDetails";
 import Properties from "./pages/dashboard/Properties";
 import TeamManagement from "./pages/dashboard/TeamManagement";
-import AccountBilling from "./pages/dashboard/AccountBilling";
-import SubscriptionPlans from "./pages/dashboard/SubscriptionPlans";
-import CheckoutCancelled from "./pages/dashboard/CheckoutCancelled";
+// WARNING: unused while /dashboard/billing* routes redirect away — kept
+// commented (not deleted) so billing can be reactivated. See has_active_subscription().
+// import AccountBilling from "./pages/dashboard/AccountBilling";
+// import SubscriptionPlans from "./pages/dashboard/SubscriptionPlans";
+// import CheckoutCancelled from "./pages/dashboard/CheckoutCancelled";
 import HelpCenter from "./pages/dashboard/HelpCenter";
 import HelpArticle from "./pages/dashboard/HelpArticle";
 import Settings from "./pages/dashboard/Settings";
@@ -118,9 +120,13 @@ const App = () => (
             <Route path="/dashboard/cases/:caseId" element={<CaseDetails />} />
             <Route path="/dashboard/properties" element={<Properties />} />
             <Route path="/dashboard/team" element={<TeamManagement />} />
-            <Route path="/dashboard/billing" element={<AccountBilling />} />
-            <Route path="/dashboard/billing/plans" element={<SubscriptionPlans />} />
-            <Route path="/dashboard/billing/cancelled" element={<CheckoutCancelled />} />
+            {/* WARNING: billing routes redirected to /dashboard while subscriptions
+                are disconnected from the critical path — see backend/src/api/deps.py
+                has_active_subscription(). AccountBilling, SubscriptionPlans, and
+                CheckoutCancelled pages are untouched and ready for reactivation. */}
+            <Route path="/dashboard/billing" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard/billing/plans" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard/billing/cancelled" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard/help" element={<HelpCenter />} />
             <Route path="/dashboard/help/:articleId" element={<HelpArticle />} />
             <Route path="/dashboard/settings" element={<Settings />} />

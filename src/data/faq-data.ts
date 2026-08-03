@@ -125,88 +125,91 @@ export const faqData = {
             answer: "Yes. Each agency’s data is securely separated."
         }
     ],
-    "Billing": [
-        {
-            question: "How does billing work?",
-            answer: "Billing operates on a subscription basis with clear invoicing."
-        },
-        {
-            question: "How often are invoices issued?",
-            answer: "Invoices are issued according to your selected billing cycle."
-        },
-        {
-            question: "Can billing details be updated?",
-            answer: "Yes. Billing information can be updated as needed."
-        },
-        {
-            question: "Are invoices itemised?",
-            answer: "Invoices clearly outline your subscription and charges."
-        },
-        {
-            question: "What happens if a payment fails?",
-            answer: "Our team will contact you to resolve the issue promptly."
-        },
-        {
-            question: "Are refunds available?",
-            answer: "Refund policies are outlined clearly in your agreement."
-        },
-        {
-            question: "Can billing be centralised for multiple branches?",
-            answer: "Yes. Billing can be managed centrally for multi-branch agencies."
-        },
-        {
-            question: "Do prices include taxes?",
-            answer: "Applicable taxes are clearly indicated on invoices."
-        },
-        {
-            question: "Can we change billing cycles?",
-            answer: "Billing cycles can be adjusted subject to agreement terms."
-        },
-        {
-            question: "Who do we contact for billing support?",
-            answer: "Our support team is available to assist with billing questions."
-        },
-        {
-            question: "How is Property Eye priced?",
-            answer: "Pricing is simple and predictable, structured around the scale of your agency rather than complex usage metrics."
-        },
-        {
-            question: "Are there different pricing tiers?",
-            answer: "Yes. Plans are designed to reflect agency size while maintaining consistent fraud monitoring capabilities."
-        },
-        {
-            question: "Is pricing transparent?",
-            answer: "Yes. All pricing is clearly outlined upfront with no hidden fees."
-        },
-        {
-            question: "Are there setup costs?",
-            answer: "Any onboarding or setup costs are communicated clearly before subscription begins."
-        },
-        {
-            question: "Can pricing change over time?",
-            answer: "Pricing only changes if you choose to move to a different plan as your agency grows or changes."
-        },
-        {
-            question: "Do you offer discounts?",
-            answer: "Discounts may be available for longer-term commitments. Details are discussed during onboarding."
-        },
-        {
-            question: "Is there a minimum contract length?",
-            answer: "Contract terms are flexible and designed to suit agency needs."
-        },
-        {
-            question: "Can we pause or cancel our subscription?",
-            answer: "Subscription options and cancellation terms are clearly defined in your agreement."
-        },
-        {
-            question: "Does pricing increase per transaction?",
-            answer: "No. Pricing is not based on individual transactions, ensuring predictability."
-        },
-        {
-            question: "How do we choose the right plan?",
-            answer: "Our team helps you select a plan that aligns with your agency’s size and operational structure."
-        }
-    ],
+    // WARNING: "Billing" FAQ category hidden while subscriptions are
+    // disconnected from the critical path — see backend/src/api/deps.py
+    // has_active_subscription(). Uncomment to reactivate.
+    // "Billing": [
+    //     {
+    //         question: "How does billing work?",
+    //         answer: "Billing operates on a subscription basis with clear invoicing."
+    //     },
+    //     {
+    //         question: "How often are invoices issued?",
+    //         answer: "Invoices are issued according to your selected billing cycle."
+    //     },
+    //     {
+    //         question: "Can billing details be updated?",
+    //         answer: "Yes. Billing information can be updated as needed."
+    //     },
+    //     {
+    //         question: "Are invoices itemised?",
+    //         answer: "Invoices clearly outline your subscription and charges."
+    //     },
+    //     {
+    //         question: "What happens if a payment fails?",
+    //         answer: "Our team will contact you to resolve the issue promptly."
+    //     },
+    //     {
+    //         question: "Are refunds available?",
+    //         answer: "Refund policies are outlined clearly in your agreement."
+    //     },
+    //     {
+    //         question: "Can billing be centralised for multiple branches?",
+    //         answer: "Yes. Billing can be managed centrally for multi-branch agencies."
+    //     },
+    //     {
+    //         question: "Do prices include taxes?",
+    //         answer: "Applicable taxes are clearly indicated on invoices."
+    //     },
+    //     {
+    //         question: "Can we change billing cycles?",
+    //         answer: "Billing cycles can be adjusted subject to agreement terms."
+    //     },
+    //     {
+    //         question: "Who do we contact for billing support?",
+    //         answer: "Our support team is available to assist with billing questions."
+    //     },
+    //     {
+    //         question: "How is Property Eye priced?",
+    //         answer: "Pricing is simple and predictable, structured around the scale of your agency rather than complex usage metrics."
+    //     },
+    //     {
+    //         question: "Are there different pricing tiers?",
+    //         answer: "Yes. Plans are designed to reflect agency size while maintaining consistent fraud monitoring capabilities."
+    //     },
+    //     {
+    //         question: "Is pricing transparent?",
+    //         answer: "Yes. All pricing is clearly outlined upfront with no hidden fees."
+    //     },
+    //     {
+    //         question: "Are there setup costs?",
+    //         answer: "Any onboarding or setup costs are communicated clearly before subscription begins."
+    //     },
+    //     {
+    //         question: "Can pricing change over time?",
+    //         answer: "Pricing only changes if you choose to move to a different plan as your agency grows or changes."
+    //     },
+    //     {
+    //         question: "Do you offer discounts?",
+    //         answer: "Discounts may be available for longer-term commitments. Details are discussed during onboarding."
+    //     },
+    //     {
+    //         question: "Is there a minimum contract length?",
+    //         answer: "Contract terms are flexible and designed to suit agency needs."
+    //     },
+    //     {
+    //         question: "Can we pause or cancel our subscription?",
+    //         answer: "Subscription options and cancellation terms are clearly defined in your agreement."
+    //     },
+    //     {
+    //         question: "Does pricing increase per transaction?",
+    //         answer: "No. Pricing is not based on individual transactions, ensuring predictability."
+    //     },
+    //     {
+    //         question: "How do we choose the right plan?",
+    //         answer: "Our team helps you select a plan that aligns with your agency's size and operational structure."
+    //     }
+    // ],
     "Access & Permissions": [
         {
             question: "Who can access Property Eye?",

@@ -23,7 +23,10 @@ const Footer = () => {
 
                     {/* Links Grid for Mobile */}
                     <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-1 gap-12 md:contents">
-                        {/* Product Links */}
+                        {/* WARNING: "Product" column (Pricing link) hidden while subscriptions
+                            are disconnected from the critical path — see
+                            backend/src/api/deps.py has_active_subscription(). Restore this
+                            block, plus the "Pricing" nav link in Header.tsx, to reactivate.
                         <div>
                             <h4 className="text-white font-normal text-lg mb-6 md:mb-8 uppercase tracking-wider">Product</h4>
                             <ul className="space-y-4">
@@ -34,6 +37,7 @@ const Footer = () => {
                                 </li>
                             </ul>
                         </div>
+                        */}
 
                         {/* Company Links */}
                         <div>
