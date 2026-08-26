@@ -193,7 +193,7 @@ const MarketerSignup = () => {
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
                                     <FormLabel className="text-sm font-normal text-muted-foreground">
-                                        By ticking, you are confirming that you have read, understood and agree to the Property Eye <Link to="/terms" className="text-progress hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-progress hover:underline">Privacy Policy</Link>.
+                                        By ticking, you are confirming that you have read, understood and agree to the Property Eye <Link to="/terms-and-conditions" className="text-progress hover:underline">Terms of Service</Link> and <Link to="/privacy-policy" className="text-progress hover:underline">Privacy Policy</Link>.
                                     </FormLabel>
                                     <FormMessage />
                                 </div>
