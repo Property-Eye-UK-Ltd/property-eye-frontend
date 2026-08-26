@@ -8,6 +8,8 @@ import {
     InputOTPSeparator,
 } from "@/components/ui/input-otp";
 import * as authService from "@/features/auth/api/authService";
+import { setAuthToken } from "@/lib/apiClient";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import {
     STALE_ONBOARDING_STATE_DETAILS,
@@ -16,9 +18,9 @@ import {
     getErrorStatus,
 } from "@/features/auth/authErrors";
 import {
-    ONBOARDING_OTP_EXPIRES_AT_KEY,
     getOnboardingEmail,
-    setOnboardingToken,
+    getOnboardingOtpExpiresAt,
+    setOnboardingOtpExpiresAt,
 } from "@/features/auth/onboardingStorage";
 
 const DEFAULT_OTP_WINDOW_SECONDS = 600; // 10 minutes
@@ -35,6 +37,7 @@ const secondsUntil = (isoTimestamp: string) => {
 const OTPVerification = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { refreshUser } = useAuth();
     const [email, setEmail] = useState<string | null>(null);
     const [otp, setOtp] = useState("");
     const [isVerified, setIsVerified] = useState(false);
@@ -45,9 +48,10 @@ const OTPVerification = () => {
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // A code is sent by /auth/agency/register right before navigating here
-    // (see Signup.tsx), so the expiry timestamp should already be in
-    // sessionStorage. If it's missing/stale, treat the code as expired so the
-    // Resend action is immediately available instead of silently doing nothing.
+    // (see Signup.tsx), so the expiry timestamp should already be in the
+    // onboarding cookie. If it's missing/stale, treat the code as expired so
+    // the Resend action is immediately available instead of silently doing
+    // nothing.
     useEffect(() => {
         const storedEmail = getOnboardingEmail();
         if (!storedEmail) {
@@ -61,7 +65,7 @@ const OTPVerification = () => {
         }
         setEmail(storedEmail);
 
-        const storedExpiry = sessionStorage.getItem(ONBOARDING_OTP_EXPIRES_AT_KEY);
+        const storedExpiry = getOnboardingOtpExpiresAt();
         setTimeLeft(storedExpiry ? secondsUntil(storedExpiry) : 0);
     }, [navigate, toast]);
 
@@ -116,7 +120,7 @@ const OTPVerification = () => {
             const response = await authService.agencyResendOtp({ email });
 
             if (response.otp_expires_at) {
-                sessionStorage.setItem(ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+                setOnboardingOtpExpiresAt(response.otp_expires_at);
                 setTimeLeft(secondsUntil(response.otp_expires_at));
             } else {
                 setTimeLeft(DEFAULT_OTP_WINDOW_SECONDS);
@@ -147,8 +151,11 @@ const OTPVerification = () => {
         setIsSubmitting(true);
         try {
             const response = await authService.agencyVerifyOtp({ email, otp_code: otp });
-            if (response.token) {
-                setOnboardingToken(response.token);
+            // Same session mechanism as an active user from this point on —
+            // gated by account status, not a separate onboarding token.
+            if (response.access_token && response.expires_in) {
+                setAuthToken(response.access_token, response.expires_in);
+                await refreshUser();
             }
             setIsVerified(true);
             toast({

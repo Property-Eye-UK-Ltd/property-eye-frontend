@@ -22,23 +22,24 @@ import {
 } from "@/components/ui/form";
 import { agencyOwnerSchema, type AgencyOwnerFormData } from "@/lib/validations/auth";
 import * as authService from "@/features/auth/api/authService";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { AUTH_ERROR_DETAIL, extractErrorMessage, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
-import { clearOnboardingStorage, getOnboardingToken } from "@/features/auth/onboardingStorage";
+import { clearOnboardingStorage } from "@/features/auth/onboardingStorage";
 
 const AgencyOwnerInfo = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
-    const onboardingToken = getOnboardingToken();
+    const { isAuthenticated } = useAuth();
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (!onboardingToken) {
+        if (!isAuthenticated) {
             navigate("/signup", { replace: true });
         }
-    }, [onboardingToken, navigate]);
+    }, [isAuthenticated, navigate]);
 
     const form = useForm<AgencyOwnerFormData>({
         resolver: zodResolver(agencyOwnerSchema),
@@ -64,35 +65,31 @@ const AgencyOwnerInfo = () => {
     };
 
     const onSubmit = async (data: AgencyOwnerFormData) => {
-        if (!onboardingToken) return;
         setIsSubmitting(true);
         try {
             let profileImageUrl = undefined;
             if (selectedFile) {
-                const sasData = await authService.getUploadSasUrl(selectedFile.name, "profile", onboardingToken);
-                await authService.uploadFileToAzure(sasData.upload_url, selectedFile);
-                profileImageUrl = sasData.clean_url;
+                const imageData = await authService.uploadImage(selectedFile, "profile");
+                profileImageUrl = imageData.url;
             }
 
-            await authService.agencyUpdateOnboardingProfile(
-                {
-                    first_name: data.firstName,
-                    last_name: data.lastName,
-                    gender: data.gender,
-                    address: data.address,
-                    profile_image_url: profileImageUrl,
-                },
-                onboardingToken
-            );
+            await authService.agencyUpdateOnboardingProfile({
+                first_name: data.firstName,
+                last_name: data.lastName,
+                gender: data.gender,
+                address: data.address,
+                profile_image_url: profileImageUrl,
+            });
             navigate("/agency-information");
         } catch (error) {
             const status = getErrorStatus(error);
             const detail = getErrorDetail(error);
 
-            // /auth/agency/onboarding-profile only ever accepts a live
-            // onboarding token — any missing/expired/reused token, or a
-            // signup completed elsewhere, always comes back as one of these
-            // three unambiguous cases, so recovery is always "start over".
+            // /auth/agency/onboarding-profile requires an authenticated
+            // session belonging to a live, not-yet-completed signup draft —
+            // a dead session, a signup already finished elsewhere, or a
+            // stale draft all come back as one of these unambiguous cases,
+            // so recovery is always "start over".
             if (
                 status === 401 ||
                 detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ||

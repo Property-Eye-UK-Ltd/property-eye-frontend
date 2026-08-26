@@ -110,6 +110,15 @@ export interface AuthUserSummary {
     must_change_password: boolean;
     avatar_url?: string;
     last_active_at?: string;
+    /**
+     * Only set when status is pending_verification/pending_profile: which
+     * onboarding-wizard step this user should resume at
+     * ("verify_otp" | "complete_profile" | "complete_agency"). Lets a
+     * pending user be redirected correctly from any entry point (e.g.
+     * reloading the dashboard), not just within the signup wizard's own
+     * next_step-driven navigation.
+     */
+    onboarding_next_step?: string;
 }
 
 export interface AuthMeResponse extends AuthUserSummary {
@@ -162,7 +171,8 @@ export interface AgencyOnboardingStartResponse {
     next_step: string;
     otp_expires_at?: string;
     message: string;
-    token?: string;
+    access_token?: string;
+    expires_in?: number;
 }
 
 export interface AgencyOnboardingResendRequest {
@@ -179,7 +189,8 @@ export interface AgencyOnboardingStepResponse {
     status: string;
     next_step: string;
     message: string;
-    token?: string;
+    access_token?: string;
+    expires_in?: number;
 }
 
 export interface AgencyProfileUpdateRequest {
@@ -206,7 +217,8 @@ export interface MarketerOnboardingStartResponse {
     next_step: string;
     otp_expires_at?: string;
     message: string;
-    token?: string;
+    access_token?: string;
+    expires_in?: number;
 }
 
 export interface MarketerOnboardingResendRequest {
@@ -223,7 +235,8 @@ export interface MarketerOnboardingStepResponse {
     status: string;
     next_step: string;
     message: string;
-    token?: string;
+    access_token?: string;
+    expires_in?: number;
 }
 
 export interface MarketerProfileUpdateRequest {

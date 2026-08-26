@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { toast } from "@/hooks/use-toast";
 import { subscriptionGateEvents } from "@/lib/subscriptionGateEvents";
@@ -24,7 +24,15 @@ export const clearAuthToken = () => {
 
 export const getAuthToken = () => Cookies.get(ACCESS_TOKEN_COOKIE);
 
+// One session mechanism for the whole account lifecycle — mid-onboarding
+// (status pending_verification/pending_profile) and fully active users carry
+// the exact same access_token cookie + httpOnly refresh_token cookie; the
+// backend gates what each status is allowed to do, not the token shape. There
+// is deliberately no separate onboarding-token cookie/path-matching here.
 apiClient.interceptors.request.use((config) => {
+    if (config.headers.Authorization) {
+        return config;
+    }
     const token = getAuthToken();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -49,9 +57,31 @@ const AUTH_FLOW_PATH_PREFIX = "/auth/";
 // which should stay on the page and just show a toast.
 const SUSPENDED_ACCOUNT_DETAIL = "User account is not active";
 
+type RetriableRequestConfig = InternalAxiosRequestConfig & { _retriedAfterRefresh?: boolean };
+
+// The backend issues a 15-minute access token (ACCESS_TOKEN_EXPIRE_MINUTES)
+// backed by a 7-day httpOnly refresh-token cookie (REFRESH_TOKEN_EXPIRE_DAYS)
+// that's meant to renew it transparently — but nothing ever called
+// POST /auth/refresh, so every access token's 401 was treated as a dead
+// session and the user was logged out and bounced to /login every 15
+// minutes in production, even with hours left on their actual session.
+// This single in-flight refresh call, shared across every request that hits
+// a 401 at once, restores that renewal.
+let refreshInFlight: Promise<string | null> | null = null;
+
+const performRefresh = async (): Promise<string | null> => {
+    try {
+        const { data } = await apiClient.post("/auth/refresh");
+        setAuthToken(data.access_token, data.expires_in);
+        return data.access_token as string;
+    } catch {
+        return null;
+    }
+};
+
 apiClient.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
+    async (error: AxiosError) => {
         const status = error.response?.status;
         const requestUrl = error.config?.url ?? "";
         const isAuthFlowEndpoint = requestUrl.includes(AUTH_FLOW_PATH_PREFIX);
@@ -63,13 +93,38 @@ apiClient.interceptors.response.use(
         const detail = (error.response?.data as { detail?: string } | undefined)?.detail;
         const isSuspendedAccount = status === 403 && detail === SUSPENDED_ACCOUNT_DETAIL;
 
-        if (status === 401 || isSuspendedAccount) {
+        if (status === 401) {
+            const config = error.config as RetriableRequestConfig | undefined;
+            // Only ever retry once per request — if the refreshed token also
+            // 401s, the refresh-token cookie itself is dead/expired, so fall
+            // through to the real "session expired" logout below instead of
+            // looping.
+            if (config && !config._retriedAfterRefresh && getAuthToken()) {
+                config._retriedAfterRefresh = true;
+                refreshInFlight ??= performRefresh().finally(() => {
+                    refreshInFlight = null;
+                });
+                const newToken = await refreshInFlight;
+                if (newToken) {
+                    config.headers.Authorization = `Bearer ${newToken}`;
+                    return apiClient.request(config);
+                }
+            }
+
             clearAuthToken();
             toast({
-                title: isSuspendedAccount ? "Account suspended" : "Session expired",
-                description: isSuspendedAccount
-                    ? "Your account has been suspended. Contact support if you believe this is a mistake."
-                    : "Please log in again to continue.",
+                title: "Session expired",
+                description: "Please log in again to continue.",
+                variant: "destructive",
+            });
+            if (window.location.pathname !== "/login") {
+                window.location.assign("/login");
+            }
+        } else if (isSuspendedAccount) {
+            clearAuthToken();
+            toast({
+                title: "Account suspended",
+                description: "Your account has been suspended. Contact support if you believe this is a mistake.",
                 variant: "destructive",
             });
             if (window.location.pathname !== "/login") {

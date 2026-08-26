@@ -14,25 +14,22 @@ import {
 } from "@/components/ui/form";
 import { marketerProfileSchema, type MarketerProfileFormData } from "@/lib/validations/auth";
 import * as authService from "@/features/auth/api/authService";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { AUTH_ERROR_DETAIL, extractErrorMessage, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
-import {
-    getMarketerOnboardingToken,
-    setPendingMarketerSession,
-} from "@/features/auth/marketerOnboardingStorage";
 import type { AuthLoginResponse } from "@/types/auth.types";
 
 const MarketerProfile = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
-    const onboardingToken = getMarketerOnboardingToken();
+    const { isAuthenticated, applyAuthSession } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (!onboardingToken) {
+        if (!isAuthenticated) {
             navigate("/marketer-signup", { replace: true });
         }
-    }, [onboardingToken, navigate]);
+    }, [isAuthenticated, navigate]);
 
     const form = useForm<MarketerProfileFormData>({
         resolver: zodResolver(marketerProfileSchema),
@@ -45,20 +42,16 @@ const MarketerProfile = () => {
     });
 
     const onSubmit = async (data: MarketerProfileFormData) => {
-        if (!onboardingToken) return;
         setIsSubmitting(true);
         try {
-            const response = await authService.marketerUpdateProfile(
-                {
-                    first_name: data.firstName,
-                    last_name: data.lastName,
-                    phone_number: data.phoneNumber,
-                },
-                onboardingToken
-            );
+            const response = await authService.marketerUpdateProfile({
+                first_name: data.firstName,
+                last_name: data.lastName,
+                phone_number: data.phoneNumber,
+            });
 
             if ("access_token" in response) {
-                setPendingMarketerSession(response as AuthLoginResponse);
+                applyAuthSession(response as AuthLoginResponse);
                 navigate("/marketer-referral-link", { replace: true });
             } else {
                 toast({
@@ -73,7 +66,7 @@ const MarketerProfile = () => {
             if (
                 status === 401 ||
                 detail === AUTH_ERROR_DETAIL.ONBOARDING_ALREADY_COMPLETED ||
-                detail === AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP
+                detail === AUTH_ERROR_DETAIL.MARKETER_PROFILE_UPDATE_BEFORE_OTP
             ) {
                 toast({
                     title: "Let's start over",

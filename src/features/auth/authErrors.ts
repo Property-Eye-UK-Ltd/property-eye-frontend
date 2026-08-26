@@ -32,6 +32,11 @@ export const AUTH_ERROR_DETAIL = {
     OTP_INVALID: "OTP code is invalid",
     PENDING_USER_NOT_FOUND: "Pending user record not found",
     PROFILE_UPDATE_BEFORE_OTP: "Agency profile can only be updated after OTP verification",
+    // marketer_onboarding_service.py — same case as PROFILE_UPDATE_BEFORE_OTP
+    // above, but the marketer flow raises a differently-worded 400 detail, so
+    // a real marketer stale-state error was previously falling through to a
+    // generic "Could not save details" toast instead of being recognized.
+    MARKETER_PROFILE_UPDATE_BEFORE_OTP: "Marketer profile can only be updated after OTP verification",
     PROFILE_FIELD_REQUIRED: "At least one profile field must be provided",
     OWNER_PROFILE_INCOMPLETE: "Owner profile is incomplete",
     AGENCY_DETAILS_INCOMPLETE: "Agency details are incomplete",
@@ -53,6 +58,7 @@ export const STALE_ONBOARDING_STATE_DETAILS: readonly string[] = [
     AUTH_ERROR_DETAIL.OTP_VERIFICATION_UNAVAILABLE,
     AUTH_ERROR_DETAIL.PENDING_USER_NOT_FOUND,
     AUTH_ERROR_DETAIL.PROFILE_UPDATE_BEFORE_OTP,
+    AUTH_ERROR_DETAIL.MARKETER_PROFILE_UPDATE_BEFORE_OTP,
 ];
 
 export const getErrorDetail = (error: unknown): string | undefined => {

@@ -113,16 +113,16 @@ export const agencyVerifyOtp = async (
     return data;
 };
 
-// Onboarding-only: saves owner/agency profile fields during signup using the
-// short-lived onboarding token from /verify-otp. Backend: POST /auth/agency/onboarding-profile.
+// Onboarding-only: saves owner/agency profile fields during signup. Uses the
+// same session (access_token cookie) as every other authenticated call —
+// there is no separate onboarding token; the backend gates this endpoint by
+// account status instead. Backend: POST /auth/agency/onboarding-profile.
 export const agencyUpdateOnboardingProfile = async (
-    payload: AgencyProfileUpdateRequest,
-    onboardingToken: string
+    payload: AgencyProfileUpdateRequest
 ): Promise<AgencyProfileUpdateResponse> => {
     const { data } = await apiClient.post<AgencyProfileUpdateResponse>(
         "/auth/agency/onboarding-profile",
-        payload,
-        { headers: { Authorization: `Bearer ${onboardingToken}` } }
+        payload
     );
     return data;
 };
@@ -170,49 +170,36 @@ export const marketerVerifyOtp = async (
     return data;
 };
 
+// Same session/cookie as every other authenticated call — see
+// agencyUpdateOnboardingProfile above.
 export const marketerUpdateProfile = async (
-    payload: MarketerProfileUpdateRequest,
-    onboardingToken: string
+    payload: MarketerProfileUpdateRequest
 ): Promise<MarketerProfileUpdateResponse> => {
     const { data } = await apiClient.post<MarketerProfileUpdateResponse>(
         "/auth/marketer/profile",
-        payload,
-        { headers: { Authorization: `Bearer ${onboardingToken}` } }
+        payload
     );
     return data;
 };
 
-export interface SasUrlResponse {
-    blob_name: string;
-    clean_url: string;
-    upload_url: string;
+export interface ImageUploadResponse {
+    url: string;
 }
 
-export const getUploadSasUrl = async (
-    fileName: string, 
-    fileType: "profile" | "logo",
-    onboardingToken?: string
-): Promise<SasUrlResponse> => {
-    const { data } = await apiClient.get<SasUrlResponse>(
-        `/media/sas-url?file_name=${encodeURIComponent(fileName)}&file_type=${fileType}`,
-        onboardingToken
-            ? { headers: { Authorization: `Bearer ${onboardingToken}` } }
-            : undefined
+// Called both mid-onboarding and from the authenticated dashboard
+// (AgencyProfileTab) — both now carry the same session cookie, so no
+// per-caller token distinction is needed here anymore.
+export const uploadImage = async (
+    file: File,
+    fileType: "profile" | "logo"
+): Promise<ImageUploadResponse> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const { data } = await apiClient.post<ImageUploadResponse>(
+        `/media/image?file_type=${fileType}`,
+        formData
     );
     return data;
-};
-
-export const uploadFileToAzure = async (uploadUrl: string, file: File): Promise<void> => {
-    const response = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: {
-            "x-ms-blob-type": "BlockBlob",
-            "Content-Type": file.type,
-        },
-        body: file,
-    });
-    if (!response.ok) {
-        throw new Error(`Failed to upload file to Azure: ${response.statusText}`);
-    }
 };
 

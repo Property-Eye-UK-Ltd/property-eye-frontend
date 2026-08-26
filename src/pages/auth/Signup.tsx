@@ -17,13 +17,14 @@ import {
 } from "@/components/ui/form";
 import { signupSchema, type SignupFormData } from "@/lib/validations/auth";
 import * as authService from "@/features/auth/api/authService";
+import { setAuthToken } from "@/lib/apiClient";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { AUTH_ERROR_DETAIL, extractErrorMessage, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
 import {
-    ONBOARDING_EMAIL_KEY,
-    ONBOARDING_OTP_EXPIRES_AT_KEY,
     resolveOnboardingRoute,
-    setOnboardingToken,
+    setOnboardingEmail,
+    setOnboardingOtpExpiresAt,
 } from "@/features/auth/onboardingStorage";
 import { captureRedirectIntent } from "@/features/auth/redirectIntent";
 
@@ -32,6 +33,7 @@ const Signup = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
+    const { refreshUser } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
@@ -77,12 +79,16 @@ const Signup = () => {
                     ...(inviteToken ? { token: inviteToken } : {}),
                 }
             );
-            sessionStorage.setItem(ONBOARDING_EMAIL_KEY, response.email);
+            setOnboardingEmail(response.email);
             if (response.otp_expires_at) {
-                sessionStorage.setItem(ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+                setOnboardingOtpExpiresAt(response.otp_expires_at);
             }
-            if (response.token) {
-                setOnboardingToken(response.token);
+            // A resumed draft past OTP verification comes back with a real
+            // session already (see start_onboarding_session's resume path) —
+            // apply it the same way OTP verification itself does.
+            if (response.access_token && response.expires_in) {
+                setAuthToken(response.access_token, response.expires_in);
+                await refreshUser();
             }
             navigate(resolveOnboardingRoute(response.next_step));
         } catch (error) {

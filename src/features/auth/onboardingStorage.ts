@@ -1,21 +1,35 @@
+import Cookies from "js-cookie";
+
 export const ONBOARDING_EMAIL_KEY = "agency_onboarding_email";
 export const ONBOARDING_OTP_EXPIRES_AT_KEY = "agency_onboarding_otp_expires_at";
-export const ONBOARDING_TOKEN_KEY = "agency_onboarding_token";
 
-export const getOnboardingEmail = () => sessionStorage.getItem(ONBOARDING_EMAIL_KEY);
+const cookieOpts = { sameSite: "lax" as const, secure: window.location.protocol === "https:" };
 
-export const setOnboardingEmail = (email: string) =>
-    sessionStorage.setItem(ONBOARDING_EMAIL_KEY, email);
+// Cookies, not sessionStorage: the OTP/verification code for this flow is
+// delivered by SMS or email, and a very common path is the user opening it
+// in a brand-new tab (or their phone's messaging/mail app opening a new
+// browser instance) rather than returning to the tab that started signup.
+// sessionStorage is scoped to that one originating tab, so it silently lost
+// this state and the new tab showed "Session expired" even though the OTP
+// itself was still valid — this was the main cause of that report.
+//
+// Only email + OTP expiry live here: before OTP verification there is no
+// User row with a real session yet, so this is the only client-side state
+// that exists pre-verification. Once OTP verifies, the backend logs the user
+// into a real session (access_token + refresh_token cookies, same as an
+// active user) — there is no separate onboarding token to track here.
+export const getOnboardingEmail = () => Cookies.get(ONBOARDING_EMAIL_KEY) ?? null;
 
-export const getOnboardingToken = () => sessionStorage.getItem(ONBOARDING_TOKEN_KEY);
+export const setOnboardingEmail = (email: string) => Cookies.set(ONBOARDING_EMAIL_KEY, email, cookieOpts);
 
-export const setOnboardingToken = (token: string) =>
-    sessionStorage.setItem(ONBOARDING_TOKEN_KEY, token);
+export const getOnboardingOtpExpiresAt = () => Cookies.get(ONBOARDING_OTP_EXPIRES_AT_KEY) ?? null;
+
+export const setOnboardingOtpExpiresAt = (expiresAt: string) =>
+    Cookies.set(ONBOARDING_OTP_EXPIRES_AT_KEY, expiresAt, cookieOpts);
 
 export const clearOnboardingStorage = () => {
-    sessionStorage.removeItem(ONBOARDING_EMAIL_KEY);
-    sessionStorage.removeItem(ONBOARDING_OTP_EXPIRES_AT_KEY);
-    sessionStorage.removeItem(ONBOARDING_TOKEN_KEY);
+    Cookies.remove(ONBOARDING_EMAIL_KEY);
+    Cookies.remove(ONBOARDING_OTP_EXPIRES_AT_KEY);
 };
 
 /**

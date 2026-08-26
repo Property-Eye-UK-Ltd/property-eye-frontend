@@ -1,5 +1,12 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { resolveOnboardingRoute } from "@/features/auth/onboardingStorage";
+
+const ONBOARDING_ROUTES = new Set([
+    "/verify-otp",
+    "/agency-owner-info",
+    "/agency-information",
+]);
 
 const ProtectedRoute = () => {
     const { isAuthenticated, isLoading, user } = useAuth();
@@ -15,6 +22,23 @@ const ProtectedRoute = () => {
 
     if (!isAuthenticated) {
         return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    // A session authenticates at any account status now (see
+    // deps.get_current_active_user on the backend) — an agency user who's
+    // mid-signup (status pending_verification/pending_profile) can reach a
+    // dashboard route with a perfectly valid session, e.g. by navigating
+    // directly to /dashboard after closing the signup tab. Send them back
+    // to the exact onboarding step they left off at, from any entry point,
+    // not just within the signup wizard's own next_step-driven navigation.
+    if (
+        user &&
+        user.portal_context === "agency" &&
+        user.status !== "active" &&
+        user.onboarding_next_step &&
+        !ONBOARDING_ROUTES.has(location.pathname)
+    ) {
+        return <Navigate to={resolveOnboardingRoute(user.onboarding_next_step)} replace />;
     }
 
     // Force a password change for invited team members still on their

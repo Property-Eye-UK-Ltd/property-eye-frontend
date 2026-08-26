@@ -53,9 +53,8 @@ export const AgencyProfileTab = () => {
         try {
             let logoUrl = currentLogoUrl || undefined
             if (selectedLogoFile) {
-                const sasData = await authService.getUploadSasUrl(selectedLogoFile.name, "logo")
-                await authService.uploadFileToAzure(sasData.upload_url, selectedLogoFile)
-                logoUrl = sasData.clean_url
+                const imageData = await authService.uploadImage(selectedLogoFile, "logo")
+                logoUrl = imageData.url
             }
 
             await authService.agencyUpdateProfile({

@@ -16,13 +16,14 @@ import {
 } from "@/components/ui/form";
 import { marketerSignupSchema, type MarketerSignupFormData } from "@/lib/validations/auth";
 import * as authService from "@/features/auth/api/authService";
+import { setAuthToken } from "@/lib/apiClient";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { extractErrorMessage, getErrorStatus } from "@/features/auth/authErrors";
 import {
-    MARKETER_ONBOARDING_EMAIL_KEY,
-    MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY,
     resolveMarketerOnboardingRoute,
-    setMarketerOnboardingToken,
+    setMarketerOnboardingEmail,
+    setMarketerOnboardingOtpExpiresAt,
 } from "@/features/auth/marketerOnboardingStorage";
 
 const MarketerSignup = () => {
@@ -30,6 +31,7 @@ const MarketerSignup = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
+    const { refreshUser } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const state = location.state as { email?: string; password?: string } | null;
@@ -52,12 +54,16 @@ const MarketerSignup = () => {
                 email: data.email,
                 password: data.password,
             });
-            sessionStorage.setItem(MARKETER_ONBOARDING_EMAIL_KEY, response.email);
+            setMarketerOnboardingEmail(response.email);
             if (response.otp_expires_at) {
-                sessionStorage.setItem(MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+                setMarketerOnboardingOtpExpiresAt(response.otp_expires_at);
             }
-            if (response.token) {
-                setMarketerOnboardingToken(response.token);
+            // A resumed draft past OTP verification comes back with a real
+            // session already (see start_onboarding_session's resume path) —
+            // apply it the same way OTP verification itself does.
+            if (response.access_token && response.expires_in) {
+                setAuthToken(response.access_token, response.expires_in);
+                await refreshUser();
             }
             navigate(resolveMarketerOnboardingRoute(response.next_step));
         } catch (error) {

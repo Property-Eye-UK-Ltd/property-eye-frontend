@@ -19,23 +19,22 @@ import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import type { AuthLoginResponse } from "@/types/auth.types";
 import { AUTH_ERROR_DETAIL, extractErrorMessage, getErrorDetail, getErrorStatus } from "@/features/auth/authErrors";
-import { clearOnboardingStorage, getOnboardingToken } from "@/features/auth/onboardingStorage";
+import { clearOnboardingStorage } from "@/features/auth/onboardingStorage";
 import { consumeRedirectIntent, resolveRedirectPath } from "@/features/auth/redirectIntent";
 
 const AgencyInformation = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
-    const { applyAuthSession } = useAuth();
-    const onboardingToken = getOnboardingToken();
+    const { isAuthenticated, applyAuthSession } = useAuth();
     const [previewLogo, setPreviewLogo] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (!onboardingToken) {
+        if (!isAuthenticated) {
             navigate("/signup", { replace: true });
         }
-    }, [onboardingToken, navigate]);
+    }, [isAuthenticated, navigate]);
 
     const form = useForm<AgencyInfoFormData>({
         resolver: zodResolver(agencyInfoSchema),
@@ -59,24 +58,19 @@ const AgencyInformation = () => {
     };
 
     const onSubmit = async (data: AgencyInfoFormData) => {
-        if (!onboardingToken) return;
         setIsSubmitting(true);
         try {
             let agencyLogoUrl = undefined;
             if (selectedFile) {
-                const sasData = await authService.getUploadSasUrl(selectedFile.name, "logo", onboardingToken);
-                await authService.uploadFileToAzure(sasData.upload_url, selectedFile);
-                agencyLogoUrl = sasData.clean_url;
+                const imageData = await authService.uploadImage(selectedFile, "logo");
+                agencyLogoUrl = imageData.url;
             }
 
-            const response = await authService.agencyUpdateOnboardingProfile(
-                {
-                    agency_name: data.agencyName,
-                    agency_address: data.agencyAddress,
-                    agency_logo_url: agencyLogoUrl,
-                },
-                onboardingToken
-            );
+            const response = await authService.agencyUpdateOnboardingProfile({
+                agency_name: data.agencyName,
+                agency_address: data.agencyAddress,
+                agency_logo_url: agencyLogoUrl,
+            });
             if ("access_token" in response) {
                 const authResponse = response as AuthLoginResponse;
                 applyAuthSession(authResponse);

@@ -8,6 +8,8 @@ import {
     InputOTPSeparator,
 } from "@/components/ui/input-otp";
 import * as authService from "@/features/auth/api/authService";
+import { setAuthToken } from "@/lib/apiClient";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import {
     STALE_ONBOARDING_STATE_DETAILS,
@@ -16,9 +18,9 @@ import {
     getErrorStatus,
 } from "@/features/auth/authErrors";
 import {
-    MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY,
     getMarketerOnboardingEmail,
-    setMarketerOnboardingToken,
+    getMarketerOnboardingOtpExpiresAt,
+    setMarketerOnboardingOtpExpiresAt,
 } from "@/features/auth/marketerOnboardingStorage";
 
 const DEFAULT_OTP_WINDOW_SECONDS = 600; // 10 minutes
@@ -35,6 +37,7 @@ const secondsUntil = (isoTimestamp: string) => {
 const MarketerOTPVerification = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { refreshUser } = useAuth();
     const [email, setEmail] = useState<string | null>(null);
     const [otp, setOtp] = useState("");
     const [isVerified, setIsVerified] = useState(false);
@@ -57,7 +60,7 @@ const MarketerOTPVerification = () => {
         }
         setEmail(storedEmail);
 
-        const storedExpiry = sessionStorage.getItem(MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY);
+        const storedExpiry = getMarketerOnboardingOtpExpiresAt();
         setTimeLeft(storedExpiry ? secondsUntil(storedExpiry) : 0);
     }, [navigate, toast]);
 
@@ -106,7 +109,7 @@ const MarketerOTPVerification = () => {
             const response = await authService.marketerResendOtp({ email });
 
             if (response.otp_expires_at) {
-                sessionStorage.setItem(MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+                setMarketerOnboardingOtpExpiresAt(response.otp_expires_at);
                 setTimeLeft(secondsUntil(response.otp_expires_at));
             } else {
                 setTimeLeft(DEFAULT_OTP_WINDOW_SECONDS);
@@ -137,8 +140,13 @@ const MarketerOTPVerification = () => {
         setIsSubmitting(true);
         try {
             const response = await authService.marketerVerifyOtp({ email, otp_code: otp });
-            if (response.token) {
-                setMarketerOnboardingToken(response.token);
+            // A real session now backs the rest of this wizard (same
+            // mechanism as an active user, gated by account status rather
+            // than a separate onboarding token) — apply it immediately so
+            // the subsequent profile-completion step is authenticated.
+            if (response.access_token && response.expires_in) {
+                setAuthToken(response.access_token, response.expires_in);
+                await refreshUser();
             }
             setIsVerified(true);
             toast({

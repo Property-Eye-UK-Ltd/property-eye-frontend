@@ -1,8 +1,8 @@
 import * as authService from "@/features/auth/api/authService";
-import { ONBOARDING_EMAIL_KEY, ONBOARDING_OTP_EXPIRES_AT_KEY } from "@/features/auth/onboardingStorage";
+import { setOnboardingEmail, setOnboardingOtpExpiresAt } from "@/features/auth/onboardingStorage";
 import {
-    MARKETER_ONBOARDING_EMAIL_KEY,
-    MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY,
+    setMarketerOnboardingEmail,
+    setMarketerOnboardingOtpExpiresAt,
 } from "@/features/auth/marketerOnboardingStorage";
 
 /**
@@ -18,9 +18,9 @@ import {
  */
 export const resumePendingVerification = async (email: string): Promise<string> => {
     const response = await authService.agencyResendOtp({ email });
-    sessionStorage.setItem(ONBOARDING_EMAIL_KEY, response.email);
+    setOnboardingEmail(response.email);
     if (response.otp_expires_at) {
-        sessionStorage.setItem(ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+        setOnboardingOtpExpiresAt(response.otp_expires_at);
     }
     return "/verify-otp";
 };
@@ -51,9 +51,9 @@ export const PENDING_PROFILE_REDIRECT = "/signup";
  */
 export const resumeMarketerPendingVerification = async (email: string): Promise<string> => {
     const response = await authService.marketerResendOtp({ email });
-    sessionStorage.setItem(MARKETER_ONBOARDING_EMAIL_KEY, response.email);
+    setMarketerOnboardingEmail(response.email);
     if (response.otp_expires_at) {
-        sessionStorage.setItem(MARKETER_ONBOARDING_OTP_EXPIRES_AT_KEY, response.otp_expires_at);
+        setMarketerOnboardingOtpExpiresAt(response.otp_expires_at);
     }
     return "/marketer-verify-otp";
 };
