@@ -73,6 +73,7 @@ const MarketerSignup = () => {
                 toast({
                     title: "Account already exists",
                     description: "An account with this email already exists. Please sign in instead.",
+                    variant: "destructive",
                 });
                 navigate("/login");
                 return;
